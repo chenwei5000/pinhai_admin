@@ -1,6 +1,6 @@
 # erp_web_vue
 
-> A Vue.js project
+> ERP前端项目 Vue版本
 
 ## Build Setup
 
