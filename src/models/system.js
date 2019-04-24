@@ -2,7 +2,6 @@ import global from './global.js';
 import qs from 'qs';
 
 const systemModel = {
-
   //登陆
   login: (param) => {
     let path = "/accessToken";
