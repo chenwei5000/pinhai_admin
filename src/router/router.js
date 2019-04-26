@@ -1,14 +1,10 @@
-import Vue from 'vue'
 import Router from 'vue-router'
 
 import Login from '../views/login'
 import Home from '../views/home/home'
+import store from "../store/userStore";
+import systemMode from "../models/system";
 
-
-import store from '../store/userStore'
-import systemMode from '../models/system'
-
-Vue.use(Router)
 
 const router = new Router({
   routes: [
@@ -21,12 +17,11 @@ const router = new Router({
       path: '/',
       name: 'Home',
       component: Home
-    }
-  ]
+    }]
 });
 
-// 导航守卫
-// 使用 router.beforeEach 注册一个全局前置守卫，判断用户是否登陆
+export default router;
+
 router.beforeEach((to, from, next) => {
   //忽略登陆
   if (to.path === '/login') {
@@ -34,6 +29,7 @@ router.beforeEach((to, from, next) => {
   } else {
     //登陆成功
     if (store.getters.isLogin == 1) {
+      getMenu();
       next();
     }
     //登陆失败
@@ -53,6 +49,9 @@ router.beforeEach((to, from, next) => {
         //重新加载菜单信息
         systemMode.getMenu().then(menu => {
           store.commit('setMenu', menu);
+          if ((router.resolve({name: '基础资料'}).route.matched.length) == 0) {
+            initMenu(menu);
+          }
         });
 
         //重新加载权限信息
@@ -65,7 +64,7 @@ router.beforeEach((to, from, next) => {
 
       // store.commit 为异步处理，需要通过观察器来判断commit是否都执行完毕
       store.subscribe((mutation, state) => {
-        if(state.menu && state.rolePower && state.user){
+        if (state.menu && state.rolePower && state.user) {
           next();
         }
       })
@@ -73,5 +72,50 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+let getMenu = () => {
+  if ((router.resolve({name: '基础资料'}).route.matched.length) == 0) {
+    if (store.state.menu) {
+      initMenu(store.state.menu);
+    }
+  }
+}
 
-export default router;
+let initMenu = (menu) => {
+  if (menu.length === 0) {
+    return
+  }
+  let menus = formatRoutes(menu);
+  // 最后添加
+  let unfound = {path: '*', redirect: '/404', hidden: true}
+  menus.push(unfound)
+  router.addRoutes(menus);
+}
+
+let formatRoutes = (aMenu) => {
+  const aRouter = []
+
+  aMenu.forEach(oMenu => {
+    //一级菜单
+    if (oMenu.level == 1 && oMenu.childMenu.length > 0) {
+      let oRouter = {
+        path: '/',
+        name: oMenu.title,
+        component: Home,
+        children: formatRoutes(oMenu.childMenu)
+      }
+      aRouter.push(oRouter);
+    }
+    //二级以上菜单
+    else if (oMenu.level > 1) {
+      if (oMenu.url.replace("/", "_") == 'CartonSpec_index') {
+        let oRouter = {
+          path: oMenu.url.replace("/", "_"),
+          name: oMenu.title,
+          components: import('../views/' + oMenu.url + '.vue')
+        }
+        aRouter.push(oRouter);
+      }
+    }
+  })
+  return aRouter
+}

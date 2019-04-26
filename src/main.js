@@ -20,8 +20,12 @@ Vue.prototype.global = global
 import './assets/icon/iconfont.css'
 
 
+import VueRouter from 'vue-router'
+import Vuex from 'vuex'
 
 
+Vue.use(VueRouter)
+Vue.use(Vuex);
 
 Vue.config.productionTip = false
 

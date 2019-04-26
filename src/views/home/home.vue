@@ -2,7 +2,30 @@
   <el-row class="container">
     <ph-header></ph-header>
     <ph-logo></ph-logo>
-    <ph-menu></ph-menu>
+
+    <el-container>
+
+      <ph-menu></ph-menu>
+
+      <section class="ph-body">
+        <div class="grid-content bg-purple-light">
+          <el-col :span="24" class="breadcrumb-container">
+            <strong class="title">{{$route.name}}</strong>
+            <el-breadcrumb separator="/" class="breadcrumb-inner">
+              <el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
+                {{ item.name }}
+              </el-breadcrumb-item>
+            </el-breadcrumb>
+          </el-col>
+          <el-col :span="24" class="content-wrapper">
+            <transition name="fade" mode="out-in">
+              <router-view></router-view>
+            </transition>
+          </el-col>
+        </div>
+      </section>
+    </el-container>
+
   </el-row>
 </template>
 
@@ -15,8 +38,7 @@
   export default {
     name: 'HelloWorld',
     data() {
-      return {
-      }
+      return {}
     },
     components: {
       'ph-header': ph_header,
@@ -28,12 +50,14 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  html{
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  html {
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   }
-  body{
+
+  body {
     margin: 0;
   }
+
   h1, h2 {
     font-weight: normal;
   }
@@ -51,7 +75,15 @@
   a {
     color: #42b983;
   }
-  .container{
+
+  .container {
     background-color: #f2f2f2;
   }
+
+  .ph-body {
+    margin-top: 60px;
+
+  }
+
+
 </style>

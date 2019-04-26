@@ -1,5 +1,6 @@
 <!--页面头部组件-->
 <template>
+
   <el-col :span="24" class="header">
     <!--左侧功能条-->
     <ul :class="menuCollapseClass">
