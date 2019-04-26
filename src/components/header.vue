@@ -20,13 +20,13 @@
         <el-dropdown trigger="click" placement="top-start" @command="handleCommand">
           <div class="el-dropdown-link user-info">
             <small>欢迎光临,</small>
-            管理员
+            {{mine.name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-ph-icon-cog">修改密码</el-dropdown-item>
-            <el-dropdown-item icon="el-ph-icon-account">个人资料</el-dropdown-item>
-            <el-dropdown-item icon="el-ph-icon-lightbulb" divided>系统更新日志</el-dropdown-item>
+            <el-dropdown-item icon="el-ph-icon-cog" command="editPass">修改密码</el-dropdown-item>
+            <el-dropdown-item icon="el-ph-icon-account" command="editInfo">个人资料</el-dropdown-item>
+            <el-dropdown-item icon="el-ph-icon-lightbulb" divided command="releaseLog">系统更新日志</el-dropdown-item>
             <el-dropdown-item icon="el-ph-icon-tuichu" command="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -42,11 +42,13 @@
   export default {
     data() {
       return {
-
       }
     },
     computed: {
       //store 的状态必须变成计算方法，只有这样state值修改之后，才会重新计算
+      mine(){
+        return this.$store.state.user;
+      },
       menuCollapse() {
         return this.$store.state.menuCollapse;
       },
