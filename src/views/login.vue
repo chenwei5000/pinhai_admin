@@ -24,7 +24,7 @@
         var loginParams = {account: this.user.name, password: this.user.pass};
         systemMode.login(loginParams).then(token => {
           this.$store.commit("setToken", token);
-          this.$router.replace('/')
+          this.$router.replace('/');
         });
       }
     },

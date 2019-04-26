@@ -17,7 +17,7 @@
       <li class="header-nav-item">
         <img class="nav-user-photo" src="../assets/avatars/avatar4.png" alt=""/>
 
-        <el-dropdown trigger="click" placement="top-start">
+        <el-dropdown trigger="click" placement="top-start" @command="handleCommand">
           <div class="el-dropdown-link user-info">
             <small>欢迎光临,</small>
             管理员
@@ -27,7 +27,7 @@
             <el-dropdown-item icon="el-ph-icon-cog">修改密码</el-dropdown-item>
             <el-dropdown-item icon="el-ph-icon-account">个人资料</el-dropdown-item>
             <el-dropdown-item icon="el-ph-icon-lightbulb" divided>系统更新日志</el-dropdown-item>
-            <el-dropdown-item icon="el-ph-icon-tuichu">退出</el-dropdown-item>
+            <el-dropdown-item icon="el-ph-icon-tuichu" command="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </li>
@@ -37,6 +37,8 @@
 
 
 <script>
+  import systemMode from '../models/system.js'
+
   export default {
     data() {
       return {
@@ -72,6 +74,14 @@
         }
         else {
           this.$store.commit("setMenuCollapse", true);
+        }
+      },
+      handleCommand(command) {
+        if (command == 'logout') {
+          systemMode.logout();
+        }
+        else {
+          this.$message('click on item ' + command);
         }
       }
     }

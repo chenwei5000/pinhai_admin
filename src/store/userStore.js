@@ -65,6 +65,12 @@ const store = new Vuex.Store({
         localStorage.setItem(ACCESS_TOKEN, token);
       }
     },
+
+    clearToken: (state) => {
+      state.token = null;
+      localStorage.removeItem(ACCESS_TOKEN);
+    },
+
     // 修改用户，并将用户存入 session中
     setUser: (state, user) => {
       if (user) {
@@ -72,11 +78,19 @@ const store = new Vuex.Store({
         sessionStorage.setItem(SESSION_USER, JSON.stringify(user));
       }
     },
+    clearUser: (state) => {
+      state.user = null;
+      sessionStorage.removeItem(SESSION_USER);
+    },
     setMenu: (state, menu) => {
       if (menu) {
         state.menu = menu;
         sessionStorage.setItem(SESSION_MENU, JSON.stringify(menu));
       }
+    },
+    clearMenu: (state) => {
+      state.menu = null;
+      sessionStorage.removeItem(SESSION_MENU);
     },
     setRolePower: (state, rolePower) => {
       if (rolePower) {
@@ -84,6 +98,11 @@ const store = new Vuex.Store({
         sessionStorage.setItem(SESSION_ROLE_POWER, JSON.stringify(rolePower));
       }
     },
+    clearRolePower: (state) => {
+      state.rolePower = null;
+      sessionStorage.removeItem(SESSION_ROLE_POWER);
+    },
+
     setMenuCollapse: (state, menuCollapse) => {
       if (menuCollapse) {
         state.menuCollapse = true;
