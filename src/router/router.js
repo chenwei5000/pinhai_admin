@@ -63,7 +63,12 @@ router.beforeEach((to, from, next) => {
 
       reloadInfo();
 
-      next();
+      // store.commit 为异步处理，需要通过观察器来判断commit是否都执行完毕
+      store.subscribe((mutation, state) => {
+        if(state.menu && state.rolePower && state.user){
+          next();
+        }
+      })
     }
   }
 });
