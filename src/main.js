@@ -2,14 +2,26 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+
+//引入 路由机制
 import router from './router/router'
+
+//引入 element ui
 import './plugins/element.js'
 
+//引入store
 import store from './store/userStore'
 
-//引入公共方法
+//引入自定义公共方法
 import global from './models/global.js'
 Vue.prototype.global = global
+
+//引入自定义Icon
+import './assets/icon/iconfont.css'
+
+
+
+
 
 Vue.config.productionTip = false
 

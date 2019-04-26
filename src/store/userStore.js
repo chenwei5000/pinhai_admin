@@ -11,6 +11,7 @@ const ACCESS_TOKEN = "ACCESS_TOKEN";
 const SESSION_USER = "SESSION_USER";
 const SESSION_MENU = "SESSION_MENU";
 const SESSION_ROLE_POWER = "SESSION_ROLE_POWER";
+const MENU_COLLAPSE = "MENU_COLLAPSE";
 
 /**
  * 定义存储对象
@@ -27,7 +28,9 @@ const store = new Vuex.Store({
     //菜单信息
     menu: sessionStorage.getItem(SESSION_MENU) ? JSON.parse(sessionStorage.getItem(SESSION_MENU)) : null,
     //权限信息
-    rolePower: sessionStorage.getItem(SESSION_ROLE_POWER) ? JSON.parse(sessionStorage.getItem(SESSION_ROLE_POWER)) : null
+    rolePower: sessionStorage.getItem(SESSION_ROLE_POWER) ? JSON.parse(sessionStorage.getItem(SESSION_ROLE_POWER)) : null,
+    //菜单收起状态
+    menuCollapse: localStorage.getItem(MENU_COLLAPSE) && localStorage.getItem(MENU_COLLAPSE) == 'true' ? true : false,
   },
 
   //getter方法，getter 的返回值会根据它的依赖被缓存起来，且只有当它的依赖值发生了改变才会被重新计算
@@ -80,6 +83,15 @@ const store = new Vuex.Store({
         state.rolePower = rolePower;
         sessionStorage.setItem(SESSION_ROLE_POWER, JSON.stringify(rolePower));
       }
+    },
+    setMenuCollapse: (state, menuCollapse) => {
+      if (menuCollapse) {
+        state.menuCollapse = true;
+      }
+      else {
+        state.menuCollapse = false;
+      }
+      localStorage.setItem(MENU_COLLAPSE, state.menuCollapse);
     }
   }
 });

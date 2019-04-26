@@ -22,8 +22,6 @@
     methods: {
       login() {
         var loginParams = {account: this.user.name, password: this.user.pass};
-
-        console.log(loginParams);
         systemMode.login(loginParams).then(token => {
           this.$store.commit("setToken", token);
           this.$router.replace('/')
