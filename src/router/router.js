@@ -1,6 +1,6 @@
 import Router from 'vue-router'
 
-import Login from '../views/login'
+import Login from '../views/Login/login'
 import Home from '../views/home/home'
 import store from "../store/userStore";
 import systemMode from "../models/system";

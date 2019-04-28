@@ -3,7 +3,7 @@
   <body class="login-bg">
   <div class="login">
     <div class="message">
-      <img src="../assets/logo-2.png"/>
+      <img src="../../assets/logo-2.png"/>
       {{global.config.NAME}}
       <small>{{global.config.VERSION}}</small>
     </div>
@@ -30,7 +30,7 @@
 
 <script>
 
-  import systemMode from '../models/system.js'
+  import systemMode from '../../models/system.js'
 
   export default {
     methods: {
@@ -51,7 +51,8 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "../assets/weadmin.less";
+
+  @import "../../assets/css/phadmin.less";
 
   .login .message img {
     height: 25px;
