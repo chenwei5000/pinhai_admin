@@ -107,14 +107,12 @@ let formatRoutes = (aMenu) => {
     }
     //二级以上菜单
     else if (oMenu.level > 1) {
-      if (oMenu.url.replace("/", "_") == 'CartonSpec_index') {
-        let oRouter = {
-          path: oMenu.url.replace("/", "_"),
-          name: oMenu.title,
-          components: import('../views/' + oMenu.url + '.vue')
-        }
-        aRouter.push(oRouter);
+      let oRouter = {
+        path: oMenu.url.replace("/", "_"),
+        name: oMenu.title,
+        components: import('../views/' + oMenu.url + '.vue')
       }
+      aRouter.push(oRouter);
     }
   })
   return aRouter

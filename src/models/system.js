@@ -8,7 +8,7 @@ const systemModel = {
   //登陆
   login: (param) => {
     let path = "/accessToken";
-    param.tenantId = global.TENANT_ID;
+    param.tenantId = global.config.TENANT_ID;
     return global.axios.post(path, qs.stringify(param), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(res => res.data);
   },
 

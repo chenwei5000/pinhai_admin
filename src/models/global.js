@@ -3,12 +3,16 @@ import store from '../store/userStore'
 import {Message} from 'element-ui'
 
 
-const ERP_SERVICE_URL = "http://192.168.10.200/erp-service";
-const TENANT_ID  = "ff80808162fb6e100162fb6e213e0000";
+const config = {
+  NAME: "ERP管理系统登录",
+  VERSION: "V2.2.1",
+  ERP_SERVICE_URL: "http://192.168.10.200/erp-service",
+  TENANT_ID: "ff80808162fb6e100162fb6e213e0000"
+}
 
 //定义全局方法
 const generateUrl = function (path) {
-  return ERP_SERVICE_URL + path;
+  return config.ERP_SERVICE_URL + path;
 }
 
 //设置默认Request的Header
@@ -39,8 +43,8 @@ axios.interceptors.response.use(data => {
   if (!err.response) {
     return Message.error(err.message);
   }
-  if(err.response.data) {
-    Message.error({message: "["+err.response.data.code+"]" + err.response.data.description})
+  if (err.response.data) {
+    Message.error({message: "[" + err.response.data.code + "]" + err.response.data.description})
   }
   else {
     if (err.response.status == 504 || err.response.status == 404) {
@@ -59,6 +63,5 @@ axios.interceptors.response.use(data => {
 export default {
   axios,
   generateUrl,
-  ERP_SERVICE_URL,
-  TENANT_ID
+  config
 }

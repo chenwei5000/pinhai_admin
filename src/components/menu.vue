@@ -114,6 +114,7 @@
         //console.log('handleclose');
       },
       handleselect: function (a, b) {
+        console.log(a);
       },
       //折叠导航栏
       collapse: function () {
