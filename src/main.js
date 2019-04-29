@@ -20,8 +20,6 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
-i18n.locale = 'zh'
-
 // 引入自定义公共方法
 import global from './api/global.js'
 Vue.prototype.global = global

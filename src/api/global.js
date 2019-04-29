@@ -1,6 +1,6 @@
-import axios from 'axios'
+import _axios from 'axios'
 import store from '@/store/index'
-import { Message } from 'element-ui'
+import {Message} from 'element-ui'
 
 const config = {
   NAME: 'ERP管理系统登录',
@@ -10,14 +10,19 @@ const config = {
 }
 
 // 定义全局方法
-const generateUrl = function(path) {
+const generateUrl = function (path) {
   return config.ERP_SERVICE_URL + path
 }
+
+const axios = _axios.create({
+  baseURL: config.ERP_SERVICE_URL, // url = base url + request url
+  timeout: 5000 // request timeout
+})
 
 // 设置默认Request的Header
 axios.interceptors.request.use(
   config => {
-    const token = store.state.token
+    const token = store.state.user.token;
     // 判断是否存在token，如果存在的话，则每个http header都加上TK-Authorization
     if (token && token != '') {
       config.headers['TK-Authorization'] = token
@@ -30,7 +35,7 @@ axios.interceptors.request.use(
     return config
   },
   err => {
-    Message.error({ message: '请求超时!' })
+    Message.error({message: '请求超时!'})
     return Promise.resolve(err)
   }
 )
@@ -43,18 +48,19 @@ axios.interceptors.response.use(data => {
     return Message.error(err.message)
   }
   if (err.response.data) {
-    Message.error({ message: '[' + err.response.data.code + ']' + err.response.data.description })
+    Message.error({message: '[' + err.response.data.code + ']' + err.response.data.description})
   } else {
     if (err.response.status == 504 || err.response.status == 404) {
-      Message.error({ message: '服务器被吃了⊙﹏⊙∥' })
+      Message.error({message: '服务器被吃了⊙﹏⊙∥'})
     } else if (err.response.status == 403) {
-      Message.error({ message: '权限不足,请联系管理员!' })
+      Message.error({message: '权限不足,请联系管理员!'})
     } else {
-      Message.error({ message: '未知错误!' })
+      Message.error({message: '未知错误!'})
     }
   }
   return Promise.resolve(err)
-})
+});
+
 
 // 暴露出这些属性和方法
 export default {

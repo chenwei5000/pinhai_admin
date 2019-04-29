@@ -110,7 +110,6 @@
 <script>
 /* eslint-disable */
 'use strict'
-import request from '@/utils/request'
 import language from './utils/language.js'
 import mimes from './utils/mimes.js'
 import data2blob from './utils/data2blob.js'
@@ -824,7 +823,7 @@ export default {
       that.reset()
       that.loading = 1
       that.setStep(3)
-      request({
+      that.global.axios.post({
         url,
         method: 'post',
         data: fmData

@@ -1,3 +1,6 @@
+/**
+ * 这个应用相关设置状态。
+ */
 import Cookies from 'js-cookie'
 import { getLanguage } from '@/lang/index'
 

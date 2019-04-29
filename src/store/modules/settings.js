@@ -1,3 +1,6 @@
+/**
+ * 设置相关， TODO:要调整
+ */
 import variables from '@/styles/element-variables.scss'
 import defaultSettings from '@/settings'
 

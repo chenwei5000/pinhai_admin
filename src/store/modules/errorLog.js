@@ -1,3 +1,6 @@
+/**
+ * 错误日志
+ */
 const state = {
   logs: []
 }

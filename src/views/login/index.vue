@@ -27,9 +27,9 @@
             v-model="user.username"
             :placeholder="$t('login.username')"
             name="username"
-            type="email"
+            type="text"
             tabindex="1"
-            auto-complete="off"
+            auto-complete="on"
           />
 
         </el-form-item>
@@ -65,7 +65,7 @@
 
         <hr class="hr15">
 
-        <input class="loginin" value="登录" style="width:100%;" type="button" @click="login">
+        <input class="loginin" value="登录" type="button" @click="login">
 
         <hr class="hr20">
       </el-form>
@@ -88,7 +88,7 @@
     vertical-align: middle !important;
     border-radius: 3px !important;
     height: 50px !important;
-    padding: 0px 16px !important;
+    padding: 0px 0px 0px 16px !important;
     font-size: 14px !important;
     color: #555555 !important;
     outline: none !important;
@@ -277,9 +277,9 @@ export default {
   created() {
   },
   mounted() {
-    if (this.user.name === '') {
+    if (this.user.username === '') {
       this.$refs.username.focus()
-    } else if (this.user.pass === '') {
+    } else if (this.user.password === '') {
       this.$refs.password.focus()
     }
   },
@@ -315,18 +315,21 @@ export default {
       this.$refs.user.validate(valid => {
         if (valid) {
           this.loading = true
-          var loginParams = { account: this.user.username, password: this.user.password }
-          systemMode.login(loginParams).then(token => {
-            this.$store.commit('setToken', token)
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
-          })
+          this.$store.dispatch('user/login', this.user)
+            .then(() => {
+
+              this.$router.push({ path: this.redirect || '/' })
+
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
         } else {
-          console.log('error submit!!')
           return false
         }
-      })
+
+      });
     }
   }
 }

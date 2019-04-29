@@ -1,3 +1,7 @@
+/**
+ * TODO:
+ * @type {{visitedViews: Array, cachedViews: Array}}
+ */
 const state = {
   visitedViews: [],
   cachedViews: []
