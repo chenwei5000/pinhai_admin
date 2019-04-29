@@ -35,6 +35,7 @@
 </template>
 
 <script>
+
 import ScrollPane from './ScrollPane'
 import { generateTitle } from '@/utils/i18n'
 import path from 'path'
@@ -55,7 +56,7 @@ export default {
       return this.$store.state.tagsView.visitedViews
     },
     routes() {
-      return this.$store.state.user.menus
+      return this.$store.state.user.menu
     }
   },
   watch: {
