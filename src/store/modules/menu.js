@@ -22,6 +22,7 @@ const mutations = {
       //保存路由对象
       state.asyncRoutes = routes;
       sessionStorage.setItem(SESSION_MENU, JSON.stringify(routes));
+      state.routes = constantRoutes.concat(routes);
 
       //重置动态路由
       resetRouter();
