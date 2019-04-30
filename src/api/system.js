@@ -4,7 +4,7 @@ import {Message} from 'element-ui'
 import store from '@/store'
 /* Layout */
 import Layout from '@/layout'
-import { asyncRoutes, constantRoutes } from '@/router'
+import router, {asyncRoutes, constantRoutes} from '@/router'
 
 const systemModel = {
 
@@ -65,6 +65,8 @@ const systemModel = {
           const accessRoutes = generateRoutes(menu);
 
           console.log(accessRoutes);
+
+          console.log(router.addRoutes(accessRoutes));
 
           store.commit('user/setMenu', constantRoutes.concat(accessRoutes));
         });
@@ -132,7 +134,7 @@ const menuToRoute = (menu) => {
           breadcrumb: true // 如果设置为false，则不会在breadcrumb面包屑中显示
         },
 
-        path: oMenu.url,
+        path: '/'+oMenu.url,
         component: Layout,
         children: menuToRoute(oMenu.childMenu)
       }
@@ -152,9 +154,11 @@ const menuToRoute = (menu) => {
           breadcrumb: true // 如果设置为false，则不会在breadcrumb面包屑中显示
         },
 
-        path: oMenu.url.replace("/", "_"),
+        path: '/'+ oMenu.url.replace("/", "_"),
         //components: () => import('@/views/' + oMenu.url),
-        component: 'views/' + oMenu.url,
+        //component: 'views/' + oMenu.url,
+        //component: Layout,
+        component: () => import('@/views/dashboard/index'),
       }
       aRouter.push(oRouter);
     }
