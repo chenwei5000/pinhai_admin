@@ -7,17 +7,16 @@ const getters = {
   visitedViews: state => state.tagsView.visitedViews,
   cachedViews: state => state.tagsView.cachedViews,
 
-  token: state => state.user.token,
+  //TODO:
   avatar: state => state.user.avatar,
   name: state => state.user.name,
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
 
-  permission_routes: state => state.permission.routes,
+  menus: state => state.menu.routes,
+  asyncRoutes: state => state.menu.asyncRoutes,
 
   errorLogs: state => state.errorLog.logs,
-
-  menus: state => state.user.menu,
 
   //判断用户登陆状态
   isLogin: state => {

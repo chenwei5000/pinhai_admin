@@ -6,11 +6,7 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/layout'
 
-/* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+import store from '@/store'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -107,20 +103,6 @@ export const constantRoutes = [
         meta: { title: 'guide', icon: 'guide', noCache: true }
       }
     ]
-  },
-  {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'profile', icon: 'user', noCache: true }
-      }
-    ]
   }
 ]
 
@@ -128,9 +110,7 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
-
-]
+export const asyncRoutes = sessionStorage.getItem("SESSION_MENU") ? JSON.parse(sessionStorage.getItem("SESSION_MENU")) : [];
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

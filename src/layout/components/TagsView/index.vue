@@ -56,7 +56,7 @@ export default {
       return this.$store.state.tagsView.visitedViews
     },
     routes() {
-      return this.$store.state.user.menu
+      return this.$store.state.menu.routes
     }
   },
   watch: {

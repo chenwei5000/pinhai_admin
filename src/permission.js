@@ -4,6 +4,7 @@
 import router from './router'
 
 import store from './store'
+
 //加载进度条
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
@@ -44,7 +45,6 @@ router.beforeEach(async (to, from, next) => {
   }
   // 存在Token信息，但是要加载其它信息
   else if (store.getters.isLogin == -1) {
-
     systemMode.reloadMenu().then(res => {
       next();
     });
