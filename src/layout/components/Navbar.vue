@@ -17,6 +17,10 @@
         <!--头部搜索功能 暂时关闭 --
         <search id="header-search" class="right-menu-item"/-->
 
+        <!-- 刷新权限 -->
+        <Reload class="right-menu-item hover-effect" />
+
+
         <!-- 错误信息列表 -->
         <error-log class="errLog-container right-menu-item hover-effect"/>
 
@@ -27,6 +31,9 @@
         <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect"/>
         </el-tooltip -->
+
+        <!-- 帮助 -->
+        <Help class="right-menu-item hover-effect" />
 
       </template>
 
@@ -60,6 +67,11 @@
 
         </el-dropdown-menu>
       </el-dropdown>
+
+
+      <!-- 更多 -->
+      <More class="right-menu-item hover-effect" />
+
     </div>
   </div>
 </template>
@@ -72,6 +84,10 @@
   import Screenfull from '@/components/Screenfull'
   import SizeSelect from '@/components/SizeSelect'
   import Search from '@/components/HeaderSearch'
+  import Reload from '@/components/Reload'
+  import Help from '@/components/Help'
+  import More from '@/components/More'
+
   import systemMode from '@/api/system'
 
   export default {
@@ -81,7 +97,10 @@
       ErrorLog,
       Screenfull,
       SizeSelect,
-      Search
+      Search,
+      Reload,
+      Help,
+      More
     },
     computed: {
       //store 的状态必须变成计算方法，只有这样state值修改之后，才会重新计算
@@ -114,6 +133,10 @@
 
 <style lang="scss" scoped>
 
+  .hover-effect {
+    cursor: pointer;
+    transition: background .3s;
+  }
 
   .user-info {
     max-width: 180px;
@@ -198,7 +221,7 @@
   }
 
   .avatar-container {
-    margin-right: 30px;
+    margin-right: 0px;
 
   .avatar-wrapper {
     margin-top: 5px;
