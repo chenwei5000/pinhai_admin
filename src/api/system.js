@@ -4,7 +4,7 @@ import {Message} from 'element-ui'
 import store from '@/store'
 /* Layout */
 import Layout from '@/layout'
-import router, {asyncRoutes, constantRoutes} from '@/router'
+import router, {resetRouter, asyncRoutes, constantRoutes} from '@/router'
 
 const systemModel = {
 
@@ -25,6 +25,9 @@ const systemModel = {
     store.commit('user/clearUser')
     store.commit('user/clearMenu')
     store.commit('user/clearRolePower')
+
+    //重置路由
+    resetRouter()
 
     Message.info({message: '退出成功!'})
 
@@ -55,25 +58,25 @@ const systemModel = {
       const reloadInfo = async function () {
 
         // 重新加载用户信息
-        systemModel.getMine().then(user => {
+        systemModel.getMine().then(async user => {
           store.commit('user/setUser', user);
         });
 
         // 重新加载菜单信息
-        systemModel.getMenu().then(menu => {
+        systemModel.getMenu().then(async menu => {
 
           const accessRoutes = generateRoutes(menu);
 
-          console.log(accessRoutes);
+          //重置路由
+          resetRouter();
+          router.addRoutes(accessRoutes);
 
-          console.log(router.addRoutes(accessRoutes));
-
-          store.commit('user/setMenu', constantRoutes.concat(accessRoutes));
+          await store.commit('user/setMenu', constantRoutes.concat(accessRoutes));
         });
 
         // 重新加载权限信息
-        systemModel.getRolePower().then(rolePower => {
-          store.commit('user/setRolePower', rolePower);
+        systemModel.getRolePower().then(async rolePower => {
+          await store.commit('user/setRolePower', rolePower);
         });
       }
 
@@ -86,8 +89,6 @@ const systemModel = {
           resolve(true);
         }
       });
-
-      return false;
     });
   }
 }
@@ -113,6 +114,8 @@ const menuToRoute = (menu) => {
   const aRouter = []
 
   menu.forEach(oMenu => {
+
+
     // 一级菜单 并且有子菜单，输出
     if (oMenu.level == 1 && oMenu.childMenu.length > 0) {
       let oRouter = {
@@ -134,7 +137,7 @@ const menuToRoute = (menu) => {
           breadcrumb: true // 如果设置为false，则不会在breadcrumb面包屑中显示
         },
 
-        path: '/'+oMenu.url,
+        path: '/' + oMenu.url,
         component: Layout,
         children: menuToRoute(oMenu.childMenu)
       }
@@ -154,11 +157,9 @@ const menuToRoute = (menu) => {
           breadcrumb: true // 如果设置为false，则不会在breadcrumb面包屑中显示
         },
 
-        path: '/'+ oMenu.url.replace("/", "_"),
-        //components: () => import('@/views/' + oMenu.url),
-        //component: 'views/' + oMenu.url,
-        //component: Layout,
-        component: () => import('@/views/dashboard/index'),
+        path: '/' + oMenu.url.replace("/", "_"),
+        components: () => import('@/views/' + oMenu.url),
+        //component: () => import('@/views/dashboard/index'),
       }
       aRouter.push(oRouter);
     }

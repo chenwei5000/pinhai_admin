@@ -46,7 +46,7 @@
 
           <div class="user-info">
             <small>欢迎光临</small>
-            {{mine.name}}
+            {{mine ? mine.name : ''}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </div>
         </div>
