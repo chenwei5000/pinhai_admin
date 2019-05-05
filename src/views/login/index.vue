@@ -7,7 +7,7 @@
         {{ global.config.NAME }}
         <small>{{ global.config.VERSION }}</small>
       </div>
-      <div id="darkbannerwrap" />
+      <div id="darkbannerwrap"/>
 
       <el-form
         ref="user"
@@ -19,7 +19,7 @@
 
         <el-form-item prop="username">
           <span class="svg-container">
-            <svg-icon icon-class="user" />
+            <svg-icon icon-class="user"/>
           </span>
 
           <el-input
@@ -39,7 +39,7 @@
         <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
           <el-form-item prop="password">
             <span class="svg-container svg-password">
-              <svg-icon icon-class="password" />
+              <svg-icon icon-class="password"/>
             </span>
 
             <el-input
@@ -57,7 +57,7 @@
             />
 
             <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
             </span>
 
           </el-form-item>
@@ -74,7 +74,7 @@
   </div>
 </template>
 
-<style type="text/less" lang="scss">
+<style type="text/less" lang="scss" scoped>
 
   body, html {
     padding: 0;
@@ -84,32 +84,32 @@
   }
 
   .el-input {
-    border: 1px solid #DCDEE0 !important;
-    vertical-align: middle !important;
-    border-radius: 3px !important;
-    height: 50px !important;
-    padding: 0px 0px 0px 16px !important;
-    font-size: 14px !important;
-    color: #555555 !important;
-    outline: none !important;
-    width: 100% !important;
-    padding-left: 40px !important;
-    box-sizing: border-box !important;
-  }
+    border: 1px solid #DCDEE0;
+    vertical-align: middle;
+    border-radius: 3px;
+    height: 50px;
+    padding: 0px 0px 0px 16px;
+    font-size: 14px;
+    color: #555555;
+    outline: none;
+    width: 100%;
+    padding-left: 40px;
+    box-sizing: border-box;
 
-  .el-input__inner {
-    border: none !important;
-    vertical-align: middle !important;
-    border-radius: 0 !important;
-    height: 48px !important;
-    padding: 0px 16px !important;
-    font-size: 14px !important;
-    color: #555555 !important;
-    background-color: #FDFDFD;
-    outline: none !important;
-    width: 100% !important;
-    padding-left: 0px !important;
-    box-sizing: border-box !important;
+    /deep/ input {
+      border: none;
+      vertical-align: middle;
+      border-radius: 0;
+      height: 48px;
+      padding: 0px 16px;
+      font-size: 14px;
+      color: #555555;
+      background-color: #FDFDFD;
+      outline: none;
+      width: 100%;
+      padding-left: 0px;
+      box-sizing: border-box;
+    }
   }
 
   .login-bg {
@@ -235,103 +235,102 @@
 </style>
 
 <script>
-import { validEmail } from '@/utils/validate'
-import systemMode from '../../api/system.js'
+  import {validEmail} from '@/utils/validate'
 
-export default {
-  name: 'Login',
-  data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validEmail(value)) {
-        callback(new Error('账号为邮箱格式!'))
-      } else {
-        callback()
-      }
-    }
-    return {
-      user: {},
-      loginRules: {
-        username: [
-          { required: true, message: '必须输入登陆账号', trigger: 'blur' },
-          { required: true, trigger: 'blur', validator: validateUsername }
-        ],
-        password: [
-          { min: 6, message: '密码至少6个字符', trigger: 'blur' }
-        ]
-      },
-      passwordType: 'password',
-      capsTooltip: false,
-      loading: false,
-      showDialog: false,
-      redirect: undefined
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
-  created() {
-  },
-  mounted() {
-    if (this.user.username === '') {
-      this.$refs.username.focus()
-    } else if (this.user.password === '') {
-      this.$refs.password.focus()
-    }
-  },
-  destroyed() {
-
-  },
-  methods: {
-    checkCapslock({ shiftKey, key } = {}) {
-      if (key && key.length === 1) {
-        if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
-          this.capsTooltip = true
+  export default {
+    name: 'Login',
+    data() {
+      const validateUsername = (rule, value, callback) => {
+        if (!validEmail(value)) {
+          callback(new Error('账号为邮箱格式!'))
         } else {
+          callback()
+        }
+      }
+      return {
+        user: {},
+        loginRules: {
+          username: [
+            {required: true, message: '必须输入登陆账号', trigger: 'blur'},
+            {required: true, trigger: 'blur', validator: validateUsername}
+          ],
+          password: [
+            {min: 6, message: '密码至少6个字符', trigger: 'blur'}
+          ]
+        },
+        passwordType: 'password',
+        capsTooltip: false,
+        loading: false,
+        showDialog: false,
+        redirect: undefined
+      }
+    },
+    watch: {
+      $route: {
+        handler: function (route) {
+          this.redirect = route.query && route.query.redirect
+        },
+        immediate: true
+      }
+    },
+    created() {
+    },
+    mounted() {
+      if (this.user.username === '') {
+        this.$refs.username.focus()
+      } else if (this.user.password === '') {
+        this.$refs.password.focus()
+      }
+    },
+    destroyed() {
+
+    },
+    methods: {
+      checkCapslock({shiftKey, key} = {}) {
+        if (key && key.length === 1) {
+          if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
+            this.capsTooltip = true
+          } else {
+            this.capsTooltip = false
+          }
+        }
+        if (key === 'CapsLock' && this.capsTooltip === true) {
           this.capsTooltip = false
         }
-      }
-      if (key === 'CapsLock' && this.capsTooltip === true) {
-        this.capsTooltip = false
-      }
-    },
+      },
 
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = 'text'
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
-
-    login() {
-      this.$refs.user.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.user)
-            .then(() => {
-
-              this.$router.push({ path: this.redirect || '/' })
-
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
+      showPwd() {
+        if (this.passwordType === 'password') {
+          this.passwordType = 'text'
         } else {
-          return false
+          this.passwordType = 'password'
         }
+        this.$nextTick(() => {
+          this.$refs.password.focus()
+        })
+      },
 
-      });
+      login() {
+        this.$refs.user.validate(valid => {
+          if (valid) {
+            this.loading = true
+            this.$store.dispatch('user/login', this.user)
+              .then(() => {
+
+                this.$router.push({path: this.redirect || '/'})
+
+                this.loading = false
+              })
+              .catch(() => {
+                this.loading = false
+              })
+          } else {
+            return false
+          }
+
+        });
+      }
     }
   }
-}
 </script>
 

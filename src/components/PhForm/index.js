@@ -96,9 +96,9 @@ export default {
         con[item.$id] =
           item.$type === GROUP
             ? item.$items.reduce((acc, cur) => {
-                acc[cur.$id] = cur.$options || []
-                return acc
-              }, {})
+              acc[cur.$id] = cur.$options || []
+              return acc
+            }, {})
             : item.$options || []
         return con
       }, {})
@@ -134,7 +134,7 @@ export default {
         defaultVal = item.$default
       }
       defaultVal !== undefined &&
-        this.updateValue({id: item.$id, value: defaultVal})
+      this.updateValue({id: item.$id, value: defaultVal})
     },
     /**
      * 更新表单数据
@@ -162,14 +162,19 @@ export default {
           if (item.$type === GROUP) {
             acc[key] = getValue(values[key], item.$items)
           } else {
-            if (item.outputFormat) {
-              const formatVal = item.outputFormat(clone(values[key]))
-              // 如果 outputFormat 返回的是一个对象，则合并该对象，否则在原有 acc 上新增该 属性：值
-              isObject(formatVal)
-                ? Object.assign(acc, formatVal)
-                : (acc[key] = formatVal)
-            } else {
-              acc[key] = clone(values[key])
+            if (item.$el.op && item.$el.op !== '') { //搜索模式
+              acc[key] = {'op': item.$el.op, 'data': clone(values[key])}
+            }
+            else {
+              if (item.outputFormat) {
+                const formatVal = item.outputFormat(clone(values[key]))
+                // 如果 outputFormat 返回的是一个对象，则合并该对象，否则在原有 acc 上新增该 属性：值
+                isObject(formatVal)
+                  ? Object.assign(acc, formatVal)
+                  : (acc[key] = formatVal)
+              } else {
+                acc[key] = clone(values[key])
+              }
             }
           }
 
@@ -190,7 +195,7 @@ export default {
             item.$type === GROUP
               ? updateValue(item.$items)
               : (item.inputFormat && item.inputFormat(values)) ||
-                values[item.$id]
+              values[item.$id]
 
           if (value !== undefined) {
             _set(acc, item.$id, value)

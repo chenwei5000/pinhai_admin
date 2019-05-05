@@ -611,9 +611,6 @@
     },
     mounted() {
       let searchForm = this.$refs.searchForm
-
-      console.log(searchForm);
-
       if (searchForm) {
         // 恢复查询条件
         let matches = location.href.match(queryPattern)
@@ -621,15 +618,14 @@
         if (matches) {
           let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
           let params = qs.parse(query, {delimiter: paramSeparator})
-
           // page size 特殊处理
-          this.page = params.page * 1
-          this.size = params.size * 1
+          this.page = params.currentPage * 1
+          this.size = params.pageSize * 1
 
           // 对slot=search无效
           searchForm.updateForm(
             Object.keys(params).reduce((acc, k) => {
-              if (k !== 'page' && k !== 'size') {
+              if (k !== 'pageSize' && k !== 'currentPage') {
                 acc[k] = params[k]
               }
               return acc
@@ -647,12 +643,15 @@
       getList(shouldStoreQuery) {
         //搜索表单，搜索用
         let searchForm = this.$refs.searchForm
+
         let formQuery = searchForm ? searchForm.getFormValue() : {}
+
         // TODO Object.assign IE不支持, 所以后面Object.keys的保守其实是没有必要的。。。
         let query = Object.assign({}, formQuery, this.customQuery)
 
         let url = this.url
         let params = ''
+        let searchParams = ''
         let size = this.hasPagination ? this.size : this.noPaginationSize
 
         if (!url) {
@@ -673,39 +672,56 @@
         let pageOffset = this.firstPage - defaultFirstPage
         let page = this.page + pageOffset
 
+
         if (size != this.noPaginationSize) {
           params += `pageSize=${size}&`
+          searchParams += `pageSize=${size}&`
         }
         params += `currentPage=${page}`
+        searchParams += `currentPage=${page}`
 
         // 处理排序
         if (this.phSort) {
-          params += this.phSort;
+          params += this.phSort
+          searchParams += this.phSort
         }
-
-
         // 处理筛选
         // 无效值过滤. query 有可能值为 0, 所以只能这样过滤
         // TODO Object.values IE11不兼容, 暂时使用Object.keys
-        // params += Object.keys(query)
-        //   .filter(k => {
-        //     return query[k] !== '' && query[k] !== null && query[k] !== undefined
-        //   })
-        //   .reduce(
-        //     (params, k) =>
-        //       (params += `&${k}=${encodeURIComponent(
-        //         query[k].toString().trim()
-        //       )}`),
-        //     ''
-        //   )
+        let filters = [];
 
+        Object.keys(query).filter(k => {
+          return query[k] !== '' && query[k] !== null && query[k] !== undefined
+        }).forEach(function (param, k) {
+          let oParam = query[param]
+          filters.push({
+            'field': param,
+            op: oParam.op ? oParam.op : 'eq',
+            data: oParam.data ? encodeURIComponent(oParam.data.toString().trim()) : ''
+          })
+        });
+
+        if (filters && filters.length > 0) {
+          params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        }
+
+        searchParams += Object.keys(query)
+          .filter(k => {
+            return query[k] !== '' && query[k] !== null && query[k] !== undefined
+          })
+          .reduce(
+            (searchParams, k) =>
+              (searchParams += `&${k}=${encodeURIComponent(
+                query[k].data ? query[k].data.toString().trim() : ''
+              )}`),
+            ''
+          )
         // 处理关联加载
 
         // 请求开始
         this.loading = true
 
-        //分两个接口加载，表格。1、获取列表。 2、获取总数量
-
+        //获取数据
         this.global.axios
           .get(url + params)
           .then(resp => {
@@ -749,7 +765,7 @@
           let newUrl = ''
           let searchQuery =
             queryFlag +
-            (params + `&page=${this.page}`)
+            (searchParams)
               .replace(/&/g, paramSeparator)
               .replace(equalPattern, valueSeparator) +
             paramSeparator
@@ -777,7 +793,6 @@
               search +
               location.hash
           }
-
           history.pushState(history.state, 'ph-table search', newUrl)
         }
       },
@@ -1113,10 +1128,12 @@
   }
 </script>
 
-<style lang="scss">
+<style type="text/less" lang="scss" scoped>
 
-  .el-table tr.warning-row {
-    background: rgb(253, 226, 226) !important;
+  .el-table {
+    /deep/ tr.warning-row {
+      background: rgb(253, 226, 226) !important;
+    }
   }
 
   .ph-table {

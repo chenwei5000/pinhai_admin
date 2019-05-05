@@ -76,6 +76,7 @@
             $id: 'name',
             label: '国家名称',
             $el: {
+              op: 'bw',
               placeholder: '请输入国家名称'
             }
           }
