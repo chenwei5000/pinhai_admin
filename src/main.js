@@ -27,6 +27,13 @@ Vue.prototype.global = global
 // 引入自定义Icon
 import './assets/icon/iconfont.css'
 
+import PhTable from './components/PhTable/index'
+import ElFormRenderer from './components/PhForm/index'
+
+
+Vue.component('ph-form', ElFormRenderer)
+Vue.component('ph-table', PhTable)
+
 /**
  * If you don't want to use mock-server
  * you want to use mockjs for request interception

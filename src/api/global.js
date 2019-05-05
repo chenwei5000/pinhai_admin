@@ -28,9 +28,9 @@ axios.interceptors.request.use(
       config.headers['TK-Authorization'] = token
     }
     // 拼接完整请求路径
-    if (config.url.indexOf('http') === -1) {
-      config.url = generateUrl(config.url)
-    }
+    // if (config.url.indexOf('http') === -1) {
+    //   config.url = generateUrl(config.url)
+    // }
 
     return config
   },

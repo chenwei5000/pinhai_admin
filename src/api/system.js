@@ -22,7 +22,7 @@ const systemModel = {
     // 清空缓存
     store.commit('user/clearToken')
     store.commit('user/clearUser')
-    store.commit('user/clearMenu')
+    store.commit('menu/clearMenus')
     store.commit('user/clearRolePower')
 
     //重置路由

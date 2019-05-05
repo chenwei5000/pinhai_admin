@@ -78,6 +78,7 @@ let menuToRoute = (menus) => {
     }
     // 二级以上菜单
     else if (oMenu.level > 1) {
+
       let oRouter = {
         hidden: false,
         alwaysShow: false,
@@ -89,12 +90,17 @@ let menuToRoute = (menus) => {
           noCache: false,    //如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
           breadcrumb: true // 如果设置为false，则不会在breadcrumb面包屑中显示
         },
-
         path: '/' + oMenu.url.replace("/", "_"),
-        //components: () => import('@/views/' + oMenu.url),
-        component: () => import('@/views/dashboard/index'),
+
+        //TODO： vue的router组件component在import时不能使用变量, webpack 编译es6 动态引入 import() 时不能传入变量
+        // https://webpack.docschina.org/concepts/
+        // component: () => import('@/views/${oMenu.url}'), 各种错误
+        //变量使用正确写法
+        component: () => import(`@/views/${oMenu.url}`)
+        //component: () => import('@/views/dashboard/index'),
       }
       aRouter.push(oRouter);
+
     }
   })
   return aRouter
