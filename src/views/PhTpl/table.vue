@@ -80,6 +80,7 @@
         url: '/countries', // 资源URL
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
+        // https://femessage.github.io/el-data-table/
         tableAttrs: {
           stripe: true,
           border: true,
