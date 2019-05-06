@@ -4,7 +4,7 @@
     <div class="ph-card">
 
       <!-- title -->
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
 
       </ph-card-header>
 
@@ -131,19 +131,19 @@
               placeholder: '全部 开启 关闭'
             },
             $options: [
-            {
-              label: '全部',
-              value: ''
-            },
-            {
-              label: '开启',
-              value: '1'
-            },
-            {
-              label: '禁用',
-              value: '0'
-            }
-          ]
+              {
+                label: '全部',
+                value: ''
+              },
+              {
+                label: '开启',
+                value: '1'
+              },
+              {
+                label: '禁用',
+                value: '0'
+              }
+            ]
           }
         ],
         //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
@@ -179,25 +179,19 @@
               }
             ]
           },
-           {
+          {
             $type: 'radio-group',
             $id: 'status',
             label: '状态',
-            $el: {
-            },
+            $el: {},
             $options: [
-            {
-              label: '开启',
-              value: '1'
-            },
-            {
-              label: '禁用',
-              value: '0'
-            }
-          ],
-            rules: [
               {
-                trigger: 'blur'
+                label: '开启',
+                value: 1
+              },
+              {
+                label: '禁用',
+                value: 0
               }
             ]
           }
