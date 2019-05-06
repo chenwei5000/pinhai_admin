@@ -17,7 +17,7 @@
           :searchForm="searchForm"
           :form="form"
           :tableAttrs="tableAttrs"
-
+          :relations="relations"
         >
         </ph-table>
       </div>
@@ -79,6 +79,7 @@
       return {
         title: '港口列表', // 页面标题
         url: '/harbours', // 资源URL
+        relations: ["creator"],//关联查询对象
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
         // https://femessage.github.io/el-data-table/
@@ -92,7 +93,7 @@
         // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
         columns: [
           {type: 'selection'}, //多选
-          {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+          {prop: 'id', label: 'ID', sortable: 'custom', hidden: false},
           {
             prop: 'status',
             label: '状态',
@@ -100,7 +101,7 @@
           },
           {prop: 'name', label: '名称', sortable: 'custom'},
           {prop: 'location', label: '地址', sortable: 'custom'},
-          {prop: 'creatorId', label: '创建人'},
+          {prop: 'creator.name', label: '创建人'},
           {
             prop: 'lastModified',
             label: '最后修改时间',
@@ -110,7 +111,7 @@
           }
         ],
 
-        // 搜索区块定义, 具体可参考 https://github.com/FEMessag+e/el-form-renderer/blob/master/README.md
+        // 搜索区块定义, 具体可参考 https://github.com/FEMessag/el-form-renderer/blob/master/README.md
         searchForm: [
           {
             $type: 'input',
@@ -120,6 +121,29 @@
               op: 'bw',
               placeholder: '请输入港口名称'
             }
+          },
+          {
+            $type: 'select',
+            $id: 'status',
+            label: '状态',
+            $el: {
+              op: 'bw',
+              placeholder: '全部 开启 关闭'
+            },
+            $options: [
+            {
+              label: '全部',
+              value: ''
+            },
+            {
+              label: '开启',
+              value: '1'
+            },
+            {
+              label: '禁用',
+              value: '0'
+            }
+          ]
           }
         ],
         //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
@@ -136,6 +160,43 @@
               {
                 required: true,
                 message: '请输入港口名称',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            $type: 'input',
+            $id: 'location',
+            label: '港口地址',
+            $el: {
+              placeholder: '请输入港口地址'
+            },
+            rules: [
+              {
+                required: true,
+                message: '请输入港口地址',
+                trigger: 'blur'
+              }
+            ]
+          },
+           {
+            $type: 'radio-group',
+            $id: 'status',
+            label: '状态',
+            $el: {
+            },
+            $options: [
+            {
+              label: '开启',
+              value: '1'
+            },
+            {
+              label: '禁用',
+              value: '0'
+            }
+          ],
+            rules: [
+              {
                 trigger: 'blur'
               }
             ]
