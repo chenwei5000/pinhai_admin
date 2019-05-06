@@ -76,7 +76,9 @@
           <el-table-column
             v-for="(col) in columns.filter((c, i) => i !== 0 && i !== 1)"
             :key="col.prop"
-            v-bind="col">
+            v-bind="col"
+            v-if="!col.hidden"
+          >
           </el-table-column>
         </template>
 
@@ -101,7 +103,9 @@
           <el-table-column
             v-for="(col) in columns.filter((c, i) => i !== 0)"
             :key="col.prop"
-            v-bind="col">
+            v-bind="col"
+            v-if="!col.hidden"
+          >
           </el-table-column>
         </template>
       </template>
@@ -111,7 +115,9 @@
         <el-table-column
           v-for="(col) in columns"
           :key="col.prop"
-          v-bind="col">
+          v-bind="col"
+          v-if="!col.hidden"
+        >
         </el-table-column>
       </template>
 
