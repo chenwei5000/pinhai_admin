@@ -578,8 +578,10 @@
        * 关联加载对象
        */
       relations: {
-        type: String,
-        default: ''
+        type: Array,
+        default() {
+          return []
+        }
       }
     },
     data() {
@@ -734,10 +736,9 @@
             ''
           )
         // 处理关联加载
-        if (this.relations && this.relations !== '') {
-          params += "&relations=" + this.relations;
+        if (this.relations && this.relations.length >0 ) {
+          params += "&relations=" + JSON.stringify(this.relations);
         }
-
 
         // 请求开始
         this.loading = true
@@ -938,7 +939,12 @@
         this.$nextTick(() => {
 
           //后台加载新数据
-          let url = this.url + '/' + row.id;
+          let url = this.url + '/' + row[this.id];
+
+          if (this.relations && this.relations.length >0 ) {
+            url += "?relations=" + JSON.stringify(this.relations);
+          }
+
           this.global.axios.get(url)
             .then(resp => {
               this.$refs[dialogForm].updateForm(resp.data);

@@ -4,7 +4,7 @@
     <div class="ph-card">
 
       <!-- title -->
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
 
       </ph-card-header>
 
@@ -17,6 +17,7 @@
           :searchForm="searchForm"
           :form="form"
           :tableAttrs="tableAttrs"
+          :relations="relations"
         >
         </ph-table>
       </div>
@@ -78,6 +79,7 @@
       return {
         title: '国家列表', // 页面标题
         url: '/countries', // 资源URL
+        relations: ["creator"],//关联查询对象
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
         // https://femessage.github.io/el-data-table/
@@ -96,6 +98,7 @@
           {prop: 'enName', label: '英文名', sortable: 'custom'},
           {prop: 'isoCode2', label: '2位iso编码'},
           {prop: 'isoCode3', label: '3位iso编码'},
+          {prop: 'creator.name', label: '创建人'},
           {
             prop: 'status',
             label: '状态',
