@@ -102,6 +102,7 @@
           {
             prop: 'status',
             label: '状态',
+            filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
             formatter: row => (row.status === 1 ? '启用' : '禁用')
           }
         ],
@@ -156,7 +157,7 @@
         else {
           return 'warning-row';
         }
-      },
+      }
     },
 
     // 观察data中的值发送变化后，调用
