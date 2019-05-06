@@ -4,12 +4,9 @@
     <div class="ph-card">
 
       <!-- title -->
-      <div class="ph-card-header">{{title}}</div>
+      <ph-card-header :title = "title" type="table">
 
-      <!-- 筛选栏 -->
-      <div class="filter-container">
-
-      </div>
+      </ph-card-header>
 
       <!-- 表格 -->
       <div class="ph-card-body">
@@ -22,10 +19,7 @@
           :tableAttrs="tableAttrs"
         >
         </ph-table>
-
       </div>
-
-
     </div>
 
 
@@ -37,12 +31,49 @@
   import {parseTime} from '@/utils'
 
   export default {
-    methods: {
-      handleClick(row) {
-        console.log(row);
-      }
+    /**********生命周期*******/
+    // 1. beforeCreate 这个阶段主要是完成vue中关于生成周期以及事件的一些初始化工作。主要用于设置一些Vue相关的参数。不常用
+    // data 无
+    // el 无
+    // message 无
+    beforeCreate() {
     },
+    // 2. created 这个阶段主要是初始化与依赖注入相关的操作，以及数据的动态绑定。 主要用于数据的初始化。常用。
+    // data 有
+    // el 无
+    // message 有
+    created() {
+    },
+    // 3. beforeMount 开始编译生成HTML时调用。这个时候页面的值还是占位符合。不常用。
+    // data 有
+    // el 有
+    // message 有
+    beforeMount() {
+    },
+    // 4. mounted  编译、渲染完成之后调用。主要用于对页面一些元素的调整。常用。
+    // data 有
+    // el 有 同时也有模版中的相关对象
+    // message 有
+    mounted() {
+    },
+    // 5. beforeUpdate  当vue发现data中的数据发生了改变，会触发对应组件的重新渲染。在重新渲染前调用。
+    beforeUpdate() {
+    },
+    // 6. updated  当vue发现data中的数据发生了改变，会触发对应组件的重新渲染。在重新渲染后调用。
+    updated() {
+    },
+    // 7. beforeDestroy 在实例销毁之前调用。
+    beforeDestroy() {
+    },
+    // 8. destroyed 在实例销毁之后调用。 主要用于手工销毁数据。
+    destroyed() {
+    },
+    /**********生命周期*******/
 
+    /**********常用对象*******/
+    // 数据对象，用于跟模版进行数据交互。
+    // data属性的值，不会随赋值变量的改动而改动。如果要改变这个属性的值，则需要直接给data属性赋值，视图上对这个属性的显示才会变。
+    // 主要用于直接跟页面进行数据交互时使用。
     data() {
       return {
         title: '国家列表', // 页面标题
@@ -81,10 +112,8 @@
             }
           }
         ],
-
         //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
         // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
-
         form: [
           {
             $type: 'input',
@@ -103,13 +132,18 @@
           }
         ]
       }
-    }
-    ,
+    },
 
+    // 计算属性，用于跟模版进行数据交互。
+    // computed属性，属于持续变化跟踪。在computed属性定义的时候，这个computed属性就与给它赋值的变量绑定了。
+    // 改变这个赋值变量，computed属性值会随之改变。
+    // 主要用于用过其它第三变量，间接跟页面进行数据交互时使用。
+    computed: {},
+
+    // 各种相关方法定义
     methods: {
       // 状态样式
       statusClassName({row, rowIndex}) {
-
         if (row.status && row.status !== 0) {
           return '';
         }
@@ -117,37 +151,14 @@
           return 'warning-row';
         }
       },
-    }
+    },
+
+    // 观察data中的值发送变化后，调用
+    watch: {}
   }
 </script>
 
 <style scoped>
-  .app-container {
-    background-color: #f4f4f5;
-  }
-
-  .ph-card {
-    border-radius: 2px;
-    background-color: #fff;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
-  }
-
-  .ph-card-header {
-    position: relative;
-    height: 42px;
-    line-height: 42px;
-    padding: 0 15px;
-    border-bottom: 1px solid #f6f6f6;
-    color: #333;
-    border-radius: 2px 2px 0 0;
-    font-size: 14px;
-  }
-
-  .ph-card-body {
-    position: relative;
-    padding: 10px 15px;
-    line-height: 24px;
-  }
 
 
 </style>

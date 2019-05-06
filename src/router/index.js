@@ -80,14 +80,22 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/documentation',
+    path: '/phtpl',
     component: Layout,
+    name: 'documentation',
+    meta: { title: '模版', icon: 'documentation' },
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation' }
+        path: 'table',
+        component: () => import('@/views/PhTpl/table'),
+        name: 'tableTpl',
+        meta: { title: '表格模版'}
+      },
+      {
+        path: 'form',
+        component: () => import('@/views/PhTpl/table'),
+        name: 'formTpl',
+        meta: { title: '表单模版'}
       }
     ]
   },

@@ -189,3 +189,31 @@ aside {
 .multiselect--active {
   z-index: 1000 !important;
 }
+
+//pinhai
+.app-container {
+  background-color: #f4f4f5;
+}
+
+.ph-card {
+  border-radius: 2px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+}
+
+.ph-card-header {
+  position: relative;
+  height: 42px;
+  line-height: 42px;
+  padding: 0 15px;
+  border-bottom: 1px solid #f6f6f6;
+  color: #333;
+  border-radius: 2px 2px 0 0;
+  font-size: 14px;
+}
+
+.ph-card-body {
+  position: relative;
+  padding: 10px 15px;
+  line-height: 24px;
+}

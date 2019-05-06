@@ -3,12 +3,10 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
-
 import Element from 'element-ui'
 import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css
-
 import App from './App'
 import store from './store'
 import router from './router'
@@ -17,22 +15,21 @@ import i18n from './lang' // internationalization
 import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
-
 import * as filters from './filters' // global filters
-
 // 引入自定义公共方法
 import global from './api/global.js'
-Vue.prototype.global = global
-
 // 引入自定义Icon
 import './assets/icon/iconfont.css'
 
 import PhTable from './components/PhTable/index'
 import ElFormRenderer from './components/PhForm/index'
+import PhCardHeader from './components/PhCardHeader/index'
 
+Vue.prototype.global = global
 
 Vue.component('ph-form', ElFormRenderer)
 Vue.component('ph-table', PhTable)
+Vue.component('ph-card-header', PhCardHeader)
 
 /**
  * If you don't want to use mock-server
