@@ -128,7 +128,7 @@
             label: '状态',
             $el: {
               op: 'bw',
-              placeholder: '全部 开启 关闭'
+              placeholder: '请选择状态'
             },
             $options: [
               {
