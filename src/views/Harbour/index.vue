@@ -102,16 +102,10 @@
           {prop: 'location', label: '地址', sortable: 'custom'},
           {prop: 'creatorId', label: '创建人'},
           {
-            prop: 'lastModified', 
+            prop: 'lastModified',
             label: '最后修改时间',
             formatter: row => {
-                var date = new Date(parseInt(row.lastModified));
-                var y = date.getFullYear();
-                var m = (date.getMonth()+1).toString().padStart(2, "0");
-                var d = date.getDate().toString().padStart(2, "0");
-                var hh = date.getHours().toString().padStart(2, "0");
-                var mm = date.getMinutes().toString().padStart(2, "0");
-                return `${y}-${m}-${d} ${hh}:${mm}`;
+              return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
             }
           }
         ],
