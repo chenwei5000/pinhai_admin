@@ -6,6 +6,7 @@
 
     <!--搜索-->
     <ph-form v-if="searchForm.length > 0 || !!$slots.search" inline :content="searchForm" ref="searchForm"
+             id="filter-form"
              @submit.native.prevent>
       <!--@slot 额外的搜索内容, 当searchForm不满足需求时可以使用-->
       <slot name="search"></slot>
@@ -20,7 +21,7 @@
     <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 ">
       <el-form-item>
         <el-button v-if="hasNew" type="primary" size="small"
-                   @click="onDefaultNew">新增
+                   @click="onDefaultNew" id="ph-table-add">新增
         </el-button>
         <self-loading-button v-for="(btn, i) in headerButtons"
                              v-if="'show' in btn ? btn.show(selected) : true"
@@ -30,7 +31,7 @@
                              :callback="getList"
                              v-bind="btn"
                              :key="i"
-                             size="small">{{btn.text}}
+                             size="small" id="ph-table-edit">{{btn.text}}
         </self-loading-button>
         <el-button v-if="hasSelect && hasDelete" type="danger" size="small"
                    @click="onDefaultDelete($event)"
@@ -48,6 +49,7 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      id="ph-table"
     >
 
       <template v-if="isTree">
@@ -119,10 +121,10 @@
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="small"
-                     @click="onDefaultNew(scope.row)">新增
+                     @click="onDefaultNew(scope.row)" >新增
           </el-button>
           <el-button v-if="hasEdit" size="small"
-                     @click="onDefaultEdit(scope.row)">
+                     @click="onDefaultEdit(scope.row)"  id="ph-table-edit">
             修改
           </el-button>
           <el-button v-if="hasView" type="info" size="small"
@@ -141,6 +143,7 @@
             {{btn.text}}
           </self-loading-button>
           <el-button v-if="!hasSelect && hasDelete && canDelete(scope.row)" type="danger" size="small"
+                     id="ph-table-del"
                      @click="onDefaultDelete(scope.row)">
             删除
           </el-button>
@@ -163,6 +166,7 @@
       :total="total"
       style="text-align: right; padding: 10px 0"
       :layout="paginationLayout"
+      id = "ph-table-page"
     >
     </el-pagination>
 

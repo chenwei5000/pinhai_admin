@@ -4,12 +4,9 @@
     <div class="ph-card">
 
       <!-- title -->
-      <div class="ph-card-header">{{title}}</div>
+      <ph-card-header :title = "title" type="table">
 
-      <!-- 筛选栏 -->
-      <div class="filter-container">
-
-      </div>
+      </ph-card-header>
 
       <!-- 表格 -->
       <div class="ph-card-body">
