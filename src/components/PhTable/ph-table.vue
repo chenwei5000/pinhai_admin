@@ -574,6 +574,13 @@
         type: Boolean,
         default: false
       },
+      /**
+       * 关联加载对象
+       */
+      relations: {
+        type: String,
+        default: ''
+      }
     },
     data() {
       return {
@@ -727,6 +734,10 @@
             ''
           )
         // 处理关联加载
+        if (this.relations && this.relations !== '') {
+          params += "&relations=" + this.relations;
+        }
+
 
         // 请求开始
         this.loading = true

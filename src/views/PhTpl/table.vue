@@ -17,7 +17,6 @@
           :searchForm="searchForm"
           :form="form"
           :tableAttrs="tableAttrs"
-
         >
         </ph-table>
       </div>
