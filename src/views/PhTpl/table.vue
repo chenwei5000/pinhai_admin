@@ -17,6 +17,7 @@
           :searchForm="searchForm"
           :form="form"
           :tableAttrs="tableAttrs"
+
         >
         </ph-table>
       </div>
@@ -80,15 +81,18 @@
         url: '/countries', // 资源URL
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
+        // https://femessage.github.io/el-data-table/
         tableAttrs: {
           stripe: true,
           border: true,
-          "row-class-name": this.statusClassName
+          "row-class-name": this.statusClassName,
+          "highlight-current-row": true
         },
 
         // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
         columns: [
-          {prop: 'id', label: 'ID', sortable: 'custom'},
+          {type: 'selection'}, //多选
+          {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
           {prop: 'name', label: '名称', sortable: 'custom'},
           {prop: 'enName', label: '英文名', sortable: 'custom'},
           {prop: 'isoCode2', label: '2位iso编码'},

@@ -76,7 +76,9 @@
           <el-table-column
             v-for="(col) in columns.filter((c, i) => i !== 0 && i !== 1)"
             :key="col.prop"
-            v-bind="col">
+            v-bind="col"
+            v-if="!col.hidden"
+          >
           </el-table-column>
         </template>
 
@@ -101,7 +103,9 @@
           <el-table-column
             v-for="(col) in columns.filter((c, i) => i !== 0)"
             :key="col.prop"
-            v-bind="col">
+            v-bind="col"
+            v-if="!col.hidden"
+          >
           </el-table-column>
         </template>
       </template>
@@ -111,7 +115,9 @@
         <el-table-column
           v-for="(col) in columns"
           :key="col.prop"
-          v-bind="col">
+          v-bind="col"
+          v-if="!col.hidden"
+        >
         </el-table-column>
       </template>
 
@@ -121,10 +127,10 @@
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="small"
-                     @click="onDefaultNew(scope.row)" >新增
+                     @click="onDefaultNew(scope.row)">新增
           </el-button>
           <el-button v-if="hasEdit" size="small"
-                     @click="onDefaultEdit(scope.row)"  id="ph-table-edit">
+                     @click="onDefaultEdit(scope.row)" id="ph-table-edit">
             修改
           </el-button>
           <el-button v-if="hasView" type="info" size="small"
@@ -166,7 +172,7 @@
       :total="total"
       style="text-align: right; padding: 10px 0"
       :layout="paginationLayout"
-      id = "ph-table-page"
+      id="ph-table-page"
     >
     </el-pagination>
 
@@ -419,7 +425,7 @@
        */
       paginationSizes: {
         type: Array,
-        default: () => [10, 20, 30, 40, 50]
+        default: () => [20, 50, 100]
       },
       /**
        * 分页组件的每页显示个数选择器默认选项，对应element-ui pagination的page-size属性
@@ -875,7 +881,12 @@
 
       // 排序列修改
       handleSortChange: function (column) {
-        this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
+        if (column.prop) {
+          this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
+        }
+        else {
+          this.phSort = '';
+        }
         this.getList();
       },
 
@@ -1138,42 +1149,46 @@
     /deep/ tr.warning-row {
       background: rgb(253, 226, 226) !important;
     }
+
+    /deep/ tr.warning-row td {
+      background: rgb(253, 226, 226) !important;
+    }
   }
 
   .ph-table {
 
-  .ms-tree-space {
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1;
-    width: 18px;
-    height: 14px;
+    .ms-tree-space {
+      position: relative;
+      top: 1px;
+      display: inline-block;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
+      width: 18px;
+      height: 14px;
 
-  &
-  ::before {
-    content: '';
-  }
+      &
+      ::before {
+        content: '';
+      }
 
-  }
-
-  .tree-ctrl {
-    position: relative;
-    cursor: pointer;
-    color: #2196F3;
-  }
-
-  @keyframes treeTableShow {
-    from {
-      opacity: 0;
     }
 
-    to {
-      opacity: 1;
+    .tree-ctrl {
+      position: relative;
+      cursor: pointer;
+      color: #2196F3;
     }
-  }
+
+    @keyframes treeTableShow {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
 
   }
 </style>
