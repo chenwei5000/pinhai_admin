@@ -8,7 +8,9 @@
   import systemMode from '@/api/system'
   import NProgress from 'nprogress' // progress bar
   import 'nprogress/nprogress.css' // progress bar style
+  import {resetRouter} from '@/router'
   NProgress.configure({showSpinner: false}) // NProgress Configuration
+
 
 
   export default {
@@ -18,6 +20,8 @@
     methods: {
       click() {
         NProgress.start();
+
+        resetRouter();
 
         systemMode.reloadMenu().then(res => {
 
