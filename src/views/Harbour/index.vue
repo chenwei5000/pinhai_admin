@@ -77,8 +77,8 @@
     // 主要用于直接跟页面进行数据交互时使用。
     data() {
       return {
-        title: '国家列表', // 页面标题
-        url: '/countries', // 资源URL
+        title: '港口列表', // 页面标题
+        url: '/harbours', // 资源URL
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
         // https://femessage.github.io/el-data-table/
@@ -93,26 +93,38 @@
         columns: [
           {type: 'selection'}, //多选
           {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-          {prop: 'name', label: '名称', sortable: 'custom'},
-          {prop: 'enName', label: '英文名', sortable: 'custom'},
-          {prop: 'isoCode2', label: '2位iso编码'},
-          {prop: 'isoCode3', label: '3位iso编码'},
           {
             prop: 'status',
             label: '状态',
             formatter: row => (row.status === 1 ? '启用' : '禁用')
+          },
+          {prop: 'name', label: '名称', sortable: 'custom'},
+          {prop: 'location', label: '地址', sortable: 'custom'},
+          {prop: 'creatorId', label: '创建人'},
+          {
+            prop: 'lastModified', 
+            label: '最后修改时间',
+            formatter: row => {
+                var date = new Date(parseInt(row.lastModified));
+                var y = date.getFullYear();
+                var m = (date.getMonth()+1).toString().padStart(2, "0");
+                var d = date.getDate().toString().padStart(2, "0");
+                var hh = date.getHours().toString().padStart(2, "0");
+                var mm = date.getMinutes().toString().padStart(2, "0");
+                return `${y}-${m}-${d} ${hh}:${mm}`;
+            }
           }
         ],
 
-        // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+        // 搜索区块定义, 具体可参考 https://github.com/FEMessag+e/el-form-renderer/blob/master/README.md
         searchForm: [
           {
             $type: 'input',
             $id: 'name',
-            label: '国家名称',
+            label: '港口名称',
             $el: {
               op: 'bw',
-              placeholder: '请输入国家名称'
+              placeholder: '请输入港口名称'
             }
           }
         ],
@@ -122,14 +134,14 @@
           {
             $type: 'input',
             $id: 'name',
-            label: '国家名称',
+            label: '港口名称',
             $el: {
-              placeholder: '请输入国家名称'
+              placeholder: '请输入港口名称'
             },
             rules: [
               {
                 required: true,
-                message: '请输入国家名称',
+                message: '请输入港口名称',
                 trigger: 'blur'
               }
             ]
