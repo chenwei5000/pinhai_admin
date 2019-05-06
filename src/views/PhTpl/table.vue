@@ -85,7 +85,8 @@
         tableAttrs: {
           stripe: true,
           border: true,
-          "row-class-name": this.statusClassName
+          "row-class-name": this.statusClassName,
+          "highlight-current-row": true
         },
 
         // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
