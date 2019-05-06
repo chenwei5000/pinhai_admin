@@ -45,20 +45,22 @@ axios.interceptors.response.use(data => {
   return data
 }, err => {
   if (!err.response) {
-    return Message.error(err.message)
+    Message.error(err.message)
   }
-  if (err.response.data) {
-    Message.error({message: '[' + err.response.data.code + ']' + err.response.data.description})
-  } else {
-    if (err.response.status == 504 || err.response.status == 404) {
-      Message.error({message: '服务器被吃了⊙﹏⊙∥'})
-    } else if (err.response.status == 403) {
-      Message.error({message: '权限不足,请联系管理员!'})
+  else {
+    if (err.response.data) {
+      Message.error({message: '[' + err.response.data.code + ']' + err.response.data.description})
     } else {
-      Message.error({message: '未知错误!'})
+      if (err.response.status == 504 || err.response.status == 404) {
+        Message.error({message: '服务器被吃了⊙﹏⊙∥'})
+      } else if (err.response.status == 403) {
+        Message.error({message: '权限不足,请联系管理员!'})
+      } else {
+        Message.error({message: '未知错误!'})
+      }
     }
   }
-  return Promise.resolve(err)
+  throw err
 });
 
 
