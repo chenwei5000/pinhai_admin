@@ -149,7 +149,7 @@
           >
             {{btn.text}}
           </self-loading-button>
-          <el-button v-if="!hasSelect && hasDelete && canDelete(scope.row)" type="danger" size="small"
+          <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="small"
                      id="ph-table-del"
                      @click="onDefaultDelete(scope.row)">
             删除
@@ -434,7 +434,7 @@
        */
       paginationSize: {
         type: Number,
-        default: 10
+        default: 20
       },
       /**
        * 不分页时的size的大小
