@@ -184,6 +184,7 @@
             $id: 'status',
             label: '状态',
             $el: {},
+            $default: 1 ,
             $options: [
               {
                 label: '开启',
