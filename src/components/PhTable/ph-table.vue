@@ -50,6 +50,7 @@
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
       id="ph-table"
+      @filter-change="handleFilterChange"
     >
 
       <template v-if="isTree">
@@ -736,7 +737,7 @@
             ''
           )
         // 处理关联加载
-        if (this.relations && this.relations.length >0 ) {
+        if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
         }
 
@@ -902,6 +903,25 @@
         this.getList();
       },
 
+      //筛选
+      handleFilterChange: function (filters) {
+        let row = null
+        let val = null
+        // 拷贝filters的值。
+        for (const i in filters) {
+          row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
+          console.log(row);
+          val = filters[i]
+        }
+        const filter = [{
+          row: row,
+          op: 'contains',
+          value: val
+        }]
+
+        console.log(filter)
+      },
+
       // 弹窗相关
       // 除非树形结构在操作列点击新增, 否则 row 都是 undefined
       onDefaultNew(row = {}) {
@@ -941,7 +961,7 @@
           //后台加载新数据
           let url = this.url + '/' + row[this.id];
 
-          if (this.relations && this.relations.length >0 ) {
+          if (this.relations && this.relations.length > 0) {
             url += "?relations=" + JSON.stringify(this.relations);
           }
 
