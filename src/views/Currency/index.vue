@@ -149,7 +149,7 @@
               {
                 required: true,
                 message: '请输入名称',
-                trigger: 'blur'
+                trigger: 'change'
               }
             ]
           },
@@ -230,13 +230,20 @@
             $id: 'decimalPlaces',
             label: '小数位数',
             $el: {
-              placeholder: '请输入小数位数'
+              placeholder: '请输入小数位数',
+              //type: "number"
             },
             rules: [
               {
+                //required: true,
+                whitespace: true,
                 type: 'number',
-                message: '请输入千分位符',
-                trigger: 'blur'
+                transform(value) {
+                  if (value) {
+                    return Number(value);
+                  }
+                },
+                message: '小数位数必须为数字类型'
               }
             ]
           },
