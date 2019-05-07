@@ -29,6 +29,7 @@
 <script>
 
   import {parseTime} from '@/utils'
+ 
 
   export default {
     /**********生命周期*******/
@@ -162,8 +163,9 @@
             },
             rules: [
               {
+                max: 3,
                 required: true,
-                message: '请输入代码',
+                message: '请输入三位代码',
                 trigger: 'blur'
               }
             ]
@@ -201,11 +203,13 @@
             $type: 'input',
             $id: 'decimalPoint',
             label: '小数符',
+            $default: '.',
             $el: {
               placeholder: '请输入小数符'
             },
             rules: [
               {
+                max: 1,
                 message: '请输入小数符',
                 trigger: 'blur'
               }
@@ -215,11 +219,13 @@
             $type: 'input',
             $id: 'thousandsPoint',
             label: '千分位符',
+            $default: ',',
             $el: {
               placeholder: '请输入千分位符'
             },
             rules: [
               {
+                max: 1,
                 message: '请输入千分位符',
                 trigger: 'blur'
               }
@@ -229,9 +235,10 @@
             $type: 'input',
             $id: 'decimalPlaces',
             label: '小数位数',
+            $default: 2,
             $el: {
               placeholder: '请输入小数位数',
-              //type: "number"
+              //type: "integer"
             },
             rules: [
               {
@@ -243,7 +250,9 @@
                     return Number(value);
                   }
                 },
-                message: '小数位数必须为数字类型'
+                //type:'integer',
+                message: '小数位数必须为正整数',
+                //trigger: 'change'
               }
             ]
           },
@@ -251,6 +260,7 @@
             $type: 'input',
             $id: 'value',
             label: '汇率值',
+            $default:'1' ,
             $el: {
               placeholder: '请输入汇率值'
             },
@@ -260,6 +270,7 @@
             $type: 'radio-group',
             $id: 'status',
             label: '状态',
+            $default: 1 ,
             $el: {},
             $options: [
               {

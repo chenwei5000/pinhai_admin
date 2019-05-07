@@ -17,6 +17,7 @@
           :searchForm="searchForm"
           :form="form"
           :tableAttrs="tableAttrs"
+          :relations="relations"
         >
         </ph-table>
       </div>
@@ -31,53 +32,12 @@
   import {parseTime} from '@/utils'
 
   export default {
-    /**********生命周期*******/
-    // 1. beforeCreate 这个阶段主要是完成vue中关于生成周期以及事件的一些初始化工作。主要用于设置一些Vue相关的参数。不常用
-    // data 无
-    // el 无
-    // message 无
-    beforeCreate() {
-    },
-    // 2. created 这个阶段主要是初始化与依赖注入相关的操作，以及数据的动态绑定。 主要用于数据的初始化。常用。
-    // data 有
-    // el 无
-    // message 有
-    created() {
-    },
-    // 3. beforeMount 开始编译生成HTML时调用。这个时候页面的值还是占位符合。不常用。
-    // data 有
-    // el 有
-    // message 有
-    beforeMount() {
-    },
-    // 4. mounted  编译、渲染完成之后调用。主要用于对页面一些元素的调整。常用。
-    // data 有
-    // el 有 同时也有模版中的相关对象
-    // message 有
-    mounted() {
-    },
-    // 5. beforeUpdate  当vue发现data中的数据发生了改变，会触发对应组件的重新渲染。在重新渲染前调用。
-    beforeUpdate() {
-    },
-    // 6. updated  当vue发现data中的数据发生了改变，会触发对应组件的重新渲染。在重新渲染后调用。
-    updated() {
-    },
-    // 7. beforeDestroy 在实例销毁之前调用。
-    beforeDestroy() {
-    },
-    // 8. destroyed 在实例销毁之后调用。 主要用于手工销毁数据。
-    destroyed() {
-    },
-    /**********生命周期*******/
-
-    /**********常用对象*******/
-    // 数据对象，用于跟模版进行数据交互。
-    // data属性的值，不会随赋值变量的改动而改动。如果要改变这个属性的值，则需要直接给data属性赋值，视图上对这个属性的显示才会变。
-    // 主要用于直接跟页面进行数据交互时使用。
+    
     data() {
       return {
-        title: '数据字典', // 页面标题
-        url: '/dataDicItems', // 资源URL
+        title: '供货商管理', // 页面标题
+        url: '/suppliers', // 资源URL
+        relations: ["dataDicItem.type"],//关联数据字典
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
         // https://femessage.github.io/el-data-table/
@@ -92,10 +52,14 @@
         columns: [
           {type: 'selection'}, //多选
           {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-          {prop: 'type', label: '字典类型', sortable: 'custom'},
-          {prop: 'name', label: '字典类型名称', sortable: 'custom'},
-          {prop: 'valueId', label: '字典值ID'},
-          {prop: 'valueName', label: '字典值名称'},
+          {prop: 'code', label: '编码'},
+          {prop: 'name', label: '简称', sortable: 'custom'},
+          {prop: 'companyName', label: '公司名称'},
+          {prop: 'city', label: '所在城市'},
+		      {prop: 'region', label: '管理区域', sortable: 'custom'},
+          {prop: 'address', label: '地址'},
+		      {prop: 'linkman', label: '联系人'},
+          {prop: 'tel', label: '联系电话'},
           {
             prop: 'status',
             label: '状态',
@@ -114,38 +78,20 @@
         searchForm: [
           {
             $type: 'input',
-            $id: 'type',
-            label: '字典类型',
+            $id: 'code',
+            label: '编码',
             $el: {
               op: 'bw',
-              placeholder: '请输入字典类型'
+              placeholder: '请输入编码'
             }
           },
           {
             $type: 'input',
             $id: 'name',
-            label: '字典类型名称',
+            label: '简称',
             $el: {
               op: 'bw',
-              placeholder: '请输入字典类型名称'
-            }
-          },
-          {
-            $type: 'input',
-            $id: 'valueId',
-            label: '字典值ID',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入字典值ID'
-            }
-          },
-          {
-            $type: 'input',
-            $id: 'valueName',
-            label: '字典值名称',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入字典值名称'
+              placeholder: '请输入简称'
             }
           }
 
@@ -155,15 +101,15 @@
         form: [
           {
             $type: 'input',
-            $id: 'type',
-            label: '字典类型',
+            $id: 'code',
+            label: '编码',
             $el: {
-              placeholder: '请输入字典类型'
+              placeholder: '请输入编码'
             },
             rules: [
               {
                 required: true,
-                message: '请输入字典类型',
+                message: '请输入编码',
                 trigger: 'blur'
               }
             ]
@@ -171,67 +117,98 @@
           {
             $type: 'input',
             $id: 'name',
-            label: '字典类型名称',
+            label: '简称',
             $el: {
-              placeholder: '请输入字典类型名称'
+              placeholder: '请输入简称'
             },
             rules: [
               {
                 required: true,
-                message: '请输入字典类型名称',
+                message: '请输入简称',
                 trigger: 'blur'
               }
             ]
           },
           {
             $type: 'input',
-            $id: 'valueId',
-            label: '字典值ID',
+            $id: 'companyName',
+            label: '公司名称',
             $el: {
-              placeholder: '请输入字典值ID'
+              placeholder: '请输入公司名称'
             },
             rules: [
               {
-                required: true,
-                message: '请输入字典值ID',
+                message: '请输入公司名称',
                 trigger: 'blur'
               }
             ]
           },
           {
             $type: 'input',
-            $id: 'valueName',
-            label: '字典值名称',
+            $id: 'city',
+            label: '所在城市',
             $el: {
-              placeholder: '请输入字典值名称'
+              placeholder: '请输入所在城市'
             },
             rules: [
               {
-                required: true,
-                message: '请输入字典值名称',
+                message: '请输入所在城市',
                 trigger: 'blur'
               }
             ]
           },
           {
-            $type: 'radio-group',
-            $id: 'status',
-            label: '状态',
-            $default: 1 ,
+            $type: 'input',
+            $id: 'region',
+            label: '管理区域',
             $el: {
+              placeholder: '请输入管理区域'
             },
-            $options: [
-              {
-                label: '开启',
-                value: 1
-              },
-              {
-                label: '禁用',
-                value: 0
-              }
-            ],
             rules: [
               {
+                message: '请输入管理区域',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            $type: 'input',
+            $id: 'address',
+            label: '地址',
+            $el: {
+              placeholder: '请输入地址'
+            },
+            rules: [
+              {
+                message: '请输入地址',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            $type: 'input',
+            $id: 'linkman',
+            label: '联系人',
+            $el: {
+              placeholder: '请输入联系人'
+            },
+            rules: [
+              {
+                message: '请输入联系人',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            $type: 'input',
+            $id: 'linkman',
+            label: '联系电话',
+            $el: {
+              placeholder: '请输入联系电话'
+            },
+            rules: [
+              {
+                message: '请输入联系电话',
                 trigger: 'blur'
               }
             ]
