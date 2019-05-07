@@ -162,7 +162,7 @@ export default {
           if (item.$type === GROUP) {
             acc[key] = getValue(values[key], item.$items)
           } else {
-            if (item.$el.op && item.$el.op !== '') { //搜索模式
+            if (item.$el && item.$el.op && item.$el.op !== '') { //搜索模式
               acc[key] = {'op': item.$el.op, 'data': clone(values[key])}
             }
             else {
