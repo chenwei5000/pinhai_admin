@@ -1093,10 +1093,13 @@
                   })
               } else {
                 // 多选模式
+                let ids = this.selected.map(v => v[this.id]).toString();
+                if (!ids && ids == '') {
+                  ids = row[this.id];
+                }
+
                 this.global.axios
-                  .delete(
-                    this.url + '/' + this.selected.map(v => v[this.id]).toString()
-                  )
+                  .delete(this.url + '/' + ids)
                   .then(resp => {
                     instance.confirmButtonLoading = false
                     done()
