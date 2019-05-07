@@ -86,6 +86,7 @@
         tableAttrs: {
           stripe: true,
           border: true,
+          "default-sort": {prop: 'name', order: 'descending'}, //设置默认排序
           "row-class-name": this.statusClassName,
           "highlight-current-row": true
         },
