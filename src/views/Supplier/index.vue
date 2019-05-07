@@ -4,7 +4,7 @@
     <div class="ph-card">
 
       <!-- title -->
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
 
       </ph-card-header>
 
@@ -29,12 +29,30 @@
 
 <script>
 
-  import {parseTime} from '@/utils'
+  import {parseTime} from '@/utils';
+  import datadicModel from '@/api/datadic';
+
 
   export default {
-    
+
+    created() {
+      // 初始化区域数据
+      datadicModel.getByType("region").then(datadics => {
+        this.regions = [];
+        datadics.forEach(datadic => {
+          this.regions.push({
+            label: datadic.valueName,
+            value: datadic.valueId
+          });
+        });
+
+        this.form[4].$options = this.regions;
+      });
+    },
+
     data() {
       return {
+        regions: [],
         title: '供货商管理', // 页面标题
         url: '/suppliers', // 资源URL
         relations: ["dataDicItem.type"],//关联数据字典
@@ -56,9 +74,9 @@
           {prop: 'name', label: '简称', sortable: 'custom'},
           {prop: 'companyName', label: '公司名称'},
           {prop: 'city', label: '所在城市'},
-		      {prop: 'region', label: '管理区域', sortable: 'custom'},
+          {prop: 'region', label: '管理区域', sortable: 'custom'},
           {prop: 'address', label: '地址'},
-		      {prop: 'linkman', label: '联系人'},
+          {prop: 'linkman', label: '联系人'},
           {prop: 'tel', label: '联系电话'},
           {
             prop: 'status',
@@ -158,18 +176,13 @@
             ]
           },
           {
-            $type: 'input',
+            $type: 'select',
             $id: 'region',
             label: '管理区域',
             $el: {
               placeholder: '请输入管理区域'
             },
-            rules: [
-              {
-                message: '请输入管理区域',
-                trigger: 'blur'
-              }
-            ]
+            $options: this.regions,
           },
           {
             $type: 'input',
