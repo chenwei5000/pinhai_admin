@@ -35,21 +35,6 @@
 
   export default {
 
-    created() {
-      // 初始化区域数据
-      datadicModel.getByType("region").then(datadics => {
-        this.regions = [];
-        datadics.forEach(datadic => {
-          this.regions.push({
-            label: datadic.valueName,
-            value: datadic.valueId
-          });
-        });
-
-        this.form[4].$options = this.regions;
-      });
-    },
-
     data() {
       return {
         regions: [],
@@ -182,7 +167,24 @@
             $el: {
               placeholder: '请输入管理区域'
             },
-            $options: this.regions,
+            $options: function () {
+              var _regions = []
+
+              const loadData = async function () {
+                datadicModel.getByType("region").then(datadics => {
+                  datadics.forEach(datadic => {
+                    _regions.push({
+                      label: datadic.valueName,
+                      value: datadic.valueId
+                    });
+                  });
+                  return _regions;
+                });
+              };
+
+              loadData();
+              return _regions;
+            }
           },
           {
             $type: 'input',

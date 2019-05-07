@@ -93,6 +93,12 @@ export default {
     return {
       value: {}, // 表单数据对象
       options: this.content.reduce((con, item) => {
+
+        //TODO: 扩展，如果options是函数，执行这个函数
+        if (item.$options && typeof item.$options === "function") {
+          item.$options = item.$options.call();
+        }
+
         con[item.$id] =
           item.$type === GROUP
             ? item.$items.reduce((acc, cur) => {
@@ -100,7 +106,8 @@ export default {
               return acc
             }, {})
             : item.$options || []
-        return con
+        return con;
+
       }, {})
     }
   },
