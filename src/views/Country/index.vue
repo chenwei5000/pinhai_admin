@@ -220,6 +220,7 @@
             $type: 'radio-group',
             $id: 'status',
             label: '状态',
+            $default: 1 ,
             $el: {
             },
             $options: [
