@@ -6,7 +6,7 @@
     <logo v-if="showLogo" :collapse="isCollapse"/>
 
     <!-- 菜单项 -->
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar wrap-class="scrollbar-wrapper" noresize>
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"

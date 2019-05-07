@@ -128,7 +128,7 @@
             $id: 'name',
             label: '国家名称',
             $el: {
-              placeholder: '请输入国家名称'
+              placeholder: '请输入国家名称',
               //type: ''  输入框可以设置类型，类型支持所有h5自带类型 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types
             },
             rules: [

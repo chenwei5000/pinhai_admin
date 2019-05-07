@@ -172,6 +172,7 @@
       :page-size="size"
       :total="total"
       style="text-align: right; padding: 10px 0"
+      background
       :layout="paginationLayout"
       id="ph-table-page"
     >
@@ -179,16 +180,24 @@
 
     <!--弹出框-->
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog">
-      <!--https://github.com/FEMessage/onDefaultEdit-->
-      <ph-form :content="form" ref="dialogForm" v-bind="formAttrs" :disabled="isView">
-        <!--@slot 额外的弹窗表单内容, 当form不满足需求时可以使用 -->
-        <slot name="form"></slot>
-      </ph-form>
+
+      <el-scrollbar class="menu-wrapper" noresize>
+      <el-row>
+        <el-col :span="22">
+          <!--https://github.com/FEMessage/onDefaultEdit-->
+          <ph-form :content="form" ref="dialogForm" v-bind="formAttrs" :disabled="isView">
+            <!--@slot 额外的弹窗表单内容, 当form不满足需求时可以使用 -->
+            <slot name="form"></slot>
+          </ph-form>
+        </el-col>
+      </el-row>
+      </el-scrollbar>
 
       <div slot="footer" v-show="!isView">
         <el-button @click="cancel" size="small">取 消</el-button>
         <el-button type="primary" @click="confirm" :loading="confirmLoading" size="small">确 定</el-button>
       </div>
+
     </el-dialog>
   </div>
 </template>
@@ -540,7 +549,12 @@
       formAttrs: {
         type: Object,
         default() {
-          return {}
+          return {
+            "label-width": "100px",
+            "label-suffix": ":",
+            "status-icon": true,
+            size: "small"
+          }
         }
       },
       /**
