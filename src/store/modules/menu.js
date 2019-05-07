@@ -1,45 +1,78 @@
 /**
  * 缓存动态路由，防止刷新页面后动态路由丢失
  */
-import router, {asyncRoutes, constantRoutes, resetRouter} from '@/router'
+import {asyncRoutes, constantRoutes, resetRouter} from '@/router'
 /* Layout */
 import Layout from '@/layout'
+import systemModel from "@/api/system";
 
 const SESSION_MENU = "SESSION_MENU";
 
 const state = {
-  routes: sessionStorage.getItem(SESSION_MENU) ? constantRoutes.concat(JSON.parse(sessionStorage.getItem(SESSION_MENU))) : [], // 全部路由
-  asyncRoutes: sessionStorage.getItem(SESSION_MENU) ? JSON.parse(sessionStorage.getItem(SESSION_MENU)) : [] // 动态路由
+  routes: [], // 全部路由
+  asyncRoutes: [] // 动态路由
 }
 
 const mutations = {
 
-  //设置用户菜单
-  setMenus: (state, menus) => {
-    if (menus) {
-      //把菜单对象转成Vue路由对象
-      let routes = menuToRoute(menus);
+  //设置动态路由信息
+  setAccessedRoutes: (state, accessedRoutes) => {
+
+    if (accessedRoutes) {
       //保存路由对象
-      state.asyncRoutes = routes;
-      sessionStorage.setItem(SESSION_MENU, JSON.stringify(routes));
-      state.routes = constantRoutes.concat(routes);
-
-      //重置动态路由
-      resetRouter();
-
-      console.log(routes);
-      //重新添加动态路由
-      console.log(router.addRoutes(routes));
+      state.asyncRoutes = accessedRoutes;
     }
+
+    state.routes = constantRoutes.concat(state.asyncRoutes);
+  },
+
+  //设置菜单信息
+  setMenus: (state, menus) => {
+    sessionStorage.setItem(SESSION_MENU, JSON.stringify(menus));
   },
 
   //清除用户菜单
   clearMenus: (state) => {
+    state.routes = [];
     state.asyncRoutes = [];
     sessionStorage.removeItem(SESSION_MENU);
+    resetRouter();
   },
 }
 
+const actions = {
+
+  // 载入菜单信息
+  loadMenus({commit}) {
+    return new Promise((resolve, reject) => {
+      //优先判断 Storage中是否存在菜单信息。
+      let menus = sessionStorage.getItem(SESSION_MENU) ? JSON.parse(sessionStorage.getItem(SESSION_MENU)) : false;
+      if (menus) {
+        console.log("从本地获取菜单信息");
+        resolve(menus);
+      }
+      else {
+        systemModel.getMenu().then(async menus => {
+          console.log("从后端获取菜单信息");
+          commit('setMenus', menus)
+          //保存菜单信息
+          resolve(menus);
+        }).catch(error => {
+          reject(error)
+        });
+      }
+    })
+  },
+
+  //生成路由
+  generateRoutes({commit}, menus) {
+    return new Promise(resolve => {
+      let accessedRoutes = menuToRoute(menus);
+      commit('setAccessedRoutes', accessedRoutes);
+      resolve(accessedRoutes);
+    })
+  }
+}
 /**
  * 菜单对象转路由对象
  * @param aMenu
@@ -110,5 +143,6 @@ let menuToRoute = (menus) => {
 export default {
   namespaced: true,
   state,
-  mutations
+  mutations,
+  actions
 }

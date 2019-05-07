@@ -1,9 +1,9 @@
 /**
  * 用户状态信息
  */
-import router, {resetRouter} from '@/router';
+import {resetRouter} from '@/router';
 
-import systemMode from '@/api/system.js';
+import systemModel from '@/api/system.js';
 
 const ACCESS_TOKEN = "ACCESS_TOKEN";
 const SESSION_USER = "SESSION_USER";
@@ -77,15 +77,38 @@ const actions = {
   login({commit}, userInfo) {
     const {username, password} = userInfo
     return new Promise((resolve, reject) => {
-      systemMode.login({account: username.trim(), password: password}).then(response => {
+      systemModel.login({account: username.trim(), password: password}).then(response => {
         commit('setToken', response.data);
         resolve()
       }).catch(error => {
         reject(error)
       })
     })
-  }
+  },
 
+  // get user info
+  loadUser({commit}) {
+    return new Promise((resolve, reject) => {
+      systemModel.getMine().then(info => {
+        commit('setUser', info);
+        resolve(info)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // get Role Power
+  loadRolePower({commit}) {
+    return new Promise((resolve, reject) => {
+      systemModel.getRolePower().then(rolePower => {
+        commit('setRolePower', rolePower);
+        resolve(rolePower)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
 }
 
 export default {
