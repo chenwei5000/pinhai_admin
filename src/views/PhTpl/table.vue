@@ -128,13 +128,36 @@
             label: '国家名称',
             $el: {
               placeholder: '请输入国家名称'
+              //type: ''  输入框可以设置类型，类型支持所有h5自带类型 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types
             },
             rules: [
+              //必填验证
               {
                 required: true,
-                message: '请输入国家名称',
+                //whitespace: true, //处理空格
+                message: '必须输入',
                 trigger: 'blur'
-              }
+              },
+              //数字验证
+              // {
+              //   whitespace: true, //处理空格
+              //   type: 'number',
+              //   transform(value) {
+              //     if (value) {
+              //       return Number(value);
+              //     }
+              //   },
+              //   message: '必须为数字类型'
+              //   trigger: 'blur'
+              // },
+              //长度验证
+              {
+                min: 0,
+                max: 6,
+                whitespace: true, //处理空格
+                message: '长度不能超过6位',
+                trigger: 'blur'
+              },
             ]
           }
         ]
