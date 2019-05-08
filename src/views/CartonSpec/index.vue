@@ -5,12 +5,7 @@
       </ph-card-header>
       <div class="ph-card-body">
         <ph-table
-          :url="url"
-          :columns="columns"
-          :searchForm="searchForm"
-          :form="form"
-          :tableAttrs="tableAttrs"
-          :relations="relations"
+          v-bind="tableConfig"
         >
         </ph-table>
       </div>
@@ -25,265 +20,273 @@
   export default {
     data() {
       return {
-        categoryNames: [],
-        title: '包装材料列表', 
-        url: '/cartonSpecs', 
-        relations: ["creator", "category"],
-        tableAttrs: {
-          stripe: true,
-          border: true,
-          "default-sort": {prop: 'id', order: 'descending'},
-          "row-class-name": this.statusClassName,
-          "highlight-current-row": true
-        },
-        //表格内容显示
-        columns: [
-          {type: 'selection'}, 
-          {prop: 'id', label: 'ID', sortable: 'true', hidden: false}, 
-          {
-            prop: 'status',
-            label: '状态',
-            formatter: row => (row.status === 1 ? '启用' : '禁用')
+        title: '包装材料列表',
+        tableConfig: {
+          url: '/cartonSpecs',
+          relations: ["creator", "category"],
+          tableAttrs: {
+            "default-sort": {prop: 'id', order: 'descending'},
+            "row-class-name": this.statusClassName,
           },
-          {prop: 'code', label: '编码'},
-          {prop: 'numberOfPallets', label: '托盘放置数量'},
-          {prop: 'length', label: '长(Cm)'},
-          {prop: 'width', label: '宽(Cm)'},
-          {prop: 'height', label: '高(Cm)'},
-          {prop: 'volume', label: '体积(m³)'},
-          {prop: 'grossWeight', label: '皮重(Kg)'},
-          {prop: 'category.name', label: '分类'},
-          {
-            prop: 'pallet', 
-            label: '是否打托',
-            formatter: row => (row.pallet === 1 ? '是' : '否' )
+          //表格内容显示
+          columns: [
+            {type: 'selection'},
+            {prop: 'code', label: '编码', 'min-width': 150, fixed: 'left'},
+            {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
+            {prop: 'category.name', label: '分类', 'min-width': 120},
+            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
+            {prop: 'length', label: '长(Cm)', width: 80},
+            {prop: 'width', label: '宽(Cm)', width: 80},
+            {prop: 'height', label: '高(Cm)', width: 80},
+            {prop: 'volume', label: '体积(m³)', 'min-width': 100},
+            {prop: 'grossWeight', label: '皮重(Kg)', width: 80},
+            {
+              prop: 'pallet',
+              label: '是否打托',
+              formatter: row => (row.pallet === 1 ? '是' : '否')
             },
-        ],
-        //搜索栏
-        searchForm: [
-          {
-            $type: 'input',
-            $id: 'code',
-            label: '编码',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入编码'
+            {prop: 'creator.name', label: '创建人', width: 100},
+            {
+              prop: 'status',
+              label: '状态',
+              width: 80,
+              formatter: row => (row.status === 1 ? '启用' : '禁用')
+            },
+            {
+              prop: 'lastModified',
+              label: '修改时间',
+              width: 140,
+              formatter: row => {
+                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
+              }
             }
-          },
-          {
-            $type: 'select',
-            $id: 'status',
-            label: '状态',
-            $el: {
-              op: 'bw',
-              placeholder: '请选择状态'
-            },
-            $options: [
-              {
-                label: '全部',
-                value: ''
-              },
-              {
-                label: '开启',
-                value: '1'
-              },
-              {
-                label: '禁用',
-                value: '0'
+          ],
+          //搜索栏
+          searchForm: [
+            {
+              $type: 'input',
+              $id: 'code',
+              label: '编码',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入编码'
               }
-            ]
-          }
-        ],
-        //添加或修改弹出框
-        form: [
-          {
-            $type: 'input',
-            $id: 'code',
-            label: '编码',
-            $el: {
-              placeholder: '请输入编码'
             },
-            rules: [
-              {
-                required: true,
-                message: '编码不能为空',
-                trigger: 'blur'
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'numberOfPallets',
-            label: '托盘放置数量',
-            $el: {
-            },
-            rules: [
-              {
-                required: true,
-                message: '托盘放置数量不能为空',
-                trigger: 'blur'
+            //TODO: 需要按照分类搜索
+            {
+              $type: 'select',
+              $id: 'status',
+              label: '状态',
+              $el: {
+                op: 'eq',
+                placeholder: '请选择状态'
               },
-              {
-                type: 'number',
-                transform(value) {
-                  if (value) {
-                    return Number(value);
-                  }
+              $options: [
+                {
+                  label: '全部',
+                  value: ''
                 },
-                message: '必须是数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'length',
-            label: '长(Cm)',
-            $el: {
-              placeholder: '请输入长度'
-            },
-            rules: [
-              {
-                required: true,
-                message: '长度不能为空',
-                trigger: 'blur',
-              },
-              {
-                type: 'number',
-                transform(value) {
-                  if (value) {
-                    return Number(value);
-                  }
+                {
+                  label: '开启',
+                  value: '1'
                 },
-                message: '必须是数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'width',
-            label: '宽(Cm)',
-            $el: {
-              placeholder: '请输入宽度'
-            },
-            rules: [
-              {
-                required: true,
-                message: '宽度不能为空',
-                trigger: 'blur'
+                {
+                  label: '禁用',
+                  value: '0'
+                }
+              ]
+            }
+          ],
+          //添加或修改弹出框
+          form: [
+            {
+              $type: 'select',
+              $id: 'groupCode',
+              label: '分类',
+              $el: {
+                placeholder: '请输入分类'
               },
-              {
-                type: 'number',
-                transform(value) {
-                  if (value) {
-                    return Number(value);
-                  }
-                },
-                message: '必须是数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'height',
-            label: '高度',
-            $el: {
-              placeholder: '请输入高度'
-            },
-            rules: [
-              {
-                required: true,
-                message: '高度不能为空',
-                trigger: 'blur'
-              },
-              {
-                type: 'number',
-                transform(value) {
-                  if (value) {
-                    return Number(value);
-                  }
-                },
-                message: '必须是数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'grossWeight',
-            label: '皮重',
-            $el: {
-              placeholder: '请输入皮重'
-            },
-            rules: [
-              {
-                required: true,
-                message: '皮重不能为空',
-                trigger: 'blur'
-              },
-              {
-                type: 'number',
-                transform(value) {
-                  if (value) {
-                    return Number(value);
-                  }
-                },
-                message: '必须是数字',
-                trigger: 'blur'
-              }
-            ]
-          },
-          {
-            $type: 'select',
-            $id: 'groupCode',
-            label: '分类',
-            $el: {
-              placeholder: '请输入分类'
-            },
-            $options: function(){
-              var _categoryNames = [];
-              const loaddata = async function(){
-                categoryModel.getCategories().then(categorys => {
-                  categorys.forEach(category => {
-                    _categoryNames.push({
-                      label: category.name,
-                      value: category.name
+              $options: function () {
+                var _categoryNames = [];
+                const loaddata = async function () {
+                  categoryModel.getCategories().then(categorys => {
+                    categorys.forEach(category => {
+                      _categoryNames.push({
+                        label: category.name,
+                        value: category.name
+                      });
                     });
+                    return _categoryNames;
                   });
-                  return _categoryNames;
-                });
-              };
-              loaddata();
-              return _categoryNames;
-            },
-            rules: [
-              {
-                required: true,
-                message: '请选择分类',
-                trigger: blur
-              }
-            ]
-          },
-          {
-            $type: 'radio-group',
-            $id: 'status',
-            label: '状态',
-            $el: {},
-            $default: 1 ,
-            $options: [
-              {
-                label: '开启',
-                value: 1
+                };
+                loaddata();
+                return _categoryNames;
               },
-              {
-                label: '禁用',
-                value: 0
-              }
-            ]
-          }
-        ]
+              rules: [
+                {
+                  required: true,
+                  message: '请选择分类',
+                  trigger: blur
+                }
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'code',
+              label: '编码',
+              $el: {
+                placeholder: '请输入编码'
+              },
+              rules: [
+                {
+                  required: true,
+                  message: '编码不能为空',
+                  trigger: 'blur'
+                }
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'numberOfPallets',
+              label: '托盘放置数',
+              $el: {},
+              rules: [
+                {
+                  required: true,
+                  message: '托盘放置数不能为空',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'number',
+                  transform(value) {
+                    if (value) {
+                      return Number(value);
+                    }
+                  },
+                  message: '必须是数字',
+                  trigger: 'blur'
+                }
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'length',
+              label: '长(Cm)',
+              $el: {
+                placeholder: '请输入长度'
+              },
+              rules: [
+                {
+                  required: true,
+                  message: '长度不能为空',
+                  trigger: 'blur',
+                },
+                {
+                  type: 'number',
+                  transform(value) {
+                    if (value) {
+                      return Number(value);
+                    }
+                  },
+                  message: '必须是数字',
+                  trigger: 'blur'
+                }
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'width',
+              label: '宽(Cm)',
+              $el: {
+                placeholder: '请输入宽度'
+              },
+              rules: [
+                {
+                  required: true,
+                  message: '宽度不能为空',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'number',
+                  transform(value) {
+                    if (value) {
+                      return Number(value);
+                    }
+                  },
+                  message: '必须是数字',
+                  trigger: 'blur'
+                }
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'height',
+              label: '高度',
+              $el: {
+                placeholder: '请输入高度'
+              },
+              rules: [
+                {
+                  required: true,
+                  message: '高度不能为空',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'number',
+                  transform(value) {
+                    if (value) {
+                      return Number(value);
+                    }
+                  },
+                  message: '必须是数字',
+                  trigger: 'blur'
+                }
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'grossWeight',
+              label: '皮重',
+              $el: {
+                placeholder: '请输入皮重'
+              },
+              rules: [
+                {
+                  required: true,
+                  message: '皮重不能为空',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'number',
+                  transform(value) {
+                    if (value) {
+                      return Number(value);
+                    }
+                  },
+                  message: '必须是数字',
+                  trigger: 'blur'
+                }
+              ]
+            },
+            {
+              $type: 'radio-group',
+              $id: 'status',
+              label: '状态',
+              $el: {},
+              $default: 1,
+              $options: [
+                {
+                  label: '开启',
+                  value: 1
+                },
+                {
+                  label: '禁用',
+                  value: 0
+                }
+              ]
+            }
+          ]
+        }
       }
     },
     computed: {},
