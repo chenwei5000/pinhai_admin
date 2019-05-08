@@ -60,4 +60,20 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
+  .ph-card-header {
+    position: relative;
+    height: 42px;
+    line-height: 42px;
+    padding: 0 15px;
+    border-bottom: 1px solid #f6f6f6;
+    color: #333;
+    border-radius: 2px 2px 0 0;
+    font-size: 14px;
+  }
+
+  .ph-card-body {
+    position: relative;
+    padding: 10px 15px;
+    line-height: 24px;
+  }
 </style>
