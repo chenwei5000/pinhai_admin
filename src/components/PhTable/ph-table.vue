@@ -1218,6 +1218,9 @@
 <style type="text/less" lang="scss" scoped>
 
   .el-table {
+    /deep/ .ph-header-small {
+      font-size: 12px !important;
+    }
     /deep/ tr.warning-row {
       background: rgb(253, 226, 226) !important;
     }

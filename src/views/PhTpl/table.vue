@@ -25,6 +25,8 @@
 <script>
 
   import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
+
 
   export default {
     /**********生命周期*******/
@@ -136,32 +138,11 @@
               },
               rules: [
                 //必填验证
-                {
-                  required: true,
-                  //whitespace: true, //处理空格
-                  message: '必须输入',
-                  trigger: 'blur'
-                },
+                validRules.required,
                 //数字验证
-                // {
-                //   whitespace: true, //处理空格
-                //   type: 'number',
-                //   transform(value) {
-                //     if (value) {
-                //       return Number(value);
-                //     }
-                //   },
-                //   message: '必须为数字类型'
-                //   trigger: 'blur'
-                // },
+                //validRules.number,
                 //长度验证
-                {
-                  min: 0,
-                  max: 6,
-                  whitespace: true, //处理空格
-                  message: '长度不能超过6位',
-                  trigger: 'blur'
-                },
+                validRules.strMax(6)
               ]
             }
           ]
