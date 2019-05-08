@@ -1,20 +1,19 @@
 import global from './global.js'
-import qs from 'qs'
 
 
 const datadicModel = {
 
-  // 登陆
+  // 通过字典类型或者字典列表
   getByType: (type) => {
     const path = '/dataDicItems';
 
-    let param = {
-      pageSize: -1,
-      filters: JSON.stringify({"groupOp": "AND", "rules": [{"field": "type", "op": "eq", "data": type}]})
-    };
+    let rules = [];
+    //通过类型搜索
+    rules.push({field: "type", op: "eq", data: type});
+    //状态有效
+    rules.push({field: "status", op: "eq", data: "1"});
 
-    return global.axios.get(path + "?" + qs.stringify(param)
-    ).then(res => res.data.rows);
+    return global.searchResource(path, rules).then(data => data.rows);
   }
 }
 

@@ -47,43 +47,7 @@ const systemModel = {
   getRolePower: () => {
     const path = '/rolePowers/mine'
     return global.axios.get(path).then(res => res.data)
-  },
-
-  // 重新加载菜单和路由
-  // reloadMenu: () => {
-  //
-  //   return new Promise(resolve => {
-  //     // 重新加载数据, 因为三个方法都是异步的ajax调用，需要构造一个方法保证，多个异步调用都能完成
-  //     const reloadInfo = async function () {
-  //
-  //       // 重新加载用户信息
-  //       systemModel.getMine().then(async user => {
-  //         store.commit('user/setUser', user);
-  //       });
-  //
-  //       // 重新加载菜单信息
-  //       systemModel.getMenu().then(async menus => {
-  //         //保存菜单信息
-  //         await store.commit('menu/setMenus', menus);
-  //       });
-  //
-  //       // 重新加载权限信息
-  //       systemModel.getRolePower().then(async rolePower => {
-  //         await store.commit('user/setRolePower', rolePower);
-  //       });
-  //     }
-  //
-  //     // 重新加载数据
-  //     reloadInfo();
-  //
-  //     // store.commit 为异步处理，需要通过观察器来判断commit是否都执行完毕
-  //     store.subscribe((mutation, state) => {
-  //       if (state.menu.asyncRoutes && state.user.rolePower && state.user.user) {
-  //         resolve(true);
-  //       }
-  //     });
-  //   });
-  // }
+  }
 }
 
 export default systemModel;

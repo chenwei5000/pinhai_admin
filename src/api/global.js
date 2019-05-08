@@ -22,12 +22,17 @@ const generateUrl = function (path) {
  * @param relations  关联加载
  * @param pagesize   页码
  */
-const searchResource = function (path, filterRules = null, relations = null, pagesize = -1) {
+const searchResource = function (path, filterRules,
+                                 relations = null, pagesize = -1) {
   if (!path || path == '') {
     return;
   }
   let _filters = null;
   let _relations = null;
+
+  if (filterRules == null) {
+    filterRules = [{"field": "status", "op": "eq", "data": "1"}]
+  }
 
   if (filterRules && filterRules.length > 0) {
     _filters = {"groupOp": "AND", "rules": filterRules}

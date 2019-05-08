@@ -36,6 +36,7 @@
           "row-class-name": this.statusClassName,
           "highlight-current-row": true
         },
+        //表格内容显示
         columns: [
           {type: 'selection'}, 
           {prop: 'id', label: 'ID', sortable: 'true', hidden: false}, 
@@ -58,6 +59,7 @@
             formatter: row => (row.pallet === 1 ? '是' : '否' )
             },
         ],
+        //搜索栏
         searchForm: [
           {
             $type: 'input',
@@ -92,6 +94,7 @@
             ]
           }
         ],
+        //添加或修改弹出框
         form: [
           {
             $type: 'input',
@@ -254,7 +257,14 @@
               };
               loaddata();
               return _categoryNames;
-            }
+            },
+            rules: [
+              {
+                required: true,
+                message: '请选择分类',
+                trigger: blur
+              }
+            ]
           },
           {
             $type: 'radio-group',
