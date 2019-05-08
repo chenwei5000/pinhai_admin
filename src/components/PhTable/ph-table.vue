@@ -130,9 +130,8 @@
           <el-button v-if="isTree && hasNew" type="primary" size="small"
                      @click="onDefaultNew(scope.row)">新增
           </el-button>
-          <el-button v-if="hasEdit" size="small"
-                     @click="onDefaultEdit(scope.row)" id="ph-table-edit">
-            修改
+          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
           <el-button v-if="hasView" type="info" size="small"
                      @click="onDefaultView(scope.row)">
@@ -150,9 +149,8 @@
             {{btn.text}}
           </self-loading-button>
           <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="small"
-                     id="ph-table-del"
+                     id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-            删除
           </el-button>
         </template>
       </el-table-column>
