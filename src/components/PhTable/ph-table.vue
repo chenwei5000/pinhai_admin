@@ -53,6 +53,8 @@
       id="ph-table"
       @filter-change="handleFilterChange"
       style="width: 100%"
+      row-style="font-size:13px;"
+      cell-style="padding:0"
     >
 
       <template v-if="isTree">
