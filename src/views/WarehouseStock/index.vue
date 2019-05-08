@@ -57,7 +57,7 @@
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
             {prop: 'skuCode', label: 'SKU编码', width: 150, fixed: 'left'},
             {prop: 'warehouseName', label: '收货仓库', width: 130},
-            {prop: 'productName', label: '产品名', sortable: 'custom', width: 300},
+            {prop: 'productName', label: '产品名', sortable: 'custom'},
             {prop: 'productModel', label: '型号', hidden: true},
             {prop: 'productColor', label: '颜色', hidden: true},
             {prop: 'productSize', label: '尺码', hidden: true},
