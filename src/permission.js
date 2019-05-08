@@ -78,7 +78,6 @@ router.beforeEach(async (to, from, next) => {
       let menus = await store.dispatch('menu/loadMenus');
       let accessRoutes = await store.dispatch('menu/generateRoutes', menus);
 
-      console.log(accessRoutes);
       //重新添加动态路由
       await router.addRoutes(accessRoutes);
       //菜单权限更新完成,重新进一次当前路由

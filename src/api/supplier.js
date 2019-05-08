@@ -1,20 +1,19 @@
 import global from './global.js'
-import qs from 'qs'
 
 
 const supplierModel = {
 
   // 登陆
-  getById: (id) => {
+  getSuppliers: (pagesize = -1) => {
     const path = '/suppliers';
 
-    let param = {
-      pageSize: -1,
-      filters: JSON.stringify({"groupOp":"AND","rules":[{"field":"type","op":"eq","data":"id"}]})
-    };
+    let filterRules = [];
 
-    return global.axios.get(path + "?" + qs.stringify(param)
-    ).then(res => res.data.rows);
+    //状态有效
+    filterRules.push({"field": "status", "op": "eq", "data": "1"});
+
+    return global.searchResource(path, filterRules, null, pagesize).then(data => data.rows);
+
   }
 }
 

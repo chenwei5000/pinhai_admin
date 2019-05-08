@@ -1,6 +1,7 @@
 import _axios from 'axios'
 import store from '@/store/index'
 import {Message} from 'element-ui'
+import qs from 'qs'
 
 const config = {
   NAME: 'ERP管理系统登录',
@@ -13,6 +14,37 @@ const config = {
 const generateUrl = function (path) {
   return config.ERP_SERVICE_URL + path
 }
+
+/**
+ * 搜索资源通用方法
+ * @param path       资源url路径
+ * @param filterRule 过滤规则
+ * @param relations  关联加载
+ * @param pagesize   页码
+ */
+const searchResource = function (path, filterRules = null, relations = null, pagesize = -1) {
+  if (!path || path == '') {
+    return;
+  }
+  let _filters = null;
+  let _relations = null;
+
+  if (filterRules && filterRules.length > 0) {
+    _filters = {"groupOp": "AND", "rules": filterRules}
+  }
+  if (relations && relations.length > 0) {
+    _relations = relations
+  }
+
+  let param = {
+    pageSize: pagesize ? pagesize : -1,
+    filters: _filters ? JSON.stringify(_filters) : '',
+    relations: _relations ? _relations : ''
+  };
+
+  return axios.get(path + "?" + qs.stringify(param)).then(res => res.data);
+}
+
 
 const axios = _axios.create({
   baseURL: config.ERP_SERVICE_URL, // url = base url + request url
@@ -68,5 +100,6 @@ axios.interceptors.response.use(data => {
 export default {
   axios,
   generateUrl,
+  searchResource,
   config
 }

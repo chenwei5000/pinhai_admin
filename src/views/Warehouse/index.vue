@@ -4,7 +4,7 @@
     <div class="ph-card">
 
       <!-- title -->
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
 
       </ph-card-header>
 
@@ -35,15 +35,15 @@
 
 
   export default {
-    
+
     data() {
       return {
         types: [],
         names: [],
         title: '仓库管理', // 页面标题
         url: '/warehouses', // 资源URL
-        relations: ["dataDicItem.type","supplier"],//关联数据字典
-        
+        relations: ["dataDicItem.type", "supplier"],//关联数据字典
+
 
         //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
         // https://femessage.github.io/el-data-table/
@@ -61,7 +61,7 @@
           {prop: 'code', label: '编码'},
           {prop: 'name', label: '名称', sortable: 'custom'},
           {prop: 'address', label: '地址'},
-		  {prop: 'linkman', label: '联系人'},
+          {prop: 'linkman', label: '联系人'},
           {prop: 'tel', label: '联系电话'},
           {prop: 'type', label: '类型'},
           {prop: 'supplierId', label: '供货商编号', hidden: true},
@@ -188,7 +188,6 @@
             },
             $options: function () {
               var _types = []
-
               const loadData = async function () {
                 datadicModel.getByType("warehouse").then(datadics => {
                   datadics.forEach(datadic => {
@@ -200,23 +199,21 @@
                   return _types;
                 });
               };
-
               loadData();
               return _types;
             }
           },
           {
             $type: 'select',
-            $id: 'supplier.name',
-            label: '供货商名称',
+            $id: 'supplier_id',
+            label: '供货商',
             $el: {
-              placeholder: '请选择供货商名称'
+              placeholder: '请选择供货商'
             },
             $options: function () {
               var _names = []
-
               const loadData = async function () {
-                supplierModel.getById("name").then(suppliers => {
+                supplierModel.getSuppliers().then(suppliers => {
                   suppliers.forEach(supplier => {
                     _names.push({
                       label: supplier.name,
