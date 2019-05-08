@@ -46,6 +46,7 @@
       v-bind="tableAttrs"
       :data="data"
       :row-style="showRow"
+      :max-height="tableMaxHeight"
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
@@ -124,18 +125,17 @@
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       v-bind="operationAttrs"
+                       v-bind="operationAttrs" width="100"
       >
         <template slot-scope="scope">
-          <el-button v-if="isTree && hasNew" type="primary" size="small"
+          <el-button v-if="isTree && hasNew" type="primary" size="mini"
                      @click="onDefaultNew(scope.row)">新增
           </el-button>
           <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
-          <el-button v-if="hasView" type="info" size="small"
+          <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
                      @click="onDefaultView(scope.row)">
-            查看
           </el-button>
           <self-loading-button v-for="(btn, i) in extraButtons"
                                v-if="'show' in btn ? btn.show(scope.row) : true"
@@ -144,11 +144,11 @@
                                :params="scope.row"
                                :callback="getList"
                                :key="i"
-                               size="small"
+                               size="mini"
           >
             {{btn.text}}
           </self-loading-button>
-          <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="small"
+          <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
@@ -180,15 +180,15 @@
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog">
 
       <el-scrollbar class="menu-wrapper" noresize>
-      <el-row>
-        <el-col :span="22">
-          <!--https://github.com/FEMessage/onDefaultEdit-->
-          <ph-form :content="form" ref="dialogForm" v-bind="formAttrs" :disabled="isView">
-            <!--@slot 额外的弹窗表单内容, 当form不满足需求时可以使用 -->
-            <slot name="form"></slot>
-          </ph-form>
-        </el-col>
-      </el-row>
+        <el-row>
+          <el-col :span="22">
+            <!--https://github.com/FEMessage/onDefaultEdit-->
+            <ph-form :content="form" ref="dialogForm" v-bind="formAttrs" :disabled="isView">
+              <!--@slot 额外的弹窗表单内容, 当form不满足需求时可以使用 -->
+              <slot name="form"></slot>
+            </ph-form>
+          </el-col>
+        </el-row>
       </el-scrollbar>
 
       <div slot="footer" v-show="!isView">
@@ -599,6 +599,7 @@
     },
     data() {
       return {
+        tableMaxHeight: 400,
         data: [],
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
@@ -641,7 +642,12 @@
         }
       }
     },
+
     mounted() {
+
+      let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; //浏览器高度
+      this.tableMaxHeight = h - 83 - 62 - 85 - this.$refs.table.$el.offsetTop;
+
       let searchForm = this.$refs.searchForm
       if (searchForm) {
         // 恢复查询条件
@@ -922,7 +928,6 @@
         // 拷贝filters的值。
         for (const i in filters) {
           row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
-          console.log(row);
           val = filters[i]
         }
         const filter = [{
@@ -931,7 +936,6 @@
           value: val
         }]
 
-        console.log(filter)
       },
 
       // 弹窗相关
