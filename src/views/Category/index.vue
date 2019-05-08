@@ -215,11 +215,7 @@
                 return _users;
               },
               rules: [
-                {
-                  required: true,
-                  message: '请选择采购负责人',
-                  trigger: blur
-                }
+                validRules.required
               ]
             },
             {
