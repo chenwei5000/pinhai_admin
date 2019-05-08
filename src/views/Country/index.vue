@@ -16,6 +16,7 @@
 <script>
 
   import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
@@ -98,11 +99,7 @@
                 placeholder: '请输入国家名称'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入国家名称',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -113,11 +110,7 @@
                 placeholder: '请输入国家英文名'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入国家英文名',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -128,18 +121,8 @@
                 placeholder: '请输入国家2位iso编码'
               },
               rules: [
-                {
-                  required: true,
-                  message: '不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  min: 0,
-                  max: 2,
-                  whitespace: true,
-                  message: '长度不能超过2位',
-                  trigger: 'blur'
-                },
+                validRules.required,
+                validRules.strMax(2)
               ]
             },
             {
@@ -150,18 +133,8 @@
                 placeholder: '请输入国家3位iso编码'
               },
               rules: [
-                {
-                  required: true,
-                  message: '不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  min: 0,
-                  max: 3,
-                  whitespace: true,
-                  message: '长度不能超过3位',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.strMax(3)
               ]
             },
             {

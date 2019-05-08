@@ -15,6 +15,7 @@
 
 <script>
   import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
@@ -96,11 +97,7 @@
                 placeholder: '请输入名称'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入名称',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -122,7 +119,6 @@
                   label: '成品+原料',
                   value: '成品+原料'
                 }
-
               ]
             },
             {
@@ -130,21 +126,8 @@
               $id: 'vip0SafetyStockWeek',
               label: 'Vip0普通(周)',
               rules: [
-                {
-                  required: true,
-                  message: '不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -152,21 +135,8 @@
               $id: 'vip1SafetyStockWeek',
               label: 'Vip1热销(周)',
               rules: [
-                {
-                  required: true,
-                  message: '不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -174,21 +144,8 @@
               $id: 'vip2SafetyStockWeek',
               label: 'Vip2爆款(周)',
               rules: [
-                {
-                  required: true,
-                  message: '不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -196,21 +153,8 @@
               $id: 'sortNum',
               label: '排序值',
               rules: [
-                {
-                  required: true,
-                  message: '不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
