@@ -168,7 +168,7 @@ export default {
           }
           //TODO: fixbug element ui 不支持 aaa.bb的方式
           let newKey = key
-          if (key.indexOf() !== false) {
+          if (key.indexOf("_") !== false) {
             newKey = key.replace("_", ".");
           }
 
@@ -204,12 +204,32 @@ export default {
      */
     updateForm(values) {
       const updateValue = content => {
+
         return content.reduce((acc, item) => {
+          let _id = item.$id;
+          let _value = values;
+
+          //TODO: fixbug element ui 不支持 aaa.bb的方式
+          if (_id.indexOf("_") !== false) {
+            _id = _id.replace("_", ".");
+          }
+
+          if (_id.indexOf(".") !== false) {
+
+            let type = _id.split(".");
+            type.forEach(_k => {
+              _value = _value[_k];
+            })
+          }
+          else {
+            _value = values[_id];
+          }
+
           const value =
             item.$type === GROUP
               ? updateValue(item.$items)
               : (item.inputFormat && item.inputFormat(values)) ||
-              values[item.$id]
+              _value
 
           if (value !== undefined) {
             _set(acc, item.$id, value)

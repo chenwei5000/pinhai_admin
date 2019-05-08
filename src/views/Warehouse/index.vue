@@ -186,7 +186,7 @@
             },
             {
               $type: 'select',
-              $id: 'supplierId',
+              $id: 'supplier_id',
               label: '供货商',
               $el: {
                 placeholder: '请选择供货商'
