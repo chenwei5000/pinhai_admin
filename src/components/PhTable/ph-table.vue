@@ -645,8 +645,6 @@
 
     mounted() {
 
-      let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; //浏览器高度
-      this.tableMaxHeight = h - 83 - 62 - 85 - this.$refs.table.$el.offsetTop;
 
       let searchForm = this.$refs.searchForm
       if (searchForm) {
@@ -673,6 +671,10 @@
       }
 
       this.$nextTick(() => {
+
+        let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; //浏览器高度
+        this.tableMaxHeight = h - 230 - this.$refs.searchForm.$el.offsetHeight - 62;
+
         this.getList()
       })
     },
