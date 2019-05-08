@@ -159,15 +159,16 @@ export default {
      */
     getFormValue() {
       const getValue = (values, content) => {
+
         return Object.keys(values).reduce((acc, key) => {
+
           const item = content.find(it => it.$id === key)
           if (!item) {
             return acc
           }
-
           //TODO: fixbug element ui 不支持 aaa.bb的方式
           let newKey = key
-          if(key.indexOf() !== false){
+          if (key.indexOf() !== false) {
             newKey = key.replace("_", ".");
           }
 
