@@ -45,7 +45,7 @@
             {
               prop: 'lastModified',
               label: '修改时间',
-              'min-width': 140,
+              'width': 140,
               formatter: row => {
                 return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
               }
