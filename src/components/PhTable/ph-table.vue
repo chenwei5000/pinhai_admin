@@ -52,6 +52,7 @@
       @sort-change='handleSortChange'
       id="ph-table"
       @filter-change="handleFilterChange"
+      style="width: 100%"
     >
 
       <template v-if="isTree">
@@ -125,7 +126,7 @@
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       v-bind="operationAttrs" width="100"
+                       v-bind="operationAttrs"
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="mini"
@@ -502,7 +503,7 @@
       operationAttrs: {
         type: Object,
         default() {
-          return {width: '', fixed: 'right'}
+          return {width: '100', fixed: 'right'}
         }
       },
       /**

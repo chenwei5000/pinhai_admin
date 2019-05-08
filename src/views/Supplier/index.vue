@@ -28,8 +28,8 @@
     data() {
       return {
         regions: [],
-        title: '供货商管理', 
-        url: '/suppliers', 
+        title: '供货商管理',
+        url: '/suppliers',
         relations: ["dataDicItem.type"],
         tableAttrs: {
           stripe: true,
@@ -40,16 +40,16 @@
 
         // 表格列定义
         columns: [
-          {type: 'selection'}, 
+          {type: 'selection'},
+          {prop: 'name', label: '简称', sortable: 'custom', width: 100, fixed: 'left'},
           {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-          {prop: 'code', label: '编码'},
-          {prop: 'name', label: '简称', sortable: 'custom'},
-          {prop: 'companyName', label: '公司名称'},
-          {prop: 'city', label: '所在城市'},
-          {prop: 'region', label: '管理区域', sortable: 'custom'},
-          {prop: 'address', label: '地址'},
-          {prop: 'linkman', label: '联系人'},
-          {prop: 'tel', label: '联系电话'},
+          {prop: 'code', label: '编码', width: 100},
+          {prop: 'companyName', label: '公司名称', width: 250},
+          {prop: 'city', label: '所在城市', width: 100},
+          {prop: 'region', label: '区域', sortable: 'custom', width: 100},
+          {prop: 'address', label: '地址', width: 250},
+          {prop: 'linkman', label: '联系人', width: 100},
+          {prop: 'tel', label: '联系电话', width: 150},
           {
             prop: 'status',
             label: '状态',
@@ -57,7 +57,8 @@
           },
           {
             prop: 'lastModified',
-            label: '最后修改时间',
+            label: '修改时间',
+            width: 150,
             formatter: row => {
               return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
             }
