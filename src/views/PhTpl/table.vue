@@ -91,15 +91,23 @@
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 150},
             {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},
-            {prop: 'isoCode2', label: '2位iso编码', 'min-width': 80},
-            {prop: 'isoCode3', label: '3位iso编码', 'min-width': 80},
-            {prop: 'creator.name', label: '创建人', 'min-width': 80},
+            {prop: 'isoCode2', label: '2位iso编码', 'min-width': 120},
+            {prop: 'isoCode3', label: '3位iso编码', 'min-width': 120},
+            {prop: 'creator.name', label: '创建人', width: 100},
             {
               prop: 'status',
               label: '状态',
-              'min-width': 80,
+              width: 80,
               filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
               formatter: row => (row.status === 1 ? '启用' : '禁用')
+            },
+            {
+              prop: 'lastModified',
+              label: '最后修改时间',
+              width: 140,
+              formatter: row => {
+                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
+              }
             }
           ],
 

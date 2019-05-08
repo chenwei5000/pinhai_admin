@@ -35,7 +35,7 @@
             {prop: 'enName', label: '英文名', sortable: 'custom', "min-width": 120},
             {prop: 'isoCode2', label: '2位iso编码', "min-width": 120},
             {prop: 'isoCode3', label: '3位iso编码', "min-width": 120},
-            {prop: 'creator.name', label: '创建人', "width": 100},
+            {prop: 'creator.name', label: '创建人', width: 100},
             {
               prop: 'status',
               label: '状态',
@@ -46,7 +46,7 @@
             {
               prop: 'lastModified',
               label: '修改时间',
-              'width': 140,
+              width: 140,
               formatter: row => {
                 return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
               }
