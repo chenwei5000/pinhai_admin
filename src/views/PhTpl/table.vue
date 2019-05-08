@@ -12,12 +12,7 @@
       <div class="ph-card-body">
         <!-- 说明  https://femessage.github.io/el-data-table/-->
         <ph-table
-          :url="url"
-          :columns="columns"
-          :searchForm="searchForm"
-          :form="form"
-          :tableAttrs="tableAttrs"
-          :relations="relations"
+          v-bind="tableConfig"
         >
         </ph-table>
       </div>
@@ -78,90 +73,91 @@
     data() {
       return {
         title: '国家列表', // 页面标题
-        url: '/countries', // 资源URL
-        relations: ["creator"],//关联查询对象
 
-        //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
-        // https://femessage.github.io/el-data-table/
-        tableAttrs: {
-          stripe: true,
-          border: true,
-          "default-sort": {prop: 'name', order: 'descending'}, //设置默认排序
-          "row-class-name": this.statusClassName,
-          "highlight-current-row": true
-        },
+        tableConfig: { //品海表格配置
+          url: '/countries', // 资源URL
+          relations: ["creator"],//关联查询对象
 
-        // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
-        columns: [
-          {type: 'selection'}, //多选
-          {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-          {prop: 'name', label: '名称', sortable: 'custom'},
-          {prop: 'enName', label: '英文名', sortable: 'custom'},
-          {prop: 'isoCode2', label: '2位iso编码'},
-          {prop: 'isoCode3', label: '3位iso编码'},
-          {prop: 'creator.name', label: '创建人'},
-          {
-            prop: 'status',
-            label: '状态',
-            filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
-            formatter: row => (row.status === 1 ? '启用' : '禁用')
-          }
-        ],
+          //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
+          // https://femessage.github.io/el-data-table/
+          tableAttrs: {
+            "default-sort": {prop: 'name', order: 'descending'}, //设置默认排序
+            "row-class-name": this.statusClassName, //设置特殊样式
+          },
 
-        // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
-        searchForm: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '国家名称',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入国家名称'
+          // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
+          columns: [
+            {type: 'selection'}, //多选
+            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 150},
+            {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},
+            {prop: 'isoCode2', label: '2位iso编码', 'min-width': 80},
+            {prop: 'isoCode3', label: '3位iso编码', 'min-width': 80},
+            {prop: 'creator.name', label: '创建人', 'min-width': 80},
+            {
+              prop: 'status',
+              label: '状态',
+              'min-width': 80,
+              filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
+              formatter: row => (row.status === 1 ? '启用' : '禁用')
             }
-          }
-        ],
-        //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
-        // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
-        form: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '国家名称',
-            $el: {
-              placeholder: '请输入国家名称',
-              //type: ''  输入框可以设置类型，类型支持所有h5自带类型 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types
-            },
-            rules: [
-              //必填验证
-              {
-                required: true,
-                //whitespace: true, //处理空格
-                message: '必须输入',
-                trigger: 'blur'
+          ],
+
+          // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+          searchForm: [
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '国家名称',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入国家名称'
+              }
+            }
+          ],
+          //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
+          // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+          form: [
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '国家名称',
+              $el: {
+                placeholder: '请输入国家名称',
+                //type: ''  输入框可以设置类型，类型支持所有h5自带类型 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types
               },
-              //数字验证
-              // {
-              //   whitespace: true, //处理空格
-              //   type: 'number',
-              //   transform(value) {
-              //     if (value) {
-              //       return Number(value);
-              //     }
-              //   },
-              //   message: '必须为数字类型'
-              //   trigger: 'blur'
-              // },
-              //长度验证
-              {
-                min: 0,
-                max: 6,
-                whitespace: true, //处理空格
-                message: '长度不能超过6位',
-                trigger: 'blur'
-              },
-            ]
-          }
-        ]
+              rules: [
+                //必填验证
+                {
+                  required: true,
+                  //whitespace: true, //处理空格
+                  message: '必须输入',
+                  trigger: 'blur'
+                },
+                //数字验证
+                // {
+                //   whitespace: true, //处理空格
+                //   type: 'number',
+                //   transform(value) {
+                //     if (value) {
+                //       return Number(value);
+                //     }
+                //   },
+                //   message: '必须为数字类型'
+                //   trigger: 'blur'
+                // },
+                //长度验证
+                {
+                  min: 0,
+                  max: 6,
+                  whitespace: true, //处理空格
+                  message: '长度不能超过6位',
+                  trigger: 'blur'
+                },
+              ]
+            }
+          ]
+        }
       }
     },
 

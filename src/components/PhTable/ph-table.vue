@@ -43,7 +43,7 @@
     <!--表格-->
     <el-table
       ref="table"
-      v-bind="tableAttrs"
+      v-bind="phTableAttrs"
       :data="data"
       :row-style="showRow"
       :max-height="tableMaxHeight"
@@ -52,7 +52,6 @@
       @sort-change='handleSortChange'
       id="ph-table"
       @filter-change="handleFilterChange"
-      style="width: 100%"
     >
 
       <template v-if="isTree">
@@ -606,6 +605,14 @@
         size: this.paginationSize || this.paginationSizes[0],
         page: defaultFirstPage,
         phSort: null,
+        defaultTableAttrs: {
+          'style': "width: 100%",
+          'cell-style': {padding: "2px 0", 'font-size': '13px'},
+          'header-cell-style': {padding: "2px 0"},
+          stripe: true,
+          border: true,
+          "highlight-current-row": true,
+        },
 
         // https://github.com/ElemeFE/element/issues/1153
         total: null,
@@ -641,6 +648,12 @@
 
           this.$refs[dialogForm].resetFields()
         }
+      }
+    },
+
+    computed: {
+      phTableAttrs() {
+        return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       }
     },
 
