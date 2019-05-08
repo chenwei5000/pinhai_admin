@@ -1,16 +1,9 @@
 <template>
   <div class="app-container">
-
     <div class="ph-card">
-
-      <!-- title -->
       <ph-card-header :title = "title" type="table">
-
       </ph-card-header>
-
-      <!-- 表格 -->
       <div class="ph-card-body">
-        <!-- 说明  https://femessage.github.io/el-data-table/-->
         <ph-table
           :url="url"
           :columns="columns"
@@ -22,8 +15,6 @@
         </ph-table>
       </div>
     </div>
-
-
   </div>
 </template>
 
@@ -40,23 +31,19 @@
       return {
         types: [],
         names: [],
-        title: '仓库管理', // 页面标题
-        url: '/warehouses', // 资源URL
-        relations: ["dataDicItem.type","supplier"],//关联数据字典
-        
-
-        //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
-        // https://femessage.github.io/el-data-table/
+        title: '仓库管理', 
+        url: '/warehouses', 
+        relations: ["dataDicItem.type","supplier"],
+        //表格定义
         tableAttrs: {
           stripe: true,
           border: true,
           "row-class-name": this.statusClassName,
           "highlight-current-row": true
         },
-
-        // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
+        // 表格列定义
         columns: [
-          {type: 'selection'}, //多选
+          {type: 'selection'},
           {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
           {prop: 'code', label: '编码'},
           {prop: 'name', label: '名称', sortable: 'custom'},
@@ -81,7 +68,7 @@
           }
         ],
 
-        // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+        // 搜索区块定义
         searchForm: [
           {
             $type: 'input',
@@ -103,8 +90,7 @@
           }
 
         ],
-        //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
-        // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+        //  弹窗表单, 用于新增与修改
         form: [
           {
             $type: 'input',
@@ -234,16 +220,8 @@
         ]
       }
     },
-
-    // 计算属性，用于跟模版进行数据交互。
-    // computed属性，属于持续变化跟踪。在computed属性定义的时候，这个computed属性就与给它赋值的变量绑定了。
-    // 改变这个赋值变量，computed属性值会随之改变。
-    // 主要用于用过其它第三变量，间接跟页面进行数据交互时使用。
     computed: {},
-
-    // 各种相关方法定义
     methods: {
-      // 状态样式
       statusClassName({row, rowIndex}) {
         if (row.status && row.status !== 0) {
           return '';
@@ -253,8 +231,6 @@
         }
       },
     },
-
-    // 观察data中的值发送变化后，调用
     watch: {}
   }
 </script>
