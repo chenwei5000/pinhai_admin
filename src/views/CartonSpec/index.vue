@@ -14,7 +14,6 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
   import categoryModel from '../../api/category'
   import validRules from '../../components/validrules'
   import phColumns from '../../components/phColumns'
