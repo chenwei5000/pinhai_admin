@@ -77,7 +77,7 @@
               label: '收货仓库',
               $el: {
                 op: 'bw',
-                placeholder: '请输入收货仓库'
+                placeholder: '请选择收货仓库'
               },
               $options: function () {
                 var _names = []

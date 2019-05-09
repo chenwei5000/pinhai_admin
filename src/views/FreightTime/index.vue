@@ -60,7 +60,7 @@
               $options: harbourModel.getSourceHarbourOptions,
               $el: {
                 op: 'eq',
-                placeholder: '请输入发货港口'
+                placeholder: '请选择发货港口'
               }
             },
             {
@@ -70,7 +70,7 @@
               $options: shippingMethodModel.getShippingMethodOptions,
               $el: {
                 op: 'eq',
-                placeholder: '请输入物流方式'
+                placeholder: '请选择物流方式'
               }
             },
             {
