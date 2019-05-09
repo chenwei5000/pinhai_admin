@@ -24,9 +24,10 @@
 
 <script>
 
-  import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
-
+  import validRules from '../../components/validrules'
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFormItems from '../../components/phFromItems'
 
   export default {
     /**********生命周期*******/
@@ -95,35 +96,14 @@
             {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},
             {prop: 'isoCode2', label: '2位iso编码', 'min-width': 120},
             {prop: 'isoCode3', label: '3位iso编码', 'min-width': 120},
-            {prop: 'creator.name', label: '创建人', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.creator,
+            phColumns.status,
+            phColumns.lastModified
           ],
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '国家名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入国家名称'
-              }
-            }
+            phSearchItems.name,
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
           // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
@@ -144,7 +124,8 @@
                 //长度验证
                 validRules.strMax(6)
               ]
-            }
+            },
+            phFormItems.status
           ]
         }
       }
