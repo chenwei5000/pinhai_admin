@@ -15,7 +15,7 @@
 
 <script>
   import {parseTime} from '@/utils'
-  import validRules from '@/api/validrules'
+  import validRules from '@/components/validrules'
   import datadicModel from '@/api/datadic'
 
   export default {

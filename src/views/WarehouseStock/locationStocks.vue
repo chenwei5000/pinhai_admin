@@ -26,7 +26,7 @@
 
   import {parseTime} from '@/utils';
   import warehouseModel from '@/api/warehouse';
-  import validRules from '@/api/validrules'
+  import validRules from '@/components/validrules'
 
 
   export default {

@@ -15,8 +15,11 @@
 
 <script>
   import {parseTime} from '@/utils'
-  import categoryModel from '@/api/category'
-  import validRules from '@/api/validrules'
+  import categoryModel from '../../api/category'
+  import validRules from '../../components/validrules'
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFormItems from '../../components/phFromItems'
 
   export default {
     data() {
@@ -33,7 +36,7 @@
           columns: [
             {type: 'selection'},
             {prop: 'code', label: '编码', 'min-width': 150, fixed: 'left'},
-            {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
+            phColumns.id,
             {prop: 'category.name', label: '分类', 'min-width': 120},
             {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
             {prop: 'length', label: '长(Cm)', width: 80},
@@ -46,57 +49,15 @@
               label: '是否打托',
               formatter: row => (row.pallet === 1 ? '是' : '否')
             },
-            {prop: 'creator.name', label: '创建人', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.creator,
+            phColumns.status,
+            phColumns.lastModified
           ],
           //搜索栏
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'code',
-              label: '编码',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入编码'
-              }
-            },
-            //TODO: 需要按照分类搜索
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'eq',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.code,
+            phSearchItems.productCategories,
+            phSearchItems.status
           ],
           //添加或修改弹出框
           form: [
@@ -107,22 +68,7 @@
               $el: {
                 placeholder: '请输入分类'
               },
-              $options: function () {
-                var _categoryNames = [];
-                const loaddata = async function () {
-                  categoryModel.getCategories().then(categorys => {
-                    categorys.forEach(category => {
-                      _categoryNames.push({
-                        label: category.name,
-                        value: category.name
-                      });
-                    });
-                    return _categoryNames;
-                  });
-                };
-                loaddata();
-                return _categoryNames;
-              },
+              $options: categoryModel.getMineCategoriesOptions('p', false),
               rules: [
                 validRules.required
               ]
@@ -196,23 +142,7 @@
                 validRules.number
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $el: {},
-              $default: 1,
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ]
-            }
+            phFormItems.status
           ]
         }
       }

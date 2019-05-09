@@ -17,7 +17,7 @@
 
   import {parseTime} from '@/utils'
   import datadicModel from '@/api/datadic'
-  import validRules from '@/api/validrules'
+  import validRules from '@/components/validrules'
 
   export default {
 

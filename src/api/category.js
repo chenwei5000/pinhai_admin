@@ -1,14 +1,44 @@
 import global from './global.js'
-import qs from 'qs'
 
 
 const categoryModel = {
 
-    // 登陆
-    getCategories: (pageSize = -1) => {
-        const path = '/categories';
-        return global.searchResource(path, null, null, pageSize).then(data => data.rows);
+  // 分类
+  getMineCategories: (type = 'p', pageSize = -1) => {
+    let path = '/categories/permissions';
+
+    if (type == 'p') {
+      path = '/categories/permissions';
     }
+    else if (type == 'm') {
+      path = '/categories/permissionMaterials';
+    }
+
+    return global.searchResource(path, null, null, pageSize).then(data => data);
+  },
+  /**
+   * 获取物流方式下拉选项
+   * @param type  p-产品  m-原料
+   * @param strFlg
+   * @returns {Array}
+   */
+  getMineCategoriesOptions(type = 'p', strFlg = true) {
+    var _options = [];
+
+    const loaddata = async function () {
+      categoryModel.getMineCategories(type).then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: strFlg ? obj.id + '' : obj.id
+          });
+        });
+        return _options;
+      });
+    };
+    loaddata();
+    return _options;
+  }
 }
 
 export default categoryModel;

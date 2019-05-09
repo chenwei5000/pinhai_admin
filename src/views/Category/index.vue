@@ -16,7 +16,7 @@
 <script>
   import {parseTime} from '@/utils'
   import userModel from '@/api/user'
-  import validRules from '@/api/validrules'
+  import validRules from '@/components/validrules'
   import datadicModel from '@/api/datadic'
 
   export default {

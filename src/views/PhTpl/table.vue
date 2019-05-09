@@ -25,7 +25,7 @@
 <script>
 
   import {parseTime} from '@/utils'
-  import validRules from '@/api/validrules'
+  import validRules from '@/components/validrules'
 
 
   export default {

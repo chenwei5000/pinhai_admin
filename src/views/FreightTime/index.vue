@@ -17,7 +17,7 @@
   import {parseTime} from '@/utils'
   import harbourModel from '@/api/harbour'
   import shippingMethodModel from '@/api/shippingMethod'
-  import validrules from '@/api/validrules'
+  import validrules from '@/components/validrules'
   export default {
     data() {
       return {

@@ -25,7 +25,7 @@
 <script>
 
   import {parseTime} from '@/utils'
-  import validRules from '@/api/validrules'
+  import validRules from '@/components/validrules'
   import supplierModel from '@/api/supplier'
   import categoryModel from '@/api/category'
   import currencyModel from '@/api/currency'
