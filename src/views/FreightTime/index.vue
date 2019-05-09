@@ -15,38 +15,37 @@
 
 <script>
   import {parseTime} from '@/utils'
-  import {getSourceHarbours, getDestinationHarbours} from '@/api/harbour'
-  import {getShippingMethods} from '@/api/shippingMethod'
+  import harbourModel from '@/api/harbour'
+  import shippingMethodModel from '@/api/shippingMethod'
   import validrules from '@/api/validrules'
   export default {
     data() {
       return {
-        title: '分类列表', 
+        title: '分类列表',
         tableConfig: {
-          url: '/freightTimes', 
+          url: '/freightTimes',
           relations: ["sourceHarbour", "shippingMethod", "destinationHarbour"],
           tableAttrs: {
-            stripe: true,
-            border: true,
-            "highlight-current-row": true
           },
           //列表
           columns: [
-            {type: 'selection'}, 
-            {prop: 'id', label: 'ID', sortable: 'true', hidden: false}, 
+            {type: 'selection'},
+            {prop: 'id', label: 'ID', sortable: 'true', hidden: true},
+            {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 200},
+            {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 200},
+            {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 200},
+            {prop: 'spendDays', label: '物流时间(天)', 'min-width': 100},
             {
               prop: 'status',
               label: '状态',
-              hidden: true,
+              width: 80,
+              filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
               formatter: row => (row.status === 1 ? '启用' : '禁用')
             },
-            {prop: 'sourceHarbour.name', label: '发货港口'},
-            {prop: 'shippingMethod.name', label: '物流方式'},
-            {prop: 'destinationHarbour.name', label: '收货港口'},
-            {prop: 'spendDays', label: '物流时间(天)'},
             {
               prop: 'lastModified',
-              label: '最后修改时间',
+              label: '修改时间',
+              width: 140,
               formatter: row => {
                 return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
               }
@@ -58,7 +57,7 @@
               $type: 'select',
               $id: 'sourceHarbourId',
               label: '发货港口',
-              $options: getSourceHarbours(),
+              $options: harbourModel.getSourceHarbourOptions,
               $el: {
                 op: 'eq',
                 placeholder: '请输入发货港口'
@@ -68,7 +67,7 @@
               $type: 'select',
               $id: 'shippingMethodId',
               label: '物流方式',
-              $options: getShippingMethods(),
+              $options: shippingMethodModel.getShippingMethodOptions,
               $el: {
                 op: 'eq',
                 placeholder: '请输入物流方式'
@@ -78,7 +77,7 @@
               $type: 'select',
               $id: 'destinationHarbourId',
               label: '收货港口',
-              $options: getDestinationHarbours(),
+              $options: harbourModel.getDestinationHarbourOptions,
               $el: {
                 op: 'eq',
                 placeholder: '请输入收货港口'
@@ -117,7 +116,7 @@
               $el: {
                 placeholder: '请选择'
               },
-              $options: getSourceHarbours(),
+              $options: harbourModel.getSourceHarbourOptions,
               rules: [
                 validrules.required
               ]
@@ -129,7 +128,7 @@
               $el: {
                 placeholder: '请选择'
               },
-              $options: getShippingMethods(),
+              $options: shippingMethodModel.getShippingMethodOptions,
               rules: [
                 validrules.required
               ]
@@ -141,7 +140,7 @@
               $el: {
                 placeholder: '请选择'
               },
-              $options: getDestinationHarbours(),
+              $options: harbourModel.getDestinationHarbourOptions,
               rules: [
                 validrules.required
               ]
