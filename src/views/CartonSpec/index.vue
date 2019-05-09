@@ -16,6 +16,7 @@
 <script>
   import {parseTime} from '@/utils'
   import categoryModel from '@/api/category'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
@@ -123,11 +124,7 @@
                 return _categoryNames;
               },
               rules: [
-                {
-                  required: true,
-                  message: '请选择分类',
-                  trigger: blur
-                }
+                validRules.required
               ]
             },
             {
@@ -138,11 +135,7 @@
                 placeholder: '请输入编码'
               },
               rules: [
-                {
-                  required: true,
-                  message: '编码不能为空',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -151,21 +144,8 @@
               label: '托盘放置数',
               $el: {},
               rules: [
-                {
-                  required: true,
-                  message: '托盘放置数不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -176,21 +156,8 @@
                 placeholder: '请输入长度'
               },
               rules: [
-                {
-                  required: true,
-                  message: '长度不能为空',
-                  trigger: 'blur',
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -201,21 +168,8 @@
                 placeholder: '请输入宽度'
               },
               rules: [
-                {
-                  required: true,
-                  message: '宽度不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -226,21 +180,8 @@
                 placeholder: '请输入高度'
               },
               rules: [
-                {
-                  required: true,
-                  message: '高度不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -251,21 +192,8 @@
                 placeholder: '请输入皮重'
               },
               rules: [
-                {
-                  required: true,
-                  message: '皮重不能为空',
-                  trigger: 'blur'
-                },
-                {
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '必须是数字',
-                  trigger: 'blur'
-                }
+                validRules.required,
+                validRules.number
               ]
             },
             {

@@ -24,8 +24,9 @@
 
 <script>
 
-  import {parseTime} from '@/utils';
-
+  import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
+  import warehouseModel from '@/api/warehouse'
 
   export default {
 
@@ -55,13 +56,13 @@
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-            {prop: 'skuCode', label: 'SKU编码', width: 150, fixed: 'left'},
-            {prop: 'warehouseName', label: '收货仓库', width: 130},
-            {prop: 'productName', label: '产品名', sortable: 'custom'},
+            {prop: 'skuCode', label: 'SKU编码','min-width': 200},
+            {prop: 'warehouseName', label: '收货仓库','min-width': 150},
+            {prop: 'productName', label: '产品名', sortable: 'custom','min-width': 250, fixed: 'left'},
             {prop: 'productModel', label: '型号', hidden: true},
             {prop: 'productColor', label: '颜色', hidden: true},
             {prop: 'productSize', label: '尺码', hidden: true},
-            {prop: 'cartonSpecCode', label: '箱规', width: 130},
+            {prop: 'cartonSpecCode', label: '箱规', 'min-width': 150},
             {prop: 'numberOfCarton', label: '装箱数', width: 100},
             {prop: 'qty', label: '件数', width: 80},
             {prop: 'cartonQty', label: '箱数', fixed: 'right', width: 80}
@@ -76,6 +77,23 @@
               $el: {
                 op: 'bw',
                 placeholder: '请输入收货仓库'
+              },
+              $options: function () {
+                var _names = []
+                const loadData = async function () {
+                  warehouseModel.getSuppliers().then(warehouses => {
+                    warehouses.forEach(warehouse => {
+                      _names.push({
+                        label: warehouse.name,
+                        value: warehouse.id
+                      });
+                    });
+                    return _names;
+                  });
+                };
+
+                loadData();
+                return _names;
               }
             },
             {
@@ -87,7 +105,6 @@
                 placeholder: '请输入SKU编码'
               }
             }
-
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
           // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
@@ -100,11 +117,7 @@
                 placeholder: '请输入收货仓库'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入收货仓库',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -114,12 +127,6 @@
               $el: {
                 placeholder: '请输入SKU编码'
               },
-              rules: [
-                {
-                  message: '请输入SKU编码',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -128,12 +135,6 @@
               $el: {
                 placeholder: '请输入产品名'
               },
-              rules: [
-                {
-                  message: '请输入产品名',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'select',
@@ -142,12 +143,6 @@
               $el: {
                 placeholder: '请输入型号'
               },
-              rules: [
-                {
-                  message: '请输入型号',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -156,12 +151,6 @@
               $el: {
                 placeholder: '请输入颜色'
               },
-              rules: [
-                {
-                  message: '请输入颜色',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -170,12 +159,6 @@
               $el: {
                 placeholder: '请输入尺码'
               },
-              rules: [
-                {
-                  message: '请输入尺码',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -184,12 +167,6 @@
               $el: {
                 placeholder: '请输入箱规'
               },
-              rules: [
-                {
-                  message: '请输入箱规',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -199,10 +176,7 @@
                 placeholder: '请输入装箱数'
               },
               rules: [
-                {
-                  message: '请输入装箱数',
-                  trigger: 'blur'
-                }
+                validRules.number
               ]
             },
             {
@@ -213,10 +187,7 @@
                 placeholder: '请输入库存箱数'
               },
               rules: [
-                {
-                  message: '请输入库存箱数',
-                  trigger: 'blur'
-                }
+                validRules.number
               ]
             },
             {
@@ -227,10 +198,7 @@
                 placeholder: '请输入库存件数'
               },
               rules: [
-                {
-                  message: '请输入库存件数',
-                  trigger: 'blur'
-                }
+                validRules.number
               ]
             }
           ]

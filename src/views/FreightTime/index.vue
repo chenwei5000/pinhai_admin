@@ -5,12 +5,7 @@
       </ph-card-header>
       <div class="ph-card-body">
         <ph-table
-          :url="url"
-          :columns="columns"
-          :searchForm="searchForm"
-          :form="form"
-          :tableAttrs="tableAttrs"
-          :relations="relations"
+          v-bind="tableConfig"
         >
         </ph-table>
       </div>
@@ -21,12 +16,14 @@
 <script>
   import {parseTime} from '@/utils'
   import userModel from '@/api/user'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
       return {
-        title: '分类列表', 
-        url: '/categories', 
+        title: '分类列表',
+        tableConfig: {
+        url: '/categories',
         relations: ["creator", "user"],
         tableAttrs: {
           stripe: true,
@@ -36,24 +33,26 @@
         },
         //列表
         columns: [
-          {type: 'selection'}, 
-          {prop: 'id', label: 'ID', sortable: 'true', hidden: false}, 
+          {type: 'selection'},
+          {prop: 'id', label: 'ID', sortable: 'true', hidden: true},
+          {prop: 'materialName', label: '类型'},
+          {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
+          {prop: 'safetyStockWeek', label: '安全库存(周)', width: 100 , 'label-class-name': 'ph-header-small'},
+          {prop: 'vip1SafetyStockWeek', label: 'Vip1安全库存(周)',width: 120, 'label-class-name': 'ph-header-small'},
+          {prop: 'vip2SafetyStockWeek', label: 'Vip2安全库存(周)',width: 120, 'label-class-name': 'ph-header-small' },
+          {
+            prop: 'needMaterial',
+            label: '产品必须设置原材料',
+            'label-class-name': 'ph-header-small',
+            formatter: row => (row.needMaterial === 1 ? '是' : '否')
+            },
           {
             prop: 'status',
             label: '状态',
+            width:80,
             formatter: row => (row.status === 1 ? '启用' : '禁用')
           },
-          {prop: 'materialName', label: '类型'},
-          {prop: 'name', label: '分类名称'},
-          {prop: 'safetyStockWeek', label: '安全库存(周)'},
-          {prop: 'vip1SafetyStockWeek', label: 'Vip1安全库存(周)'},
-          {prop: 'vip2SafetyStockWeek', label: 'Vip2安全库存(周)'},
-          {
-            prop: 'needMaterial', 
-            label: '产品必须设置原材料',
-            formatter: row => (row.needMaterial === 1 ? '是' : '否')
-            },
-          {prop: 'user.name', label: '采购负责人'},
+          {prop: 'user.name', label: '采购负责人', width: 100},
         ],
         // 搜索
         searchForm: [
@@ -87,7 +86,7 @@
                 label: '原料',
                 value: '1'
               },
-              
+
             ]
           },
           {
@@ -141,11 +140,7 @@
             $el: {
             },
             rules: [
-              {
-                required: true,
-                message: '分类名称不能为空',
-                trigger: 'blur'
-              }
+              validRules.required
             ]
           },
            {
@@ -200,7 +195,7 @@
                     users.forEach(user => {
                       _users.push({
                         label: user.name,
-                        value: user.id 
+                        value: user.id
                       });
                     });
                     return _users;
@@ -210,11 +205,7 @@
               return _users;
             },
             rules: [
-              {
-                required: true,
-                message: '请选择采购负责人',
-                trigger: blur
-              }
+              validRules.required
             ]
           },
           {
@@ -235,6 +226,7 @@
             ]
           }
         ]
+      }
       }
     },
     computed: {},

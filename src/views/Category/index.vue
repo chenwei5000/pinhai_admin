@@ -17,14 +17,16 @@
   import {parseTime} from '@/utils'
   import userModel from '@/api/user'
   import validRules from '@/api/validrules'
+  import datadicModel from '@/api/datadic'
 
   export default {
     data() {
       return {
+        materials:[],
         title: '分类列表',
         tableConfig: {
           url: '/categories',
-          relations: ["creator", "user"],
+          relations: ["creator", "user","dataDicItem.type"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
           },
@@ -35,15 +37,16 @@
             {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 100},
             {prop: 'user.name', label: '采购负责人', width: 100},
-            {
-              prop: 'needMaterial',
-              label: '产品必须设置原材料',
-              formatter: row => (row.needMaterial === 1 ? '是' : '否'),
-              width: 150
-            },
             {prop: 'safetyStockWeek', label: '安全库存(周)', width: 100, 'label-class-name': 'ph-header-small'},
             {prop: 'vip1SafetyStockWeek', label: 'Vip1安全库存(周)', width: 120, 'label-class-name': 'ph-header-small'},
             {prop: 'vip2SafetyStockWeek', label: 'Vip2安全库存(周)', width: 120, 'label-class-name': 'ph-header-small'},
+            {
+              prop: 'needMaterial',
+              label: '产品必须设置原材料',
+              'label-class-name': 'ph-header-small',
+              formatter: row => (row.needMaterial === 1 ? '是' : '否'),
+              width: 150
+            },
             {prop: 'creator.name', label: '创建人', width: 100},
             {
               prop: 'status',
@@ -80,21 +83,24 @@
                 op: 'eq',
                 placeholder: '请选择类型'
               },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '产品',
-                  value: '0'
-                },
-                {
-                  label: '原料',
-                  value: '1'
-                },
+              $options: function () {
+                var _materials = []
 
-              ]
+                const loadData = async function () {
+                  datadicModel.getByType("materialName").then(datadics => {
+                    datadics.forEach(datadic => {
+                      _materials.push({
+                        label: datadic.valueName,
+                        value: datadic.valueId
+                      });
+                    });
+                    return _materials;
+                  });
+                };
+
+                loadData();
+                return _materials;
+              }
             },
             {
               $type: 'select',
@@ -122,23 +128,30 @@
           ],
           //修改或新增
           form: [
-            //TODO: 替换成数据字典
             {
               $type: 'select',
-              $id: 'material',
+              $id: 'materialName',
               label: '类型',
               $default: 0,
               $el: {},
-              $options: [
-                {
-                  label: '产品',
-                  value: 0
-                },
-                {
-                  label: '原料',
-                  value: 1
-                }
-              ]
+              $options: function () {
+                var _materials = []
+
+                const loadData = async function () {
+                  datadicModel.getByType("materialName").then(datadics => {
+                    datadics.forEach(datadic => {
+                      _materials.push({
+                        label: datadic.valueName,
+                        value: datadic.valueId
+                      });
+                    });
+                    return _materials;
+                  });
+                };
+
+                loadData();
+                return _materials;
+              }
             },
             {
               $type: 'input',

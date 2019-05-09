@@ -5,12 +5,7 @@
       </ph-card-header>
       <div class="ph-card-body">
         <ph-table
-          :url="url"
-          :columns="columns"
-          :searchForm="searchForm"
-          :form="form"
-          :tableAttrs="tableAttrs"
-          :relations="relations"
+          v-bind="tableConfig"
         >
         </ph-table>
       </div>
@@ -20,122 +15,119 @@
 
 <script>
   import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
       return {
-        title: '港口列表', 
-        url: '/harbours', 
-        relations: ["creator"],
-        tableAttrs: {
-          stripe: true,
-          border: true,
-          "row-class-name": this.statusClassName,
-          "highlight-current-row": true
-        },
-        columns: [
-          {type: 'selection'}, 
-          {prop: 'id', label: 'ID', sortable: 'custom', hidden: false},
-          {
-            prop: 'status',
-            label: '状态',
-            formatter: row => (row.status === 1 ? '启用' : '禁用')
+        title: '港口列表',
+        tableConfig: {
+          url: '/harbours',
+          relations: ["creator"],
+          tableAttrs: {
+            stripe: true,
+            border: true,
+            "row-class-name": this.statusClassName,
+            "highlight-current-row": true
           },
-          {prop: 'name', label: '名称', sortable: 'custom'},
-          {prop: 'location', label: '地址', sortable: 'custom'},
-          {prop: 'creator.name', label: '创建人'},
-          {
-            prop: 'lastModified',
-            label: '最后修改时间',
-            formatter: row => {
-              return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
+          columns: [
+            {type: 'selection'},
+            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
+            {prop: 'location', label: '地址', sortable: 'custom' ,'min-width': 100},
+            {prop: 'creator.name', label: '创建人', width: 100},
+            {
+              prop: 'status',
+              label: '状态',
+              width: 80,
+              formatter: row => (row.status === 1 ? '启用' : '禁用')
+            },
+            {
+              prop: 'lastModified',
+              label: '修改时间',
+              width: 140,
+              formatter: row => {
+                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
+              }
             }
-          }
-        ],
+          ],
 
-        searchForm: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '港口名称',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入港口名称'
+          searchForm: [
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '港口名称',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入港口名称'
+              }
+            },
+            {
+              $type: 'select',
+              $id: 'status',
+              label: '状态',
+              $el: {
+                op: 'bw',
+                placeholder: '请选择状态'
+              },
+              $options: [
+                {
+                  label: '全部',
+                  value: ''
+                },
+                {
+                  label: '开启',
+                  value: '1'
+                },
+                {
+                  label: '禁用',
+                  value: '0'
+                }
+              ]
             }
-          },
-          {
-            $type: 'select',
-            $id: 'status',
-            label: '状态',
-            $el: {
-              op: 'bw',
-              placeholder: '请选择状态'
-            },
-            $options: [
-              {
-                label: '全部',
-                value: ''
+          ],
+          form: [
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '港口名称',
+              $el: {
+                placeholder: '请输入港口名称'
               },
-              {
-                label: '开启',
-                value: '1'
-              },
-              {
-                label: '禁用',
-                value: '0'
-              }
-            ]
-          }
-        ],
-        form: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '港口名称',
-            $el: {
-              placeholder: '请输入港口名称'
+              rules: [
+                validRules.required
+              ]
             },
-            rules: [
-              {
-                required: true,
-                message: '请输入港口名称',
-                trigger: 'blur'
-              }
-            ]
-          },
-          {
-            $type: 'input',
-            $id: 'location',
-            label: '港口地址',
-            $el: {
-              placeholder: '请输入港口地址'
-            },
-            rules: [
-              {
-                required: true,
-                message: '请输入港口地址',
-                trigger: 'blur'
-              }
-            ]
-          },
-          {
-            $type: 'radio-group',
-            $id: 'status',
-            label: '状态',
-            $el: {},
-            $default: 1 ,
-            $options: [
-              {
-                label: '开启',
-                value: 1
+            {
+              $type: 'input',
+              $id: 'location',
+              label: '港口地址',
+              $el: {
+                placeholder: '请输入港口地址'
               },
-              {
-                label: '禁用',
-                value: 0
-              }
-            ]
-          }
-        ]
+              rules: [
+                validRules.required
+              ]
+            },
+            {
+              $type: 'radio-group',
+              $id: 'status',
+              label: '状态',
+              $el: {},
+              $default: 1,
+              $options: [
+                {
+                  label: '开启',
+                  value: 1
+                },
+                {
+                  label: '禁用',
+                  value: 0
+                }
+              ]
+            }
+          ]
+        }
       }
     },
     computed: {},

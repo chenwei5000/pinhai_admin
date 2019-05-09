@@ -16,10 +16,12 @@
 <script>
   import {parseTime} from '@/utils'
   import validRules from '@/api/validrules'
+  import datadicModel from '@/api/datadic'
 
   export default {
     data() {
       return {
+        types : [],
         title: '安全库存配置列表',
         tableConfig: {
           url: '/safetyStockConfigs',
@@ -32,7 +34,7 @@
             {type: 'selection'},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true, width: 80},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 80, fixed: 'left'},
-            {prop: 'typeName', label: '类型', 'width': 100},
+            {prop: 'typeName', label: '类型', 'min-width': 100},
             {prop: 'vip0SafetyStockWeek', label: 'Vip0普通', 'width': 90},
             {prop: 'vip1SafetyStockWeek', label: 'Vip1热销', 'width': 90},
             {prop: 'vip2SafetyStockWeek', label: 'Vip2爆款', 'width': 90},
@@ -101,25 +103,28 @@
               ]
             },
             {
-              //TODO: 替换成数据字典
               $type: 'select',
               $id: 'typeName',
               $default: '成品',
               label: '类型',
-              $options: [
-                {
-                  label: '成品',
-                  value: '成品'
-                },
-                {
-                  label: '原料',
-                  value: '原料'
-                },
-                {
-                  label: '成品+原料',
-                  value: '成品+原料'
-                }
-              ]
+              $options: function () {
+                var _types = []
+
+                const loadData = async function () {
+                  datadicModel.getByType("typeName").then(datadics => {
+                    datadics.forEach(datadic => {
+                      _types.push({
+                        label: datadic.valueName,
+                        value: datadic.valueId
+                      });
+                    });
+                    return _types;
+                  });
+                };
+
+                loadData();
+                return _types;
+              }
             },
             {
               $type: 'input',

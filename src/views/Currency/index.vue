@@ -15,6 +15,7 @@
 
 <script>
   import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
@@ -107,11 +108,7 @@
                 placeholder: '请输入名称'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入名称',
-                  trigger: 'blur'
-                }
+                  validRules.required
               ]
             },
             {
@@ -122,11 +119,7 @@
                 placeholder: '请输入代码'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入代码',
-                  trigger: 'blur'
-                }
+                  validRules.required
               ]
             },
             {
@@ -137,11 +130,7 @@
                 placeholder: '请输入左侧符'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入左侧符',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -152,11 +141,7 @@
                 placeholder: '请输入右侧符'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入右侧符',
-                  trigger: 'blur'
-                }
+                validRules.strMax(1)
               ]
             },
             {
@@ -168,11 +153,7 @@
                 placeholder: '请输入小数符'
               },
               rules: [
-                {
-                  max: 1,
-                  message: '长度不能超过1位',
-                  trigger: 'blur'
-                }
+                validRules.strMax(1)
               ]
             },
             {
@@ -184,11 +165,7 @@
                 placeholder: '请输入千分位符'
               },
               rules: [
-                {
-                  max: 1,
-                  message: '长度不能超过1位',
-                  trigger: 'blur'
-                }
+                validRules.strMax(1)
               ]
             },
             {
@@ -200,17 +177,7 @@
                 placeholder: '请输入小数位数',
               },
               rules: [
-                {
-                  whitespace: true,
-                  type: 'integer',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '小数位数必须为正整数',
-                  trigger: 'blur'
-                }
+                validRules.integer
               ]
             },
             {
@@ -222,17 +189,7 @@
                 placeholder: '请输入汇率值'
               },
               rules: [
-                {
-                  whitespace: true,
-                  type: 'number',
-                  transform(value) {
-                    if (value) {
-                      return Number(value);
-                    }
-                  },
-                  message: '汇率值必须为数字类型',
-                  trigger: 'blur'
-                }
+                validRules.number
               ]
             },
             {

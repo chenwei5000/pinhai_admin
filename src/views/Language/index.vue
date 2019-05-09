@@ -15,6 +15,7 @@
 
 <script>
   import {parseTime} from '@/utils'
+  import validRules from '@/api/validrules'
 
   export default {
     data() {
@@ -29,8 +30,8 @@
           columns: [
             {type: 'selection'},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            {prop: 'name', label: '名称', 'min-width': 150, fixed: 'left', sortable: 'custom'},
             {prop: 'code', label: '代码', sortable: 'custom', 'min-width': 150},
-            {prop: 'name', label: '名称', 'min-width': 150},
             {
               prop: 'status',
               label: '状态',
@@ -92,11 +93,7 @@
                 placeholder: '请输入代码'
               },
               rules: [
-                {
-                  required: true,
-                  message: '代码不能为空',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -107,11 +104,7 @@
                 placeholder: '请输入名称'
               },
               rules: [
-                {
-                  required: true,
-                  message: '名称不能为空',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {

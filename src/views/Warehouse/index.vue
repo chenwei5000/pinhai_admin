@@ -16,8 +16,9 @@
 <script>
 
   import {parseTime} from '@/utils'
-  import datadicModel from '@/api/datadic';
-  import supplierModel from '@/api/supplier';
+  import datadicModel from '@/api/datadic'
+  import supplierModel from '@/api/supplier'
+  import validRules from '@/api/validrules'
 
 
   export default {
@@ -42,22 +43,24 @@
           columns: [
             {type: 'selection'},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-            {prop: 'code', label: '编码'},
-            {prop: 'name', label: '名称', sortable: 'custom'},
-            {prop: 'address', label: '地址'},
-            {prop: 'linkman', label: '联系人'},
-            {prop: 'tel', label: '联系电话'},
+            {prop: 'code', label: '编码',  'min-width': 200},
+            {prop: 'name', label: '名称', sortable: 'custom',  'min-width': 200, fixed: 'left'},
+            {prop: 'address', label: '地址',  'min-width': 150},
+            {prop: 'linkman', label: '联系人', width: 100},
+            {prop: 'tel', label: '联系电话', width: 125},
             {prop: 'type', label: '类型'},
             {prop: 'supplierId', label: '供货商编号', hidden: true},
-            {prop: 'supplier.name', label: '供货商名称'},
+            {prop: 'supplier.name', label: '供货商名称', 'min-width': 150},
             {
               prop: 'status',
               label: '状态',
+              width:80,
               formatter: row => (row.status === 1 ? '启用' : '禁用')
             },
             {
               prop: 'lastModified',
-              label: '最后修改时间',
+              label: '修改时间',
+              width: 140,
               formatter: row => {
                 return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
               }
@@ -96,11 +99,7 @@
                 placeholder: '请输入编码'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入编码',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -111,11 +110,7 @@
                 placeholder: '请输入名称'
               },
               rules: [
-                {
-                  required: true,
-                  message: '请输入名称',
-                  trigger: 'blur'
-                }
+                validRules.required
               ]
             },
             {
@@ -125,12 +120,6 @@
               $el: {
                 placeholder: '请输入地址'
               },
-              rules: [
-                {
-                  message: '请输入地址',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -139,12 +128,6 @@
               $el: {
                 placeholder: '请输入联系人'
               },
-              rules: [
-                {
-                  message: '请输入联系人',
-                  trigger: 'blur'
-                }
-              ]
             },
             {
               $type: 'input',
@@ -154,10 +137,7 @@
                 placeholder: '请输入联系电话'
               },
               rules: [
-                {
-                  message: '请输入联系电话',
-                  trigger: 'blur'
-                }
+                validRules.number
               ]
             },
             {
