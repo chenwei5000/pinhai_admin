@@ -17,6 +17,52 @@
       </el-form-item>
     </ph-form>
 
+    <!--筛选过滤-->
+    <div class="filterbox">
+      <div class="filter-with-count" v-if="filterData">
+        <el-tag
+          disable-transitions
+          v-for="(item, index) in filterData"
+          :key="index"
+          closable
+          style="margin-right:10px;"
+          @close="handleTagClose(item)"
+          size="small"
+          type='info'>
+        <span
+          style="color:#bbb"
+          v-if="item.ftn">
+          {{item.ftn}}:
+        </span>
+          {{item.label}}
+        </el-tag>
+        <div class="count">
+          <slot name="tip">
+            <b>
+              <slot name="count"></slot>
+            </b>
+          </slot>
+        </div>
+        <div class="count">
+          <slot name="curnum">
+            <b>
+              <slot name="curcount"></slot>
+            </b>
+          </slot>
+        </div>
+        <div class="count">
+          <slot name="selectnum">
+            <b>
+              <slot name="selectcount"></slot>
+            </b>
+          </slot>
+        </div>
+      </div>
+      <div>
+        <slot></slot>
+      </div>
+    </div>
+
     <!--新增、编辑-->
     <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
       <el-form-item>
@@ -120,6 +166,9 @@
           v-bind="col"
           v-if="!col.hidden"
         >
+
+
+
         </el-table-column>
       </template>
 
@@ -159,6 +208,35 @@
       <slot></slot>
 
     </el-table>
+
+    <!-- 注册的筛选器 -->
+    <div v-clickoutside='allfilterHide'>
+      <template v-for="(item, key) in regfilters">
+        <!-- 输入框选择器 -->
+        <div :class="{'filterWrap': true, 'hideBg': item.hidebg}"
+             v-show="filterAction[key]"
+             :key="key"
+             :style="item.position">
+          <div class="filterContainer">
+            <component
+              :key="key"
+              :is="item.component"
+              :data="item.data"
+              :filterkey="item.filterkey"
+              :listinfo="item.listinfo"
+              :refname="item.refname"
+              :cdata="item.cdata"
+              :myprops="item.myprops"
+              :placeholderstr="item.myplaceholder"
+              :unit="item.unit"
+              :ftn="item.ftn"
+              :customizedata="item.customizedata"
+              @getFilterBridge="getFilterBridge">
+            </component>
+          </div>
+        </div>
+      </template>
+    </div>
 
     <!--分页-->
     <el-pagination
@@ -205,6 +283,43 @@
   import _get from 'lodash.get'
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
+
+  // 过滤功能
+  import editFilter from './Filters/edit.vue'
+  import dateFilter from './Filters/date.vue'
+  import cascaderFilter from './Filters/cascader.vue'
+  import searchFilter from './Filters/search.vue'
+  import radiosFilter from './Filters/radio.vue'
+  import rangeFilter from './Filters/range.vue'
+  import {doDeleteFilter} from './js/index.js'
+
+  const myFilterComponts = {
+    edit: editFilter,
+    date: dateFilter,
+    cascader: cascaderFilter,
+    search: searchFilter,
+    radio: radiosFilter,
+    range: rangeFilter
+  }
+
+  // 渲染出来后各种类型筛选器的数量 对应的filter的key
+  // 因为可能有多个一样类型的筛选器
+  const curFilterCount = {
+    edit: 0,
+    date: 0,
+    cascader: 0,
+    search: 0,
+    radio: 0,
+    range: 0
+  }
+  const _regFilter = {}
+  const _filterAction = {}
+  // 存放当前显示的 filter数据 e--》filter的header  filter--》filter的对象映射
+  const _curFilter = ''
+  const _filterbar = null
+  const _regfilterarr = []
+
+
 
   // 默认返回的数据格式如下
   //          {
@@ -619,6 +734,7 @@
         total: null,
         loading: false,
         selected: [],
+        filterData: [],
 
         //弹窗
         dialogTitle: this.dialogNewTitle,
@@ -912,6 +1028,14 @@
           'update:customQuery',
           Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
         )
+      },
+
+      // 删除tag
+      handleTagClose(tag) {
+        this.filterData.splice(this.filterData.indexOf(tag), 1);
+
+        var dofilter = doDeleteFilter(tag)
+        this.$emit('filter-change', dofilter)
       },
 
       // 一页显示数量调整
