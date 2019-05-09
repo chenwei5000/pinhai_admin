@@ -5,9 +5,9 @@ import qs from 'qs'
 const categoryModel = {
 
     // 登陆
-    getCategories: () => {
+    getCategories: (pageSize = -1) => {
         const path = '/categories';
-        return global.axios.get(path).then(res => res.data.rows);
+        return global.searchResource(path, null, null, pageSize).then(data => data.rows);
     }
 }
 

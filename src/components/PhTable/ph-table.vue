@@ -18,7 +18,7 @@
     </ph-form>
 
     <!--新增、编辑-->
-    <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 ">
+    <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
       <el-form-item>
         <el-button v-if="hasNew" type="primary" size="small"
                    @click="onDefaultNew" id="ph-table-add">新增
@@ -173,6 +173,7 @@
       background
       :layout="paginationLayout"
       id="ph-table-page"
+      ref="pageForm"
     >
     </el-pagination>
 
@@ -658,8 +659,12 @@
     },
 
     mounted() {
+      //全屏，表格高度处理
+      window.onresize = () => {
+        this.getTableHeight();
+      }
 
-
+      //搜索区块，根据url恢复功能
       let searchForm = this.$refs.searchForm
       if (searchForm) {
         // 恢复查询条件
@@ -685,14 +690,25 @@
       }
 
       this.$nextTick(() => {
-
-        let h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight; //浏览器高度
-        this.tableMaxHeight = h - 230 - this.$refs.searchForm.$el.offsetHeight - 62;
-
-        this.getList()
+        this.getTableHeight();
+        this.getList();
       })
     },
     methods: {
+      // 获取表格的高度
+      getTableHeight() {
+        //浏览器高度
+        let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        //表格高度
+        let tableHeight = windowHeight;
+        tableHeight = tableHeight - 84; //减框架头部高度
+        tableHeight = tableHeight - 82; //减标题高度
+        tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
+        tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
+        tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
+        tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+        this.tableMaxHeight = tableHeight;
+      },
       /*获取列表*/
       getList(shouldStoreQuery) {
         //搜索表单，搜索用
