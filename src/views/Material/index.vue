@@ -27,20 +27,20 @@
   import {parseTime} from '@/utils'
   import validRules from '@/api/validrules'
   import supplierModel from '@/api/supplier'
-  import cartonspecModel from '@/api/cartonspec'
   import categoryModel from '@/api/category'
+  import currencyModel from '@/api/currency'
 
   export default {
 
     data() {
       return {
         categoryNames : [],
-        specs: [],
+        currencyNames:[],
         names: [],
-        title: '产品管理', // 页面标题
+        title: '原材料管理', // 页面标题
         tableConfig: {
-          url: '/products', // 资源URL
-          relations: ["supplier","cartonSpec", "category"],
+          url: '/materials', // 资源URL
+          relations: ["supplier","currency", "category"],
 
           //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
           // https://femessage.github.io/el-data-table/
@@ -55,33 +55,21 @@
           columns: [
             {type: 'selection'}, //多选
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-            {prop: 'imgUrl', label: '图片'},
             {prop: 'skuCode', label: 'SKU','min-width': 200},
             {prop: 'categoryId', label: '分类ID', sortable: 'custom', hidden: true},
             {prop: 'category.name', label: '分类名称',width:80},
-            {prop: 'groupName', label: '款式', sortable: 'custom',width:80},
-            {prop: 'name', label: '产品名称',  'min-width': 250},
-            {prop: 'fnSku', label: 'FN-SKU', hidden: true},
-            {prop: 'model', label: '型号', hidden: true},
-            {prop: 'color', label: '颜色', hidden: true},
-            {prop: 'size', label: '尺码', hidden: true},
-            {prop: 'grossWeight', label: '净重(Kg)',width:80},
-            {prop: 'sizeInfo', label: '体积', hidden: true},
-            {prop: 'length', label: '长(Cm)', hidden: true},
-            {prop: 'width', label: '宽(Cm)', hidden: true},
-            {prop: 'height', label: '高(Cm)', hidden: true},
+            {prop: 'name', label: '原材料名称',  'min-width': 250},
+            {prop: 'model', label: '型号'},
+            {prop: 'color', label: '颜色'},
+            {prop: 'size', label: '尺码'},
+            {prop: 'unit', label: '单位'},
+            {prop: 'grossWeight', label: '毛重(Kg)',width:80, hidden: true},
             {prop: 'supplierId', label: '供货商', hidden: true},
             {prop: 'supplier.name', label: '供货商名称',  'min-width': 100, 'label-class-name': 'ph-header-small'},
             {prop: 'currencyId', label: '结算货币', hidden: true},
-            {prop: 'currencyName', label: '结算货币', hidden: true},
+            {prop: 'currency.name', label: '结算货币', hidden: true},
             {prop: 'price', label: '采购价', hidden: true},
             {prop: 'leadDay', label: '交期(天)', hidden: true},
-            {prop: 'cartonSpecId', label: '箱规', hidden: true},
-            {prop: 'cartonSpec.code', label: '箱规', 'min-width': 150},
-            {prop: 'numberOfCarton', label: '装箱数量', width: 80, 'label-class-name': 'ph-header-small'},
-            {prop: 'vipLevel', label: 'Vip级别', hidden: true},
-            {prop: 'oversize', label: '超大', hidden: true},
-            {prop: 'parentSku', label: 'Parent Asin', hidden: true},
             {prop: 'comment', label: '备注', hidden: true},
             {
               prop: 'status',
@@ -117,7 +105,7 @@
                     categorys.forEach(category => {
                       _categoryNames.push({
                         label: category.name,
-                        value: category.id
+                        value: category.id 
                       });
                     });
                     return _categoryNames;
@@ -125,25 +113,17 @@
                 };
                 loaddata();
                 return _categoryNames;
+              }
               },
 
-            },
-            {
-              $type: 'input',
-              $id: 'groupName',
-              label: '款式',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入款式'
-              }
-            },
+
             {
               $type: 'input',
               $id: 'name',
-              label: '产品名称',
+              label: '原材料名称',
               $el: {
                 op: 'bw',
-                placeholder: '请输入产品名称'
+                placeholder: '请输入原材料名称'
               }
             }
 
@@ -164,10 +144,10 @@
             },
             {
               $type: 'select',
-              $id: 'categoryId',
+              $id: 'groupCode',
               label: '分类',
               $el: {
-                placeholder: '请选择分类'
+                placeholder: '请输入分类'
               },
               $options: function () {
                 var _categoryNames = [];
@@ -176,7 +156,7 @@
                     categorys.forEach(category => {
                       _categoryNames.push({
                         label: category.name,
-                        value: category.id
+                        value: category.name
                       });
                     });
                     return _categoryNames;
@@ -190,32 +170,42 @@
               ]
             },
             {
-              $type: 'input',
-              $id: 'groupName',
-              label: '款式',
+              $type: 'select',
+              $id: 'currencyId',
+              label: '结算货币',
               $el: {
-                placeholder: '请输入款式'
+                placeholder: '请选择结算货币'
+              },
+              $options: function () {
+                var _currencyNames = [];
+                const loadData = async function () {
+                  currencyModel.getCurrencies().then(currencies => {
+                    currencies.forEach(currency => {
+                      _currencyNames.push({
+                        label: currency.name,
+                        value: currency.id
+                      });
+                    });
+                    return _currencyNames;
+                  });
+                };
+                loadData();
+                return _currencyNames;
               },
             },
             {
               $type: 'input',
               $id: 'name',
-              label: '产品名称',
+              label: '原材料名称',
               $el: {
-                placeholder: '请输入产品名称'
-              },
+                placeholder: '请输入原材料名称'
+              },rules: [
+                validRules.required
+              ]
             },
             {
               $type: 'input',
-              $id: 'fnSku',
-              label: 'FN-SKU',
-              $el: {
-                placeholder: '请输入FN-SKU'
-              },
-            },
-            {
-              $type: 'input',
-              $id: 'name',
+              $id: 'model',
               label: '型号',
               $el: {
                 placeholder: '请输入型号'
@@ -240,9 +230,9 @@
             {
               $type: 'input',
               $id: 'grossWeight',
-              label: '净重(Kg)',
+              label: '毛重(Kg)',
               $el: {
-                placeholder: '请输入净重(Kg)'
+                placeholder: '请输入毛重(Kg)'
               },
               rules: [
                 validRules.number
@@ -250,10 +240,10 @@
             },
             {
               $type: 'input',
-              $id: 'sizeInfo',
-              label: '体积',
+              $id: 'leadDay',
+              label: '交期(天)',
               $el: {
-                placeholder: '请输入体积'
+                placeholder: '请输入交期(天)'
               },
               rules: [
                 validRules.number
@@ -261,26 +251,10 @@
             },
             {
               $type: 'input',
-              $id: 'fnSku',
-              label: 'FN-SKU',
+              $id: 'comment',
+              label: '备注',
               $el: {
-                placeholder: '请输入FN-SKU'
-              },
-            },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                placeholder: '请输入名称'
-              },
-            },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '型号',
-              $el: {
-                placeholder: '请输入型号'
+                placeholder: '请输入备注'
               },
             },
             {
@@ -306,31 +280,6 @@
 
                 loadData();
                 return _names;
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'cartonSpecId',
-              label: '箱规',
-              $el: {
-                placeholder: '请选择箱规'
-              },
-              $options: function () {
-                var _specs = []
-                const loadData = async function () {
-                  cartonspecModel.getCartonspecs().then(cartonSpecs => {
-                    cartonSpecs.forEach(cartonSpec => {
-                      _specs.push({
-                        label: cartonSpec.code,
-                        value: cartonSpec.id
-                      });
-                    });
-                    return _specs;
-                  });
-                };
-
-                loadData();
-                return _specs;
               }
             },
           ]

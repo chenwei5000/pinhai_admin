@@ -74,7 +74,6 @@
                 placeholder: '请输入分类名称'
               }
             },
-            //TODO: 替换成数据字典
             {
               $type: 'select',
               $id: 'material',
