@@ -763,7 +763,7 @@
         Object.keys(query).filter(k => {
           return query[k] !== '' && query[k] !== null && query[k] !== undefined
         }).forEach(function (param, k) {
-          let oParam = query[param]
+          let oParam = query[param];
           filters.push({
             'field': param,
             op: oParam.op ? oParam.op : 'eq',

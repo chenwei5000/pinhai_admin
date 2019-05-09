@@ -4,7 +4,7 @@
     <div class="ph-card">
 
       <!-- title -->
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
 
       </ph-card-header>
 
@@ -34,13 +34,13 @@
 
     data() {
       return {
-        categoryNames : [],
-        currencyNames:[],
+        categoryNames: [],
+        currencyNames: [],
         names: [],
         title: '原材料管理', // 页面标题
         tableConfig: {
           url: '/materials', // 资源URL
-          relations: ["supplier","currency", "category"],
+          relations: ["supplier", "currency", "category"],
 
           //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
           // https://femessage.github.io/el-data-table/
@@ -55,17 +55,17 @@
           columns: [
             {type: 'selection'}, //多选
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-            {prop: 'skuCode', label: 'SKU','min-width': 200},
+            {prop: 'skuCode', label: 'SKU', 'min-width': 200},
             {prop: 'categoryId', label: '分类ID', sortable: 'custom', hidden: true},
-            {prop: 'category.name', label: '分类名称',width:80},
-            {prop: 'name', label: '原材料名称',  'min-width': 250},
+            {prop: 'category.name', label: '分类名称', width: 80},
+            {prop: 'name', label: '原材料名称', 'min-width': 250},
             {prop: 'model', label: '型号'},
             {prop: 'color', label: '颜色'},
             {prop: 'size', label: '尺码'},
             {prop: 'unit', label: '单位'},
-            {prop: 'grossWeight', label: '毛重(Kg)',width:80, hidden: true},
+            {prop: 'grossWeight', label: '毛重(Kg)', width: 80, hidden: true},
             {prop: 'supplierId', label: '供货商', hidden: true},
-            {prop: 'supplier.name', label: '供货商名称',  'min-width': 100, 'label-class-name': 'ph-header-small'},
+            {prop: 'supplier.name', label: '供货商名称', 'min-width': 100, 'label-class-name': 'ph-header-small'},
             {prop: 'currencyId', label: '结算货币', hidden: true},
             {prop: 'currency.name', label: '结算货币', hidden: true},
             {prop: 'price', label: '采购价', hidden: true},
@@ -74,7 +74,7 @@
             {
               prop: 'status',
               label: '状态',
-              width:80,
+              width: 80,
               formatter: row => (row.status === 1 ? '启用' : '禁用')
             },
 
@@ -96,6 +96,7 @@
               $id: 'categoryId',
               label: '分类',
               $el: {
+                op: 'eq',
                 placeholder: '请选择分类'
               },
               $options: function () {
@@ -105,7 +106,7 @@
                     categorys.forEach(category => {
                       _categoryNames.push({
                         label: category.name,
-                        value: category.id 
+                        value: category.id + ''
                       });
                     });
                     return _categoryNames;
@@ -114,9 +115,7 @@
                 loaddata();
                 return _categoryNames;
               }
-              },
-
-
+            },
             {
               $type: 'input',
               $id: 'name',
@@ -199,7 +198,7 @@
               label: '原材料名称',
               $el: {
                 placeholder: '请输入原材料名称'
-              },rules: [
+              }, rules: [
                 validRules.required
               ]
             },

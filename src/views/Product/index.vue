@@ -108,6 +108,7 @@
               $id: 'categoryId',
               label: '分类',
               $el: {
+                op: 'eq',
                 placeholder: '请选择分类'
               },
               $options: function () {
@@ -167,6 +168,7 @@
               $id: 'categoryId',
               label: '分类',
               $el: {
+                op: 'eq',
                 placeholder: '请选择分类'
               },
               $options: function () {
