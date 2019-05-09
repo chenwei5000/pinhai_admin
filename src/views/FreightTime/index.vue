@@ -5,12 +5,7 @@
       </ph-card-header>
       <div class="ph-card-body">
         <ph-table
-          :url="url"
-          :columns="columns"
-          :searchForm="searchForm"
-          :form="form"
-          :tableAttrs="tableAttrs"
-          :relations="relations"
+          v-bind="tableConfig"
         >
         </ph-table>
       </div>
@@ -20,235 +15,183 @@
 
 <script>
   import {parseTime} from '@/utils'
-  import userModel from '@/api/user'
-
+  import {getSourceHarbours, getDestinationHarbours} from '@/api/harbour'
+  import {getShippingMethods} from '@/api/shippingMethod'
+  import validrules from '@/api/validrules'
   export default {
     data() {
       return {
         title: '分类列表', 
-        url: '/categories', 
-        relations: ["creator", "user"],
-        tableAttrs: {
-          stripe: true,
-          border: true,
-          "row-class-name": this.statusClassName,
-          "highlight-current-row": true
-        },
-        //列表
-        columns: [
-          {type: 'selection'}, 
-          {prop: 'id', label: 'ID', sortable: 'true', hidden: false}, 
-          {
-            prop: 'status',
-            label: '状态',
-            formatter: row => (row.status === 1 ? '启用' : '禁用')
+        tableConfig: {
+          url: '/freightTimes', 
+          relations: ["sourceHarbour", "shippingMethod", "destinationHarbour"],
+          tableAttrs: {
+            stripe: true,
+            border: true,
+            "highlight-current-row": true
           },
-          {prop: 'materialName', label: '类型'},
-          {prop: 'name', label: '分类名称'},
-          {prop: 'safetyStockWeek', label: '安全库存(周)'},
-          {prop: 'vip1SafetyStockWeek', label: 'Vip1安全库存(周)'},
-          {prop: 'vip2SafetyStockWeek', label: 'Vip2安全库存(周)'},
-          {
-            prop: 'needMaterial', 
-            label: '产品必须设置原材料',
-            formatter: row => (row.needMaterial === 1 ? '是' : '否')
+          //列表
+          columns: [
+            {type: 'selection'}, 
+            {prop: 'id', label: 'ID', sortable: 'true', hidden: false}, 
+            {
+              prop: 'status',
+              label: '状态',
+              hidden: true,
+              formatter: row => (row.status === 1 ? '启用' : '禁用')
             },
-          {prop: 'user.name', label: '采购负责人'},
-        ],
-        // 搜索
-        searchForm: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '名称',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入分类名称'
+            {prop: 'sourceHarbour.name', label: '发货港口'},
+            {prop: 'shippingMethod.name', label: '物流方式'},
+            {prop: 'destinationHarbour.name', label: '收货港口'},
+            {prop: 'spendDays', label: '物流时间(天)'},
+            {
+              prop: 'lastModified',
+              label: '最后修改时间',
+              formatter: row => {
+                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
+              }
             }
-          },
-          {
-            $type: 'select',
-            $id: 'material',
-            label: '类型',
-            $el: {
-              op: 'eq',
-              placeholder: '请选择类型'
-            },
-            $options: [
-              {
-                label: '全部',
-                value: ''
-              },
-              {
-                label: '产品',
-                value: '0'
-              },
-              {
-                label: '原料',
-                value: '1'
-              },
-              
-            ]
-          },
-          {
-            $type: 'select',
-            $id: 'status',
-            label: '状态',
-            $el: {
-              op: 'bw',
-              placeholder: '请选择状态'
-            },
-            $options: [
-              {
-                label: '全部',
-                value: ''
-              },
-              {
-                label: '开启',
-                value: '1'
-              },
-              {
-                label: '禁用',
-                value: '0'
+          ],
+          // 搜索
+          searchForm: [
+            {
+              $type: 'select',
+              $id: 'sourceHarbourId',
+              label: '发货港口',
+              $options: getSourceHarbours(),
+              $el: {
+                op: 'eq',
+                placeholder: '请输入发货港口'
               }
-            ]
-          }
-        ],
-        //修改或新增
-        form: [
-          {
-            $type: 'select',
-            $id: 'material',
-            label: '类型',
-            $default: 0,
-            $el: {
             },
-            $options: [
-              {
-                label: '产品',
-                value: 0
+            {
+              $type: 'select',
+              $id: 'shippingMethodId',
+              label: '物流方式',
+              $options: getShippingMethods(),
+              $el: {
+                op: 'eq',
+                placeholder: '请输入物流方式'
+              }
+            },
+            {
+              $type: 'select',
+              $id: 'destinationHarbourId',
+              label: '收货港口',
+              $options: getDestinationHarbours(),
+              $el: {
+                op: 'eq',
+                placeholder: '请输入收货港口'
+              }
+            },
+            {
+              $type: 'select',
+              $id: 'status',
+              label: '状态',
+              $el: {
+                op: 'eq',
+                placeholder: '请选择状态'
               },
-              {
-                label: '原料',
-                value: 1
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'name',
-            label: '分类名称',
-            $el: {
-            },
-            rules: [
-              {
-                required: true,
-                message: '分类名称不能为空',
-                trigger: 'blur'
-              }
-            ]
-          },
-           {
-            $type: 'input',
-            $id: 'safetyStockWeek ',
-            label: '安全库存(周)',
-            $el: {
-            },
-          },
-           {
-            $type: 'input',
-            $id: 'vip1SafetyStockWeek ',
-            label: 'Vip1安全库存(周)',
-            $el: {
-            },
-          },
-           {
-            $type: 'input',
-            $id: 'vip2SafetyStockWeek ',
-            label: 'Vip2安全库存(周)',
-            $el: {
-            },
-          },
-           {
-            $type: 'radio-group',
-            $id: 'needMaterial',
-            label: '产品必须设置原材料',
-            $default: 1,
-            $options: [
-              {
-                label: '是',
-                value: 1
+              $options: [
+                {
+                  label: '全部',
+                  value: ''
+                },
+                {
+                  label: '开启',
+                  value: '1'
+                },
+                {
+                  label: '禁用',
+                  value: '0'
+                }
+              ]
+            }
+          ],
+          //修改或新增
+          form: [
+            {
+              $type: 'select',
+              $id: 'sourceHarbourId',
+              label: '发货港口',
+              $el: {
+                placeholder: '请选择'
               },
-              {
-                label: '否',
-                value: 0
-              }
-            ],
-            $el: {
+              $options: getSourceHarbours(),
+              rules: [
+                validrules.required
+              ]
             },
-          },
-           {
-            $type: 'select',
-            $id: 'userId',
-            label: '采购负责人',
-            $el: {
-            },
-            $options: function(){
-              var _users = [];
-              const loaddata = async function(){
-                  userModel.getUsers().then(users => {
-                    users.forEach(user => {
-                      _users.push({
-                        label: user.name,
-                        value: user.id 
-                      });
-                    });
-                    return _users;
-                  });
-              };
-              loaddata();
-              return _users;
-            },
-            rules: [
-              {
-                required: true,
-                message: '请选择采购负责人',
-                trigger: blur
-              }
-            ]
-          },
-          {
-            $type: 'radio-group',
-            $id: 'status',
-            label: '状态',
-            $el: {},
-            $default: 1 ,
-            $options: [
-              {
-                label: '开启',
-                value: 1
+               {
+              $type: 'select',
+              $id: 'shippingMethodId',
+              label: '物流方式',
+              $el: {
+                placeholder: '请选择'
               },
-              {
-                label: '禁用',
-                value: 0
-              }
-            ]
-          }
-        ]
+              $options: getShippingMethods(),
+              rules: [
+                validrules.required
+              ]
+            },
+               {
+              $type: 'select',
+              $id: 'destinationHarbourId',
+              label: '收货港口',
+              $el: {
+                placeholder: '请选择'
+              },
+              $options: getDestinationHarbours(),
+              rules: [
+                validrules.required
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'spendDays',
+              label: '物流时间',
+              $el:{
+                placeholder:'请输入物流天数'
+              },
+              rules: [
+                validrules.required,
+                validrules.number
+              ]
+            },
+            {
+              $type: 'radio-group',
+              $id: 'status',
+              label: '状态',
+              $el: {
+              },
+              $default: 1 ,
+              $options: [
+                {
+                  label: '开启',
+                  value: 1
+                },
+                {
+                  label: '禁用',
+                  value: 0
+                }
+              ]
+            }
+          ]
+        }
       }
     },
-    computed: {},
-    methods: {
-      statusClassName({row, rowIndex}) {
-        if (row.status && row.status !== 0) {
-          return '';
-        }
-        else {
-          return 'warning-row';
-        }
-      },
-    },
-    watch: {}
+        computed: {},
+        methods: {
+          statusClassName({row, rowIndex}) {
+            if (row.status && row.status !== 0) {
+              return '';
+            }
+            else {
+              return 'warning-row';
+            }
+          },
+        },
+        watch: {}
   }
 </script>
 
