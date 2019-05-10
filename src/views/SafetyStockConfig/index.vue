@@ -25,7 +25,7 @@
         title: '安全库存配置列表',
         tableConfig: {
           url: '/safetyStockConfigs',
-          relations: ["creator"],
+          relations: ["creator"], 
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -115,7 +115,7 @@
                     datadics.forEach(datadic => {
                       _types.push({
                         label: datadic.valueName,
-                        value: datadic.valueId
+                        value: datadic.valueName
                       });
                     });
                     return _types;
