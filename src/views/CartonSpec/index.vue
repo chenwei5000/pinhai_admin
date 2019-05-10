@@ -28,7 +28,7 @@
           url: '/cartonSpecs',
           relations: ["creator", "category"],
           tableAttrs: {
-            "default-sort": {prop: 'id', order: 'descending'},
+            "default-sort": {prop: 'categoryId', order: 'ascending'},
             "row-class-name": this.statusClassName,
           },
           //表格内容显示
@@ -37,6 +37,7 @@
             {prop: 'code', label: '编码', 'min-width': 150, fixed: 'left'},
             phColumns.id,
             {prop: 'category.name', label: '分类', 'min-width': 120},
+            {prop: 'categoryId', label: '分类ID', hidden:true, 'min-width': 120},
             {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
             {prop: 'length', label: '长(Cm)', width: 80},
             {prop: 'width', label: '宽(Cm)', width: 80},
@@ -67,7 +68,7 @@
               $el: {
                 placeholder: '请输入分类'
               },
-              $options: categoryModel.getMineCategoryOptions('p', false),
+              $options: categoryModel.getMineCategoryNameOptions('p'),
               rules: [
                 validRules.required
               ]

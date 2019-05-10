@@ -2,7 +2,7 @@ import {parseTime} from '@/utils'
 
 const phColumns = {
 
-  id: {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
+  id: {prop: 'id', label: 'ID', sortable: 'true', hidden: true, width: 100},
 
   creator: {prop: 'creator.name', label: '创建人', width: 100},
 

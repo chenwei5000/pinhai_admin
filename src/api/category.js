@@ -39,7 +39,33 @@ const categoryModel = {
     loaddata();
     console.log(_options);
     return _options;
+  },
+
+  /**
+   * 获取分类管理下拉选项
+   * @param type  p-产品  m-原料
+   * @param strFlg
+   * @returns {Array}
+   */
+  getMineCategoryNameOptions(type = 'p') {
+    var _options = [];
+
+    const loaddata = async function () {
+      categoryModel.getMineCategories(type).then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.name
+          });
+        });
+        return _options;
+      });
+    };
+    loaddata();
+    console.log(_options);
+    return _options;
   }
+
 }
 
 export default categoryModel;
