@@ -22,7 +22,7 @@ const categoryModel = {
    * @param strFlg
    * @returns {Array}
    */
-  getMineCategoriesOptions(type = 'p', strFlg = true) {
+  getMineCategoryOptions(type = 'p', strFlg = true) {
     var _options = [];
 
     const loaddata = async function () {

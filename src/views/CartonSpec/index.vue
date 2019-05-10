@@ -67,7 +67,7 @@
               $el: {
                 placeholder: '请输入分类'
               },
-              $options: categoryModel.getMineCategoriesOptions('p', false),
+              $options: categoryModel.getMineCategoryOptions('p', false),
               rules: [
                 validRules.required
               ]

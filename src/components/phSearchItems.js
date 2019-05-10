@@ -1,4 +1,5 @@
 import categoryModel from "../api/category";
+import datadicModel from "../api/datadic";
 
 // 通用搜索
 const phSearchItems = {
@@ -51,30 +52,40 @@ const phSearchItems = {
   },
 
   // 产品分类
-  productCategories() {
-    return {
-      $type: 'select',
-      $id: 'categoryId',
-      label: '分类',
-      $options: categoryModel.getMineCategoriesOptions('p', true),
-      $el: {
-        op: 'eq',
-        placeholder: '请选择分类'
-      }
+  productCategories: {
+    $type: 'select',
+    $id: 'categoryId',
+    label: '分类',
+    $options: categoryModel.getMineCategoryOptions('p', true),
+    $el: {
+      op: 'eq',
+      placeholder: '请选择分类'
     }
   },
 
   // 原料分类
-  materialCategories() {
+  materialCategories: {
+    $type: 'select',
+    $id: 'categoryId',
+    label: '分类',
+    $options: categoryModel.getMineCategoryOptions('m', true),
+    $el: {
+      op: 'eq',
+      placeholder: '请选择分类'
+    }
+  },
+
+  // 字典搜索
+  datadic(type, label, id) {
     return {
       $type: 'select',
-      $id: 'categoryId',
-      label: '分类',
-      $options: categoryModel.getMineCategoriesOptions('m', true),
+      $id: id,
+      label: label,
       $el: {
         op: 'eq',
-        placeholder: '请选择分类'
-      }
+        placeholder: '请选择' + label
+      },
+      $options: datadicModel.getDatadicOptions(type)
     }
   }
 

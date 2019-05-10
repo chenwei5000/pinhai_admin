@@ -15,25 +15,28 @@
 
 <script>
   import {parseTime} from '@/utils'
-  import userModel from '@/api/user'
-  import validRules from '@/components/validrules'
-  import datadicModel from '@/api/datadic'
+  import userModel from '../../api/user'
+  import datadicModel from '../../api/datadic'
+  import validRules from '../../components/validrules'
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFormItems from '../../components/phFromItems'
 
   export default {
     data() {
       return {
-        materials:[],
+        materials: [],
         title: '分类列表',
         tableConfig: {
           url: '/categories',
-          relations: ["creator", "user","dataDicItem.type"],
+          relations: ["creator", "user", "dataDicItem.type"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
           },
           //列表
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'true', hidden: true},
+            phColumns.id,
             {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 100},
             {prop: 'user.name', label: '采购负责人', width: 100},
@@ -47,83 +50,15 @@
               formatter: row => (row.needMaterial === 1 ? '是' : '否'),
               width: 150
             },
-            {prop: 'creator.name', label: '创建人', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.creator,
+            phColumns.status,
+            phColumns.lastModified
           ],
           // 搜索
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入分类名称'
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'material',
-              label: '类型',
-              $el: {
-                op: 'eq',
-                placeholder: '请选择类型'
-              },
-              $options: function () {
-                var _materials = []
-
-                const loadData = async function () {
-                  datadicModel.getByType("materialName").then(datadics => {
-                    datadics.forEach(datadic => {
-                      _materials.push({
-                        label: datadic.valueName,
-                        value: datadic.valueId
-                      });
-                    });
-                    return _materials;
-                  });
-                };
-
-                loadData();
-                return _materials;
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'eq',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.name,
+            phSearchItems.datadic("materialName", "类型", "material"),
+            phSearchItems.status
           ],
           //修改或新增
           form: [
