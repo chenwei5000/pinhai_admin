@@ -35,11 +35,11 @@
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
             {
               prop: 'releaseTime',
-              label: '修改时间',
+              label: '发版日期',
               width: 140,
               fixed: 'left',
               formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d}');
+                return parseTime(row.releaseTime, '{y}-{m}-{d} {h}:{i}');
               }
             },
             {prop: 'version', label: '系统版本', sortable: 'custom', 'min-width': 60},
@@ -101,7 +101,8 @@
               $id: 'releaseTime',
               label: '发版日期',
               $el: {
-                placeholder: '请输入港口名称'
+                valueFormat: 'timestamp',
+                placeholder: '请选择日期'
               },
               rules: [
                 validRules.required
@@ -119,10 +120,11 @@
               ]
             },
              {
-              $type: 'textarea',
+              $type: 'input',
               $id: 'caption',
               label: '更新说明',
               $el: {
+                type: 'textarea'
               },
               rules: [
                 validRules.required
