@@ -1,3 +1,5 @@
+import validRules from '../components/validrules'
+
 // 通用搜索
 const phFromItems = {
 
@@ -21,7 +23,33 @@ const phFromItems = {
           value: 0
         }
       ]
-  }
+  },
+
+  //名称
+  name:{
+    $type: 'input',
+    $id: 'name',
+    label: '名称',
+    $el: {
+      placeholder: '请输入名称'
+    },
+    rules: [
+      validRules.required
+    ]
+  },
+
+  //代码
+  code:{
+    $type: 'input',
+    $id: 'code',
+    label: '代码',
+    $el: {
+      placeholder: '请输入代码'
+    },
+    rules: [
+      validRules.required
+    ]
+  },
 
 }
 

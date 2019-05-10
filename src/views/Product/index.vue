@@ -30,13 +30,17 @@
   import cartonspecModel from '@/api/cartonspec'
   import categoryModel from '@/api/category'
 
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
+
   export default {
 
     data() {
       return {
         categoryNames : [],
         specs: [],
-        names: [],
+
         title: '产品管理', // 页面标题
         tableConfig: {
           url: '/products', // 资源URL
@@ -54,7 +58,7 @@
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
             {type: 'selection'}, //多选
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+             phColumns.id,
             {prop: 'imgUrl', label: '图片'},
             {prop: 'skuCode', label: 'SKU','min-width': 200},
             {prop: 'categoryId', label: '分类ID', sortable: 'custom', hidden: true},
@@ -83,26 +87,13 @@
             {prop: 'oversize', label: '超大', hidden: true},
             {prop: 'parentSku', label: 'Parent Asin', hidden: true},
             {prop: 'comment', label: '备注', hidden: true},
-            {
-              prop: 'status',
-              label: '状态',
-              width:80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
+            phColumns.status
 
           ],
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'skuCode',
-              label: 'SKU',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入SKU'
-              }
-            },
+            phSearchItems.skuCode,
             {
               $type: 'select',
               $id: 'categoryId',
@@ -199,14 +190,7 @@
                 placeholder: '请输入款式'
               },
             },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '产品名称',
-              $el: {
-                placeholder: '请输入产品名称'
-              },
-            },
+            phFromItems.name,
             {
               $type: 'input',
               $id: 'fnSku',
@@ -217,7 +201,7 @@
             },
             {
               $type: 'input',
-              $id: 'name',
+              $id: 'model',
               label: '型号',
               $el: {
                 placeholder: '请输入型号'
@@ -270,45 +254,14 @@
               },
             },
             {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                placeholder: '请输入名称'
-              },
-            },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '型号',
-              $el: {
-                placeholder: '请输入型号'
-              },
-            },
-            {
               $type: 'select',
               $id: 'supplierId',
               label: '供货商',
               $el: {
                 placeholder: '请选择供货商'
               },
-              $options: function () {
-                var _names = []
-                const loadData = async function () {
-                  supplierModel.getSuppliers().then(suppliers => {
-                    suppliers.forEach(supplier => {
-                      _names.push({
-                        label: supplier.name,
-                        value: supplier.id
-                      });
-                    });
-                    return _names;
-                  });
-                };
+              $options: supplierModel.getSuppilerOptions,
 
-                loadData();
-                return _names;
-              }
             },
             {
               $type: 'select',

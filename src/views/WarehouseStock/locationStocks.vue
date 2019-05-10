@@ -25,8 +25,11 @@
 <script>
 
   import {parseTime} from '@/utils';
-  import warehouseModel from '@/api/warehouse';
   import validRules from '@/components/validrules'
+
+  import phColumns from '../../components/phColumns'
+
+  import phSearchItems from '../../components/phSearchItems'
 
 
   export default {
@@ -56,7 +59,7 @@
 
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'skuCode', label: 'SKU编码','min-width': 200},
             {prop: 'warehouseName', label: '收货仓库','min-width': 150},
             {prop: 'locationCode', label: '货位'},
@@ -71,41 +74,8 @@
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'warehouseName',
-              label: '收货仓库',
-              $el: {
-                op: 'bw',
-                placeholder: '请选择收货仓库'
-              },
-              $options: function () {
-                var _names = []
-                const loadData = async function () {
-                  warehouseModel.getSuppliers().then(warehouses => {
-                    warehouses.forEach(warehouse => {
-                      _names.push({
-                        label: warehouse.name,
-                        value: warehouse.id
-                      });
-                    });
-                    return _names;
-                  });
-                };
-
-                loadData();
-                return _names;
-              }
-            },
-            {
-              $type: 'input',
-              $id: 'skuCode',
-              label: 'SKU编码',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入SKU编码'
-              }
-            }
+            phSearchItems.warehouseId,
+            phSearchItems.skuCode
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
           // https://github.com/FEMessage/el-form-renderer/blob/master/README.md

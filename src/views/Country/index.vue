@@ -18,6 +18,10 @@
   import {parseTime} from '@/utils'
   import validRules from '@/components/validrules'
 
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
+
   export default {
     data() {
       return {
@@ -31,77 +35,24 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'enName', label: '英文名', sortable: 'custom', "min-width": 120},
             {prop: 'isoCode2', label: '2位iso编码', "min-width": 120},
             {prop: 'isoCode3', label: '3位iso编码', "min-width": 120},
             {prop: 'creator.name', label: '创建人', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.status,
+            phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '国家名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入国家名称'
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'eq',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.name,
+            phSearchItems.status
           ],
           //  弹窗表单
           form: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '国家名称',
-              $el: {
-                placeholder: '请输入国家名称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
+            phFromItems.name,
             {
               $type: 'input',
               $id: 'enName',
@@ -137,23 +88,7 @@
                 validRules.strMax(3)
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $default: 1,
-              $el: {},
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ],
-            }
+            phFromItems.status
           ]
         }
       }

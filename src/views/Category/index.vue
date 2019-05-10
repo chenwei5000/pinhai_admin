@@ -76,7 +76,7 @@
                     datadics.forEach(datadic => {
                       _materials.push({
                         label: datadic.valueName,
-                        value: datadic.valueId
+                        value: datadic.valueName
                       });
                     });
                     return _materials;
@@ -165,23 +165,7 @@
                 validRules.required
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $el: {},
-              $default: 1,
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ]
-            }
+            phFormItems.status
           ]
         }
       }

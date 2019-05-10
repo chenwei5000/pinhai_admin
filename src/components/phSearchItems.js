@@ -1,5 +1,6 @@
 import categoryModel from "../api/category";
 import datadicModel from "../api/datadic";
+import warehouseModel from '../api/warehouse';
 
 // 通用搜索
 const phSearchItems = {
@@ -87,7 +88,30 @@ const phSearchItems = {
       },
       $options: datadicModel.getDatadicOptions(type)
     }
-  }
+  },
+
+  //仓库名称搜索
+  warehouseId:{
+    $type: 'select',
+    $id: 'warehouseId',
+    label: '收货仓库',
+    $el: {
+      op: 'eq',
+      placeholder: '请选择收货仓库'
+    },
+    $options: warehouseModel.getWarehouseOptions,
+  },
+
+  //sku编码搜索
+  skuCode:{
+    $type: 'input',
+    $id: 'skuCode',
+    label: 'SKU编码',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入SKU编码'
+    }
+  },
 
 }
 

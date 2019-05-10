@@ -26,7 +26,8 @@
 
   import {parseTime} from '@/utils'
   import validRules from '@/components/validrules'
-  import warehouseModel from '@/api/warehouse'
+  import phSearchItems from '../../components/phSearchItems'
+
 
   export default {
 
@@ -70,41 +71,8 @@
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            {
-              $type: 'select',
-              $id: 'warehouseId',
-              label: '收货仓库',
-              $el: {
-                op: 'bw',
-                placeholder: '请选择收货仓库'
-              },
-              $options: function () {
-                var _names = []
-                const loadData = async function () {
-                  warehouseModel.getSuppliers().then(warehouses => {
-                    warehouses.forEach(warehouse => {
-                      _names.push({
-                        label: warehouse.name,
-                        value: warehouse.id
-                      });
-                    });
-                    return _names;
-                  });
-                };
-
-                loadData();
-                return _names;
-              }
-            },
-            {
-              $type: 'input',
-              $id: 'skuCode',
-              label: 'SKU编码',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入SKU编码'
-              }
-            }
+            phSearchItems.warehouseId,
+            phSearchItems.skuCode
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
           // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
@@ -162,7 +130,7 @@
             },
             {
               $type: 'input',
-              $id: 'productSize',
+              $id: 'cartonSpecCode',
               label: '箱规',
               $el: {
                 placeholder: '请输入箱规'

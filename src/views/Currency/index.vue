@@ -17,6 +17,10 @@
   import {parseTime} from '@/utils'
   import validRules from '@/components/validrules'
 
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
+
   export default {
     data() {
       return {
@@ -29,7 +33,7 @@
           },
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '代码', sortable: 'custom', width: 80},
             {prop: 'symbolLeft', label: '左侧符', width: 80},
@@ -38,79 +42,19 @@
             {prop: 'thousandsPoint', label: '千分位符', width: 80},
             {prop: 'decimalPlaces', label: '小数位数', width: 80},
             {prop: 'value', label: '汇率值', sortable: 'custom', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              'width': 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.status,
+            phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入名称'
-              }
-            },
-            {
-              $type: 'input',
-              $id: 'code',
-              label: '代码',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入代码'
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'eq',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.name,
+            phSearchItems.code,
+            phSearchItems.status,
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                placeholder: '请输入名称'
-              },
-              rules: [
-                  validRules.required
-              ]
-            },
+            phFromItems.name,
             {
               $type: 'input',
               $id: 'code',
@@ -192,23 +136,7 @@
                 validRules.number
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $default: 1,
-              $el: {},
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ],
-            }
+            phFromItems.status
           ]
         }
       }

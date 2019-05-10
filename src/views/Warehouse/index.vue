@@ -19,15 +19,15 @@
   import datadicModel from '@/api/datadic'
   import supplierModel from '@/api/supplier'
   import validRules from '@/components/validrules'
-
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
 
   export default {
 
     data() {
       return {
 
-        types: [],
-        names: [],
         title: '仓库管理',
 
         tableConfig: {
@@ -42,7 +42,7 @@
           },
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'code', label: '编码',  'min-width': 200},
             {prop: 'name', label: '名称', sortable: 'custom',  'min-width': 200, fixed: 'left'},
             {prop: 'address', label: '地址',  'min-width': 150},
@@ -51,68 +51,20 @@
             {prop: 'type', label: '类型'},
             {prop: 'supplierId', label: '供货商编号', hidden: true},
             {prop: 'supplier.name', label: '供货商名称', 'min-width': 150},
-            {
-              prop: 'status',
-              label: '状态',
-              width:80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.status,
+            phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'code',
-              label: '编码',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入编码'
-              }
-            },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入名称'
-              }
-            }
+            phSearchItems.name,
+            phSearchItems.code
 
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            {
-              $type: 'input',
-              $id: 'code',
-              label: '编码',
-              $el: {
-                placeholder: '请输入编码'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                placeholder: '请输入名称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
+            phFromItems.code,
+            phFromItems.name,
             {
               $type: 'input',
               $id: 'address',
@@ -147,22 +99,7 @@
               $el: {
                 placeholder: '请输入类型'
               },
-              $options: function () {
-                var _types = []
-                const loadData = async function () {
-                  datadicModel.getByType("warehouse").then(datadics => {
-                    datadics.forEach(datadic => {
-                      _types.push({
-                        label: datadic.valueName,
-                        value: datadic.valueId
-                      });
-                    });
-                    return _types;
-                  });
-                };
-                loadData();
-                return _types;
-              }
+              $options: datadicModel.getDatadicOptions("warehouse"),
             },
             {
               $type: 'select',

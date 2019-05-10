@@ -73,17 +73,7 @@
                 validRules.required
               ]
             },
-            {
-              $type: 'input',
-              $id: 'code',
-              label: '编码',
-              $el: {
-                placeholder: '请输入编码'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
+            phFormItems.code,
             {
               $type: 'input',
               $id: 'numberOfPallets',

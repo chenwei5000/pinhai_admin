@@ -17,6 +17,10 @@
   import {parseTime} from '@/utils'
   import validRules from '@/components/validrules'
 
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
+
   export default {
     data() {
       return {
@@ -32,72 +36,20 @@
           },
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'location', label: '地址', sortable: 'custom' ,'min-width': 100},
             {prop: 'creator.name', label: '创建人', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.status,
+            phColumns.lastModified
           ],
 
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '港口名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入港口名称'
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'bw',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.name,
+            phSearchItems.status
           ],
           form: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '港口名称',
-              $el: {
-                placeholder: '请输入港口名称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
+            phFromItems.name,
             {
               $type: 'input',
               $id: 'location',
@@ -109,23 +61,7 @@
                 validRules.required
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $el: {},
-              $default: 1,
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ]
-            }
+            phFromItems.status
           ]
         }
       }

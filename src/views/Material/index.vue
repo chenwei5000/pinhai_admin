@@ -30,6 +30,10 @@
   import categoryModel from '@/api/category'
   import currencyModel from '@/api/currency'
 
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
+
   export default {
 
     data() {
@@ -54,7 +58,7 @@
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
             {type: 'selection'}, //多选
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'skuCode', label: 'SKU', 'min-width': 200},
             {prop: 'categoryId', label: '分类ID', sortable: 'custom', hidden: true},
             {prop: 'category.name', label: '分类名称', width: 80},
@@ -71,26 +75,13 @@
             {prop: 'price', label: '采购价', hidden: true},
             {prop: 'leadDay', label: '交期(天)', hidden: true},
             {prop: 'comment', label: '备注', hidden: true},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
+            phColumns.status,
 
           ],
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'skuCode',
-              label: 'SKU',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入SKU'
-              }
-            },
+            phSearchItems.skuCode,
             {
               $type: 'select',
               $id: 'categoryId',
@@ -101,15 +92,7 @@
               },
               $options: categoryModel.getMineCategoriesOptions,
             },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '原材料名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入原材料名称'
-              }
-            }
+            phSearchItems.name
 
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
@@ -163,16 +146,7 @@
                 return _currencyNames;
               },
             },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '原材料名称',
-              $el: {
-                placeholder: '请输入原材料名称'
-              }, rules: [
-                validRules.required
-              ]
-            },
+            phFromItems.name,
             {
               $type: 'input',
               $id: 'model',

@@ -18,6 +18,10 @@
   import {parseTime} from '@/utils'
   import validRules from '@/components/validrules'
 
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFormItems from '../../components/phFromItems'
+
   export default {
     data() {
       return {
@@ -32,26 +36,13 @@
           },
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'type', label: '字典类型', sortable: 'custom', fixed: 'left','min-width': 100},
             {prop: 'name', label: '字典类型名称', sortable: 'custom','min-width': 100},
             {prop: 'valueId', label: '字典值ID','min-width': 100},
             {prop: 'valueName', label: '字典值名称','min-width': 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.status,
+            phColumns.lastModified
           ],
 
           // 搜索区块定义
@@ -65,15 +56,7 @@
                 placeholder: '请输入字典类型'
               }
             },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '字典类型名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入字典类型名称'
-              }
-            },
+            phSearchItems.name,
             {
               $type: 'input',
               $id: 'valueId',
@@ -107,17 +90,7 @@
                 validRules.required
               ]
             },
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '字典类型名称',
-              $el: {
-                placeholder: '请输入字典类型名称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
+            phFormItems.name,
             {
               $type: 'input',
               $id: 'valueId',
@@ -140,23 +113,7 @@
                 validRules.required
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $default: 1,
-              $el: {},
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ],
-            }
+            phFormItems.status
           ]
         }
       }

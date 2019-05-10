@@ -18,6 +18,11 @@
   import harbourModel from '@/api/harbour'
   import shippingMethodModel from '@/api/shippingMethod'
   import validrules from '@/components/validrules'
+
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFromItems from '../../components/phFromItems'
+
   export default {
     data() {
       return {
@@ -30,26 +35,13 @@
           //列表
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'true', hidden: true},
+            phColumns.id,
             {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 200},
             {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 200},
             {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 200},
             {prop: 'spendDays', label: '物流时间(天)', 'min-width': 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              filters: [{text: '启用', value: 1}, {text: '禁用', value: 0}],
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            phColumns.status,
+            phColumns.lastModified
           ],
           // 搜索
           searchForm: [
@@ -83,29 +75,7 @@
                 placeholder: '请输入收货港口'
               }
             },
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'eq',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.status
           ],
           //修改或新增
           form: [
@@ -157,24 +127,7 @@
                 validrules.number
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $el: {
-              },
-              $default: 1 ,
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ]
-            }
+            phFromItems.status
           ]
         }
       }
