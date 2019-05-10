@@ -9,7 +9,25 @@ const supplierModel = {
 
     return global.searchResource(path, null, null, pagesize).then(data => data.rows);
 
+  },
+
+  getSuppilerOptions(){
+    var _names = []
+    const loadData = async function () {
+      supplierModel.getSuppliers().then(suppliers => {
+        suppliers.forEach(supplier => {
+          _names.push({
+            label: supplier.name,
+            value: supplier.id
+          });
+        });
+        return _names;
+      });
+    };
+    loadData();
+    return _names;
   }
+
 }
 
 export default supplierModel;

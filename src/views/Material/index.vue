@@ -36,7 +36,7 @@
       return {
         categoryNames: [],
         currencyNames: [],
-        names: [],
+
         title: '原材料管理', // 页面标题
         tableConfig: {
           url: '/materials', // 资源URL
@@ -99,22 +99,7 @@
                 op: 'eq',
                 placeholder: '请选择分类'
               },
-              $options: function () {
-                var _categoryNames = [];
-                const loaddata = async function () {
-                  categoryModel.getCategories().then(categorys => {
-                    categorys.forEach(category => {
-                      _categoryNames.push({
-                        label: category.name,
-                        value: category.id + ''
-                      });
-                    });
-                    return _categoryNames;
-                  });
-                };
-                loaddata();
-                return _categoryNames;
-              }
+              $options: categoryModel.getMineCategoriesOptions,
             },
             {
               $type: 'input',
@@ -146,24 +131,10 @@
               $id: 'groupCode',
               label: '分类',
               $el: {
+                op: 'eq',
                 placeholder: '请输入分类'
               },
-              $options: function () {
-                var _categoryNames = [];
-                const loaddata = async function () {
-                  categoryModel.getCategories().then(categorys => {
-                    categorys.forEach(category => {
-                      _categoryNames.push({
-                        label: category.name,
-                        value: category.name
-                      });
-                    });
-                    return _categoryNames;
-                  });
-                };
-                loaddata();
-                return _categoryNames;
-              },
+              $options: categoryModel.getMineCategoriesOptions,
               rules: [
                 validRules.required
               ]
@@ -263,23 +234,7 @@
               $el: {
                 placeholder: '请选择供货商'
               },
-              $options: function () {
-                var _names = []
-                const loadData = async function () {
-                  supplierModel.getSuppliers().then(suppliers => {
-                    suppliers.forEach(supplier => {
-                      _names.push({
-                        label: supplier.name,
-                        value: supplier.id
-                      });
-                    });
-                    return _names;
-                  });
-                };
-
-                loadData();
-                return _names;
-              }
+              $options: supplierModel.getSuppilerOptions,
             },
           ]
         }

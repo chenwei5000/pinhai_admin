@@ -17,7 +17,7 @@ const categoryModel = {
     return global.searchResource(path, null, null, pageSize).then(data => data);
   },
   /**
-   * 获取物流方式下拉选项
+   * 获取分类管理下拉选项
    * @param type  p-产品  m-原料
    * @param strFlg
    * @returns {Array}
@@ -37,6 +37,7 @@ const categoryModel = {
       });
     };
     loaddata();
+    console.log(_options);
     return _options;
   }
 }

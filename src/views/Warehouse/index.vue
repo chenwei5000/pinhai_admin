@@ -131,7 +131,7 @@
             },
             {
               $type: 'input',
-              $id: 'linkman',
+              $id: 'tel',
               label: '联系电话',
               $el: {
                 placeholder: '请输入联系电话'
@@ -171,23 +171,8 @@
               $el: {
                 placeholder: '请选择供货商'
               },
-              $options: function () {
-                var _names = []
-                const loadData = async function () {
-                  supplierModel.getSuppliers().then(suppliers => {
-                    suppliers.forEach(supplier => {
-                      _names.push({
-                        label: supplier.name,
-                        value: supplier.id
-                      });
-                    });
-                    return _names;
-                  });
-                };
+              $options: supplierModel.getSuppilerOptions,
 
-                loadData();
-                return _names;
-              }
             },
           ]
         }
