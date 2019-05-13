@@ -15,7 +15,7 @@
 
 <script>
   import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
+  import validrules from '@/components/validrules'
   import datadicModel from '@/api/datadic'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'

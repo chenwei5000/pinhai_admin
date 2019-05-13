@@ -16,8 +16,7 @@
 <script>
 
   import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
-
+  import validrules from '@/components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -40,7 +39,7 @@
             {prop: 'enName', label: '英文名', sortable: 'custom', "min-width": 120},
             {prop: 'isoCode2', label: '2位iso编码', "min-width": 120},
             {prop: 'isoCode3', label: '3位iso编码', "min-width": 120},
-            {prop: 'creator.name', label: '创建人', width: 100},
+            phColumns.creator,
             phColumns.status,
             phColumns.lastModified
           ],
@@ -88,13 +87,13 @@
                 validRules.strMax(3)
               ]
             },
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }
     },
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

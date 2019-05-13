@@ -14,9 +14,7 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
-
+  import validrules from '@/components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -136,7 +134,7 @@
                 validRules.number
               ]
             },
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }
@@ -145,7 +143,7 @@
 
     methods: {
       // 状态样式
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

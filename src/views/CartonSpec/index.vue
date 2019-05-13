@@ -15,7 +15,7 @@
 
 <script>
   import categoryModel from '../../api/category'
-  import validRules from '../../components/validrules'
+  import validrules from '../../components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
@@ -70,7 +70,7 @@
               },
               $options: categoryModel.getMineSelectNameOptions('p'),
               rules: [
-                validRules.required
+                validrules.required
               ]
             },
             phFormItems.code,
@@ -80,8 +80,8 @@
               label: '托盘放置数',
               $el: {},
               rules: [
-                validRules.required,
-                validRules.number
+                validrules.required,
+                validrules.number
               ]
             },
             {
@@ -92,8 +92,8 @@
                 placeholder: '请输入长度'
               },
               rules: [
-                validRules.required,
-                validRules.number
+                validrules.required,
+                validrules.number
               ]
             },
             {
@@ -104,8 +104,8 @@
                 placeholder: '请输入宽度'
               },
               rules: [
-                validRules.required,
-                validRules.number
+                validrules.required,
+                validrules.number
               ]
             },
             {
@@ -116,8 +116,8 @@
                 placeholder: '请输入高度'
               },
               rules: [
-                validRules.required,
-                validRules.number
+                validrules.required,
+                validrules.number
               ]
             },
             {
@@ -128,11 +128,11 @@
                 placeholder: '请输入皮重'
               },
               rules: [
-                validRules.required,
-                validRules.number
+                validrules.required,
+                validrules.number
               ]
             },
-            phFormItems.status
+            phFormItems.status()
           ]
         }
       }

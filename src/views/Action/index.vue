@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import validRules from '../../components/validrules'
+  import validrules from '../../components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'

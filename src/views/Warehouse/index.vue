@@ -18,7 +18,7 @@
   import {parseTime} from '@/utils'
   import datadicModel from '@/api/datadic'
   import supplierModel from '@/api/supplier'
-  import validRules from '@/components/validrules'
+  import validrules from '@/components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'

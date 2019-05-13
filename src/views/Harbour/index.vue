@@ -14,9 +14,7 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
-
+  import validrules from '../../components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -29,16 +27,13 @@
           url: '/harbours',
           relations: ["creator"],
           tableAttrs: {
-            stripe: true,
-            border: true,
             "row-class-name": this.statusClassName,
-            "highlight-current-row": true
           },
           columns: [
             {type: 'selection'},
             phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
-            {prop: 'location', label: '地址', sortable: 'custom' ,'min-width': 100},
+            {prop: 'location', label: '地址', sortable: 'custom', 'min-width': 100},
             {prop: 'creator.name', label: '创建人', width: 100},
             phColumns.status,
             phColumns.lastModified
@@ -58,17 +53,17 @@
                 placeholder: '请输入港口地址'
               },
               rules: [
-                validRules.required
+                validrules.required
               ]
             },
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }
     },
     computed: {},
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

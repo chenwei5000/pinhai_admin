@@ -5,6 +5,16 @@ import warehouseModel from '../api/warehouse';
 // 通用搜索
 const phSearchItems = {
 
+  // 名称搜索
+  id: {
+    $type: 'hidden',
+    $id: 'id',
+    label: 'id',
+    $el: {
+      op: 'eq'
+    }
+  },
+
   // 编码搜索
   code: {
     $type: 'input',

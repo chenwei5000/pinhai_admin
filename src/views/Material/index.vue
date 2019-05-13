@@ -17,15 +17,13 @@
         </ph-table>
       </div>
     </div>
-
-
   </div>
 </template>
 
 <script>
 
   import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
+  import validrules from '@/components/validrules'
   import supplierModel from '@/api/supplier'
   import categoryModel from '@/api/category'
   import currencyModel from '@/api/currency'

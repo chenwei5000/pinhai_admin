@@ -16,8 +16,7 @@
 <script>
 
   import {parseTime} from '@/utils'
-  import validRules from '@/components/validrules'
-
+  import validrules from '@/components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
@@ -29,10 +28,7 @@
         tableConfig: {
           url: '/dataDicItems',
           tableAttrs: {
-            stripe: true,
-            border: true,
-            "row-class-name": this.statusClassName,
-            "highlight-current-row": true
+            "row-class-name": this.statusClassName
           },
           columns: [
             {type: 'selection'},
@@ -75,7 +71,6 @@
                 placeholder: '请输入字典值名称'
               }
             }
-
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -123,7 +118,7 @@
     // 各种相关方法定义
     methods: {
       // 状态样式
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

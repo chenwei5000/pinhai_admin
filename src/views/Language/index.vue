@@ -14,12 +14,10 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
 
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
-
 
   export default {
     data() {
@@ -49,7 +47,7 @@
           form: [
             phFromItems.code,
             phFromItems.name,
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }
@@ -57,7 +55,7 @@
     computed: {},
 
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

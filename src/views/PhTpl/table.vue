@@ -24,7 +24,7 @@
 
 <script>
 
-  import validRules from '../../components/validrules'
+  import validrules from '../../components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
@@ -118,11 +118,11 @@
               },
               rules: [
                 //必填验证
-                validRules.required,
+                validrules.required,
                 //数字验证
-                //validRules.number,
+                //validrules.number,
                 //长度验证
-                validRules.strMax(6)
+                validrules.strMax(6)
               ]
             },
             phFormItems.status
