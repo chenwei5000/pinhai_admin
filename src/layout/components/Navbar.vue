@@ -41,7 +41,7 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click" placement="top-start" @command="handleCommand">
         <div>
           <div class="avatar-wrapper">
-            <img src="../../assets/avatars/avatar4.png" class="user-avatar">
+            <img src="../../assets/avatars/avatar.gif" class="user-avatar">
           </div>
 
           <div class="user-info">
