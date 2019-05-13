@@ -24,7 +24,7 @@ const supplierModel = {
       });
     };
     _loadData();
-    return _names;
+    return _options;
   },
 
   // 获取供货商下拉选项 name:name格式

@@ -16,7 +16,7 @@
 <script>
   import {parseTime} from '@/utils'
   import userModel from '../../api/user'
-  import validrules from '../../components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
@@ -24,7 +24,6 @@
   export default {
     data() {
       return {
-        materials: [],
         title: '分类列表',
         tableConfig: {
           url: '/categories',
@@ -68,7 +67,7 @@
               label: '分类名称',
               $el: {},
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             {
@@ -77,7 +76,7 @@
               label: '安全库存(周)',
               $el: {},
               rules: [
-                validrules.number
+                validRules.number
               ]
             },
             {
@@ -86,7 +85,7 @@
               label: 'Vip1安全库存(周)',
               $el: {},
               rules: [
-                validrules.number
+                validRules.number
               ]
             },
             {
@@ -95,7 +94,7 @@
               label: 'Vip2安全库存(周)',
               $el: {},
               rules: [
-                validrules.number
+                validRules.number
               ]
             },
             phFormItems.yesOrNo('needMaterial', '产品必须设置原材料'),
@@ -106,7 +105,7 @@
               $el: {},
               $options: userModel.getSelectOptions(),
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             phFormItems.status()

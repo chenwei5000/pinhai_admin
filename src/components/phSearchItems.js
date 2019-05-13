@@ -104,10 +104,10 @@ const phSearchItems = {
   warehouseId: {
     $type: 'select',
     $id: 'warehouseId',
-    label: '收货仓库',
+    label: '仓库',
     $el: {
       op: 'eq',
-      placeholder: '请选择收货仓库'
+      placeholder: '请选择仓库'
     },
     $options: warehouseModel.getSelectOptions,
   },

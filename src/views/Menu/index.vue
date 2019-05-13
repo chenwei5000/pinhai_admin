@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import validrules from '../../components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -115,7 +115,7 @@
                 placeholder: '请输入名称'
               },
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             {
@@ -144,7 +144,7 @@
               label: '菜单URL',
               $el: {},
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             {
@@ -153,7 +153,7 @@
               label: '排序值',
               $el: {},
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             phFromItems.status()

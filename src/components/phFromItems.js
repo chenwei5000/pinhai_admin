@@ -1,4 +1,4 @@
-import validrules from './validrules'
+import validRules from './validRules'
 import datadicModel from '../api/datadic'
 
 // 通用搜索
@@ -46,7 +46,7 @@ const phFromItems = {
         }
       ],
       rules: [
-        validrules.required
+        validRules.required
       ],
     }
   },
@@ -60,7 +60,7 @@ const phFromItems = {
       placeholder: '请输入名称'
     },
     rules: [
-      validrules.required
+      validRules.required
     ]
   },
 
@@ -73,11 +73,11 @@ const phFromItems = {
       placeholder: '请输入代码'
     },
     rules: [
-      validrules.required
+      validRules.required
     ]
   },
 
-  //数据字典
+  //数据字典 id:name
   datadic(type, label, defaultVal, id) {
     return {
       $type: 'select',
@@ -88,9 +88,26 @@ const phFromItems = {
         placeholder: '请输入' + label
       },
       rules: [
-        validrules.required
+        validRules.required
       ],
       $options: datadicModel.getSelectOptions(type)
+    }
+  },
+
+  //数据字典 name:name
+  datadicName(type, label, defaultVal, id) {
+    return {
+      $type: 'select',
+      $id: id,
+      label: label,
+      $default: defaultVal,
+      $el: {
+        placeholder: '请输入' + label
+      },
+      rules: [
+        validRules.required
+      ],
+      $options: datadicModel.getSelectNameOptions(type)
     }
   },
 

@@ -15,7 +15,7 @@
 
 <script>
   import categoryModel from '../../api/category'
-  import validrules from '../../components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
@@ -70,7 +70,7 @@
               },
               $options: categoryModel.getMineSelectNameOptions('p'),
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             phFormItems.code,
@@ -80,8 +80,8 @@
               label: '托盘放置数',
               $el: {},
               rules: [
-                validrules.required,
-                validrules.number
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -92,8 +92,8 @@
                 placeholder: '请输入长度'
               },
               rules: [
-                validrules.required,
-                validrules.number
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -104,8 +104,8 @@
                 placeholder: '请输入宽度'
               },
               rules: [
-                validrules.required,
-                validrules.number
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -116,8 +116,8 @@
                 placeholder: '请输入高度'
               },
               rules: [
-                validrules.required,
-                validrules.number
+                validRules.required,
+                validRules.number
               ]
             },
             {
@@ -128,8 +128,8 @@
                 placeholder: '请输入皮重'
               },
               rules: [
-                validrules.required,
-                validrules.number
+                validRules.required,
+                validRules.number
               ]
             },
             phFormItems.status()

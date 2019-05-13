@@ -14,8 +14,10 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
-  import validrules from '@/components/validrules'
+  import validRules from '../../components/validRules'
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFormItems from '../../components/phFromItems'
 
   export default {
     data() {
@@ -25,75 +27,22 @@
           url: '/shippingMethods',
           relations: ["creator"],
           tableAttrs: {
-            stripe: true,
-            border: true,
-            "row-class-name": this.statusClassName,
-            "highlight-current-row": true
+            "row-class-name": this.statusClassName
           },
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
-            {prop: 'code', label: '编码', sortable: 'custom' ,'min-width': 100},
-            {prop: 'creator.name', label: '创建人', width: 100},
-            {
-              prop: 'status',
-              label: '状态',
-              width: 80,
-              formatter: row => (row.status === 1 ? '启用' : '禁用')
-            },
-            {
-              prop: 'lastModified',
-              label: '修改时间',
-              width: 140,
-              formatter: row => {
-                return parseTime(row.lastModified, '{y}-{m}-{d} {h}:{i}');
-              }
-            }
+            {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 100},
+            phColumns.creator,
+            phColumns.status,
+            phColumns.lastModified
           ],
           //搜索栏
           searchForm: [
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入名称'
-              }
-            },
-             {
-              $type: 'input',
-              $id: 'code',
-              label: '编码',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入编码'
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'status',
-              label: '状态',
-              $el: {
-                op: 'bw',
-                placeholder: '请选择状态'
-              },
-              $options: [
-                {
-                  label: '全部',
-                  value: ''
-                },
-                {
-                  label: '开启',
-                  value: '1'
-                },
-                {
-                  label: '禁用',
-                  value: '0'
-                }
-              ]
-            }
+            phSearchItems.name,
+            phSearchItems.code,
+            phSearchItems.status
           ],
           //修改或添加弹窗栏
           form: [
@@ -119,23 +68,7 @@
                 validRules.required
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'status',
-              label: '状态',
-              $el: {},
-              $default: 1,
-              $options: [
-                {
-                  label: '开启',
-                  value: 1
-                },
-                {
-                  label: '禁用',
-                  value: 0
-                }
-              ]
-            }
+            phFormItems.status()
           ]
         }
       }

@@ -1,4 +1,4 @@
-const validrules = {
+const validRules = {
 
   required: {
     required: true,
@@ -40,4 +40,4 @@ const validrules = {
   },
 }
 
-export default validrules;
+export default validRules;

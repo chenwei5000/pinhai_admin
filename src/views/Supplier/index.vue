@@ -15,9 +15,7 @@
 
 <script>
 
-  import {parseTime} from '@/utils'
-  import datadicModel from '@/api/datadic'
-  import validrules from '@/components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -32,22 +30,19 @@
           url: '/suppliers',
           relations: ["dataDicItem.type"],
           tableAttrs: {
-            stripe: true,
-            border: true,
             "row-class-name": this.statusClassName,
-            "highlight-current-row": true
           },
 
           // 表格列定义
           columns: [
             {type: 'selection'},
-            {prop: 'name', label: '简称', sortable: 'custom',  'min-width': 150, fixed: 'left'},
+            {prop: 'name', label: '简称', sortable: 'custom', 'min-width': 150, fixed: 'left'},
             phColumns.id,
             {prop: 'code', label: '编码', width: 100},
-            {prop: 'companyName', label: '公司名称',  'min-width': 250},
-            {prop: 'city', label: '所在城市',  'min-width': 100},
+            {prop: 'companyName', label: '公司名称', 'min-width': 250},
+            {prop: 'city', label: '所在城市', 'min-width': 100},
             {prop: 'region', label: '区域', sortable: 'custom', width: 100},
-            {prop: 'address', label: '地址',  'min-width': 250},
+            {prop: 'address', label: '地址', 'min-width': 250},
             {prop: 'linkman', label: '联系人', width: 100},
             {prop: 'tel', label: '联系电话', width: 125},
             phColumns.status,
@@ -90,15 +85,7 @@
                 placeholder: '请输入所在城市'
               },
             },
-            {
-              $type: 'select',
-              $id: 'region',
-              label: '管理区域',
-              $el: {
-                placeholder: '请输入管理区域'
-              },
-              $options: datadicModel.getDatadicOptions("region"),
-            },
+            phFromItems.datadic("region", '管理区域', '', 'region'),
             {
               $type: 'input',
               $id: 'address',
@@ -122,7 +109,8 @@
               $el: {
                 placeholder: '请输入联系电话'
               },
-            }
+            },
+            phFromItems.status()
           ]
         }
       }
@@ -130,7 +118,7 @@
 
     computed: {},
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

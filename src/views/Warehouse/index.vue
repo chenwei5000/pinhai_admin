@@ -15,42 +15,33 @@
 
 <script>
 
-  import {parseTime} from '@/utils'
-  import datadicModel from '@/api/datadic'
-  import supplierModel from '@/api/supplier'
-  import validrules from '@/components/validrules'
+  import supplierModel from '../../api/supplier'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
 
   export default {
-
     data() {
       return {
-
         title: '仓库管理',
-
         tableConfig: {
-
           url: '/warehouses',
           relations: ["dataDicItem.type", "supplier"],
           tableAttrs: {
-            stripe: true,
-            border: true,
             "row-class-name": this.statusClassName,
-            "highlight-current-row": true
           },
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'code', label: '编码',  'min-width': 200},
-            {prop: 'name', label: '名称', sortable: 'custom',  'min-width': 200, fixed: 'left'},
-            {prop: 'address', label: '地址',  'min-width': 150},
+            {prop: 'code', label: '编码', 'min-width': 200},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 200, fixed: 'left'},
+            {prop: 'address', label: '地址', 'min-width': 150},
             {prop: 'linkman', label: '联系人', width: 100},
             {prop: 'tel', label: '联系电话', width: 125},
             {prop: 'type', label: '类型'},
             {prop: 'supplierId', label: '供货商编号', hidden: true},
             {prop: 'supplier.name', label: '供货商名称', 'min-width': 150},
+            phColumns.creator,
             phColumns.status,
             phColumns.lastModified
           ],
@@ -58,8 +49,8 @@
           // 搜索区块定义
           searchForm: [
             phSearchItems.name,
-            phSearchItems.code
-
+            phSearchItems.code,
+            phSearchItems.datadic('warehouse', '类型', 'type')
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -88,19 +79,8 @@
               $el: {
                 placeholder: '请输入联系电话'
               },
-              rules: [
-                validRules.number
-              ]
             },
-            {
-              $type: 'select',
-              $id: 'type',
-              label: '类型',
-              $el: {
-                placeholder: '请输入类型'
-              },
-              $options: datadicModel.getDatadicOptions("warehouse"),
-            },
+            phFromItems.datadic('warehouse', '类型', '', 'type'),
             {
               $type: 'select',
               $id: 'supplierId',
@@ -108,16 +88,16 @@
               $el: {
                 placeholder: '请选择供货商'
               },
-              $options: supplierModel.getSuppilerOptions,
-
+              $options: supplierModel.getSelectOptions(),
             },
+            phFromItems.status()
           ]
         }
       }
     },
     computed: {},
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

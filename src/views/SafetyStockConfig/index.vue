@@ -14,9 +14,7 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
-  import validrules from '@/components/validrules'
-  import datadicModel from '@/api/datadic'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -24,7 +22,7 @@
   export default {
     data() {
       return {
-        types : [],
+        types: [],
         title: '安全库存配置列表',
         tableConfig: {
           url: '/safetyStockConfigs',
@@ -42,6 +40,7 @@
             {prop: 'vip1SafetyStockWeek', label: 'Vip1热销', 'width': 90},
             {prop: 'vip2SafetyStockWeek', label: 'Vip2爆款', 'width': 90},
             {prop: 'sortNum', label: '排序值', sortable: true, 'width': 90},
+            phColumns.creator,
             phColumns.status,
             phColumns.lastModified
           ],
@@ -53,30 +52,8 @@
           //添加或修改弹窗
           form: [
             phFromItems.name,
-            {
-              $type: 'select',
-              $id: 'typeName',
-              $default: '成品',
-              label: '类型',
-              $options: function () {
-                var _types = []
+            phFromItems.datadicName("typeName", '类型', '成品', 'typeName'),
 
-                const loadData = async function () {
-                  datadicModel.getByType("typeName").then(datadics => {
-                    datadics.forEach(datadic => {
-                      _types.push({
-                        label: datadic.valueName,
-                        value: datadic.valueName
-                      });
-                    });
-                    return _types;
-                  });
-                };
-
-                loadData();
-                return _types;
-              }
-            },
             {
               $type: 'input',
               $id: 'vip0SafetyStockWeek',
@@ -113,7 +90,7 @@
                 validRules.number
               ]
             },
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }
@@ -121,7 +98,7 @@
 
     computed: {},
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

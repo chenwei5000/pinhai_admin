@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import validrules from '@/components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -23,7 +23,6 @@
     data() {
       return {
         title: '货币管理',
-
         tableConfig: {
           url: '/currencies',
           tableAttrs: {

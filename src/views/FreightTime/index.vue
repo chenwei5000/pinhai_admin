@@ -16,7 +16,7 @@
 <script>
   import harbourModel from '../../api/harbour'
   import shippingMethodModel from '../../api/shippingMethod'
-  import validrules from '../../components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -87,7 +87,7 @@
               },
               $options: harbourModel.getSelectOptions(),
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             {
@@ -99,7 +99,7 @@
               },
               $options: shippingMethodModel.getSelectOptions(),
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             {
@@ -111,7 +111,7 @@
               },
               $options: harbourModel.getSelectOptions(),
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             {
@@ -122,8 +122,8 @@
                 placeholder: '请输入物流天数'
               },
               rules: [
-                validrules.required,
-                validrules.number
+                validRules.required,
+                validRules.number
               ]
             },
             phFromItems.status

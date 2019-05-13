@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import validrules from '../../components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -53,7 +53,7 @@
                 placeholder: '请输入港口地址'
               },
               rules: [
-                validrules.required
+                validRules.required
               ]
             },
             phFromItems.status()

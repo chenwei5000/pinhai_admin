@@ -15,8 +15,7 @@
 
 <script>
 
-  import {parseTime} from '@/utils'
-  import validrules from '@/components/validrules'
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
