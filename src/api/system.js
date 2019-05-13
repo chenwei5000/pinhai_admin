@@ -11,8 +11,7 @@ const systemModel = {
   login: (param) => {
     const path = '/accessToken';
     param.tenantId = global.config.TENANT_ID;
-    return global.axios.post(path,
-      qs.stringify(param),
+    return global.axios.post(path, qs.stringify(param),
       {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
     ).then(res => res);
   },

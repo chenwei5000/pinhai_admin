@@ -205,6 +205,7 @@
   import _get from 'lodash.get'
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
+  import {mapGetters} from 'vuex'
 
   // 默认返回的数据格式如下
   //          {
@@ -600,7 +601,7 @@
     },
     data() {
       return {
-        tableMaxHeight: 400,
+        tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
         data: [],
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
@@ -653,6 +654,10 @@
     },
 
     computed: {
+      ...mapGetters([
+        'device'
+      ]),
+
       phTableAttrs() {
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       }
@@ -697,17 +702,22 @@
     methods: {
       // 获取表格的高度
       getTableHeight() {
-        //浏览器高度
-        let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        //表格高度
-        let tableHeight = windowHeight;
-        tableHeight = tableHeight - 84; //减框架头部高度
-        tableHeight = tableHeight - 82; //减标题高度
-        tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
-        tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
-        tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-        tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
-        this.tableMaxHeight = tableHeight;
+        if (this.device !== 'mobile') {
+          //浏览器高度
+          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          //表格高度
+          let tableHeight = windowHeight;
+          tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 82; //减标题高度
+          tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
+          tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
+          tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
+          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          this.tableMaxHeight = tableHeight;
+        }
+        else{
+          this.tableMaxHeight = 40000000;
+        }
       },
       /*获取列表*/
       getList(shouldStoreQuery) {

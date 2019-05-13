@@ -57,7 +57,7 @@ const phSearchItems = {
     $type: 'select',
     $id: 'categoryId',
     label: '分类',
-    $options: categoryModel.getMineCategoryOptions('p', true),
+    $options: categoryModel.getMineSelectOptions('p'),
     $el: {
       op: 'eq',
       placeholder: '请选择分类'
@@ -69,7 +69,7 @@ const phSearchItems = {
     $type: 'select',
     $id: 'categoryId',
     label: '分类',
-    $options: categoryModel.getMineCategoryOptions('m', true),
+    $options: categoryModel.getMineSelectOptions('m'),
     $el: {
       op: 'eq',
       placeholder: '请选择分类'
@@ -86,12 +86,12 @@ const phSearchItems = {
         op: 'eq',
         placeholder: '请选择' + label
       },
-      $options: datadicModel.getDatadicOptions(type)
+      $options: datadicModel.getSelectOptions(type)
     }
   },
 
   //仓库名称搜索
-  warehouseId:{
+  warehouseId: {
     $type: 'select',
     $id: 'warehouseId',
     label: '收货仓库',
@@ -99,11 +99,11 @@ const phSearchItems = {
       op: 'eq',
       placeholder: '请选择收货仓库'
     },
-    $options: warehouseModel.getWarehouseOptions,
+    $options: warehouseModel.getSelectOptions,
   },
 
   //sku编码搜索
-  skuCode:{
+  skuCode: {
     $type: 'input',
     $id: 'skuCode',
     label: 'SKU编码',

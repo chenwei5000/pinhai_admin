@@ -3,7 +3,7 @@ import global from './global.js'
 
 const datadicModel = {
 
-  // 通过字典类型或者字典列表
+  // 通过字典类型获取字典列表
   getByType: (type) => {
     const path = '/dataDicItems';
 
@@ -16,22 +16,39 @@ const datadicModel = {
     return global.searchResource(path, rules).then(data => data.rows);
   },
 
-  getDatadicOptions(type, strFlg = true) {
-    var _options = [];
+  // 获取字典id:name格式下拉框选项
+  getSelectOptions(type) {
+    let _options = [];
 
-    const loaddata = async function () {
+    const _loadData = async function () {
       datadicModel.getByType(type).then(list => {
-        console.log(list);
         list.forEach(obj => {
           _options.push({
             label: obj.valueName,
-            value: strFlg ? obj.valueId + '' : obj.valueId
+            value: obj.valueId  + ''
           });
         });
-        return _options;
       });
     };
-    loaddata();
+    _loadData();
+    return _options;
+  },
+
+  // 获取字典name:name格式下拉框选项
+  getSelectNameOptions(type) {
+    let _options = [];
+
+    const _loadData = async function () {
+      datadicModel.getByType(type).then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.valueName,
+            value: obj.valueName,
+          });
+        });
+      });
+    };
+    _loadData();
     return _options;
   }
 }

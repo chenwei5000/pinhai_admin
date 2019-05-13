@@ -10,29 +10,29 @@ const harbourModel = {
   },
 
   /////////////////下拉列表选项/////////////////////////////////////
-  // 获取发货港口下拉列表项
-  getSourceHarbourOptions() {
-    var _sourceHarbours = [];
+  // 获取发货港口下拉列表项 id:name格式
+  getSelectOptions() {
+    let _sourceHarbours = [];
 
-    const loaddata = async function () {
-      harbourModel.getHarbours().then(sourceHarbours => {
-        sourceHarbours.forEach(sourceHarbour => {
+    const _loadData = async function () {
+      harbourModel.getHarbours().then(list => {
+        list.forEach(obj => {
           _sourceHarbours.push({
-            label: sourceHarbour.name,
-            value: sourceHarbour.id +''
+            label: obj.name,
+            value: obj.id + ''
           });
         });
-        return _sourceHarbours;
       });
     };
-    loaddata();
+    _loadData();
     return _sourceHarbours;
   },
 
+  //TODO:
   // 获取目的港口下拉列表项
   getDestinationHarbourOptions() {
-    var _destinationHarbours = [];
-    const loaddata = async function () {
+    let _destinationHarbours = [];
+    const _loadData = async function () {
       harbourModel.getHarbours().then(destinationHarbours => {
         destinationHarbours.forEach(destinationHarbour => {
           _destinationHarbours.push({
@@ -40,10 +40,9 @@ const harbourModel = {
             value: destinationHarbour.id + ''
           });
         });
-        return _destinationHarbours;
       });
     };
-    loaddata();
+    _loadData();
     return _destinationHarbours;
   }
 

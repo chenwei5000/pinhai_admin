@@ -8,25 +8,43 @@ const warehouseModel = {
     const path = '/warehouses';
 
     return global.searchResource(path, null, null, pagesize).then(data => data.rows);
-
   },
 
-  getWarehouseOptions(){
-    var _names = []
-    const loadData = async function () {
-      warehouseModel.getWarehouses().then(warehouses => {
-        warehouses.forEach(warehouse => {
-          _names.push({
-            label: warehouse.name,
-            value: warehouse.id
+
+  // 获取仓库 id:name格式下拉框选项
+  getSelectOptions() {
+    var _options = []
+
+    const _loadData = async function () {
+      warehouseModel.getWarehouses().then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.id + ''
           });
         });
-        return _names;
       });
     };
+    _loadData();
+    return _options;
+  },
 
-    loadData();
-    return _names;
+  // 获取仓库 name:name格式下拉框选项
+  getSelectNameOptions() {
+    var _options = []
+
+    const _loadData = async function () {
+      warehouseModel.getWarehouses().then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.name
+          });
+        });
+      });
+    };
+    _loadData();
+    return _options;
   }
 
 }

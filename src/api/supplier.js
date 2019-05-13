@@ -8,24 +8,40 @@ const supplierModel = {
     const path = '/suppliers';
 
     return global.searchResource(path, null, null, pagesize).then(data => data.rows);
-
   },
 
-  getSuppilerOptions(){
-    var _names = []
-    const loadData = async function () {
-      supplierModel.getSuppliers().then(suppliers => {
-        suppliers.forEach(supplier => {
-          _names.push({
-            label: supplier.name,
-            value: supplier.id
+  // 获取供货商下拉选项 id:name格式
+  getSelectOptions() {
+    let _options = []
+    const _loadData = async function () {
+      supplierModel.getSuppliers().then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.id + ''
           });
         });
-        return _names;
       });
     };
-    loadData();
+    _loadData();
     return _names;
+  },
+
+  // 获取供货商下拉选项 name:name格式
+  getSelectNameOptions() {
+    let _options = []
+    const _loadData = async function () {
+      supplierModel.getSuppliers().then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.name
+          });
+        });
+      });
+    };
+    _loadData();
+    return _options;
   }
 
 }

@@ -9,22 +9,21 @@ const shippingMethodModel = {
     return global.searchResource(path, null, null, pagesize).then(data => data.rows);
   },
 
-  // 获取物流方式下拉选项
-  getShippingMethodOptions() {
-    var _shippingMethods = [];
+  // 获取物流方式下拉选项 id:name格式
+  getSelectOptions() {
+    let _shippingMethods = [];
 
-    const loaddata = async function () {
-      shippingMethodModel.getShippingMethods().then(shippingMethods => {
-        shippingMethods.forEach(shippingMethod => {
+    const _loadData = async function () {
+      shippingMethodModel.getShippingMethods().then(list => {
+        list.forEach(obj => {
           _shippingMethods.push({
-            label: shippingMethod.name,
-            value: shippingMethod.id + ''
+            label: obj.name,
+            value: obj.id + ''
           });
         });
-        return _shippingMethods;
       });
     };
-    loaddata();
+    _loadData();
     return _shippingMethods;
   }
 

@@ -1,32 +1,58 @@
 import validRules from '../components/validrules'
+import datadicModel from '../api/datadic'
 
 // 通用搜索
 const phFromItems = {
 
   // 状态
-  status: {
-    $type: 'radio-group',
-    $id:
-      'status',
-    label:
-      '状态',
-    $el: {},
-    $default: 1,
-    $options:
-      [
+  status(defaultVal = 1) {
+    return {
+      $type: 'radio-group',
+      $id:
+        'status',
+      label:
+        '状态',
+      $el: {},
+      $default: defaultVal + '',
+      $options: [
         {
           label: '开启',
-          value: 1
+          value: '1'
         },
         {
           label: '禁用',
-          value: 0
+          value: '0'
         }
       ]
+    }
+  },
+
+  // 是否
+  yesOrNo(id, label, defaultVal = 0) {
+    return {
+      $type: 'radio-group',
+      $id: id,
+      label: label,
+      $el: {},
+      $default: defaultVal + '',
+      $options: [
+        {
+          label: '是',
+          value: '1'
+        },
+        {
+          label: '否',
+          value: '0'
+        }
+      ],
+      rules: [
+        validRules.required
+      ],
+    }
   },
 
   //名称
-  name:{
+  name: {
     $type: 'input',
     $id: 'name',
     label: '名称',
@@ -39,7 +65,7 @@ const phFromItems = {
   },
 
   //代码
-  code:{
+  code: {
     $type: 'input',
     $id: 'code',
     label: '代码',
@@ -49,6 +75,23 @@ const phFromItems = {
     rules: [
       validRules.required
     ]
+  },
+
+  //数据字典
+  datadic(type, label, defaultVal, id) {
+    return {
+      $type: 'select',
+      $id: id,
+      label: label,
+      $default: defaultVal,
+      $el: {
+        placeholder: '请输入' + label
+      },
+      rules: [
+        validRules.required
+      ],
+      $options: datadicModel.getSelectOptions(type)
+    }
   },
 
 }

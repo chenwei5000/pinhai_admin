@@ -232,7 +232,8 @@ export default {
               _value
 
           if (value !== undefined) {
-            _set(acc, item.$id, value)
+            //TOOD: 所有设置值，按照字符串处理
+            _set(acc, item.$id, value + '')
           }
 
           return acc

@@ -34,10 +34,10 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            {prop: 'code', label: '编码', 'min-width': 150, fixed: 'left'},
+            {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 150, fixed: 'left'},
             phColumns.id,
             {prop: 'category.name', label: '分类', 'min-width': 120},
-            {prop: 'categoryId', label: '分类ID', hidden:true, 'min-width': 120},
+            {prop: 'categoryId', label: '分类ID', hidden: true, 'min-width': 120},
             {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
             {prop: 'length', label: '长(Cm)', width: 80},
             {prop: 'width', label: '宽(Cm)', width: 80},
@@ -68,7 +68,7 @@
               $el: {
                 placeholder: '请输入分类'
               },
-              $options: categoryModel.getMineCategoryNameOptions('p'),
+              $options: categoryModel.getMineSelectNameOptions('p'),
               rules: [
                 validRules.required
               ]
@@ -139,7 +139,7 @@
     },
     computed: {},
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }

@@ -9,28 +9,40 @@ const userModel = {
     return global.searchResource(path, null, null, pageSize).then(data => data.rows);
   },
 
-  /**
-   * 获取物流方式下拉选项
-   * @param type  p-产品  m-原料
-   * @param strFlg
-   * @returns {Array}
-   */
-  getUserOptions(strFlg = true) {
+  // 获取用户 id:name格式下拉框选项
+  getSelectOptions() {
     var _options = [];
 
-    const loaddata = async function () {
-      userModel.getUsers(type).then(list => {
+    const _loadData = async function () {
+      userModel.getUsers().then(list => {
         list.forEach(obj => {
           _options.push({
             label: obj.name,
-            value: strFlg ? obj.id + '' : obj.id
+            value: obj.id + ''
           });
         });
-        return _options;
       });
     };
-    loaddata();
-    return
+    _loadData();
+    return _options;
+  },
+
+  // 获取用户 name:name格式下拉框选项
+  getSelectNameOptions() {
+    var _options = [];
+
+    const _loadData = async function () {
+      userModel.getUsers().then(list => {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.name
+          });
+        });
+      });
+    };
+    _loadData();
+    return _options;
   }
 }
 

@@ -16,7 +16,6 @@
 <script>
   import {parseTime} from '@/utils'
   import userModel from '../../api/user'
-  import datadicModel from '../../api/datadic'
   import validRules from '../../components/validrules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
@@ -62,31 +61,7 @@
           ],
           //修改或新增
           form: [
-            {
-              $type: 'select',
-              $id: 'materialName',
-              label: '类型',
-              $default: 0,
-              $el: {},
-              $options: function () {
-                var _materials = []
-
-                const loadData = async function () {
-                  datadicModel.getByType("materialName").then(datadics => {
-                    datadics.forEach(datadic => {
-                      _materials.push({
-                        label: datadic.valueName,
-                        value: datadic.valueName
-                      });
-                    });
-                    return _materials;
-                  });
-                };
-
-                loadData();
-                return _materials;
-              }
-            },
+            phFormItems.datadic("materialName", "类型", '0', "material"),
             {
               $type: 'input',
               $id: 'name',
@@ -123,56 +98,25 @@
                 validRules.number
               ]
             },
-            {
-              $type: 'radio-group',
-              $id: 'needMaterial',
-              label: '产品必须设置原材料',
-              $default: 1,
-              $options: [
-                {
-                  label: '是',
-                  value: 1
-                },
-                {
-                  label: '否',
-                  value: 0
-                }
-              ],
-              $el: {},
-            },
+            phFormItems.yesOrNo('needMaterial', '产品必须设置原材料'),
             {
               $type: 'select',
               $id: 'userId',
               label: '采购负责人',
               $el: {},
-              $options: function () {
-                var _users = [];
-                const loaddata = async function () {
-                  userModel.getUsers().then(users => {
-                    users.forEach(user => {
-                      _users.push({
-                        label: user.name,
-                        value: user.id
-                      });
-                    });
-                    return _users;
-                  });
-                };
-                loaddata();
-                return _users;
-              },
+              $options: userModel.getSelectOptions(),
               rules: [
                 validRules.required
               ]
             },
-            phFormItems.status
+            phFormItems.status()
           ]
         }
       }
     },
     computed: {},
     methods: {
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }
