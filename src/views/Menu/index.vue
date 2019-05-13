@@ -39,8 +39,14 @@
             {prop: 'title', label: '名称', sortable: 'custom', 'min-width': 120},
             {prop: 'actionId', label: '操作标识', sortable: 'custom', 'min-width': 300},
             {prop: 'icon', label: '图标', sortable: 'custom', 'min-width': 100},
-            {prop: 'parentId', label: '父级菜单ID', sortable: 'custom', 'min-width': 120, 'label-class-name': 'ph-header-small'},
-            {prop: 'url', label: '菜单URL', sortable: 'custom', 'min-width': 100},
+            {
+              prop: 'parentId',
+              label: '父级菜单ID',
+              sortable: 'custom',
+              'min-width': 120,
+              'label-class-name': 'ph-header-small'
+            },
+            {prop: 'url', label: '菜单URL', sortable: 'custom', 'min-width': 300},
             {prop: 'sortNum', label: '排序值', sortable: 'custom', 'min-width': 100},
             phColumns.status,
             phColumns.lastModified
@@ -93,15 +99,25 @@
               $options: [
                 {
                   label: '一级',
-                  value: 1
+                  value: '1'
                 },
                 {
                   label: '二级',
-                  value: 2
+                  value: '2'
                 }
               ]
             },
-            phFromItems.name,
+            {
+              $type: 'input',
+              $id: 'title',
+              label: '名称',
+              $el: {
+                placeholder: '请输入名称'
+              },
+              rules: [
+                validrules.required
+              ]
+            },
             {
               $type: 'input',
               $id: 'actionId',

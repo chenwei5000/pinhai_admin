@@ -231,7 +231,7 @@ export default {
               : (item.inputFormat && item.inputFormat(values)) ||
               _value
 
-          if (value !== undefined) {
+          if (value !== undefined && value !== null) {
             //TOOD: 所有设置值，按照字符串处理
             _set(acc, item.$id, value + '')
           }

@@ -94,8 +94,8 @@
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 150},
             {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},
-            {prop: 'isoCode2', label: '2位iso编码', 'min-width': 120},
-            {prop: 'isoCode3', label: '3位iso编码', 'min-width': 120},
+            {prop: 'isoCode2', label: '2位iso编码', 'min-width': 100, 'label-class-name': 'ph-header-small'},
+            {prop: 'isoCode3', label: '3位iso编码', 'min-width': 120, 'label-class-name': 'ph-header-small'},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -104,6 +104,7 @@
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
             phSearchItems.name,
+            phSearchItems.status
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
           // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
@@ -125,7 +126,7 @@
                 validrules.strMax(6)
               ]
             },
-            phFormItems.status
+            phFormItems.status()
           ]
         }
       }
@@ -140,7 +141,7 @@
     // 各种相关方法定义
     methods: {
       // 状态样式
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }
