@@ -81,6 +81,7 @@
             v-bind="col"
             v-if="!col.hidden"
           >
+
           </el-table-column>
         </template>
 
@@ -114,13 +115,41 @@
 
       <!--非树-->
       <template v-else>
+
         <el-table-column
           v-for="(col) in columns"
           :key="col.prop"
           v-bind="col"
           v-if="!col.hidden"
         >
+
+          <template slot-scope="scope">
+            <template v-if="col.phimg">
+              <el-popover
+                placement="right"
+                title=""
+                trigger="click" v-if="getColVal(scope.row, col.prop)">
+                <img :src="getColVal(scope.row, col.prop).replace('_SL75_','_SL500_')" width="500">
+                <img slot="reference" :src="getColVal(scope.row, col.prop)" :alt="getColVal(scope.row, col.prop)"
+                     width="50" style="cursor: pointer">
+              </el-popover>
+
+            </template>
+
+            <template v-else-if="col.statustag">
+              <el-tag
+                :type="getColVal(scope.row, col.prop) === 1 ? 'success' : 'info'"
+                disable-transitions>{{ getColVal(scope.row, col.prop) === 1 ? '启用' : '禁用' }}
+              </el-tag>
+            </template>
+
+            <template v-else>
+              {{ getColVal(scope.row, col.prop, col.formatter) }}
+            </template>
+          </template>
+
         </el-table-column>
+
       </template>
 
       <!--默认操作列-->
@@ -206,6 +235,7 @@
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
   import {mapGetters} from 'vuex'
+  import {getObjectVal} from '@/utils'
 
   // 默认返回的数据格式如下
   //          {
@@ -241,6 +271,9 @@
 
   const queryFlag = 'q='
   const queryPattern = new RegExp('q=.*' + paramSeparator)
+
+  const statusFlag = 's='
+  const statusPattern = new RegExp('s=.*')
 
   export default {
     name: 'ElDataTable',
@@ -700,6 +733,13 @@
       })
     },
     methods: {
+      getColVal(row, prop, formatter) {
+        if (formatter && typeof formatter === "function") {
+          return formatter.call(this, row);
+        }
+
+        return getObjectVal(row, prop)
+      },
       // 获取表格的高度
       getTableHeight() {
         if (this.device !== 'mobile') {
@@ -713,9 +753,10 @@
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
           tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          console.log(tableHeight);
           this.tableMaxHeight = tableHeight;
         }
-        else{
+        else {
           this.tableMaxHeight = 40000000;
         }
       },
@@ -780,6 +821,17 @@
             data: oParam.data ? encodeURIComponent(oParam.data.toString().trim()) : ''
           })
         });
+
+        let matches = location.href.match(statusPattern);
+        if (matches) {
+          let query = matches[0].split("=");
+          let params = query[1]
+          filters.push({
+            'field': 'status',
+            op: 'eq',
+            data: params
+          });
+        }
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
@@ -1248,11 +1300,11 @@
       font-size: 12px !important;
     }
     /deep/ tr.warning-row {
-      background: rgb(253, 226, 226) !important;
+      background: rgb(233, 233, 235) !important;
     }
 
     /deep/ tr.warning-row td {
-      background: rgb(253, 226, 226) !important;
+      background: rgb(233, 233, 235) !important;
     }
   }
 

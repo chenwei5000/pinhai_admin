@@ -40,7 +40,6 @@
             {prop: 'vip1SafetyStockWeek', label: 'Vip1热销', 'width': 90},
             {prop: 'vip2SafetyStockWeek', label: 'Vip2爆款', 'width': 90},
             {prop: 'sortNum', label: '排序值', sortable: true, 'width': 90},
-            phColumns.creator,
             phColumns.status,
             phColumns.lastModified
           ],

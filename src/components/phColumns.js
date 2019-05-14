@@ -10,6 +10,7 @@ const phColumns = {
     prop: 'status',
     label: '状态',
     width: 80,
+    statustag: true,
     formatter: row => (row.status === 1 ? '启用' : '禁用')
   },
 
