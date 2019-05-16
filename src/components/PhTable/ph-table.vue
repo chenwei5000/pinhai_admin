@@ -273,7 +273,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   const statusFlag = 's='
-  const statusPattern = new RegExp('s=.*')
+  const statusPattern = new RegExp('s=.*' + paramSeparator)
 
   export default {
     name: 'ElDataTable',
@@ -825,10 +825,11 @@
         let matches = location.href.match(statusPattern);
         if (matches) {
           let query = matches[0].split("=");
-          let params = query[1]
+          let params = query[1];
+          params = params.replace("&","");
           filters.push({
             'field': 'status',
-            op: 'eq',
+            op: 'in',
             data: params
           });
         }
@@ -1305,6 +1306,14 @@
 
     /deep/ tr.warning-row td {
       background: rgb(233, 233, 235) !important;
+    }
+
+    /deep/ tr.danger-row {
+      background: rgb(253, 226, 226) !important;
+    }
+
+    /deep/ tr.danger-row td {
+      background: rgb(253, 226, 226) !important;
     }
   }
 

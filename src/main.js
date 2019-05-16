@@ -31,6 +31,10 @@ Vue.component('ph-form', ElFormRenderer)
 Vue.component('ph-table', PhTable)
 Vue.component('ph-card-header', PhCardHeader)
 
+//中央事件总线
+let bus = new Vue()
+Vue.prototype.bus = bus
+
 /**
  * If you don't want to use mock-server
  * you want to use mockjs for request interception
