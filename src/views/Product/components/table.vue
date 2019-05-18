@@ -6,11 +6,11 @@
     <el-form :inline="true" :model="productParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
       <el-form-item label="分类">
-        <el-select v-model="productParam.categoryId.value" placeholder="请选择分类">
-
+        <el-select filterable v-model="productParam.categoryId.value" placeholder="请选择分类">
           <el-option
-            v-for="item in categorySelectOptions"
+            v-for="(item,idx) in categorySelectOptions"
             :label="item.label" :value="item.value"
+            :key="idx"
           ></el-option>
 
         </el-select>
@@ -132,6 +132,7 @@
     >
     </el-pagination>
 
+
   </div>
 
 
@@ -140,8 +141,8 @@
 <script>
   import _get from 'lodash.get'
   import {mapGetters} from 'vuex'
-  import categoryModel from '@/api/category'
   import qs from 'qs'
+  import categoryModel from '@/api/category'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -179,7 +180,7 @@
         else {
           return true;
         }
-      },
+      }
     },
 
     data() {
@@ -270,11 +271,14 @@
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
           tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          console.log(this.$refs.searchForm.$el.offsetHeight);
+          console.log(this.$refs.operationForm);
+          console.log(this.$refs.pageForm.$el.offsetHeight);
           console.log(tableHeight);
           this.tableMaxHeight = tableHeight;
         }
         else {
-          this.tableMaxHeight = 40000000;
+          this.tableMaxHeight = 400;
         }
       },
 

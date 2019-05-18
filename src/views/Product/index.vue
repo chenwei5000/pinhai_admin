@@ -25,11 +25,20 @@
           </el-tab-pane>
 
           <el-tab-pane name="unfinished" lazy>
-          <span slot="label" style="color: #F56C6C;">
-            <i class="el-ph-icon-exclamation-circle"></i> 信息不全的产品
-          </span>
+            <span slot="label" style="color: #F56C6C;">
+              <i class="el-ph-icon-exclamation-circle"></i> 信息不全的产品
+            </span>
             <keep-alive>
               <tab-pane type="unfinished"/>
+            </keep-alive>
+          </el-tab-pane>
+
+          <el-tab-pane name="createFrom" lazy>
+            <span slot="label" style="color: #409EFF;">
+              <i class="el-ph-icon-plus-circle"></i> 添加商品
+            </span>
+            <keep-alive>
+              <createFrom></createFrom>
             </keep-alive>
           </el-tab-pane>
 
@@ -42,11 +51,12 @@
 
 <script>
   import tabPane from './components/TabPane'
+  import createFrom from './components/createFrom'
 
   const statusFlag = 's='
 
   export default {
-    components: {tabPane},
+    components: {tabPane, createFrom},
 
     data() {
       return {
