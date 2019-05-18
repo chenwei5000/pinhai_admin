@@ -757,7 +757,7 @@
           this.tableMaxHeight = tableHeight;
         }
         else {
-          this.tableMaxHeight = 40000000;
+          this.tableMaxHeight = 400;
         }
       },
       /*获取列表*/
