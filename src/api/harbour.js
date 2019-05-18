@@ -16,36 +16,40 @@ const harbourModel = {
 
     const _loadData = async function () {
       harbourModel.getHarbours().then(list => {
-        list.forEach(obj => {
-          _sourceHarbours.push({
-            label: obj.name,
-            value: obj.id + ''
+        if (list) {
+          list.forEach(obj => {
+            _sourceHarbours.push({
+              label: obj.name,
+              value: obj.id + ''
+            });
           });
-        });
+        }
       });
     };
     _loadData();
     return _sourceHarbours;
-  },
 
-  //TODO:
-  // 获取目的港口下拉列表项
-  getDestinationHarbourOptions() {
-    let _destinationHarbours = [];
+  },
+  // 获取发货港口下拉列表项 name:name格式
+  getSelectNameOptions() {
+    let _sourceHarbours = [];
+
     const _loadData = async function () {
-      harbourModel.getHarbours().then(destinationHarbours => {
-        destinationHarbours.forEach(destinationHarbour => {
-          _destinationHarbours.push({
-            label: destinationHarbour.name,
-            value: destinationHarbour.id + ''
+      harbourModel.getHarbours().then(list => {
+        if (list) {
+          list.forEach(obj => {
+            _sourceHarbours.push({
+              label: obj.name,
+              value: obj.name
+            });
           });
-        });
+        }
       });
     };
     _loadData();
-    return _destinationHarbours;
-  }
+    return _sourceHarbours;
 
+  }
 }
 
 

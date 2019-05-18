@@ -15,12 +15,14 @@ const supplierModel = {
     let _options = []
     const _loadData = async function () {
       supplierModel.getSuppliers().then(list => {
-        list.forEach(obj => {
-          _options.push({
-            label: obj.name,
-            value: obj.id + ''
+        if (list) {
+          list.forEach(obj => {
+            _options.push({
+              label: obj.name,
+              value: obj.id + ''
+            });
           });
-        });
+        }
       });
     };
     _loadData();
@@ -28,16 +30,18 @@ const supplierModel = {
   },
 
   // 获取供货商下拉选项 name:name格式
-  getSelectNameOptions() {
+  getSelectCodeOptions() {
     let _options = []
     const _loadData = async function () {
       supplierModel.getSuppliers().then(list => {
-        list.forEach(obj => {
-          _options.push({
-            label: obj.name,
-            value: obj.name
+        if (list) {
+          list.forEach(obj => {
+            _options.push({
+              label: obj.code,
+              value: obj.id + ''
+            });
           });
-        });
+        }
       });
     };
     _loadData();

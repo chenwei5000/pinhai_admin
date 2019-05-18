@@ -29,24 +29,6 @@ const warehouseModel = {
     return _options;
   },
 
-  // 获取仓库 name:name格式下拉框选项
-  getSelectNameOptions() {
-    var _options = []
-
-    const _loadData = async function () {
-      warehouseModel.getWarehouses().then(list => {
-        list.forEach(obj => {
-          _options.push({
-            label: obj.name,
-            value: obj.name
-          });
-        });
-      });
-    };
-    _loadData();
-    return _options;
-  }
-
 }
 
 export default warehouseModel;

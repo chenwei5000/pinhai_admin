@@ -16,13 +16,14 @@ const currencyModel = {
 
     const _loadData = async function () {
       currencyModel.getCurrencies().then(list => {
-        list.forEach(obj => {
-          _options.push({
-            label: obj.name,
-            value: obj.id + ''
+        if (list) {
+          list.forEach(obj => {
+            _options.push({
+              label: obj.name,
+              value: obj.id + ''
+            });
           });
-        });
-        return _options;
+        }
       });
     };
     _loadData();
@@ -35,13 +36,14 @@ const currencyModel = {
 
     const _loadData = async function () {
       currencyModel.getCurrencies().then(list => {
-        list.forEach(obj => {
-          _options.push({
-            label: obj.name,
-            value: obj.name
+        if (list) {
+          list.forEach(obj => {
+            _options.push({
+              label: obj.name,
+              value: obj.name
+            });
           });
-        });
-        return _options;
+        }
       });
     };
     _loadData();

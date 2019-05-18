@@ -22,12 +22,14 @@ const datadicModel = {
 
     const _loadData = async function () {
       datadicModel.getByType(type).then(list => {
-        list.forEach(obj => {
-          _options.push({
-            label: obj.valueName,
-            value: obj.valueId  + ''
+        if (list) {
+          list.forEach(obj => {
+            _options.push({
+              label: obj.valueName,
+              value: obj.valueId + ''
+            });
           });
-        });
+        }
       });
     };
     _loadData();

@@ -15,12 +15,14 @@ const shippingMethodModel = {
 
     const _loadData = async function () {
       shippingMethodModel.getShippingMethods().then(list => {
-        list.forEach(obj => {
-          _shippingMethods.push({
-            label: obj.name,
-            value: obj.id + ''
+        if (list) {
+          list.forEach(obj => {
+            _shippingMethods.push({
+              label: obj.name,
+              value: obj.id + ''
+            });
           });
-        });
+        }
       });
     };
     _loadData();

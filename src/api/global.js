@@ -1,5 +1,5 @@
 import _axios from 'axios'
-import store from '@/store/index'
+import store from '@/store'
 import {Message} from 'element-ui'
 import qs from 'qs'
 
@@ -24,8 +24,11 @@ const generateUrl = function (path) {
  */
 const searchResource = function (path, filterRules,
                                  relations = null, pagesize = -1) {
+
   if (!path || path == '') {
-    return;
+    return new Promise((resolve, reject) => {
+      resolve(false);
+    });
   }
   let _filters = null;
   let _relations = null;
