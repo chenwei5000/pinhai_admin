@@ -24,7 +24,8 @@
 
         <el-row>
           <el-form-item label="SKU" style="width: 400px" prop="skuCode">
-            <el-input v-model="newProduct.skuCode" placeholder="请输入产品SKU" style="width: 300px"></el-input>
+            <el-input v-model="newProduct.skuCode" placeholder="使用全英文,空格用-号代替。如：gym-104"
+                      style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="名称" style="width: 400px" prop="name">
             <el-input v-model="newProduct.name" placeholder="请输入产品名称" style="width: 300px"></el-input>
@@ -34,7 +35,7 @@
         <el-row>
           <el-form-item label="分类" style="width: 400px" prop="categoryId">
             <el-col :span="20">
-              <el-select filterable v-model="newProduct.categoryId" placeholder="请选择分类" style="width: 200px">
+              <el-select filterable v-model="newProduct.categoryId" placeholder="请选择分类,可筛选" style="width: 200px">
                 <el-option
                   v-for="(item,idx) in categorySelectOptions"
                   :label="item.label" :value="item.value"
@@ -43,7 +44,7 @@
               </el-select>
             </el-col>
             <el-col :span="4">
-              <el-button type="primary" @click="onCategoryNew" icon="el-icon-circle-plus"></el-button>
+              <el-button type="primary" @click="openNewCategoryDialog" icon="el-icon-circle-plus"></el-button>
             </el-col>
           </el-form-item>
 
@@ -55,7 +56,7 @@
         <el-row>
           <el-form-item label="箱规" style="width: 400px" prop="cartonSpecId">
             <el-col :span="20">
-              <el-select filterable v-model="newProduct.cartonSpecId" placeholder="包装材料规格" style="width: 200px">
+              <el-select filterable v-model="newProduct.cartonSpecId" placeholder="外箱包装材料规格,可筛选" style="width: 200px">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
                   :label="item.label" :value="item.value"
@@ -64,7 +65,7 @@
               </el-select>
             </el-col>
             <el-col :span="4">
-              <el-button type="primary" icon="el-icon-circle-plus"></el-button>
+              <el-button type="primary" @click="openNewCartonspecDialog" icon="el-icon-circle-plus"></el-button>
             </el-col>
           </el-form-item>
 
@@ -107,9 +108,9 @@
       <fieldset class="panel-heading" style="margin-top: 10px">
         <legend class="panel-title">采购信息</legend>
         <el-row>
-          <el-form-item filterable label="供货商" style="width: 400px" prop="supplierId">
+          <el-form-item label="供货商" style="width: 400px" prop="supplierId">
             <el-col :span="20">
-              <el-select v-model="newProduct.supplierId" placeholder="请选择供货商" style="width: 200px">
+              <el-select filterable v-model="newProduct.supplierId" placeholder="请选择供货商,可筛选" style="width: 200px">
                 <el-option
                   v-for="(item,idx) in supplierSelectOptions"
                   :label="item.label" :value="item.value"
@@ -118,7 +119,7 @@
               </el-select>
             </el-col>
             <el-col :span="4">
-              <el-button type="primary" icon="el-icon-circle-plus"></el-button>
+              <el-button type="primary" @click="openNewSupplierDialog" icon="el-icon-circle-plus"></el-button>
             </el-col>
           </el-form-item>
 
@@ -129,18 +130,13 @@
 
         <el-row>
           <el-form-item label="结算货币" style="width: 400px" prop="currencyId">
-            <el-col :span="20">
-              <el-select v-model="newProduct.currencyId" placeholder="请选择结算货币" style="width: 200px">
-                <el-option
-                  v-for="(item,idx) in currencySelectOptions"
-                  :label="item.label" :value="item.value"
-                  :key="idx"
-                ></el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="4">
-              <el-button type="primary" icon="el-icon-circle-plus"></el-button>
-            </el-col>
+            <el-select v-model="newProduct.currencyId" placeholder="请选择结算货币" style="width: 200px">
+              <el-option
+                v-for="(item,idx) in currencySelectOptions"
+                :label="item.label" :value="item.value"
+                :key="idx"
+              ></el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item label="采购价" style="width: 400px" prop="price">
@@ -179,7 +175,7 @@
       </fieldset>
 
       <el-row type="flex" justify="center">
-        <el-button type="primary" style="margin-top: 15px" @click="submitForm">立即创建</el-button>
+        <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateProduct">立即创建</el-button>
       </el-row>
 
     </el-form>
@@ -194,22 +190,17 @@
     </div-->
 
     <!--添加分类-->
-    <el-dialog title="添加分类" :visible.sync="categoryDialogVisible">
-      <el-scrollbar class="menu-wrapper" noresize>
-        <el-row>
-          <el-col :span="22">
-            <ph-form :content="categoryForm" ref="categoryForm" v-bind="formAttrs">
-            </ph-form>
-          </el-col>
-        </el-row>
-      </el-scrollbar>
+    <categoryDialog ref="categoryDialog"
+                    @newCategoryComplete="onNewCategoryComplete"></categoryDialog>
 
-      <div slot="footer">
-        <el-button @click="cancelCategory" size="small">取 消</el-button>
-        <el-button type="primary" @click="createCategory" :loading="createCategoryLoading" size="small">确 定</el-button>
-      </div>
 
-    </el-dialog>
+    <!--添加箱规-->
+    <cartonspecDialog ref="cartonspecDialog"
+                      @newCartonspecComplete="onNewCartonspecComplete"></cartonspecDialog>
+
+    <!--添加供货商-->
+    <supplierDialog ref="supplierDialog"
+                    @newSupplierComplete="onNewSupplierComplete"></supplierDialog>
 
   </div>
 
@@ -217,53 +208,37 @@
 </template>
 
 <script>
+  import categoryDialog from '@/components/PhDialog/category'
+  import cartonspecDialog from '@/components/PhDialog/cartonspec'
+  import supplierDialog from '@/components/PhDialog/supplier'
+
   import categoryModel from '@/api/category'
   import cartonspecModel from '@/api/cartonspec'
   import supplierModel from '@/api/supplier'
   import currencyModel from '@/api/currency'
-  import userModel from '@/api/user'
-  import validRules from '@/components/validRules'
 
   export default {
+
+    components: {
+      categoryDialog,
+      cartonspecDialog,
+      supplierDialog
+    },
+
     props: {},
 
     computed: {},
 
     data() {
       return {
-        categoryDialogVisible: false,
-        createCategoryLoading: false,
-        categoryForm: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '分类名称',
-            $el: {},
-            rules: [
-              validRules.required
-            ]
-          },
-          {
-            $type: 'select',
-            $id: 'userId',
-            label: '采购负责人',
-            $el: {filterable: true},
-            $options: userModel.getSelectOptions(),
-            rules: [
-              validRules.required
-            ]
-          }
-        ],
-        formAttrs: {
-          "label-width": "100px",
-          "label-suffix": ":",
-          "status-icon": true,
-          size: "small"
-        },
+        //选择框
         categorySelectOptions: [],
         cartonspecSelectOptions: [],
         supplierSelectOptions: [],
         currencySelectOptions: [],
+
+        confirmLoading: false,
+        // 新产品对象
         newProduct: {
           status: 1,
           skuCode: null,
@@ -307,16 +282,12 @@
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
           grossWeight: [
-            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           supplierId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           currencyId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           price: [
-            {required: true, message: '必须输入', trigger: 'blur'}
           ]
         },
       }
@@ -331,21 +302,59 @@
     mounted() {
     },
     methods: {
-      cancelCategory() {
-        this.$refs.categoryForm.resetFields();
-        this.categoryDialogVisible = false
+
+      ///////////////分类///////////////////////
+      // 打开
+      openNewCategoryDialog() {
+        this.$refs.categoryDialog.show();
       },
-      onCategoryNew(row = {}) {
-        this.row = row
-        this.isNew = true
-        this.categoryDialogVisible = true
+      //保存完毕
+      onNewCategoryComplete(category) {
+        this.categorySelectOptions.unshift({label: category.name, value: category.id + ''});
+        this.newProduct.categoryId = category.id + '';
+      },
+
+      ///////////////箱规///////////////////////
+      // 打开
+      openNewCartonspecDialog(row = {}) {
+        this.$refs.cartonspecDialog.show();
+      },
+      //保存完毕
+      onNewCartonspecComplete(cartonSpec) {
+        this.cartonspecSelectOptions.unshift({label: cartonSpec.name, value: cartonSpec.id + ''});
+        this.newProduct.cartonSpecId = cartonSpec.id + '';
+      },
+
+      ///////////////供货商///////////////////////
+      // 打开
+      openNewSupplierDialog(row = {}) {
+        this.$refs.supplierDialog.show();
+      },
+      //保存完毕
+      onNewSupplierComplete(supplier) {
+        this.supplierSelectOptions.unshift({label: supplier.name, value: supplier.id + ''});
+        this.newProduct.supplierId = supplier.id + '';
       },
 
 
-      submitForm() {
+      ///////////////产品///////////////////////
+      onCreateProduct() {
         this.$refs.createForm.validate(valid => {
-          alert(valid);
           if (!valid) return;
+
+          // 新增逻辑
+          let url = '/products'
+          this.confirmLoading = true
+
+          this.global.axios.post(url, this.newProduct)
+            .then(resp => {
+              this.$message({type: 'success', message: '产品添加成功'});
+              this.$refs.createForm.resetFields();
+              this.confirmLoading = false
+            })
+            .catch(err => {
+              this.confirmLoading = false;
+            })
         })
       }
     }

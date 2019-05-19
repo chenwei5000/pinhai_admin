@@ -70,7 +70,7 @@ const phFromItems = {
     $id: 'code',
     label: '代码',
     $el: {
-      placeholder: '请输入代码'
+      placeholder: '请输入代码,最好使用全英文,空格用-号代替。如：gymmat-104'
     },
     rules: [
       validRules.required
