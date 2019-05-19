@@ -130,6 +130,8 @@
       id="ph-table-page"
       ref="pageForm"
     >
+      <el-button icon="el-icon-refresh" @click="onRefreshTable" class="btn-prev" circle></el-button>
+
     </el-pagination>
 
 
@@ -197,7 +199,7 @@
         //分页
         size: 20,
         page: 1,
-        layout: 'total, sizes, prev, pager, next, jumper',
+        layout: 'total, sizes, slot, prev, pager, next, jumper',
         paginationSizes: [20, 50, 100],
         total: 0,
 
@@ -271,10 +273,6 @@
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
           tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
-          console.log(this.$refs.searchForm.$el.offsetHeight);
-          console.log(this.$refs.operationForm);
-          console.log(this.$refs.pageForm.$el.offsetHeight);
-          console.log(tableHeight);
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -517,8 +515,11 @@
           op: 'contains',
           value: val
         }]
-
       },
+
+      onRefreshTable: function () {
+        this.getList();
+      }
     }
   }
 </script>
