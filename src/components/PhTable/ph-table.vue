@@ -122,32 +122,6 @@
           v-bind="col"
           v-if="!col.hidden"
         >
-
-          <template slot-scope="scope">
-            <template v-if="col.phimg">
-              <el-popover
-                placement="right"
-                title=""
-                trigger="click" v-if="getColVal(scope.row, col.prop)">
-                <img :src="getColVal(scope.row, col.prop).replace('_SL75_','_SL500_')" width="500">
-                <img slot="reference" :src="getColVal(scope.row, col.prop)" :alt="getColVal(scope.row, col.prop)"
-                     width="50" style="cursor: pointer">
-              </el-popover>
-
-            </template>
-
-            <template v-else-if="col.statustag">
-              <el-tag
-                :type="getColVal(scope.row, col.prop) === 1 ? 'success' : 'info'"
-                disable-transitions>{{ getColVal(scope.row, col.prop) === 1 ? '启用' : '禁用' }}
-              </el-tag>
-            </template>
-
-            <template v-else>
-              {{ getColVal(scope.row, col.prop, col.formatter) }}
-            </template>
-          </template>
-
         </el-table-column>
 
       </template>
@@ -272,8 +246,6 @@
   const queryFlag = 'q='
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
-  const statusFlag = 's='
-  const statusPattern = new RegExp('s=.*' + paramSeparator)
 
   export default {
     name: 'ElDataTable',
@@ -821,18 +793,6 @@
             data: oParam.data ? encodeURIComponent(oParam.data.toString().trim()) : ''
           })
         });
-
-        let matches = location.href.match(statusPattern);
-        if (matches) {
-          let query = matches[0].split("=");
-          let params = query[1];
-          params = params.replace("&","");
-          filters.push({
-            'field': 'status',
-            op: 'in',
-            data: params
-          });
-        }
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});

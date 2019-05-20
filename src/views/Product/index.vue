@@ -61,7 +61,8 @@
     data() {
       return {
         title: '产品管理', // 页面标题
-        activeStatus: location.href.indexOf(statusFlag) > -1 ? this.$route.query.s !== null ? this.$route.query.s : 'valid' : 'valid',
+        activeStatus: location.href.indexOf(statusFlag) > -1
+          ? this.$route.query.s !== null ? this.$route.query.s : 'valid' : 'valid',
       }
     },
 

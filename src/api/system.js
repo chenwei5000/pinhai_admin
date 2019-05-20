@@ -24,6 +24,16 @@ const systemModel = {
     store.commit('menu/clearMenus')
     store.commit('user/clearRolePower')
 
+    store.commit('app/SET_CATEGORIES', null)
+    store.commit('app/SET_SUPPLIERS', null)
+    store.commit('app/SET_WAREHOUSES', null)
+    store.commit('app/SET_CURRENCIES', null)
+    store.commit('app/SET_CARTONSPECS', null)
+    store.commit('app/SET_HARBOURS', null)
+    store.commit('app/SET_DATADICS', null)
+    store.commit('app/SET_SHIPPINGMETHODS', null)
+    store.commit('app/SET_PERSONNELS', null)
+
     //重置路由
     resetRouter()
 

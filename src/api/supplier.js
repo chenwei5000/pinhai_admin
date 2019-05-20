@@ -1,4 +1,5 @@
 import global from './global.js'
+import store from '@/store'
 
 
 const supplierModel = {
@@ -14,36 +15,40 @@ const supplierModel = {
   getSelectOptions() {
     let _options = []
     const _loadData = async function () {
-      supplierModel.getSuppliers().then(list => {
-        if (list) {
-          list.forEach(obj => {
-            _options.push({
-              label: obj.name,
-              value: obj.id + ''
-            });
+      let list = store.getters.suppliers;
+      if (list == null) {
+        list = await store.dispatch('app/loadSuppliers');
+      }
+      if (list) {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.id + ''
           });
-        }
-      });
-    };
+        });
+      }
+    }
     _loadData();
     return _options;
   },
 
-  // 获取供货商下拉选项 name:name格式
+  // 获取供货商下拉选项 id:code格式
   getSelectCodeOptions() {
     let _options = []
     const _loadData = async function () {
-      supplierModel.getSuppliers().then(list => {
-        if (list) {
-          list.forEach(obj => {
-            _options.push({
-              label: obj.code,
-              value: obj.id + ''
-            });
+      let list = store.getters.suppliers;
+      if (list == null) {
+        list = await store.dispatch('app/loadSuppliers');
+      }
+      if (list) {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.code,
+            value: obj.id + ''
           });
-        }
-      });
-    };
+        });
+      }
+    }
     _loadData();
     return _options;
   }

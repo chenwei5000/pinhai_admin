@@ -1,11 +1,12 @@
 import global from './global.js'
+import store from '@/store'
 
 
 const harbourModel = {
 
   // 获取港口列表
   getHarbours(pagesize = -1) {
-    const path = '/harbours';
+    const path = '/harbours?sort=name&order=asc';
     return global.searchResource(path, null, null, pagesize).then(data => data.rows);
   },
 
@@ -15,17 +16,20 @@ const harbourModel = {
     let _sourceHarbours = [];
 
     const _loadData = async function () {
-      harbourModel.getHarbours().then(list => {
-        if (list) {
-          list.forEach(obj => {
-            _sourceHarbours.push({
-              label: obj.name,
-              value: obj.id + ''
-            });
+      let list = store.getters.harbours;
+      if (list == null) {
+        list = await store.dispatch('app/loadHarbours');
+      }
+      if (list) {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.id + ''
           });
-        }
-      });
-    };
+        });
+      }
+    }
+
     _loadData();
     return _sourceHarbours;
 
@@ -35,20 +39,21 @@ const harbourModel = {
     let _sourceHarbours = [];
 
     const _loadData = async function () {
-      harbourModel.getHarbours().then(list => {
-        if (list) {
-          list.forEach(obj => {
-            _sourceHarbours.push({
-              label: obj.name,
-              value: obj.name
-            });
+      let list = store.getters.harbours;
+      if (list == null) {
+        list = await store.dispatch('app/loadHarbours');
+      }
+      if (list) {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.name
           });
-        }
-      });
-    };
+        });
+      }
+    }
     _loadData();
     return _sourceHarbours;
-
   }
 }
 

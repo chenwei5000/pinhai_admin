@@ -1,7 +1,15 @@
 import global from './global.js'
+import store from '@/store'
 
 
 const datadicModel = {
+
+  //获取所有数据字典
+  getDatadics: (pagesize = -1) => {
+    const path = '/dataDicItems?sort=valueName&order=asc';
+
+    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+  },
 
   // 通过字典类型获取字典列表
   getByType: (type) => {
@@ -21,17 +29,21 @@ const datadicModel = {
     let _options = [];
 
     const _loadData = async function () {
-      datadicModel.getByType(type).then(list => {
-        if (list) {
-          list.forEach(obj => {
+      let list = store.getters.datadics;
+      if (list == null) {
+        list = await store.dispatch('app/loadDatadics');
+      }
+      if (list) {
+        list.forEach(obj => {
+          if (obj.type && obj.type == type) {
             _options.push({
               label: obj.valueName,
-              value: obj.valueId + ''
+              value: obj.valueNameId + ''
             });
-          });
-        }
-      });
-    };
+          }
+        });
+      }
+    }
     _loadData();
     return _options;
   },
@@ -41,15 +53,21 @@ const datadicModel = {
     let _options = [];
 
     const _loadData = async function () {
-      datadicModel.getByType(type).then(list => {
+      let list = store.getters.datadics;
+      if (list == null) {
+        list = await store.dispatch('app/loadDatadics');
+      }
+      if (list) {
         list.forEach(obj => {
-          _options.push({
-            label: obj.valueName,
-            value: obj.valueName,
-          });
+          if (obj.type && obj.type === type) {
+            _options.push({
+              label: obj.valueName,
+              value: obj.valueName
+            });
+          }
         });
-      });
-    };
+      }
+    }
     _loadData();
     return _options;
   }

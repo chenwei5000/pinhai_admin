@@ -1,12 +1,11 @@
 import global from './global.js'
-
+import store from '@/store'
 
 const warehouseModel = {
 
   // 获取供货商列表
   getWarehouses: (pagesize = -1) => {
-    const path = '/warehouses';
-
+    const path = '/warehouses?sort=name&order=asc';
     return global.searchResource(path, null, null, pagesize).then(data => data.rows);
   },
 
