@@ -12,6 +12,7 @@ import harbourModel from '@/api/harbour'
 import datadicModel from '@/api/datadic'
 import shippingMethodModel from '@/api/shippingMethod'
 import userModel from '@/api/user'
+import enumModel from '@/api/phEnum'
 
 const state = {
   sidebar: {
@@ -31,6 +32,7 @@ const state = {
   datadics: null, //数据字典
   shippingMethods: null, //运输方式
   personnels: null,  //人员
+  enums: null //人员
 }
 
 const mutations = {
@@ -61,6 +63,9 @@ const mutations = {
   },
   SET_PERSONNELS: (state, personnels) => {
     state.personnels = personnels
+  },
+  SET_ENUMS: (state, enums) => {
+    state.enums = enums
   },
 
   TOGGLE_SIDEBAR: state => {
@@ -215,6 +220,20 @@ const actions = {
       });
     });
   },
+
+  loadEnums({commit}) {
+    return new Promise((resolve, reject) => {
+      enumModel.getEnums.then(async list => {
+        console.log("从后端获取枚举信息");
+        commit('SET_ENUMS', list);
+        resolve(list);
+      }).catch(error => {
+        reject(error)
+      });
+    });
+  },
+
+
 }
 
 export default {
