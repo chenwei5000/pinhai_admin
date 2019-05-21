@@ -47,7 +47,7 @@
           searchForm: [
             phSearchItems.name,
             phSearchItems.code,
-            phSearchItems.status,
+            phSearchItems.status(),
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -60,7 +60,8 @@
                 placeholder: '请输入代码'
               },
               rules: [
-                  validRules.required
+                validRules.required,
+                validRules.strMax(3)
               ]
             },
             {
@@ -134,7 +135,11 @@
               ]
             },
             phFromItems.status()
-          ]
+          ],
+          //提交后执行
+          afterConfirm: () => {
+            this.$store.commit('app/SET_CURRENCIES', null)
+          }
         }
       }
     },

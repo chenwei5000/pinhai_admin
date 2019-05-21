@@ -46,7 +46,7 @@
           // 搜索区块定义
           searchForm: [
             phSearchItems.name,
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //  弹窗表单
           form: [
@@ -87,7 +87,10 @@
               ]
             },
             phFromItems.status()
-          ]
+          ],
+          //提交后执行
+          afterConfirm: () => {
+          }
         }
       }
     },

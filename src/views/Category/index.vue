@@ -14,6 +14,8 @@
 </template>
 
 <script>
+
+  import phEnumModel from '../../api/phEnum'
   import userModel from '../../api/user'
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
@@ -45,7 +47,17 @@
               prop: 'needMaterial',
               label: '产品必须设置原材料',
               'label-class-name': 'ph-header-small',
-              formatter: row => (row.needMaterial === 1 ? '是' : '否'),
+              formatter: row => {
+                let _status = phEnumModel.getSelectOptions("YesOrNo");
+                let _label = '';
+                _status.forEach(s => {
+                  if (s.value === row.needMaterial + '') {
+                    _label = s.label;
+                    return;
+                  }
+                });
+                return _label;
+              },
               width: 150
             },
             phColumns.creator,
@@ -56,7 +68,7 @@
           searchForm: [
             phSearchItems.name,
             phSearchItems.datadic("materialName", "类型", "material"),
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //修改或新增
           form: [
@@ -65,16 +77,34 @@
               $type: 'input',
               $id: 'name',
               label: '分类名称',
-              $el: {},
+              $el: {
+                placeholder: '请输入分类名称'
+              },
               rules: [
                 validRules.required
               ]
             },
             {
+              $type: 'select',
+              $id: 'userId',
+              label: '采购负责人',
+              $el: {
+                placeholder: '请选择采购负责人,可筛选',
+                filterable: true
+              },
+              $options: userModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
+            },
+            phFormItems.yesOrNo('needMaterial', '产品必须设置原材料'),
+            {
               $type: 'input',
               $id: 'safetyStockWeek ',
               label: '安全库存(周)',
-              $el: {},
+              $el: {
+                placeholder: '分类下普通产品安全库存周数'
+              },
               rules: [
                 validRules.number
               ]
@@ -83,7 +113,9 @@
               $type: 'input',
               $id: 'vip1SafetyStockWeek ',
               label: 'Vip1安全库存(周)',
-              $el: {},
+              $el: {
+                placeholder: '分类下热卖产品安全库存周数'
+              },
               rules: [
                 validRules.number
               ]
@@ -92,24 +124,18 @@
               $type: 'input',
               $id: 'vip2SafetyStockWeek ',
               label: 'Vip2安全库存(周)',
-              $el: {},
+              $el: {
+                placeholder: '分类下爆款产品安全库存周数'
+              },
               rules: [
                 validRules.number
               ]
             },
-            phFormItems.yesOrNo('needMaterial', '产品必须设置原材料'),
-            {
-              $type: 'select',
-              $id: 'userId',
-              label: '采购负责人',
-              $el: {},
-              $options: userModel.getSelectOptions(),
-              rules: [
-                validRules.required
-              ]
-            },
             phFormItems.status()
           ],
+          formAttrs: {
+            "label-width": "170px"
+          },
           //提交后执行
           afterConfirm: () => {
             this.$store.commit('app/SET_CATEGORIES', null)

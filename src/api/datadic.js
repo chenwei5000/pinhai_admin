@@ -38,7 +38,7 @@ const datadicModel = {
           if (obj.type && obj.type == type) {
             _options.push({
               label: obj.valueName,
-              value: obj.valueNameId + ''
+              value: obj.valueId + ''
             });
           }
         });

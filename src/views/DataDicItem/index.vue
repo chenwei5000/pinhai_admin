@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
       </ph-card-header>
       <div class="ph-card-body">
         <ph-table
@@ -32,10 +32,10 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'type', label: '字典类型', sortable: 'custom', fixed: 'left','min-width': 100},
-            {prop: 'name', label: '字典类型名称', sortable: 'custom','min-width': 100},
-            {prop: 'valueId', label: '字典值ID','min-width': 100},
-            {prop: 'valueName', label: '字典值名称','min-width': 100},
+            {prop: 'type', label: '字典类型', sortable: 'custom', fixed: 'left', 'min-width': 100},
+            {prop: 'name', label: '字典类型名称', sortable: 'custom', 'min-width': 100},
+            {prop: 'valueId', label: '字典值ID', 'min-width': 100},
+            {prop: 'valueName', label: '字典值名称', 'min-width': 100},
             phColumns.status,
             phColumns.lastModified
           ],
@@ -44,21 +44,11 @@
           searchForm: [
             {
               $type: 'input',
-              $id: 'type',
-              label: '字典类型',
+              $id: 'name',
+              label: '字典类型名称',
               $el: {
                 op: 'bw',
-                placeholder: '请输入字典类型'
-              }
-            },
-            phSearchItems.name,
-            {
-              $type: 'input',
-              $id: 'valueId',
-              label: '字典值ID',
-              $el: {
-                op: 'bw',
-                placeholder: '请输入字典值ID'
+                placeholder: '请输入字典类型名称'
               }
             },
             {
@@ -69,7 +59,8 @@
                 op: 'bw',
                 placeholder: '请输入字典值名称'
               }
-            }
+            },
+            phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -107,8 +98,12 @@
                 validRules.required
               ]
             },
-            phFormItems.status
-          ]
+            phFormItems.status()
+          ],
+          //提交后执行
+          afterConfirm: () => {
+            this.$store.commit('app/SET_DATADICS', null)
+          }
         }
       }
     },
