@@ -33,6 +33,7 @@ const systemModel = {
     store.commit('app/SET_DATADICS', null)
     store.commit('app/SET_SHIPPINGMETHODS', null)
     store.commit('app/SET_PERSONNELS', null)
+    store.commit('app/SET_ENUMS', null);
 
     //重置路由
     resetRouter()

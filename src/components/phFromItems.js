@@ -1,5 +1,6 @@
 import validRules from './validRules'
 import datadicModel from '../api/datadic'
+import phEnumModel from '../api/phEnum'
 
 // 通用搜索
 const phFromItems = {
@@ -14,16 +15,7 @@ const phFromItems = {
         '状态',
       $el: {},
       $default: defaultVal + '',
-      $options: [
-        {
-          label: '开启',
-          value: '1'
-        },
-        {
-          label: '禁用',
-          value: '0'
-        }
-      ]
+      $options: phEnumModel.getSelectOptions('Status')
     }
   },
 

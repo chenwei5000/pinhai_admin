@@ -1,6 +1,7 @@
 import categoryModel from "../api/category";
 import datadicModel from "../api/datadic";
 import warehouseModel from '../api/warehouse';
+import phEnumModel from '../api/phEnum'
 
 // 通用搜索
 const phSearchItems = {
@@ -46,20 +47,10 @@ const phSearchItems = {
       op: 'eq',
       placeholder: '请选择状态'
     },
-    $options: [
-      {
-        label: '全部',
-        value: ''
-      },
-      {
-        label: '开启',
-        value: '1'
-      },
-      {
-        label: '禁用',
-        value: '0'
-      }
-    ]
+    $options: phEnumModel.getSelectOptions('Status', {
+      label: '全部',
+      value: ''
+    })
   },
 
   // 产品分类

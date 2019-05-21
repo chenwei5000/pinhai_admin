@@ -11,12 +11,16 @@ const phColumns = {
     prop: 'status',
     label: '状态',
     width: 80,
-    statustag: true,
     formatter: row => {
-      let status = phEnumModel.getSelectOptions("Status");
-      console.log(status);
-
-      (row.status === 1 ? '启用' : '禁用')
+      let _status = phEnumModel.getSelectOptions("Status");
+      let _label = '';
+      _status.forEach(s => {
+        if (s.value === row.status + '') {
+          _label = s.label;
+          return;
+        }
+      });
+      return _label;
     }
   },
 

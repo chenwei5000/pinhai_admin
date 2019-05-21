@@ -11,7 +11,7 @@ const enumModel = {
   },
 
 // 获取字典id:name格式下拉框选项
-  getSelectOptions(type) {
+  getSelectOptions(type, top = null) {
     let _options = [];
 
     const _loadData = async function () {
@@ -20,16 +20,23 @@ const enumModel = {
         list = await store.dispatch('app/loadEnums');
       }
       if (list) {
-        list = list[type];
-        list.forEach(obj => {
-          _options.push({
-            label: obj.name,
-            value: obj.value + ''
+        list = list[`${type}`];
+        if (list) {
+          list.forEach(obj => {
+            _options.push({
+              label: obj.name,
+              value: obj.value + ''
+            });
           });
-        });
+        }
       }
     }
     _loadData();
+
+    if (top != null) {
+      _options.unshift(top);
+    }
+
     return _options;
   },
 
