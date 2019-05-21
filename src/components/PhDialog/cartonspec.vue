@@ -45,30 +45,18 @@
         form: [
           {
             $type: 'select',
-            $id: 'groupCode',
+            $id: 'categoryId',
             label: '分类',
             $el: {
               filterable: true,
               placeholder: '请选择分类,可筛选'
             },
-            $options: categoryModel.getMineSelectNameOptions('p'),
+            $options: categoryModel.getMineSelectOptions('p'),
             rules: [
               validRules.required
             ]
           },
           phFormItems.code,
-          {
-            $type: 'input',
-            $id: 'numberOfPallets',
-            label: '托盘放置数',
-            $el: {
-              placeholder: '一个托盘上可以放置该箱规的最大箱数, 如：24'
-            },
-            rules: [
-              validRules.required,
-              validRules.number
-            ]
-          },
           {
             $type: 'input',
             $id: 'length',
@@ -116,7 +104,21 @@
               validRules.required,
               validRules.number
             ]
-          }
+          },
+          phFormItems.yesOrNo('pallet', '是否打托', 0),
+          {
+            $type: 'input',
+            $id: 'numberOfPallets',
+            label: '托盘放置数',
+            $default: 1,
+            $el: {
+              placeholder: '一个托盘上可以放置该箱规的最大箱数, 如：24'
+            },
+            rules: [
+              validRules.required,
+              validRules.number
+            ]
+          },
         ]
       }
     },
@@ -153,6 +155,8 @@
               //TODO: 添加成功，需要更新分类选项
               let obj = resp.data;
               this.$emit("newCartonSpecComplete", obj);
+              //清除箱规缓存
+              this.$store.commit('app/SET_CARTONSPECS', null);
               this.confirmLoading = false
             })
             .catch(err => {

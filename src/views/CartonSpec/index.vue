@@ -15,6 +15,7 @@
 
 <script>
   import categoryModel from '../../api/category'
+  import phEnumModel from '../../api/phEnum'
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
@@ -28,7 +29,6 @@
           url: '/cartonSpecs',
           relations: ["creator", "category"],
           tableAttrs: {
-            "default-sort": {prop: 'categoryId', order: 'ascending'},
             "row-class-name": this.statusClassName,
           },
           //表格内容显示
@@ -38,7 +38,6 @@
             phColumns.id,
             {prop: 'category.name', label: '分类', 'min-width': 120},
             {prop: 'categoryId', label: '分类ID', hidden: true, 'min-width': 120},
-            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
             {prop: 'length', label: '长(Cm)', width: 80},
             {prop: 'width', label: '宽(Cm)', width: 80},
             {prop: 'height', label: '高(Cm)', width: 80},
@@ -47,8 +46,19 @@
             {
               prop: 'pallet',
               label: '是否打托',
-              formatter: row => (row.pallet === 1 ? '是' : '否')
+              formatter: row => {
+                let _status = phEnumModel.getSelectOptions("YesOrNo");
+                let _label = '';
+                _status.forEach(s => {
+                  if (s.value === row.pallet + '') {
+                    _label = s.label;
+                    return;
+                  }
+                });
+                return _label;
+              }
             },
+            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -56,19 +66,20 @@
           //搜索栏
           searchForm: [
             phSearchItems.code,
-            phSearchItems.productCategories,
-            phSearchItems.status
+            phSearchItems.productCategories(),
+            phSearchItems.status()
           ],
           //添加或修改弹出框
           form: [
             {
               $type: 'select',
-              $id: 'groupCode',
+              $id: 'categoryId',
               label: '分类',
               $el: {
-                placeholder: '请输入分类'
+                filterable: true,
+                placeholder: '请选择分类,可筛选'
               },
-              $options: categoryModel.getMineSelectNameOptions('p'),
+              $options: categoryModel.getMineSelectOptions('p'),
               rules: [
                 validRules.required
               ]
@@ -76,20 +87,10 @@
             phFormItems.code,
             {
               $type: 'input',
-              $id: 'numberOfPallets',
-              label: '托盘放置数',
-              $el: {},
-              rules: [
-                validRules.required,
-                validRules.number
-              ]
-            },
-            {
-              $type: 'input',
               $id: 'length',
               label: '长(Cm)',
               $el: {
-                placeholder: '请输入长度'
+                placeholder: '请输入箱子长度'
               },
               rules: [
                 validRules.required,
@@ -101,7 +102,7 @@
               $id: 'width',
               label: '宽(Cm)',
               $el: {
-                placeholder: '请输入宽度'
+                placeholder: '请输入箱子宽度'
               },
               rules: [
                 validRules.required,
@@ -111,9 +112,9 @@
             {
               $type: 'input',
               $id: 'height',
-              label: '高度',
+              label: '高度(Cm)',
               $el: {
-                placeholder: '请输入高度'
+                placeholder: '请输入箱子高度'
               },
               rules: [
                 validRules.required,
@@ -123,17 +124,34 @@
             {
               $type: 'input',
               $id: 'grossWeight',
-              label: '皮重',
+              label: '皮重(Kg)',
               $el: {
-                placeholder: '请输入皮重'
+                placeholder: '箱子和箱中填充物的重量，不包含产品的重量'
               },
               rules: [
                 validRules.required,
                 validRules.number
               ]
             },
+            phFormItems.yesOrNo('pallet', '是否打托', 0),
+            {
+              $type: 'input',
+              $id: 'numberOfPallets',
+              label: '托盘放置数',
+              $default: 1,
+              $el: {
+                placeholder: '一个托盘上可以放置该箱规的最大箱数, 如：24'
+              },
+              rules: [
+                validRules.number
+              ]
+            },
             phFormItems.status()
-          ]
+          ],
+          //提交后执行
+          afterConfirm: () => {
+            this.$store.commit('app/SET_CARTONSPECS', null)
+          }
         }
       }
     },

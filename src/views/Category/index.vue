@@ -14,12 +14,12 @@
 </template>
 
 <script>
-  import {parseTime} from '@/utils'
   import userModel from '../../api/user'
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+
 
   export default {
     data() {
@@ -109,7 +109,11 @@
               ]
             },
             phFormItems.status()
-          ]
+          ],
+          //提交后执行
+          afterConfirm: () => {
+            this.$store.commit('app/SET_CATEGORIES', null)
+          }
         }
       }
     },

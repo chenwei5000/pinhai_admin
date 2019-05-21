@@ -11,7 +11,7 @@ const enumModel = {
   },
 
 // 获取字典id:name格式下拉框选项
-  getSelectOptions(type, top = null) {
+  getSelectOptions(type) {
     let _options = [];
 
     const _loadData = async function () {
@@ -32,10 +32,6 @@ const enumModel = {
       }
     }
     _loadData();
-
-    if (top != null) {
-      _options.unshift(top);
-    }
 
     return _options;
   },

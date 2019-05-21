@@ -578,6 +578,18 @@
           return Promise.resolve()
         }
       },
+
+      /**
+       * 在新增/修改弹窗 点击确认后调用，返回Promise, 如果reject, 则不会发送新增/修改请求
+       * 参数: (data, isNew) data为表单数据, isNew true 表示是新增弹窗, false 为 编辑弹窗
+       */
+      afterConfirm: {
+        type: Function,
+        default() {
+          return Promise.resolve()
+        }
+      },
+
       /**
        * 外部的注入额外的查询参数, 键值对形式
        */
@@ -1118,6 +1130,9 @@
             })
             .catch(e => {
             })
+
+          this.afterConfirm();
+
         })
       },
       onDefaultDelete(row) {
@@ -1181,6 +1196,7 @@
                     instance.confirmButtonLoading = false
                   })
               }
+              this.afterConfirm();
             } else done()
           }
         }).catch(er => {

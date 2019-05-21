@@ -6,9 +6,9 @@ import phEnumModel from '../api/phEnum'
 const phFromItems = {
 
   // 状态
-  status(defaultVal = 1) {
+  status: (defaultVal = 1) => {
     return {
-      $type: 'radio-group',
+      $type: 'radio-button',
       $id:
         'status',
       label:
@@ -20,12 +20,12 @@ const phFromItems = {
   },
 
   // 是否
-  yesOrNo(id, label, defaultVal = 0) {
+  yesOrNo: (id, label, defaultVal = 0, el = {}) => {
     return {
-      $type: 'radio-group',
+      $type: 'radio-button',
       $id: id,
       label: label,
-      $el: {},
+      $el: el,
       $default: defaultVal + '',
       $options: [
         {
@@ -70,7 +70,7 @@ const phFromItems = {
   },
 
   //数据字典 id:name
-  datadic(type, label, defaultVal, id) {
+  datadic: (type, label, defaultVal, id) => {
     return {
       $type: 'select',
       $id: id,
@@ -87,7 +87,7 @@ const phFromItems = {
   },
 
   //数据字典 name:name
-  datadicName(type, label, defaultVal, id) {
+  datadicName: (type, label, defaultVal, id) => {
     return {
       $type: 'select',
       $id: id,

@@ -39,52 +39,58 @@ const phSearchItems = {
   },
 
   // 状态搜索
-  status: {
-    $type: 'select',
-    $id: 'status',
-    label: '状态',
-    $el: {
-      op: 'eq',
-      placeholder: '请选择状态'
-    },
-    $options: phEnumModel.getSelectOptions('Status', {
-      label: '全部',
-      value: ''
-    })
+  status: () => {
+    return {
+      $type: 'select',
+      $id: 'status',
+      label: '状态',
+      $el: {
+        op: 'eq',
+        placeholder: '请选择状态'
+      },
+      $options: phEnumModel.getSelectOptions('Status')
+    }
   },
 
   // 产品分类
-  productCategories: {
-    $type: 'select',
-    $id: 'categoryId',
-    label: '分类',
-    $options: categoryModel.getMineSelectOptions('p'),
-    $el: {
-      op: 'eq',
-      placeholder: '请选择分类'
+  productCategories: () => {
+    return {
+      $type: 'select',
+      $id: 'categoryId',
+      label: '分类',
+      $options: categoryModel.getMineSelectOptions('p'),
+      $el: {
+        op: 'eq',
+        filterable: true,
+        placeholder: '请选择分类'
+      }
     }
   },
 
   // 原料分类
-  materialCategories: {
-    $type: 'select',
-    $id: 'categoryId',
-    label: '分类',
-    $options: categoryModel.getMineSelectOptions('m'),
-    $el: {
-      op: 'eq',
-      placeholder: '请选择分类'
+  materialCategories: () => {
+    return {
+      $type: 'select',
+      $id: 'categoryId',
+      label: '分类',
+      $options: categoryModel.getMineSelectOptions('m'),
+      $el: {
+        op: 'eq',
+        filterable: true,
+        placeholder: '请选择分类'
+      }
     }
   },
 
   // 字典搜索
-  datadic(type, label, id) {
+  datadic: (type, label, id) => {
     return {
       $type: 'select',
       $id: id,
       label: label,
       $el: {
         op: 'eq',
+        filterable: true,
         placeholder: '请选择' + label
       },
       $options: datadicModel.getSelectOptions(type)
@@ -92,15 +98,18 @@ const phSearchItems = {
   },
 
   //仓库名称搜索
-  warehouseId: {
-    $type: 'select',
-    $id: 'warehouseId',
-    label: '仓库',
-    $el: {
-      op: 'eq',
-      placeholder: '请选择仓库'
-    },
-    $options: warehouseModel.getSelectOptions,
+  warehouseId: () => {
+    return {
+      $type: 'select',
+      $id: 'warehouseId',
+      label: '仓库',
+      $el: {
+        op: 'eq',
+        filterable: true,
+        placeholder: '请选择仓库'
+      },
+      $options: warehouseModel.getSelectOptions,
+    }
   },
 
   //sku编码搜索

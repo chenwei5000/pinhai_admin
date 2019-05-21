@@ -104,7 +104,7 @@
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
             phSearchItems.name,
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
           // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
