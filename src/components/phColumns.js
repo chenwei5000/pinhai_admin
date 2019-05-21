@@ -1,4 +1,5 @@
 import {parseTime} from '@/utils'
+import phEnumModel from '../api/phEnum'
 
 const phColumns = {
 
@@ -11,7 +12,12 @@ const phColumns = {
     label: '状态',
     width: 80,
     statustag: true,
-    formatter: row => (row.status === 1 ? '启用' : '禁用')
+    formatter: row => {
+      let status = phEnumModel.getSelectOptions("Status");
+      console.log(status);
+
+      (row.status === 1 ? '启用' : '禁用')
+    }
   },
 
   lastModified: {

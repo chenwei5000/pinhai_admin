@@ -223,7 +223,7 @@ const actions = {
 
   loadEnums({commit}) {
     return new Promise((resolve, reject) => {
-      enumModel.getEnums.then(async list => {
+      enumModel.getEnums().then(async list => {
         console.log("从后端获取枚举信息");
         commit('SET_ENUMS', list);
         resolve(list);
