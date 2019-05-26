@@ -1,0 +1,81 @@
+@charset "utf-8";
+.card-panel {
+  border-radius: 5px;
+  height: 110px;
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+  overflow: hidden;
+  color: #666;
+  background: #fff;
+  box-shadow: 5px 4px 40px rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+.card-panel:hover .icon-red {
+  color: #b6483b;
+}
+.card-panel:hover .icon-yellow {
+  color: #bf850a;
+}
+.card-panel:hover .icon-blue {
+  color: #2975c0;
+}
+.card-panel:hover .icon-green {
+  color: #199477;
+}
+.card-panel:hover .icon-orange {
+  color: #be6a2c;
+}
+.card-panel .card-header {
+  position: relative;
+  height: 42px;
+  line-height: 42px;
+  padding: 0 15px;
+  border-bottom: 1px solid #f6f6f6;
+  color: #303133;
+  border-radius: 5px 5px 0 0;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.card-panel .card-header .svg-icon {
+  width: 28px;
+  height: 28px;
+}
+.card-panel .card-badge {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  margin-top: -16px;
+  height: 18px;
+  line-height: 18px;
+}
+.card-panel .card-body {
+  padding: 0px;
+  position: relative;
+  line-height: 42px;
+  text-align: center;
+}
+.card-panel .card-panel-num {
+  color: #666;
+  font-weight: bold;
+  font-size: 20px;
+}
+.card-panel .icon-red {
+  color: #f4516c;
+}
+.card-panel .icon-yellow {
+  color: #feac00;
+}
+.card-panel .icon-blue {
+  color: #279feb;
+}
+.card-panel .icon-green {
+  color: #17c295;
+}
+.card-panel .icon-orange {
+  color: #fe892c;
+}
+.card-panel:hover {
+  background: #eee;
+}
+/*# sourceMappingURL=panel.css.map */

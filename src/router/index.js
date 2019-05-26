@@ -108,7 +108,19 @@ export const constantRoutes = [
         meta: {title: 'guide', icon: 'guide', noCache: true}
       }
     ]
-  }
+  },
+  {
+    path: '/icon',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
+        meta: { title: 'icons', icon: 'icon', noCache: true }
+      }
+    ]
+  },
 ]
 
 /**

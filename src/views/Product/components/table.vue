@@ -432,7 +432,7 @@
 
         }
         else if (row.vipLevel === 2) {
-          return "1-爆款"
+          return "2-爆款"
         }
         else {
           return row.vipLevel;
