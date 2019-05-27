@@ -48,9 +48,6 @@
       @filter-change="handleFilterChange"
       id="table"
     >
-
-      <el-table-column prop="id" label="ID" sortable="true" v-if="false" width="100"></el-table-column>
-
       <el-table-column
         prop="imgUrl"
         label="图片"
@@ -66,7 +63,6 @@
           </el-popover>
         </template>
       </el-table-column>
-
       <el-table-column prop="skuCode" sortable="custom" label="SKU" min-width="150" fixed="left"></el-table-column>
       <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
       <el-table-column prop="category.name" label="分类" width="80"></el-table-column>
@@ -134,7 +130,6 @@
 
     </el-pagination>
 
-
   </div>
 
 
@@ -145,6 +140,7 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import categoryModel from '@/api/category'
+  import createFrom from './createFrom'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -155,6 +151,8 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
+
+    components: {createFrom},
     props: {
       type: {
         type: String,
@@ -216,7 +214,16 @@
           categoryId: {value: null, op: 'eq', id: 'categoryId'},
           skuCode: {value: null, op: 'bw', id: 'skuCode'},
           name: {value: null, op: 'bw', id: 'name'},
-        }
+        },
+        //弹窗
+        dialogTitle: '新增',
+        dialogVisible: false,
+        isNew: true,
+        isEdit: false,
+        isView: false,
+        confirmLoading: false,
+        // 要修改的那一行
+        row: {},
       }
     },
     created() {
@@ -517,6 +524,37 @@
         }]
       },
 
+      onDefaultEdit(row) {
+
+        let self=this;
+        //后台加载新数据
+        let url = '/products/' + row.id;
+
+        if (this.relations && this.relations.length > 0) {
+          url += "?relations=" + JSON.stringify(this.relations);
+        }
+
+        this.global.axios.get(url)
+          .then(resp => {
+            let option = {
+              title: '编辑产品',
+              component: createFrom,
+              _top_: '3vh',
+              _width_: '90%',
+              data: resp.data,
+              callback:function(val){
+                self.childMsg=val;
+              }
+            };
+            common.dialog(option);
+          })
+          .catch(err => {
+          })
+      },
+      cancel() {
+      },
+      confirm() {
+      },
       onRefreshTable: function () {
         this.getList();
       }

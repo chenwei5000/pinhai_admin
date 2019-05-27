@@ -5,8 +5,9 @@ import qs from 'qs'
 
 const config = {
   NAME: '品海ERP管理系统',
-  VERSION: 'V2.2.1',
+  VERSION: 'V2.0.0',
   ERP_SERVICE_URL: 'http://192.168.10.200/erp-service',
+  //ERP_SERVICE_URL: 'http://localhost:9001/erp-service',
   TENANT_ID: 'ff80808162fb6e100162fb6e213e0000'
 }
 

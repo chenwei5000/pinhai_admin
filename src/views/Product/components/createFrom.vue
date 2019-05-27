@@ -35,7 +35,7 @@
         <el-row>
           <el-form-item label="分类" style="width: 400px" prop="categoryId">
             <el-col :span="20">
-              <el-select filterable v-model="newProduct.categoryId" placeholder="请选择分类,可筛选" style="width: 200px">
+              <el-select filterable v-model="newProduct.categoryId + ''" placeholder="请选择分类,可筛选" style="width: 200px">
                 <el-option
                   v-for="(item,idx) in categorySelectOptions"
                   :label="item.label" :value="item.value"
@@ -56,7 +56,8 @@
         <el-row>
           <el-form-item label="箱规" style="width: 400px" prop="cartonSpecId">
             <el-col :span="20">
-              <el-select filterable v-model="newProduct.cartonSpecId" placeholder="外箱包装材料规格,可筛选" style="width: 200px">
+              <el-select filterable v-model="newProduct.cartonSpecId+ ''" placeholder="外箱包装材料规格,可筛选"
+                         style="width: 200px">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
                   :label="item.label" :value="item.value"
@@ -110,7 +111,7 @@
         <el-row>
           <el-form-item label="供货商" style="width: 400px" prop="supplierId">
             <el-col :span="20">
-              <el-select filterable v-model="newProduct.supplierId" placeholder="请选择供货商,可筛选" style="width: 200px">
+              <el-select filterable v-model="newProduct.supplierId+ ''" placeholder="请选择供货商,可筛选" style="width: 200px">
                 <el-option
                   v-for="(item,idx) in supplierSelectOptions"
                   :label="item.label" :value="item.value"
@@ -130,7 +131,7 @@
 
         <el-row>
           <el-form-item label="结算货币" style="width: 400px" prop="currencyId">
-            <el-select v-model="newProduct.currencyId" placeholder="请选择结算货币" style="width: 200px">
+            <el-select v-model="newProduct.currencyId+ ''" placeholder="请选择结算货币" style="width: 200px">
               <el-option
                 v-for="(item,idx) in currencySelectOptions"
                 :label="item.label" :value="item.value"
@@ -152,7 +153,7 @@
             <el-input v-model="newProduct.fnSku" placeholder="请输入产品FNSKU" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="Vip级别" style="width: 400px">
-            <el-select v-model="newProduct.vipLevel" placeholder="请输入产品Vip级别" style="width: 200px">
+            <el-select v-model="newProduct.vipLevel+ ''" placeholder="请输入产品Vip级别" style="width: 200px">
               <el-option
                 v-for="(item,idx) in currencySelectOptions"
                 :label="item.label" :value="item.value"
@@ -175,7 +176,8 @@
       </fieldset>
 
       <el-row type="flex" justify="center">
-        <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateProduct">立即创建</el-button>
+        <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateProduct">立即创建
+        </el-button>
       </el-row>
 
     </el-form>
@@ -189,18 +191,6 @@
       </el-steps>
     </div-->
 
-    <!--添加分类-->
-    <categoryDialog ref="categoryDialog"
-                    @newCategoryComplete="onNewCategoryComplete"></categoryDialog>
-
-
-    <!--添加箱规-->
-    <cartonspecDialog ref="cartonspecDialog"
-                      @newCartonspecComplete="onNewCartonspecComplete"></cartonspecDialog>
-
-    <!--添加供货商-->
-    <supplierDialog ref="supplierDialog"
-                    @newSupplierComplete="onNewSupplierComplete"></supplierDialog>
 
   </div>
 
@@ -219,13 +209,14 @@
 
   export default {
 
-    components: {
-      categoryDialog,
-      cartonspecDialog,
-      supplierDialog
-    },
+    components: {},
 
-    props: {},
+    props: {
+      init_data: {
+        type: Object,
+        default: null
+      }
+    },
 
     computed: {},
 
@@ -239,12 +230,12 @@
 
         confirmLoading: false,
         // 新产品对象
-        newProduct: {
+        newProduct: this.init_data ? this.init_data : {
           status: 1,
           skuCode: null,
           groupName: null,
           fnSku: null,
-          categoryId: null,
+          categoryId: '',
           name: null,
           model: null,
           color: null,
@@ -253,13 +244,13 @@
           length: null,
           width: null,
           height: null,
-          supplierId: null,
+          supplierId: '',
           price: null,
-          cartonSpecId: null,
+          cartonSpecId: '',
           numberOfCarton: null,
-          currencyId: null,
+          currencyId: '',
           leadDay: null,
-          vipLevel: null,
+          vipLevel: 0,
           oversize: 0,
         },
         rules: {
@@ -281,14 +272,10 @@
           numberOfCarton: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
-          grossWeight: [
-          ],
-          supplierId: [
-          ],
-          currencyId: [
-          ],
-          price: [
-          ]
+          grossWeight: [],
+          supplierId: [],
+          currencyId: [],
+          price: []
         },
       }
     },
@@ -302,40 +289,51 @@
     mounted() {
     },
     methods: {
-
       ///////////////分类///////////////////////
       // 打开
       openNewCategoryDialog() {
-        this.$refs.categoryDialog.show();
-      },
-      //保存完毕
-      onNewCategoryComplete(category) {
-        this.categorySelectOptions.unshift({label: category.name, value: category.id + ''});
-        this.newProduct.categoryId = category.id + '';
+        let option = {
+          title: '添加分类',
+          component: categoryDialog,
+          _width_: '70%',
+          callback: (category) => {
+            this.categorySelectOptions.unshift({label: category.name, value: category.id + ''});
+            this.newProduct.categoryId = category.id + '';
+          }
+        };
+        common.dialog(option);
       },
 
       ///////////////箱规///////////////////////
       // 打开
       openNewCartonspecDialog(row = {}) {
-        this.$refs.cartonspecDialog.show();
-      },
-      //保存完毕
-      onNewCartonspecComplete(cartonSpec) {
-        this.cartonspecSelectOptions.unshift({label: cartonSpec.name, value: cartonSpec.id + ''});
-        this.newProduct.cartonSpecId = cartonSpec.id + '';
+        let option = {
+          title: '添加箱规',
+          component: cartonspecDialog,
+          _width_: '70%',
+          callback: (cartonSpec) => {
+            //清除缓存
+            this.cartonspecSelectOptions.unshift({label: cartonSpec.name, value: cartonSpec.id + ''});
+            this.newProduct.cartonSpecId = cartonSpec.id + '';
+          }
+        };
+        common.dialog(option);
       },
 
       ///////////////供货商///////////////////////
       // 打开
       openNewSupplierDialog(row = {}) {
-        this.$refs.supplierDialog.show();
+        let option = {
+          title: '添加供货商',
+          component: supplierDialog,
+          _width_: '70%',
+          callback: (supplier) => {
+            this.supplierSelectOptions.unshift({label: supplier.name, value: supplier.id + ''});
+            this.newProduct.supplierId = supplier.id + '';
+          }
+        };
+        common.dialog(option);
       },
-      //保存完毕
-      onNewSupplierComplete(supplier) {
-        this.supplierSelectOptions.unshift({label: supplier.name, value: supplier.id + ''});
-        this.newProduct.supplierId = supplier.id + '';
-      },
-
 
       ///////////////产品///////////////////////
       onCreateProduct() {

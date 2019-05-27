@@ -21,6 +21,8 @@ import global from './api/global.js'
 // 引入自定义Icon
 import './assets/icon/iconfont.css'
 
+import common from './common'
+
 import PhTable from './components/PhTable/index'
 import ElFormRenderer from './components/PhForm/index'
 import PhCardHeader from './components/PhCardHeader/index'

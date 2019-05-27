@@ -33,7 +33,7 @@
             </keep-alive>
           </el-tab-pane>
 
-          <el-tab-pane name="createFrom" lazy>
+          <el-tab-pane name="create" lazy>
             <span slot="label" style="color: #409EFF;">
               <i class="el-ph-icon-plus-circle"></i> 添加商品
             </span>

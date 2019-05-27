@@ -138,7 +138,7 @@
           },
           //提交后执行
           afterConfirm: () => {
-            this.$store.commit('app/SET_CATEGORIES', null)
+            this.$store.commit('app/SET_CATEGORIES', null);
           }
         }
       }

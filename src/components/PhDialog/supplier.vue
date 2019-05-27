@@ -1,22 +1,7 @@
 <template>
 
-  <el-dialog title="添加供应商" :visible.sync="dialogVisible">
-    <el-scrollbar class="menu-wrapper" noresize>
-      <el-row>
-        <el-col :span="22">
-          <!--https://github.com/FEMessage/onDefaultEdit-->
-          <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
-          </ph-form>
-        </el-col>
-      </el-row>
-    </el-scrollbar>
-
-    <div slot="footer">
-      <el-button @click="cancel" size="small">取 消</el-button>
-      <el-button type="primary" @click="confirm" :loading="confirmLoading" size="small">确 定</el-button>
-    </div>
-
-  </el-dialog>
+  <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
+  </ph-form>
 
 </template>
 
@@ -24,6 +9,7 @@
   import validRules from '@/components/validRules'
   import phFromItems from '../../components/phFromItems'
   import datadicModel from '@/api/datadic'
+  import store from '@/store'
 
   export default {
     name: 'SupplierDialog',
@@ -31,9 +17,6 @@
     props: {},
     data() {
       return {
-        dialogVisible: false,
-        confirmLoading: false,
-
         // 弹窗表单默认样式
         formAttrs: {
           "label-width": "100px",
@@ -112,21 +95,13 @@
     },
     methods: {
       ///////////////分类///////////////////////
-      // 显示浮层
-      show() {
-        this.dialogVisible = true;
-      },
-
-      //取消创建分类
-      cancel() {
-        this.$refs.dialogForm.resetFields();
-        this.dialogVisible = false
-      },
-
       //保存分类
       confirm() {
         this.$refs.dialogForm.validate(valid => {
-          if (!valid) return false
+          if (!valid) {
+            this.$emit("callback", null);
+            return false;
+          }
           let data = Object.assign(
             {status: 1},
             this.$refs.dialogForm.getFormValue()
@@ -134,20 +109,20 @@
 
           // 新增逻辑
           let url = '/suppliers'
-          this.confirmLoading = true
 
           this.global.axios.post(url, data)
             .then(resp => {
               this.$message({type: 'success', message: '供应商添加成功'});
-              this.cancel();
-
-              //TODO: 添加成功，需要更新分类选项
+              this.$refs.dialogForm.resetFields();
               let obj = resp.data;
-              this.$emit("newSupplierComplete", obj);
-              this.confirmLoading = false
+
+              // 清除缓存
+              store.commit('app/SET_SUPPLIERS', null);
+              // 回传消息
+              this.$emit("callback", {type: 'sure', data: obj});
             })
             .catch(err => {
-              this.confirmLoading = false;
+              this.$emit("callback", null);
             })
         });
       },
