@@ -526,7 +526,7 @@
 
       onDefaultEdit(row) {
 
-        let self=this;
+        let self = this;
         //后台加载新数据
         let url = '/products/' + row.id;
 
@@ -542,8 +542,10 @@
               _top_: '3vh',
               _width_: '90%',
               data: resp.data,
-              callback:function(val){
-                self.childMsg=val;
+              callback: (val) => {
+                if (val) {
+                  this.getList();
+                }
               }
             };
             common.dialog(option);

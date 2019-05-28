@@ -175,7 +175,7 @@
         </el-form-item>
       </fieldset>
 
-      <el-row type="flex" justify="center">
+      <el-row type="flex" justify="center" v-if="isNew">
         <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateProduct">立即创建
         </el-button>
       </el-row>
@@ -227,6 +227,8 @@
         cartonspecSelectOptions: [],
         supplierSelectOptions: [],
         currencySelectOptions: [],
+
+        isNew: this.init_data ? false : true,
 
         confirmLoading: false,
         // 新产品对象
@@ -354,7 +356,37 @@
               this.confirmLoading = false;
             })
         })
-      }
+      },
+
+      //保存产品
+      confirm() {
+        this.$refs.createForm.validate(valid => {
+          if (!valid) {
+            this.$emit("callback", null);
+            return false;
+          }
+          let data = this.newProduct;
+          if(!data.id){
+            this.$message.error("无效的产品ID");
+            this.$emit("callback", null);
+            return false;
+          }
+
+          // 新增逻辑
+          let url = '/products/'+data.id
+
+          this.global.axios.put(url, data)
+            .then(resp => {
+              this.$message({type: 'success', message: '商品编辑成功'});
+              let obj = resp.data;
+              // 回传消息
+              this.$emit("callback", {type: 'sure', data: obj});
+            })
+            .catch(err => {
+              this.$emit("callback", null);
+            })
+        });
+      },
     }
   }
 </script>
