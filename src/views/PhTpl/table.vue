@@ -4,7 +4,7 @@
     <div class="ph-card">
 
       <!-- title -->
-      <ph-card-header :title = "title" type="table">
+      <ph-card-header :title="title" type="table">
 
       </ph-card-header>
 
@@ -12,12 +12,7 @@
       <div class="ph-card-body">
         <!-- 说明  https://femessage.github.io/el-data-table/-->
         <ph-table
-          :url="url"
-          :columns="columns"
-          :searchForm="searchForm"
-          :form="form"
-          :tableAttrs="tableAttrs"
-
+          v-bind="tableConfig"
         >
         </ph-table>
       </div>
@@ -29,7 +24,10 @@
 
 <script>
 
-  import {parseTime} from '@/utils'
+  import validRules from '../../components/validRules'
+  import phColumns from '../../components/phColumns'
+  import phSearchItems from '../../components/phSearchItems'
+  import phFormItems from '../../components/phFromItems'
 
   export default {
     /**********生命周期*******/
@@ -78,63 +76,59 @@
     data() {
       return {
         title: '国家列表', // 页面标题
-        url: '/countries', // 资源URL
 
-        //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
-        // https://femessage.github.io/el-data-table/
-        tableAttrs: {
-          stripe: true,
-          border: true,
-          "row-class-name": this.statusClassName,
-          "highlight-current-row": true
-        },
+        tableConfig: { //品海表格配置
+          url: '/countries', // 资源URL
+          relations: ["creator"],//关联查询对象
 
-        // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
-        columns: [
-          {type: 'selection'}, //多选
-          {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
-          {prop: 'name', label: '名称', sortable: 'custom'},
-          {prop: 'enName', label: '英文名', sortable: 'custom'},
-          {prop: 'isoCode2', label: '2位iso编码'},
-          {prop: 'isoCode3', label: '3位iso编码'},
-          {
-            prop: 'status',
-            label: '状态',
-            formatter: row => (row.status === 1 ? '启用' : '禁用')
-          }
-        ],
+          //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
+          // https://femessage.github.io/el-data-table/
+          tableAttrs: {
+            "default-sort": {prop: 'name', order: 'descending'}, //设置默认排序
+            "row-class-name": this.statusClassName, //设置特殊样式
+          },
 
-        // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
-        searchForm: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '国家名称',
-            $el: {
-              op: 'bw',
-              placeholder: '请输入国家名称'
-            }
-          }
-        ],
-        //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
-        // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
-        form: [
-          {
-            $type: 'input',
-            $id: 'name',
-            label: '国家名称',
-            $el: {
-              placeholder: '请输入国家名称'
+          // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
+          columns: [
+            {type: 'selection'}, //多选
+            {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 150},
+            {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},
+            {prop: 'isoCode2', label: '2位iso编码', 'min-width': 100, 'label-class-name': 'ph-header-small'},
+            {prop: 'isoCode3', label: '3位iso编码', 'min-width': 120, 'label-class-name': 'ph-header-small'},
+            phColumns.creator,
+            phColumns.status,
+            phColumns.lastModified
+          ],
+
+          // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+          searchForm: [
+            phSearchItems.name,
+            phSearchItems.status()
+          ],
+          //  弹窗表单, 用于新增与修改, 详情配置参考el-form-renderer
+          // https://github.com/FEMessage/el-form-renderer/blob/master/README.md
+          form: [
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '国家名称',
+              $el: {
+                placeholder: '请输入国家名称',
+                //type: ''  输入框可以设置类型，类型支持所有h5自带类型 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types
+              },
+              rules: [
+                //必填验证
+                validRules.required,
+                //数字验证
+                //validRules.number,
+                //长度验证
+                validRules.strMax(6)
+              ]
             },
-            rules: [
-              {
-                required: true,
-                message: '请输入国家名称',
-                trigger: 'blur'
-              }
-            ]
-          }
-        ]
+            phFormItems.status()
+          ]
+        }
       }
     },
 
@@ -147,14 +141,14 @@
     // 各种相关方法定义
     methods: {
       // 状态样式
-      statusClassName({row, rowIndex}) {
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }
         else {
           return 'warning-row';
         }
-      },
+      }
     },
 
     // 观察data中的值发送变化后，调用

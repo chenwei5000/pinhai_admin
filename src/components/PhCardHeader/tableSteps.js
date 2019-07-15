@@ -42,16 +42,16 @@ const steps = [
   {
     element: '#ph-table-edit',
     popover: {
-      title: '新增按钮',
-      description: '您可以通过点击新增按钮，来添加新的数据。如果您有新增数据的权限。',
+      title: '编辑按钮',
+      description: '您可以通过点击编辑按钮，来编辑数据。如果您有编辑数据的权限。',
       position: 'left'
     }
   },
   {
     element: '#ph-table-del',
     popover: {
-      title: '新增按钮',
-      description: '您可以通过点击新增按钮，来添加新的数据。如果您有新增数据的权限。',
+      title: '删除按钮',
+      description: '您可以通过点击删除按钮，来删除数据。如果您有删除数据的权限。',
       position: 'left'
     }
   },

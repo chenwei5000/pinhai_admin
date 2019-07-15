@@ -1,6 +1,6 @@
 export default {
   route: {
-    dashboard: '首页',
+    dashboard: '控制台',
     documentation: '文档',
     guide: '引导页',
     permission: '权限测试页',

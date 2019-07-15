@@ -1,12 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
 /* Layout */
 import Layout from '@/layout'
 
-import store from '@/store'
+Vue.use(Router)
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -73,9 +70,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/Dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: true, affix: true }
+        meta: {title: '控制台', icon: 'dashboard', noCache: true, affix: true}
       }
     ]
   },
@@ -83,19 +80,19 @@ export const constantRoutes = [
     path: '/phtpl',
     component: Layout,
     name: 'documentation',
-    meta: { title: '模版', icon: 'documentation' },
+    meta: {title: '模版', icon: 'documentation'},
     children: [
       {
         path: 'table',
         component: () => import('@/views/PhTpl/table'),
         name: 'tableTpl',
-        meta: { title: '表格模版'}
+        meta: {title: '表格模版'}
       },
       {
         path: 'form',
         component: () => import('@/views/PhTpl/table'),
         name: 'formTpl',
-        meta: { title: '表单模版'}
+        meta: {title: '表单模版'}
       }
     ]
   },
@@ -108,21 +105,33 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/guide/index'),
         name: 'Guide',
-        meta: { title: 'guide', icon: 'guide', noCache: true }
+        meta: {title: 'guide', icon: 'guide', noCache: true}
       }
     ]
-  }
+  },
+  {
+    path: '/icon',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
+        meta: { title: 'icons', icon: 'icon', noCache: true }
+      }
+    ]
+  },
 ]
 
 /**
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = sessionStorage.getItem("SESSION_MENU") ? JSON.parse(sessionStorage.getItem("SESSION_MENU")) : [];
+export const asyncRoutes = [];
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({y: 0}),
   routes: constantRoutes
 })
 

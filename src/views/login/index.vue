@@ -232,6 +232,28 @@
     cursor: pointer;
   }
 
+  @media (max-width: 430px) {
+    .login {
+      margin: 50px auto 0 auto;
+      min-height: 320px;
+      max-width: 320px;
+
+      .message {
+        margin: 10px 0 0 -58px;
+        padding: 18px 10px 18px 20px;
+        background: #189F92;
+        position: relative;
+        color: #fff;
+        font-size: 22px;
+      }
+      .message img {
+        height: 25px;
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+    }
+  }
+
 </style>
 
 <script>

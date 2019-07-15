@@ -1,13 +1,13 @@
 import store from '@/store'
 
-const { body } = document
+const {body} = document
 const WIDTH = 992 // refer to Bootstrap's responsive design
 
 export default {
   watch: {
     $route(route) {
       if (this.device === 'mobile' && this.sidebar.opened) {
-        store.dispatch('app/closeSideBar', { withoutAnimation: false })
+        store.dispatch('app/closeSideBar', {withoutAnimation: false})
       }
     }
   },
@@ -21,15 +21,21 @@ export default {
     const isMobile = this.$_isMobile()
     if (isMobile) {
       store.dispatch('app/toggleDevice', 'mobile')
-      store.dispatch('app/closeSideBar', { withoutAnimation: true })
+      store.dispatch('app/closeSideBar', {withoutAnimation: true})
     }
   },
   methods: {
     // use $_ for mixins properties
     // https://vuejs.org/v2/style-guide/index.html#Private-property-names-essential
     $_isMobile() {
-      const rect = body.getBoundingClientRect()
-      return rect.width - 1 < WIDTH
+      if ((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
+        return true;
+      }
+      else {
+        return false;
+      }
+      // const rect = body.getBoundingClientRect()
+      // return rect.width - 1 < WIDTH
     },
     $_resizeHandler() {
       if (!document.hidden) {
@@ -37,7 +43,7 @@ export default {
         store.dispatch('app/toggleDevice', isMobile ? 'mobile' : 'desktop')
 
         if (isMobile) {
-          store.dispatch('app/closeSideBar', { withoutAnimation: true })
+          store.dispatch('app/closeSideBar', {withoutAnimation: true})
         }
       }
     }

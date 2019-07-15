@@ -21,6 +21,8 @@ import global from './api/global.js'
 // 引入自定义Icon
 import './assets/icon/iconfont.css'
 
+import common from './common'
+
 import PhTable from './components/PhTable/index'
 import ElFormRenderer from './components/PhForm/index'
 import PhCardHeader from './components/PhCardHeader/index'
@@ -30,6 +32,10 @@ Vue.prototype.global = global
 Vue.component('ph-form', ElFormRenderer)
 Vue.component('ph-table', PhTable)
 Vue.component('ph-card-header', PhCardHeader)
+
+//中央事件总线
+let bus = new Vue()
+Vue.prototype.bus = bus
 
 /**
  * If you don't want to use mock-server

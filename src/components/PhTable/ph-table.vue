@@ -18,7 +18,7 @@
     </ph-form>
 
     <!--新增、编辑-->
-    <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 ">
+    <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
       <el-form-item>
         <el-button v-if="hasNew" type="primary" size="small"
                    @click="onDefaultNew" id="ph-table-add">新增
@@ -43,13 +43,15 @@
     <!--表格-->
     <el-table
       ref="table"
-      v-bind="tableAttrs"
+      v-bind="phTableAttrs"
       :data="data"
       :row-style="showRow"
+      :max-height="tableMaxHeight"
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
       id="ph-table"
+      @filter-change="handleFilterChange"
     >
 
       <template v-if="isTree">
@@ -79,6 +81,7 @@
             v-bind="col"
             v-if="!col.hidden"
           >
+
           </el-table-column>
         </template>
 
@@ -112,6 +115,7 @@
 
       <!--非树-->
       <template v-else>
+
         <el-table-column
           v-for="(col) in columns"
           :key="col.prop"
@@ -119,6 +123,7 @@
           v-if="!col.hidden"
         >
         </el-table-column>
+
       </template>
 
       <!--默认操作列-->
@@ -126,16 +131,14 @@
                        v-bind="operationAttrs"
       >
         <template slot-scope="scope">
-          <el-button v-if="isTree && hasNew" type="primary" size="small"
+          <el-button v-if="isTree && hasNew" type="primary" size="mini"
                      @click="onDefaultNew(scope.row)">新增
           </el-button>
-          <el-button v-if="hasEdit" size="small"
-                     @click="onDefaultEdit(scope.row)" id="ph-table-edit">
-            修改
+          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
-          <el-button v-if="hasView" type="info" size="small"
+          <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
                      @click="onDefaultView(scope.row)">
-            查看
           </el-button>
           <self-loading-button v-for="(btn, i) in extraButtons"
                                v-if="'show' in btn ? btn.show(scope.row) : true"
@@ -144,14 +147,13 @@
                                :params="scope.row"
                                :callback="getList"
                                :key="i"
-                               size="small"
+                               size="mini"
           >
             {{btn.text}}
           </self-loading-button>
-          <el-button v-if="!hasSelect && hasDelete && canDelete(scope.row)" type="danger" size="small"
-                     id="ph-table-del"
+          <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
+                     id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-            删除
           </el-button>
         </template>
       </el-table-column>
@@ -171,23 +173,33 @@
       :page-size="size"
       :total="total"
       style="text-align: right; padding: 10px 0"
+      background
       :layout="paginationLayout"
       id="ph-table-page"
+      ref="pageForm"
     >
     </el-pagination>
 
     <!--弹出框-->
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog">
-      <!--https://github.com/FEMessage/onDefaultEdit-->
-      <ph-form :content="form" ref="dialogForm" v-bind="formAttrs" :disabled="isView">
-        <!--@slot 额外的弹窗表单内容, 当form不满足需求时可以使用 -->
-        <slot name="form"></slot>
-      </ph-form>
+
+      <el-scrollbar class="menu-wrapper" noresize>
+        <el-row>
+          <el-col :span="22">
+            <!--https://github.com/FEMessage/onDefaultEdit-->
+            <ph-form :content="form" ref="dialogForm" v-bind="formAttrs" :disabled="isView">
+              <!--@slot 额外的弹窗表单内容, 当form不满足需求时可以使用 -->
+              <slot name="form"></slot>
+            </ph-form>
+          </el-col>
+        </el-row>
+      </el-scrollbar>
 
       <div slot="footer" v-show="!isView">
         <el-button @click="cancel" size="small">取 消</el-button>
         <el-button type="primary" @click="confirm" :loading="confirmLoading" size="small">确 定</el-button>
       </div>
+
     </el-dialog>
   </div>
 </template>
@@ -196,6 +208,8 @@
   import _get from 'lodash.get'
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
+  import {mapGetters} from 'vuex'
+  import {getObjectVal} from '@/utils'
 
   // 默认返回的数据格式如下
   //          {
@@ -231,6 +245,7 @@
 
   const queryFlag = 'q='
   const queryPattern = new RegExp('q=.*' + paramSeparator)
+
 
   export default {
     name: 'ElDataTable',
@@ -433,7 +448,7 @@
        */
       paginationSize: {
         type: Number,
-        default: 10
+        default: 20
       },
       /**
        * 不分页时的size的大小
@@ -494,7 +509,7 @@
       operationAttrs: {
         type: Object,
         default() {
-          return {width: '', fixed: 'right'}
+          return {width: '100', fixed: 'right'}
         }
       },
       /**
@@ -539,7 +554,12 @@
       formAttrs: {
         type: Object,
         default() {
-          return {}
+          return {
+            "label-width": "100px",
+            "label-suffix": ":",
+            "status-icon": true,
+            size: "small"
+          }
         }
       },
       /**
@@ -558,6 +578,18 @@
           return Promise.resolve()
         }
       },
+
+      /**
+       * 在新增/修改弹窗 点击确认后调用，返回Promise, 如果reject, 则不会发送新增/修改请求
+       * 参数: (data, isNew) data为表单数据, isNew true 表示是新增弹窗, false 为 编辑弹窗
+       */
+      afterConfirm: {
+        type: Function,
+        default() {
+          return Promise.resolve()
+        }
+      },
+
       /**
        * 外部的注入额外的查询参数, 键值对形式
        */
@@ -574,14 +606,32 @@
         type: Boolean,
         default: false
       },
+      /**
+       * 关联加载对象
+       */
+      relations: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
     },
     data() {
       return {
+        tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
         data: [],
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
         page: defaultFirstPage,
         phSort: null,
+        defaultTableAttrs: {
+          'style': "width: 100%",
+          'cell-style': {padding: "2px 0", 'font-size': '13px'},
+          'header-cell-style': {padding: "2px 0"},
+          stripe: true,
+          border: true,
+          "highlight-current-row": true,
+        },
 
         // https://github.com/ElemeFE/element/issues/1153
         total: null,
@@ -619,7 +669,24 @@
         }
       }
     },
+
+    computed: {
+      ...mapGetters([
+        'device'
+      ]),
+
+      phTableAttrs() {
+        return Object.assign(this.defaultTableAttrs, this.tableAttrs);
+      }
+    },
+
     mounted() {
+      //全屏，表格高度处理
+      window.onresize = () => {
+        this.getTableHeight();
+      }
+
+      //搜索区块，根据url恢复功能
       let searchForm = this.$refs.searchForm
       if (searchForm) {
         // 恢复查询条件
@@ -645,10 +712,38 @@
       }
 
       this.$nextTick(() => {
-        this.getList()
+        this.getTableHeight();
+        this.getList();
       })
     },
     methods: {
+      getColVal(row, prop, formatter) {
+        if (formatter && typeof formatter === "function") {
+          return formatter.call(this, row);
+        }
+
+        return getObjectVal(row, prop)
+      },
+      // 获取表格的高度
+      getTableHeight() {
+        if (this.device !== 'mobile') {
+          //浏览器高度
+          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          //表格高度
+          let tableHeight = windowHeight;
+          tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 82; //减标题高度
+          tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
+          tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
+          tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
+          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          console.log(tableHeight);
+          this.tableMaxHeight = tableHeight;
+        }
+        else {
+          this.tableMaxHeight = 400;
+        }
+      },
       /*获取列表*/
       getList(shouldStoreQuery) {
         //搜索表单，搜索用
@@ -703,7 +798,7 @@
         Object.keys(query).filter(k => {
           return query[k] !== '' && query[k] !== null && query[k] !== undefined
         }).forEach(function (param, k) {
-          let oParam = query[param]
+          let oParam = query[param];
           filters.push({
             'field': param,
             op: oParam.op ? oParam.op : 'eq',
@@ -727,6 +822,9 @@
             ''
           )
         // 处理关联加载
+        if (this.relations && this.relations.length > 0) {
+          params += "&relations=" + JSON.stringify(this.relations);
+        }
 
         // 请求开始
         this.loading = true
@@ -890,6 +988,23 @@
         this.getList();
       },
 
+      //筛选
+      handleFilterChange: function (filters) {
+        let row = null
+        let val = null
+        // 拷贝filters的值。
+        for (const i in filters) {
+          row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
+          val = filters[i]
+        }
+        const filter = [{
+          row: row,
+          op: 'contains',
+          value: val
+        }]
+
+      },
+
       // 弹窗相关
       // 除非树形结构在操作列点击新增, 否则 row 都是 undefined
       onDefaultNew(row = {}) {
@@ -927,7 +1042,12 @@
         this.$nextTick(() => {
 
           //后台加载新数据
-          let url = this.url + '/' + row.id;
+          let url = this.url + '/' + row[this.id];
+
+          if (this.relations && this.relations.length > 0) {
+            url += "?relations=" + JSON.stringify(this.relations);
+          }
+
           this.global.axios.get(url)
             .then(resp => {
               this.$refs[dialogForm].updateForm(resp.data);
@@ -1010,6 +1130,9 @@
             })
             .catch(e => {
             })
+
+          this.afterConfirm();
+
         })
       },
       onDefaultDelete(row) {
@@ -1056,10 +1179,13 @@
                   })
               } else {
                 // 多选模式
+                let ids = this.selected.map(v => v[this.id]).toString();
+                if (!ids && ids == '') {
+                  ids = row[this.id];
+                }
+
                 this.global.axios
-                  .delete(
-                    this.url + '/' + this.selected.map(v => v[this.id]).toString()
-                  )
+                  .delete(this.url + '/' + ids)
                   .then(resp => {
                     instance.confirmButtonLoading = false
                     done()
@@ -1070,6 +1196,7 @@
                     instance.confirmButtonLoading = false
                   })
               }
+              this.afterConfirm();
             } else done()
           }
         }).catch(er => {
@@ -1146,16 +1273,29 @@
 <style type="text/less" lang="scss" scoped>
 
   .el-table {
+    /deep/ .ph-header-small {
+      font-size: 12px !important;
+    }
     /deep/ tr.warning-row {
-      background: rgb(253, 226, 226) !important;
+      background: rgb(233, 233, 235) !important;
     }
 
     /deep/ tr.warning-row td {
+      background: rgb(233, 233, 235) !important;
+    }
+
+    /deep/ tr.danger-row {
+      background: rgb(253, 226, 226) !important;
+    }
+
+    /deep/ tr.danger-row td {
       background: rgb(253, 226, 226) !important;
     }
   }
 
   .ph-table {
+
+    padding: 10px 15px;
 
     .ms-tree-space {
       position: relative;

@@ -93,6 +93,12 @@ export default {
     return {
       value: {}, // 表单数据对象
       options: this.content.reduce((con, item) => {
+
+        //TODO: 扩展，如果options是函数，执行这个函数
+        if (item.$options && typeof item.$options === "function") {
+          item.$options = item.$options.call();
+        }
+
         con[item.$id] =
           item.$type === GROUP
             ? item.$items.reduce((acc, cur) => {
@@ -100,7 +106,8 @@ export default {
               return acc
             }, {})
             : item.$options || []
-        return con
+        return con;
+
       }, {})
     }
   },
@@ -152,18 +159,25 @@ export default {
      */
     getFormValue() {
       const getValue = (values, content) => {
+
         return Object.keys(values).reduce((acc, key) => {
+
           const item = content.find(it => it.$id === key)
           if (!item) {
             return acc
           }
+          //TODO: fixbug element ui 不支持 aaa.bb的方式
+          let newKey = key
+          if (key.indexOf("_") !== false) {
+            newKey = key.replace("_", ".");
+          }
 
           // 如果类型是group，对值递归处理
           if (item.$type === GROUP) {
-            acc[key] = getValue(values[key], item.$items)
+            acc[newKey] = getValue(values[key], item.$items)
           } else {
-            if (item.$el.op && item.$el.op !== '') { //搜索模式
-              acc[key] = {'op': item.$el.op, 'data': clone(values[key])}
+            if (item.$el && item.$el.op && item.$el.op !== '') { //搜索模式
+              acc[newKey] = {'op': item.$el.op, 'data': clone(values[key])}
             }
             else {
               if (item.outputFormat) {
@@ -171,9 +185,9 @@ export default {
                 // 如果 outputFormat 返回的是一个对象，则合并该对象，否则在原有 acc 上新增该 属性：值
                 isObject(formatVal)
                   ? Object.assign(acc, formatVal)
-                  : (acc[key] = formatVal)
+                  : (acc[newKey] = formatVal)
               } else {
-                acc[key] = clone(values[key])
+                acc[newKey] = clone(values[key])
               }
             }
           }
@@ -190,15 +204,36 @@ export default {
      */
     updateForm(values) {
       const updateValue = content => {
+
         return content.reduce((acc, item) => {
+          let _id = item.$id;
+          let _value = values;
+
+          //TODO: fixbug element ui 不支持 aaa.bb的方式
+          if (_id.indexOf("_") !== false) {
+            _id = _id.replace("_", ".");
+          }
+
+          if (_id.indexOf(".") !== false) {
+
+            let type = _id.split(".");
+            type.forEach(_k => {
+              _value = _value[_k];
+            })
+          }
+          else {
+            _value = values[_id];
+          }
+
           const value =
             item.$type === GROUP
               ? updateValue(item.$items)
               : (item.inputFormat && item.inputFormat(values)) ||
-              values[item.$id]
+              _value
 
-          if (value !== undefined) {
-            _set(acc, item.$id, value)
+          if (value !== undefined && value !== null) {
+            //TOOD: 所有设置值，按照字符串处理
+            _set(acc, item.$id, value + '')
           }
 
           return acc

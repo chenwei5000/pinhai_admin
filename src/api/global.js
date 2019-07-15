@@ -1,11 +1,13 @@
 import _axios from 'axios'
-import store from '@/store/index'
+import store from '@/store'
 import {Message} from 'element-ui'
+import qs from 'qs'
 
 const config = {
-  NAME: 'ERP管理系统登录',
-  VERSION: 'V2.2.1',
+  NAME: '品海ERP管理系统',
+  VERSION: 'V2.0.0',
   ERP_SERVICE_URL: 'http://192.168.10.200/erp-service',
+  //ERP_SERVICE_URL: 'http://localhost:9001/erp-service',
   TENANT_ID: 'ff80808162fb6e100162fb6e213e0000'
 }
 
@@ -13,6 +15,45 @@ const config = {
 const generateUrl = function (path) {
   return config.ERP_SERVICE_URL + path
 }
+
+/**
+ * 搜索资源通用方法
+ * @param path       资源url路径
+ * @param filterRule 过滤规则
+ * @param relations  关联加载
+ * @param pagesize   页码
+ */
+const searchResource = function (path, filterRules,
+                                 relations = null, pagesize = -1) {
+
+  if (!path || path == '') {
+    return new Promise((resolve, reject) => {
+      resolve(false);
+    });
+  }
+  let _filters = null;
+  let _relations = null;
+
+  if (filterRules == null) {
+    filterRules = [{"field": "status", "op": "eq", "data": "1"}]
+  }
+
+  if (filterRules && filterRules.length > 0) {
+    _filters = {"groupOp": "AND", "rules": filterRules}
+  }
+  if (relations && relations.length > 0) {
+    _relations = relations
+  }
+
+  let param = {
+    pageSize: pagesize ? pagesize : -1,
+    filters: _filters ? JSON.stringify(_filters) : '',
+    relations: _relations ? _relations : ''
+  };
+
+  return axios.get(path + "?" + qs.stringify(param)).then(res => res.data);
+}
+
 
 const axios = _axios.create({
   baseURL: config.ERP_SERVICE_URL, // url = base url + request url
@@ -45,20 +86,22 @@ axios.interceptors.response.use(data => {
   return data
 }, err => {
   if (!err.response) {
-    return Message.error(err.message)
+    Message.error(err.message)
   }
-  if (err.response.data) {
-    Message.error({message: '[' + err.response.data.code + ']' + err.response.data.description})
-  } else {
-    if (err.response.status == 504 || err.response.status == 404) {
-      Message.error({message: '服务器被吃了⊙﹏⊙∥'})
-    } else if (err.response.status == 403) {
-      Message.error({message: '权限不足,请联系管理员!'})
+  else {
+    if (err.response.data) {
+      Message.error({message: '[' + err.response.data.code + ']' + err.response.data.description})
     } else {
-      Message.error({message: '未知错误!'})
+      if (err.response.status == 504 || err.response.status == 404) {
+        Message.error({message: '服务器被吃了⊙﹏⊙∥'})
+      } else if (err.response.status == 403) {
+        Message.error({message: '权限不足,请联系管理员!'})
+      } else {
+        Message.error({message: '未知错误!'})
+      }
     }
   }
-  return Promise.resolve(err)
+  throw err
 });
 
 
@@ -66,5 +109,6 @@ axios.interceptors.response.use(data => {
 export default {
   axios,
   generateUrl,
+  searchResource,
   config
 }

@@ -1,0 +1,60 @@
+@charset "utf-8";
+.card-panel:hover .icon-red {
+  background: #b6483b;
+}
+.card-panel:hover .icon-yellow {
+  background: #bf850a;
+}
+.card-panel:hover .icon-blue {
+  background: #2975c0;
+}
+.card-panel:hover .icon-green {
+  background: #199477;
+}
+.card-panel:hover .icon-orange {
+  background: #be6a2c;
+}
+.card-panel .icon-red {
+  background: #f25542;
+}
+.card-panel .icon-yellow {
+  background: #feac00;
+}
+.card-panel .icon-blue {
+  background: #279feb;
+}
+.card-panel .icon-green {
+  background: #17c295;
+}
+.card-panel .icon-orange {
+  background: #fe892c;
+}
+.card-panel .card-panel-icon-wrapper {
+  display: block;
+  width: 100%;
+  max-width: 60px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 30px;
+  color: #fff;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+  margin: 0 auto;
+}
+.card-panel .card-panel-icon {
+  font-size: 48px;
+}
+.card-panel .svg-icon {
+  width: 40px;
+  height: 40px;
+}
+.card-panel .card-panel-text {
+  line-height: 18px;
+  color: #000;
+  font-size: 12px;
+  margin: 5px 0;
+  text-align: center;
+}
+/*# sourceMappingURL=operate.css.map */
