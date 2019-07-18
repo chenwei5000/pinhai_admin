@@ -13,7 +13,7 @@ const harbourModel = {
   /////////////////下拉列表选项/////////////////////////////////////
   // 获取发货港口下拉列表项 id:name格式
   getSelectOptions() {
-    let _sourceHarbours = [];
+    let _options = [];
 
     const _loadData = async function () {
       let list = store.getters.harbours;
@@ -31,12 +31,12 @@ const harbourModel = {
     }
 
     _loadData();
-    return _sourceHarbours;
+    return _options;
 
   },
   // 获取发货港口下拉列表项 name:name格式
   getSelectNameOptions() {
-    let _sourceHarbours = [];
+    let _options = [];
 
     const _loadData = async function () {
       let list = store.getters.harbours;
@@ -53,7 +53,7 @@ const harbourModel = {
       }
     }
     _loadData();
-    return _sourceHarbours;
+    return _options;
   }
 }
 
