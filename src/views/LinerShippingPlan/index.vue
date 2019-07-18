@@ -3,7 +3,6 @@
     <div class="ph-card">
       <div class="ph-card-body">
         <full-Calendar
-          class='demo-app-calendar'
           ref="fullCalendar"
           defaultView="dayGridMonth"
           locale="zh"
@@ -143,6 +142,7 @@
   import harbourModel from "../../api/harbour";
   import categoryModel from "../../api/category";
   import userModel from "../../api/user";
+  import planModel from "../../api/linerShippingPlan";
 
   // 所有的计划
   export default {
@@ -166,6 +166,7 @@
             day: '日视图'
           },
           eventRender: function (event) {
+            console.log(event);
             // 事件显示
             event.el.innerHTML = event.event.title;
           }
@@ -224,11 +225,12 @@
             this.calendarEvents = [];
             let plans = data.data;
             for (let i = 0; i < plans.length; i++) {
-              let title = "";
+              let title = planModel.generateEventTitle(plans[i]);
               this.calendarEvents.push({
                 id: plans[i].id,
                 start: plans[i].formatEtdTime,
-                title: `<a href="#" >[${plans[i].id}]</a>`,
+                title: title.title,
+                className: title.className
               });
             }
           }
@@ -323,5 +325,54 @@
   @import '~@fullcalendar/core/main.css';
   @import '~@fullcalendar/daygrid/main.css';
   @import '~@fullcalendar/timegrid/main.css';
+
+  .fc-day-grid-container{
+    overflow: visible !important;
+  }
+
+  .fc-content-skeleton td{
+    min-height: 200px !important;
+  }
+
+  .label-danger, .badge-danger {
+    background-color: #d15b47 !important;
+  }
+
+  .label-grey, .badge-grey {
+    background-color: #a0a0a0 !important;
+  }
+
+  .label-yellow, .badge-yellow {
+    background-color: #fee188 !important;
+  }
+
+  .label-info, .badge-info {
+    background-color: #3a87ad !important;
+  }
+
+  .label-danger, .badge-danger {
+    background-color: #d15b47 !important;
+  }
+
+  .label-inverse, .badge-inverse {
+    background-color: #333!important;
+  }
+
+  .label-pink, .badge-pink {
+    background-color: #d6487e!important;
+  }
+
+  .label-success, .badge-success {
+    background-color: #82af6f!important;
+  }
+
+  .fc-header-toolbar{
+    padding: 15px 15px 0 15px !important;
+  }
+  .fc-widget-header th{
+    height: 30px !important;
+    vertical-align: middle !important;
+    background-color: #efefef;
+  }
 
 </style>
