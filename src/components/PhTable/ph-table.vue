@@ -212,35 +212,6 @@
 
     </el-table>
 
-    <!-- 注册的筛选器 -->
-    <div v-clickoutside='allfilterHide'>
-      <template v-for="(item, key) in regfilters">
-        <!-- 输入框选择器 -->
-        <div :class="{'filterWrap': true, 'hideBg': item.hidebg}"
-             v-show="filterAction[key]"
-             :key="key"
-             :style="item.position">
-          <div class="filterContainer">
-            <component
-              :key="key"
-              :is="item.component"
-              :data="item.data"
-              :filterkey="item.filterkey"
-              :listinfo="item.listinfo"
-              :refname="item.refname"
-              :cdata="item.cdata"
-              :myprops="item.myprops"
-              :placeholderstr="item.myplaceholder"
-              :unit="item.unit"
-              :ftn="item.ftn"
-              :customizedata="item.customizedata"
-              @getFilterBridge="getFilterBridge">
-            </component>
-          </div>
-        </div>
-      </template>
-    </div>
-
     <!--分页-->
     <el-pagination
       v-if="hasPagination"
