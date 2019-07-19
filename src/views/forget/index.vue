@@ -4,8 +4,7 @@
     <div class="login">
       <div class="message">
         <img src="../../assets/logo-2.png">
-        {{ global.config.NAME }}
-        <small>{{ global.config.VERSION }}</small>
+        找回密码
       </div>
       <div id="darkbannerwrap"/>
 
@@ -16,7 +15,6 @@
         auto-complete="on"
         label-position="left"
       >
-       
         <el-form-item prop="username">
           <span class="svg-container">
             <svg-icon icon-class="user"/>
@@ -25,56 +23,30 @@
           <el-input
             ref="username"
             v-model="user.username"
-            :placeholder="$t('login.username')"
+            placeholder="请输入验证邮箱"
             name="username"
             type="text"
             tabindex="1"
             auto-complete="on"
           />
-
         </el-form-item>
-
         <hr class="hr15">
-
-        <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
-          <el-form-item prop="password">
-            <span class="svg-container svg-password">
-              <svg-icon icon-class="password"/>
-            </span>
-
-            <el-input
-              :key="passwordType"
-              ref="password"
-              v-model="user.password"
-              :type="passwordType"
-              :placeholder="$t('login.password')"
-              name="password"
-              tabindex="2"
-              auto-complete="on"
-              @keyup.native="checkCapslock"
-              @blur="capsTooltip = false"
-              @keyup.enter.native="login"
-            />
-
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
-            </span>
-
-          </el-form-item>
-        </el-tooltip>
-
-        <hr class="hr15">
-        <input class="loginin" value="登录" type="button" @click="login">
-        <router-link to="/register">账号注册</router-link>
-        <router-link to="/forget">忘记密码</router-link>
+        <el-button class="loginin" type="success" :disabled="user.flag" @click="verification">{{ user.buttonValue}}</el-button>  
         <hr class="hr20">
       </el-form>
-      
+      <router-link to="/login">返回登录</router-link>
+       
     </div>
   </div>
 </template>
 
 <style type="text/less" lang="scss" scoped>
+  .loginin{
+    color: white;
+    width: 340px;
+    height: 50px;
+    font-size: 18px;
+  }
 
   body, html {
     padding: 0;
@@ -263,7 +235,9 @@
 
 <script>
   import {validEmail} from '@/utils/validate'
-
+  import global from '../../api/global.js'
+  import { globalAgent } from 'http';
+import { setInterval, clearInterval } from 'timers';
   export default {
     name: 'Login',
     data() {
@@ -275,17 +249,17 @@
         }
       }
       return {
-        user: {},
+        user: {
+          flag: false,
+          buttonValue: "验证",
+          resendTime: 60
+        },
         loginRules: {
           username: [
-            {required: true, message: '必须输入登陆账号', trigger: 'blur'},
+            {required: true, message: '请输入验证账号', trigger: 'blur'},
             {required: true, trigger: 'blur', validator: validateUsername}
           ],
-          password: [
-            {min: 6, message: '密码至少6个字符', trigger: 'blur'}
-          ]
         },
-        passwordType: 'password',
         capsTooltip: false,
         loading: false,
         showDialog: false,
@@ -305,57 +279,37 @@
     mounted() {
       if (this.user.username === '') {
         this.$refs.username.focus()
-      } else if (this.user.password === '') {
-        this.$refs.password.focus()
       }
     },
     destroyed() {
 
     },
     methods: {
-      checkCapslock({shiftKey, key} = {}) {
-        if (key && key.length === 1) {
-          if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
-            this.capsTooltip = true
-          } else {
-            this.capsTooltip = false
-          }
-        }
-        if (key === 'CapsLock' && this.capsTooltip === true) {
-          this.capsTooltip = false
-        }
-      },
-
-      showPwd() {
-        if (this.passwordType === 'password') {
-          this.passwordType = 'text'
-        } else {
-          this.passwordType = 'password'
-        }
-        this.$nextTick(() => {
-          this.$refs.password.focus()
-        })
-      },
-
-      login() {
+      verification() {
         this.$refs.user.validate(valid => {
-          if (valid) {
-            this.loading = true
-            this.$store.dispatch('user/login', this.user)
-              .then(() => {
-
-                this.$router.push({path: this.redirect || '/'})
-
-                this.loading = false
-              })
-              .catch(() => {
-                this.loading = false
-              })
-          } else {
-            return false
-          }
-
+           if(valid){
+            global.axios.post("users/forgetPassword", this.user).then(resp => {
+          //成功的回调
+          var id = setInterval(() => {
+             this.user.buttonValue = this.user.resendTime + "S 后可重新发送";
+             this.user.resendTime --;
+             if(this.user.resendTime <0 ){
+               clearInterval(id);
+               this.user.flag = false;
+               this.user.buttonValue = "验证";
+               this.user.resendTime = 60;
+             }
+          }, 1000);
+          this.user.flag = true;
+           this.$message({
+          message: '发送成功！',
+          type: 'success'
         });
+        }).catch(err => {
+          console.log(err)
+        })
+        }
+        })
       }
     }
   }
