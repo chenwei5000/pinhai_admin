@@ -10,7 +10,7 @@ const LinerShippingPlanModel = {
     }
 
     var class_name = "label-grey";
-    var title = '&nbsp;&nbsp;<i class="el-icon-bell"></i>&nbsp;&nbsp;';
+    var title = '&nbsp;&nbsp;<i class="el-icon-ship"></i>&nbsp;&nbsp;';
 
     if (plan.type == '空运') {
       title = '&nbsp;&nbsp;<i class="el-icon-s-promotion"></i>&nbsp;&nbsp;';
