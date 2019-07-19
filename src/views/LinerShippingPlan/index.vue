@@ -144,6 +144,8 @@
   import userModel from "../../api/user";
   import planModel from "../../api/linerShippingPlan";
 
+  import { Loading } from 'element-ui';
+
   // 所有的计划
   export default {
     components: {
@@ -238,6 +240,7 @@
       },
 
       handleEventClick(event) {
+        Loading.service();
         this.$message.info(event.event.id);
 
       },
@@ -300,14 +303,15 @@
       createPlan() {
         this.$refs['planForm'].validate((valid) => {
           if (valid) {
+            let loadingInstance1 = Loading.service({ fullscreen: true });
             this.plan.category = this.plan.categoryId.join(",");
             this.plan.merchandiser = this.plan.merchandiserId.join(",");
-
             console.log("plan:", this.plan)
             this.global.axios.post('/linerShippingPlans', this.plan).then(data => {
               console.log('post data', data)
               //关掉弹窗
               this.fcEvents.push(data.data);
+              loadingInstance1.close()
             })
 
           } else {
