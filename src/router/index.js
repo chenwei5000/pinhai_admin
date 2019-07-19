@@ -49,6 +49,21 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    hidden: true
+  },
+  {
+    path: '/forget',
+    component: () => import('@/views/forget/index'),
+    hidden: true
+  },
+  {
+    path: '/reset-password',
+    component: () => import('@/views/ResetPassword/index'),
+    hidden: true
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
