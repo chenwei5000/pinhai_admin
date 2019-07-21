@@ -170,7 +170,6 @@
         >
 
 
-
         </el-table-column>
 
       </template>
@@ -254,12 +253,10 @@
 </template>
 
 <script>
-  import _get from 'lodash.get'
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
   import {mapGetters} from 'vuex'
   import {getObjectVal} from '@/utils'
-
   // 过滤功能
   import editFilter from './Filters/edit.vue'
   import dateFilter from './Filters/date.vue'
@@ -296,7 +293,6 @@
   const _regfilterarr = []
 
 
-
   // 默认返回的数据格式如下
   //          {
   //            "page": 1
@@ -310,9 +306,9 @@
 
   const defaultFirstPage = 1 //默认第一页
 
-  const dataPath = 'rows'
-  const totalPath = 'total'
-  const noPaginationDataPath = 'rows'
+  const dataPath = ''
+  const totalPath = ''
+  const noPaginationDataPath = ''
 
   const treeChildKey = 'children'
   const treeParentKey = 'parentId'
@@ -345,6 +341,13 @@
       url: {
         type: String,
         default: ''
+      },
+      /**
+       * 请求url, 如果为空, 则不会发送请求; 改变url, 则table会重新发送请求
+       */
+      countUrl: {
+        type: String,
+        default: '/count'
       },
       /**
        * 主键，默认值 id，
@@ -824,7 +827,6 @@
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
           tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
-          console.log(tableHeight);
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -841,7 +843,8 @@
         // TODO Object.assign IE不支持, 所以后面Object.keys的保守其实是没有必要的。。。
         let query = Object.assign({}, formQuery, this.customQuery)
 
-        let url = this.url
+        let url = this.url;
+        let countUrl = this.url + this.countUrl;
         let params = ''
         let searchParams = ''
         let size = this.hasPagination ? this.size : this.noPaginationSize
@@ -857,6 +860,13 @@
         }
         else {
           url += '?'
+        }
+
+        if (countUrl.indexOf('?') > -1) {
+          countUrl += '&'
+        }
+        else {
+          countUrl += '?'
         }
 
         // 处理分页信息
@@ -886,6 +896,7 @@
           return query[k] !== '' && query[k] !== null && query[k] !== undefined
         }).forEach(function (param, k) {
           let oParam = query[param];
+
           filters.push({
             'field': param,
             op: oParam.op ? oParam.op : 'eq',
@@ -916,24 +927,29 @@
         // 请求开始
         this.loading = true
 
-        //获取数据
+        //获取列表数量数据
+        this.global.axios
+          .get(countUrl + params)
+          .then(resp => {
+            let res = resp.data
+            this.total = res || 0;
+          })
+          .catch(err => {
+            /**
+             * 请求数据失败，返回err对象
+             * @event error
+             */
+            this.$emit('error', err)
+          })
+
+        //获取列表数据
         this.global.axios
           .get(url + params)
           .then(resp => {
             let res = resp.data
-            let data = []
-
-            // 不分页
-            if (!this.hasPagination) {
-              data =
-                _get(res, this.dataPath) || _get(res, noPaginationDataPath) || []
-            } else {
-              data = _get(res, this.dataPath) || []
-              this.total = _get(res, this.totalPath)
-            }
+            let data = res || []
 
             this.data = data
-
             // 树形结构逻辑
             if (this.isTree) {
               this.data = this.tree2Array(data, this.expandAll)
