@@ -203,6 +203,7 @@
 
         //数据
         url: this.type === 'unfinished' ? '/products/unfinishs' : '/products', // 资源URL
+        countUrl: this.type === 'unfinished' ? '/products/countUnfinishs' : '/products/count', // 资源URL
         relations: ["category", "supplier", "cartonSpec", "currency"],  // 关联对象
         data: [],
         phSort: {prop: "skuCode", order: "asc"},
@@ -290,6 +291,7 @@
       /*获取列表*/
       getList(shouldStoreQuery) {
         let url = this.url
+        let countUrl = this.countUrl
         let params = ''
         let searchParams = ''
         let size = this.size
@@ -307,6 +309,15 @@
         else {
           url += '?'
         }
+
+        // 构造查询url
+        if (countUrl.indexOf('?') > -1) {
+          countUrl += '&'
+        }
+        else {
+          countUrl += '?'
+        }
+
 
         // 处理分页信息
         // 根据偏移值计算接口正确的页数
@@ -351,11 +362,20 @@
 
         //获取数据
         this.global.axios
+          .get(countUrl + params)
+          .then(resp => {
+            let res = resp.data
+            this.total = res || 0
+          })
+          .catch(err => {
+          })
+
+        //获取数据
+        this.global.axios
           .get(url + params)
           .then(resp => {
             let res = resp.data
-            let data = _get(res, 'rows') || []
-            this.total = _get(res, 'total') || 0
+            let data = res || []
             this.data = data
             this.loading = false
             /**
