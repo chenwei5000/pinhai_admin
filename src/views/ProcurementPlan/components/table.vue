@@ -204,6 +204,7 @@
 
         //数据 TODO: 根据实际情况调整
         url: '/procurementPlans', // 资源URL
+        countUrl: '/procurementPlans/count', // 资源URL
         relations: ["creator"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
@@ -385,6 +386,7 @@
       /*获取列表*/
       getList(shouldStoreQuery) {
         let url = this.url
+        let countUrl = this.countUrl
         let params = ''
         let searchParams = ''
         let size = this.size
@@ -401,6 +403,12 @@
         }
         else {
           url += '?'
+        }
+        if (countUrl.indexOf('?') > -1) {
+          countUrl += '&'
+        }
+        else {
+          countUrl += '?'
         }
 
         // 处理分页信息
@@ -446,11 +454,20 @@
 
         //获取数据
         this.global.axios
+          .get(countUrl + params)
+          .then(resp => {
+            let res = resp.data
+            this.total = res || 0
+          })
+          .catch(err => {
+          })
+
+        //获取数据
+        this.global.axios
           .get(url + params)
           .then(resp => {
             let res = resp.data
-            let data = _get(res, 'rows') || []
-            this.total = _get(res, 'total') || 0
+            let data = res || []
             this.data = data
             this.loading = false
             /**
