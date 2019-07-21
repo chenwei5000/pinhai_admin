@@ -7,7 +7,7 @@ const cartonspecModel = {
   // 获取箱规列表
   getCartonspecs: (pagesize = -1) => {
     const path = '/cartonSpecs?sort=code&order=asc';
-    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+    return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 获取id:name格式下拉框选项

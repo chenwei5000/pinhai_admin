@@ -7,7 +7,7 @@ const shippingMethodModel = {
   // 获取物流方式数据
   getShippingMethods: (pagesize = -1) => {
     const path = '/shippingMethods?sort=name&order=asc';
-    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+    return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 获取物流方式下拉选项 id:name格式

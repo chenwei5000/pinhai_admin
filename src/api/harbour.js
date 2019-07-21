@@ -7,7 +7,7 @@ const harbourModel = {
   // 获取港口列表
   getHarbours(pagesize = -1) {
     const path = '/harbours?sort=name&order=asc';
-    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+    return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   /////////////////下拉列表选项/////////////////////////////////////

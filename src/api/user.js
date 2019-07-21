@@ -7,7 +7,7 @@ const userModel = {
   // 登陆
   getUsers: (pageSize = -1) => {
     const path = '/users?sort=name&order=asc';
-    return global.searchResource(path, null, null, pageSize).then(data => data.rows);
+    return global.searchResource(path, null, null, pageSize).then(data => data);
   },
 
   // 获取用户 id:name格式下拉框选项

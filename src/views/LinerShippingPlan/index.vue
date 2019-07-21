@@ -279,7 +279,7 @@ export default {
       let warehousesUrl = `/warehouses?filters={"groupOp":"AND","rules":[{"field":"status","op":"eq","data":"1"}]}&sort=type asc,name`;
       this.global.axios(warehousesUrl).then(data => {
         if (data.status == 200) {
-          data.data.rows.forEach(warehouse => {
+          data.data.forEach(warehouse => {
             if (
               warehouse.type == "工厂仓" ||
               warehouse.type == "普通" ||

@@ -8,7 +8,7 @@ const supplierModel = {
   getSuppliers: (pagesize = -1) => {
     const path = '/suppliers';
 
-    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+    return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 获取供货商下拉选项 id:name格式
