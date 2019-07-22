@@ -31,7 +31,7 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
+            {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
             {
               prop: 'level', label: '菜单级别', sortable: 'custom', 'min-width': 120,
               formatter: row => (row.level === 1 ? '一级' : '二级')
