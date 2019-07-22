@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="创建计划" :visible.sync="formVisible" width="60%">
     <fieldset class="panel-heading">
-      <legend class="panel-title">基本信息</legend>
+      <legend class="panel-title">订船信息</legend>
       <el-form
         :model="plan"
         :rules="rules"
@@ -13,90 +13,40 @@
         <el-form-item label="开船时间" prop="etdTime">
           <el-date-picker v-model="plan.etdTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
         </el-form-item>
-        <el-form-item label="编号">
-          <el-input placeholder v-model="plan.code" :disabled="true"></el-input>
+
+        <el-form-item label="船运公司">
+          <el-input placeholder v-model="plan.code"></el-input>
         </el-form-item>
 
-        <el-form-item label="运输方式" prop="type">
-          <el-select v-model="plan.type" placeholder="请选择" style="width: 100%;">
-            <el-option label="海运" value="海运"></el-option>
-            <el-option label="空运" value="空运"></el-option>
-          </el-select>
+        <el-form-item label="货代公司">
+          <el-input placeholder v-model="plan.code"></el-input>
+        </el-form-item>
+        
+        <el-form-item label="目的港口">
+          <el-input placeholder v-model="plan.code"></el-input>
         </el-form-item>
 
-        <el-form-item label="发货港口" prop="portOfLoading">
-          <el-select v-model="plan.portOfLoading" placeholder="请选择">
-            <el-option
-              v-for="(item, idx) in harbours"
-              :key="`${idx}-${item.value}`"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="船名航次">
+          <el-input placeholder v-model="plan.code"></el-input>
+        </el-form-item>
+        
+        <el-form-item label="物流单号">
+          <el-input placeholder v-model="plan.code"></el-input>
         </el-form-item>
 
-        <el-form-item label="发货仓库" prop="fromWarehouseId">
-          <el-select v-model="plan.fromWarehouseId" filterable placeholder="请选择">
-            <el-option
-              v-for="(item, idx) in fromWarehouses"
-              :key="`${idx}-${item.value}`"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="提单号">
+          <el-input placeholder v-model="plan.code"></el-input>
         </el-form-item>
 
-        <el-form-item label="收货仓库" prop="toWarehouseId">
-          <el-select v-model="plan.toWarehouseId" filterable placeholder="请选择">
-            <el-option
-              v-for="(item, idx) in toWarehouses"
-              :key="`${idx}-${item.value}`"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="箱号">
+          <el-input placeholder v-model="plan.code"></el-input>
         </el-form-item>
 
-        <el-form-item label="分类" prop="categoryId">
-          <el-select v-model="plan.categoryId" multiple filterable placeholder="请选择">
-            <el-option
-              v-for="(item , idx) in categorys"
-              :key="`${idx}-${item.value}`"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
+        <el-form-item label="封条号">
+          <el-input placeholder v-model="plan.code"></el-input>
         </el-form-item>
 
-        <el-form-item label="负责人" prop="merchandiserId">
-          <el-select v-model="plan.merchandiserId" multiple filterable placeholder="请选择">
-            <el-option
-              v-for="(item, idx) in users"
-              :key="`${idx}-${item.value}`"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
 
-        <el-form-item label="是否打托：">
-          <el-radio v-model="plan.pallet" label="1" value="1">是</el-radio>
-          <el-radio v-model="plan.pallet" label="0" value="0">否</el-radio>
-        </el-form-item>
-
-        <el-form-item label="Oversize：" style="margin-left:150px;">
-          <el-radio v-model="plan.oversize" label="1" value="1">是</el-radio>
-          <el-radio v-model="plan.oversize" label="2" value="0">否</el-radio>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入内容"
-            v-model="plan.detail"
-            style="width:500px"
-          ></el-input>
-        </el-form-item>
       </el-form>
     </fieldset>
     <div slot="footer" class="dialog-footer">
@@ -111,7 +61,6 @@ import harbourModel from "../../../api/harbour";
 import categoryModel from "../../../api/category";
 import userModel from "../../../api/user";
 import planModel from "../../../api/linerShippingPlan";
-
 
 // loading 组件
 import { Loading } from "element-ui";
@@ -140,7 +89,19 @@ export default {
 
       formVisible: false,
 
-      plan: {},
+      plan: {
+        etdTime: "",
+        code: "",
+        type: "",
+        portOfLoading: "",
+        fromWarehouseId: "",
+        toWarehouseId: "",
+        categoryId: [],
+        merchandiserId: [],
+        pallet: "",
+        oversize: "",
+        detail: ""
+      },
       rules: {
         etdTime: [
           { required: true, message: "开船时间不能为空", trigger: "blur" }
@@ -168,7 +129,7 @@ export default {
   },
   methods: {
     createPlan() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["planForm"].validate(valid => {
         if (valid) {
           this.plan.category = this.plan.categoryId.join(",");
           this.plan.merchandiser = this.plan.merchandiserId.join(",");
@@ -180,7 +141,7 @@ export default {
               if (data.status == 200) {
                 let event = data.data;
                 let title = planModel.generateEventTitle(event);
-                this.$emit("addCalendarEvent", event, title)
+                this.$emit("addCalendarEvent", event, title);
                 closeLoding();
                 this.formVisible = false;
               }
@@ -193,34 +154,16 @@ export default {
     }
   },
   mounted() {
-    this.$on("openDialog", day => {
-      this.formVisible = true;
-      this.plan.etdTime = day;
-
-      // 初始化变量
-      let allPlanAttrName = [
-        "etdTime",
-        "code",
-        "type",
-        "portOfLoading",
-        "fromWarehouseId",
-        "toWarehouseId",
-        "categoryId",
-        "merchandiserId",
-        "pallet",
-        "oversize",
-        "detail"
-      ];
-      allPlanAttrName.forEach(name => {
-        if (name === "etdTime") {
-          this.plan[name] = day;
-        } else if (name === "categoryId" || name === "merchandiserId") {
-          this.plan[name] = [];
-        } else {
-          this.plan[name] = "";
+    this.$on("openDialog", id => {
+      this.global.axios.get(`/linerShippingPlans/${id}`).then(data => {
+        if (data.status === 200) {
+          this.formVisible = true;
+          this.plan = data.data;
+          this.plan.etdTime = this.plan.formatEtdTime;
+          this.plan.categoryId = this.plan.categoryName.split(",");
+          this.plan.merchandiserId = this.plan.merchandiserName.split(",");
         }
       });
-
       // 仓库信息
       let warehousesUrl = `/warehouses?filters={"groupOp":"AND","rules":[{"field":"status","op":"eq","data":"1"}]}&sort=type asc,name`;
       this.global.axios(warehousesUrl).then(data => {

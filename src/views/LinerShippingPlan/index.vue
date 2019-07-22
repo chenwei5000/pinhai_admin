@@ -30,6 +30,9 @@
     ></createEvent>
 
     <!-- 编辑 event -->
+    <editEvent 
+    ref="editEvent"
+    ></editEvent>
   </div>
 </template>
 
@@ -42,13 +45,21 @@ import dateFormat from "dateformat";
 
 import planModel from "../../api/linerShippingPlan";
 
-// 创建计划 dialog
+// 创建 event dialog
 import createEvent from "./components/createEvent";
+
+// 
+import editEvent from "./components/editEvent";
+
+// ding chuan xinxi
+import shipInfo from "./components/shipInfo";
 
 export default {
   components: {
     fullCalendar: fullCalendar,
-    createEvent: createEvent
+    createEvent: createEvent,
+    editEvent: editEvent,
+    shipInfo: shipInfo
   },
   name: "plan",
   data() {
@@ -97,7 +108,7 @@ export default {
     },
 
     handleEventClick(event) {
-      this.$message.info(event.event.id);
+      this.$refs.editEvent.$emit("openDialog", event.event.id);
     },
 
     handleDateClick(day, jsEvent) {
@@ -114,8 +125,6 @@ export default {
         title: title.title,
         className: title.className
       });
-    },
-    mounted() {
     }
   }
 };
