@@ -6,7 +6,7 @@ import phEnumModel from '../api/phEnum'
 // 通用搜索
 const phSearchItems = {
 
-  // 名称搜索
+  // id搜索
   id: {
     $type: 'hidden',
     $id: 'id',
@@ -37,6 +37,29 @@ const phSearchItems = {
       placeholder: '请输入名称'
     }
   },
+
+  // 区域搜索
+  region: {
+    $type: 'input',
+    $id: 'region',
+    label: '区域',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入公司所在区域'
+    }
+  },
+
+  // 联系人搜索
+  contact: {
+    $type: 'input',
+    $id: 'contact',
+    label: '联系人',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入联系人'
+    }
+  },
+
 
   // 状态搜索
   status: () => {
