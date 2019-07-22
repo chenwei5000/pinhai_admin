@@ -4,8 +4,7 @@
     <div class="login">
       <div class="message">
         <img src="../../assets/logo-2.png">
-        {{ global.config.NAME }}
-        <small>{{ global.config.VERSION }}</small>
+        重置密码
       </div>
       <div id="darkbannerwrap"/>
 
@@ -15,61 +14,59 @@
         :rules="loginRules"
         auto-complete="on"
         label-position="left"
-      >
-       
-        <el-form-item prop="username">
-          <span class="svg-container">
-            <svg-icon icon-class="user"/>
-          </span>
-
-          <el-input
-            ref="username"
-            v-model="user.username"
-            :placeholder="$t('login.username')"
-            name="username"
-            type="text"
-            tabindex="1"
-            auto-complete="on"
-          />
-
-        </el-form-item>
-
+        v-loading="loading"
+      > 
         <hr class="hr15">
 
         <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
-          <el-form-item prop="password">
-            <span class="svg-container svg-password">
-              <svg-icon icon-class="password"/>
-            </span>
-
+          <el-form-item prop="pass" label="密码" >
             <el-input
               :key="passwordType"
-              ref="password"
-              v-model="user.password"
+              ref="pass"
+              v-model="user.pass"
               :type="passwordType"
               :placeholder="$t('login.password')"
-              name="password"
+              name="pass"
               tabindex="2"
-              auto-complete="on"
+              auto-complete="off"
               @keyup.native="checkCapslock"
               @blur="capsTooltip = false"
               @keyup.enter.native="login"
             />
-
             <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
+              <svg-icon :icon-class="passwordType === 'pass' ? 'eye' : 'eye-open'"/>
             </span>
-
           </el-form-item>
+          
+        </el-tooltip>
+
+        <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
+          <el-form-item prop="checkPass" label="确认密码">
+            <el-input
+              :key="passwordType"
+              ref="checkPass"
+              v-model="user.checkPass"
+              :type="passwordType"
+              :placeholder="$t('login.password')"
+              name="checkPass"
+              tabindex="2"
+              auto-complete="off"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="login"
+            />
+            <span class="show-pwd" @click="showPwd">
+              <svg-icon :icon-class="passwordType === 'checkPass' ? 'eye' : 'eye-open'"/>
+            </span>
+          </el-form-item>
+          
         </el-tooltip>
 
         <hr class="hr15">
-        <input class="loginin" value="登录" type="button" @click="login">
-        <router-link to="/register">账号注册</router-link>
-        <router-link to="/forget">忘记密码</router-link>
+        <input class="loginin" value="确认修改" type="button" @click="submitForm">
         <hr class="hr20">
       </el-form>
-      
+      <router-link to="/login">返回登录</router-link>
     </div>
   </div>
 </template>
@@ -151,6 +148,7 @@
       position: relative;
       color: #fff;
       font-size: 22px;
+      text-align: center;
     }
     .message img {
       height: 25px;
@@ -263,26 +261,44 @@
 
 <script>
   import {validEmail} from '@/utils/validate'
+  import global from '../../api/global.js'
 
   export default {
     name: 'Login',
     data() {
-      const validateUsername = (rule, value, callback) => {
-        if (!validEmail(value)) {
-          callback(new Error('账号为邮箱格式!'))
+      const validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
         } else {
-          callback()
+          if (this.user.checkPass !== '') {
+            this.$refs.user.validateField('checkPass');
+          }
+          callback();
+        }
+      };
+
+      const validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.user.pass) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
         }
       }
       return {
-        user: {},
+        user: {
+          pass: '',
+          checkPass: ''
+        },
         loginRules: {
-          username: [
-            {required: true, message: '必须输入登陆账号', trigger: 'blur'},
-            {required: true, trigger: 'blur', validator: validateUsername}
+           pass: [
+            {min: 6, message: '密码至少6个字符', trigger: 'blur'},
+            { validator: validatePass, trigger: 'blur' }
           ],
-          password: [
-            {min: 6, message: '密码至少6个字符', trigger: 'blur'}
+          checkPass: [
+            {min: 6, message: '密码至少6个字符', trigger: 'blur'},
+            { validator: validatePass2, trigger: 'blur' }
           ]
         },
         passwordType: 'password',
@@ -332,29 +348,31 @@
         } else {
           this.passwordType = 'password'
         }
-        this.$nextTick(() => {
-          this.$refs.password.focus()
-        })
       },
 
-      login() {
-        this.$refs.user.validate(valid => {
+       submitForm(formName) {
+        this.$refs.user.validate((valid) => {
           if (valid) {
-            this.loading = true
-            this.$store.dispatch('user/login', this.user)
-              .then(() => {
-
-                this.$router.push({path: this.redirect || '/'})
-
-                this.loading = false
-              })
-              .catch(() => {
-                this.loading = false
+            if(this.$route.query.account == null || this.$route.query.validCode == null){
+              alert("参数异常")
+               console.log("参数异常！")
+               return false;
+            }
+            var param = '?password=' + this.user.pass + '&account=' + this.$route.query.account + '&validCode=' + this.$route.query.validCode; 
+            global.axios.post('users/resetPassword' + param).then(resp => {
+              this.$message({
+                message: '修改成功！',
+                type: 'success'
+                });
+              this.$router.push({path: '/login'});
+              console.log(resp)
+            })
+              .catch(err => {
               })
           } else {
-            return false
+            console.log('error submit!!');
+            return false;
           }
-
         });
       }
     }

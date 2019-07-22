@@ -11,7 +11,7 @@ import 'nprogress/nprogress.css' // progress bar style
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
 // 白名单,这个里面的请求，不进行权限验证
-const whiteList = ['/login', '/auth-redirect']
+const whiteList = ['/login', '/auth-redirect','/register', '/forget', '/reset-password']
 
 let hasPermission = (roles, permissionRoles) => {
 
