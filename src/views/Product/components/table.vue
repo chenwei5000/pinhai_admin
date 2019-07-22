@@ -48,21 +48,7 @@
       @filter-change="handleFilterChange"
       id="table"
     >
-      <el-table-column
-        prop="imgUrl"
-        label="图片"
-        width="70">
-        <template slot-scope="scope">
-          <el-popover
-            placement="right"
-            title=""
-            trigger="click" v-if="scope.row.imgUrl">
-            <img :src="scope.row.imgUrl.replace('_SL75_','_SL500_')" width="500">
-            <img slot="reference" :src="scope.row.imgUrl" :alt="scope.row.skuCode"
-                 width="50" style="cursor: pointer">
-          </el-popover>
-        </template>
-      </el-table-column>
+
       <el-table-column prop="skuCode" sortable="custom" label="SKU" min-width="150" fixed="left"></el-table-column>
       <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
       <el-table-column prop="category.name" label="分类" width="80"></el-table-column>
