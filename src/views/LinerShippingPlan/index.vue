@@ -32,7 +32,13 @@
     <!-- 编辑 event -->
     <editEvent 
     ref="editEvent"
+    @editCalendarEvent="editCalendarEvent"
     ></editEvent>
+
+    <!-- 订船信息 -->
+    <shipInfo
+    ref="shipInfo"
+    ></shipInfo>
   </div>
 </template>
 
@@ -51,7 +57,7 @@ import createEvent from "./components/createEvent";
 // 
 import editEvent from "./components/editEvent";
 
-// ding chuan xinxi
+// 订船信息
 import shipInfo from "./components/shipInfo";
 
 export default {
@@ -108,7 +114,9 @@ export default {
     },
 
     handleEventClick(event) {
-      this.$refs.editEvent.$emit("openDialog", event.event.id);
+      // this.$refs.editEvent.$emit("openDialog", event.event.id);
+      this.$refs.shipInfo.$emit("openDialog", event.event.id);
+
     },
 
     handleDateClick(day, jsEvent) {
@@ -125,6 +133,15 @@ export default {
         title: title.title,
         className: title.className
       });
+    },
+    editCalendarEvent(event, title) {
+      for(let i = 0; i < this.calendarEvents.length; i++) {
+        if(this.calendarEvents[i].id == event.id) {
+          this.calendarEvents[i].start = event.formatEtdTime,
+          this.calendarEvents[i].title = title.title,
+          this.calendarEvents[i].className = title.className
+        }
+      }
     }
   }
 };

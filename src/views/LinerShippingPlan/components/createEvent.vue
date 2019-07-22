@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="创建计划" :visible.sync="formVisible" width="60%">
+  <el-dialog title="创建计划" :visible.sync="formVisible" width="65%">
     <fieldset class="panel-heading">
       <legend class="panel-title">基本信息</legend>
       <el-form
@@ -11,10 +11,10 @@
         :inline="true"
       >
         <el-form-item label="开船时间" prop="etdTime">
-          <el-date-picker v-model="plan.etdTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-date-picker v-model="plan.etdTime" type="datetime" placeholder="选择日期时间" readonly></el-date-picker>
         </el-form-item>
         <el-form-item label="编号">
-          <el-input placeholder v-model="plan.code" :disabled="true"></el-input>
+          <el-input placeholder v-model="plan.code" disabled></el-input>
         </el-form-item>
 
         <el-form-item label="运输方式" prop="type">
@@ -112,7 +112,6 @@ import categoryModel from "../../../api/category";
 import userModel from "../../../api/user";
 import planModel from "../../../api/linerShippingPlan";
 
-
 // loading 组件
 import { Loading } from "element-ui";
 
@@ -140,7 +139,21 @@ export default {
 
       formVisible: false,
 
-      plan: {},
+      plan: {
+        etdTime: "",
+        code: "",
+        type: "",
+        portOfLoading: "",
+        fromWarehouseId: "",
+        toWarehouseId: "",
+        categoryId: [],
+        merchandiserId: [],
+        referenceId: "",
+        shipmentId: "",
+        pallet: "",
+        oversize: "",
+        detail: ""
+      },
       rules: {
         etdTime: [
           { required: true, message: "开船时间不能为空", trigger: "blur" }
@@ -172,6 +185,7 @@ export default {
         if (valid) {
           this.plan.category = this.plan.categoryId.join(",");
           this.plan.merchandiser = this.plan.merchandiserId.join(",");
+          // console.log("this.plan.etdTime ", this.plan.etdTime)
           showLoading();
           this.global.axios
             .post("/linerShippingPlans", this.plan)
@@ -180,7 +194,7 @@ export default {
               if (data.status == 200) {
                 let event = data.data;
                 let title = planModel.generateEventTitle(event);
-                this.$emit("addCalendarEvent", event, title)
+                this.$emit("addCalendarEvent", event, title);
                 closeLoding();
                 this.formVisible = false;
               }
@@ -209,6 +223,8 @@ export default {
         "merchandiserId",
         "pallet",
         "oversize",
+        "referenceId",
+        "shipmentId",
         "detail"
       ];
       allPlanAttrName.forEach(name => {
@@ -225,7 +241,7 @@ export default {
       let warehousesUrl = `/warehouses?filters={"groupOp":"AND","rules":[{"field":"status","op":"eq","data":"1"}]}&sort=type asc,name`;
       this.global.axios(warehousesUrl).then(data => {
         if (data.status == 200) {
-          data.data.rows.forEach(warehouse => {
+          data.data.forEach(warehouse => {
             if (
               warehouse.type == "工厂仓" ||
               warehouse.type == "普通" ||
