@@ -86,6 +86,8 @@
   </el-dialog>
 </template>
 
+
+
 <script>
 import harbourModel from "../../../api/harbour";
 import categoryModel from "../../../api/category";
@@ -180,7 +182,7 @@ export default {
     },    
     navigateTo() {
       console.log("跳转");
-      this.$router.push({ path: "dashboard" });
+      this.$router.push({ path: "/dashboard" });
     }
   },
   mounted() {
