@@ -34,7 +34,7 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'abbreviation', label: '简称', sortable: 'custom', "min-width": 120, },
+            {prop: 'abbreviation', label: '简称', sortable: 'custom', "min-width": 135, },
             {prop: 'fullName', label: '全称', sortable: 'custom', "min-width": 120},
             {prop: 'address', label: '地址', "min-width": 120},
             {prop: 'region', label: '区域', "min-width": 120},
@@ -131,6 +131,7 @@
       }
     },
     methods: {
+      // 状态样式
       statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
@@ -140,6 +141,7 @@
         }
       }
     },
+    // 观察data中的值发送变化后，调用
     watch: {}
   }
 </script>
