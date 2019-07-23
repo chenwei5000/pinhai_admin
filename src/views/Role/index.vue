@@ -36,9 +36,9 @@
     },
     computed: {},
     methods: {
-      openRoleList(id) {
+      openRoleList(id, name) {
         console.log('index ', id)
-        this.$refs.roleList.$emit('openDiaLog', id)
+        this.$refs.roleList.$emit('openDiaLog', id, name)
       }
     },
     watch: {}

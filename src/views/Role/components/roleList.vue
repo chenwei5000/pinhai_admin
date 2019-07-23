@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="权限选择" :visible.sync="dialogVisible" width="65%" top="5vh">
+  <el-dialog :title="title" :visible.sync="dialogVisible" width="65%" top="5vh">
     <div class="custom-tree-container">
       <el-input
         placeholder="输入关键字进行过滤"
@@ -38,6 +38,8 @@
 
     data() {
       return {
+        title: "",
+        roleId: 0,
         list: [],
         dialogVisible: false,
         loading: false,
@@ -51,6 +53,24 @@
     },
     methods: {
       save() {
+        let data = this.$refs.tree.getCheckedNodes()
+        this.loading = true
+        let postData = []
+        
+        for(let i = 0; i < data.length; i++) {
+          const e = data[i]
+          let temp = {}
+          temp.actionId = e.id
+          postData.push(temp)
+        }
+        let url = `/rolePowers?roleId=${this.roleId}`
+        console.log('data ', postData)
+        this.global.axios.post(url, postData).then(data => {
+          if(data.status == 200) {
+            this.$message.info('操作成功！')
+          }
+          this.loading = false
+        })
       },
       setDefault(id) {
         let url = `/rolePowers?roleId=${id}`;
@@ -80,7 +100,9 @@
       }
     },
     mounted() {
-      this.$on("openDiaLog", id => {
+      this.$on("openDiaLog", (id, name) => {
+        this.roleId = id
+        this.title = `${name} 权限管理`
         this.dialogVisible = true;
         this.loading = true;
         // showLoading('.custom-tree-container')

@@ -58,7 +58,7 @@ const searchResource = function (path, filterRules,
 
 const axios = _axios.create({
   baseURL: config.ERP_SERVICE_URL, // url = base url + request url
-  timeout: 5000 // request timeout
+  timeout: 600000 // request timeout
 })
 
 // 设置默认Request的Header
