@@ -35,7 +35,7 @@
         <el-form-item label="备注">
           <el-input type="textarea" v-model="newPlan.note"
                     maxlength="500"
-                    textarea="4"
+                    rows="4"
                     show-word-limit></el-input>
         </el-form-item>
 
