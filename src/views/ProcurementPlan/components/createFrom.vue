@@ -6,40 +6,117 @@
       <el-step title="明细信息" icon="el-icon-picture"></el-step>
       <el-step title="指派处理人" icon="el-icon-upload"></el-step>
       <el-step title="提交审核" icon="el-icon-edit"></el-step>
-
     </el-steps>
 
-    <el-form :rules="rules" :model="newPlan" status-icon ref="createForm" label-position="right" inline
-             label-width="110px">
+    <el-form :rules="rules" :model="newPlan" status-icon ref="createForm" label-position="right"
+             label-width="180px">
 
       <fieldset class="panel-heading">
+        <el-form-item label="分类" prop="categoryId">
+          <el-select v-model="newPlan.categoryId"
+                     filterable multiple placeholder="请选择分类,可多选">
+            <el-option
+              v-for="(item , idx)  in categorySelectOptions"
+              :label="item.label"
+              :value="item.value"
+              :key="idx"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-        <el-row>
-          <el-form-item label="分类" prop="categoryId">
-            <el-select size="mini" v-model="newPlan.categoryId"
-                       filterable multiple placeholder="请选择分类,可多选">
+        <el-form-item label="交货截止日" prop="limitTime">
+          <el-date-picker v-model="newPlan.limitTime" type="date" placeholder="交货截止日"></el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="下单截止日" prop="executeTime">
+          <el-date-picker v-model="newPlan.executeTime" type="date" placeholder="交货截止日"></el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="newPlan.note"
+                    maxlength="500"
+                    textarea="4"
+                    show-word-limit></el-input>
+        </el-form-item>
+
+        <fieldset class="panel-heading">
+          <legend class="panel-title">智能备货</legend>
+
+          <el-form-item label="销售渠道" prop="merchantId">
+            <el-select v-model="newPlan.merchantId"
+                       filterable placeholder="请选择销售渠道">
               <el-option
-                v-for="(item , idx)  in categorySelectOptions"
+                v-for="(item , idx)  in merchantSelectOptions"
                 :label="item.label"
                 :value="item.value"
                 :key="idx"
               ></el-option>
             </el-select>
+          </el-form-item>
 
+          <el-form-item label="库存来源" prop="warehouseId">
+            <el-select v-model="newPlan.warehouseId"
+                       filterable multiple placeholder="请选择库存,可多选">
+              <el-option
+                v-for="(item , idx)  in warehouseSelectOptions"
+                :label="item.label"
+                :value="item.value"
+                :key="idx"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="非Vip备货周数" prop="safetyStockWeek">
+            <el-select v-model="newPlan.safetyStockWeek"
+                       filterable placeholder="请选择非Vip备货周数">
+              <el-option
+                v-for="week in 52"
+                :label="week"
+                :value="week"
+                :key="week"
+              ></el-option>
+            </el-select>
           </el-form-item>
 
 
-        </el-row>
-
-        <el-row>
-          <el-form-item label="交货截止日" prop="limitTime">
-            <el-date-picker size="mini" v-model="newPlan.limitTime" type="date" placeholder="交货截止日"></el-date-picker>
+          <el-form-item label="Vip1备货周数" prop="vip1SafetyStockWeek">
+            <el-select v-model="newPlan.vip1SafetyStockWeek"
+                       filterable placeholder="请选择Vip1备货周数">
+              <el-option
+                v-for="week in 52"
+                :label="week"
+                :value="week"
+                :key="week"
+              ></el-option>
+            </el-select>
           </el-form-item>
 
-          <el-form-item label="下单截止日" prop="executeTime">
-            <el-date-picker size="mini" v-model="newPlan.executeTime" type="date" placeholder="交货截止日"></el-date-picker>
+          <el-form-item label="Vip2备货周数" prop="vip2SafetyStockWeek">
+            <el-select v-model="newPlan.vip2SafetyStockWeek"
+                       filterable placeholder="请选择Vip2备货周数">
+              <el-option
+                v-for="week in 52"
+                :label="week"
+                :value="week"
+                :key="week"
+              ></el-option>
+            </el-select>
           </el-form-item>
-        </el-row>
+
+          <el-form-item label="未完成采购计划处理方式" prop="exclude">
+            <el-select v-model="newPlan.exclude"
+                       filterable placeholder="请选择未完成采购计划处理方式">
+
+              <el-option label="不考虑" value="0"></el-option>
+              <el-option label="采购计划数量" value="1"></el-option>
+              <el-option label="已下采购单数量" value="2"></el-option>
+              <el-option label="已发货数量" value="3"></el-option>
+              <el-option label="已收货数量" value="4"></el-option>
+
+            </el-select>
+          </el-form-item>
+
+        </fieldset>
 
 
       </fieldset>
@@ -59,6 +136,8 @@
 
 <script>
   import categoryModel from '@/api/category'
+  import warehouseModel from '@/api/warehouse'
+  import merchantModel from '@/api/merchant'
 
   export default {
 
@@ -72,6 +151,8 @@
       return {
         //选择框
         categorySelectOptions: [],
+        warehouseSelectOptions: [],
+        merchantSelectOptions: [],
 
         confirmLoading: false,
         // 新产品对象
@@ -120,6 +201,19 @@
 
     mounted() {
       this.categorySelectOptions = categoryModel.getMineSelectOptions();
+      this.merchantSelectOptions = merchantModel.getSelectOptions();
+
+      this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+      let flg = true;
+      this.warehouseSelectOptions.forEach(obj => {
+        if (obj.value == -99) {
+          flg = false;
+        }
+      });
+
+      if (flg) {
+        this.warehouseSelectOptions.unshift({label: '供货商库存', value: -99})
+      }
     },
     methods: {
 
