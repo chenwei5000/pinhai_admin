@@ -359,7 +359,7 @@
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
         this.searchParam.name.value = null;
-        this.searchParam.name.status = null;
+        this.searchParam.status.value = null;
         this.page = 1
 
         // 重置
@@ -473,7 +473,7 @@
       },
 
       onDefaultSetting(row) {
-        console.log(row);
+        this.$emit("openRoleList", row.id, row.name);
         this.$message.info(row.id + "");
       },
 

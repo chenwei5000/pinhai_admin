@@ -13,6 +13,7 @@ import datadicModel from '@/api/datadic'
 import shippingMethodModel from '@/api/shippingMethod'
 import userModel from '@/api/user'
 import enumModel from '@/api/phEnum'
+import merchantModel from '@/api/merchant'
 
 const state = {
   sidebar: {
@@ -32,7 +33,8 @@ const state = {
   datadics: null, //数据字典
   shippingMethods: null, //运输方式
   personnels: null,  //人员
-  enums: null //人员
+  enums: null, //枚举
+  merchants: null //销售渠道
 }
 
 const mutations = {
@@ -66,6 +68,9 @@ const mutations = {
   },
   SET_ENUMS: (state, enums) => {
     state.enums = enums
+  },
+  SET_MERCHANTS: (state, merchants) => {
+    state.merchants = merchants
   },
 
   TOGGLE_SIDEBAR: state => {
@@ -226,6 +231,19 @@ const actions = {
       enumModel.getEnums().then(async list => {
         console.log("从后端获取枚举信息");
         commit('SET_ENUMS', list);
+        resolve(list);
+      }).catch(error => {
+        reject(error)
+      });
+    });
+  },
+
+  loadMerchants({commit}) {
+    return new Promise((resolve, reject) => {
+
+      merchantModel.getMerchants().then(async list => {
+        console.log("从后端获取渠道信息");
+        commit('SET_MERCHANTS', list);
         resolve(list);
       }).catch(error => {
         reject(error)
