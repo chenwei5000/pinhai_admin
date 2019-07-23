@@ -52,7 +52,14 @@ const searchResource = function (path, filterRules,
     relations: _relations ? _relations : ''
   };
 
-  return axios.get(path + "?" + qs.stringify(param)).then(res => res.data);
+  if (path.indexOf('?') > -1) {
+    path += '&'
+  }
+  else {
+    path += '?'
+  }
+
+  return axios.get(path + qs.stringify(param)).then(res => res.data);
 }
 
 
