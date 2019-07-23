@@ -473,7 +473,8 @@
       },
 
       onDefaultSetting(row) {
-        console.log(row);
+        this.$emit("openRoleList", row.id);
+        console.log('table ', row.id)
         this.$message.info(row.id + "");
       },
 
