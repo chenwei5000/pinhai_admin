@@ -80,6 +80,7 @@
     </fieldset>
     <div slot="footer" class="dialog-footer">
       <el-button @click="formVisible = false">取 消</el-button>
+      <el-button type="warning" @click="navigateTo">跳 转</el-button>
       <el-button type="primary" @click="save">保 存</el-button>
     </div>
   </el-dialog>
@@ -90,6 +91,7 @@ import harbourModel from "../../../api/harbour";
 import categoryModel from "../../../api/category";
 import userModel from "../../../api/user";
 import planModel from "../../../api/linerShippingPlan";
+
 
 // loading 组件
 import { Loading } from "element-ui";
@@ -175,6 +177,10 @@ export default {
           return false;
         }
       });
+    },    
+    navigateTo() {
+      console.log("跳转");
+      this.$router.push({ path: "dashboard" });
     }
   },
   mounted() {
