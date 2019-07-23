@@ -34,12 +34,12 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 80, fixed: 'left'},
-            {prop: 'typeName', label: '类型', 'min-width': 100},
-            {prop: 'vip0SafetyStockWeek', label: 'Vip0普通', 'width': 90},
-            {prop: 'vip1SafetyStockWeek', label: 'Vip1热销', 'width': 90},
-            {prop: 'vip2SafetyStockWeek', label: 'Vip2爆款', 'width': 90},
-            {prop: 'sortNum', label: '排序值', sortable: true, 'width': 90},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 90, fixed: 'left'},
+            {prop: 'typeName', label: '类型', 'min-width': 80},
+            {prop: 'vip0SafetyStockWeek', label: 'Vip0普通', 'min-width': 80},
+            {prop: 'vip1SafetyStockWeek', label: 'Vip1热销', 'min-width': 80},
+            {prop: 'vip2SafetyStockWeek', label: 'Vip2爆款', 'min-width': 80},
+            {prop: 'sortNum', label: '排序值', sortable: true, 'min-width': 80},
             phColumns.status,
             phColumns.lastModified
           ],
