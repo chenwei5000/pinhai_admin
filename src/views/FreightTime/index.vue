@@ -42,7 +42,7 @@
             phColumns.status,
             phColumns.lastModified
           ],
-          // 搜索
+          //搜索
           searchForm: [
             {
               $type: 'select',
