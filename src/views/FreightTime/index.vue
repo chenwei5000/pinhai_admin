@@ -74,7 +74,7 @@
                 placeholder: '请输入收货港口'
               }
             },
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //修改或新增
           form: [
@@ -126,7 +126,7 @@
                 validRules.number
               ]
             },
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }
