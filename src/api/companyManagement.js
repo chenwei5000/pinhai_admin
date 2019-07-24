@@ -2,11 +2,11 @@ import global from './global.js'
 
 
 
-const bankAccountModel = {
+const companyManagementModel = {
 
-  // 获取银行账户列表
-  getBankAccounts: (pagesize = -1) => {
-    const path = '/bankAccounts?sort=accountName&order=asc';
+  // 获取公司列表
+  getCompanyManagements: (pagesize = -1) => {
+    const path = '/companyManagements?sort=fullName&order=asc';
 
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
@@ -16,11 +16,11 @@ const bankAccountModel = {
     let _options = [];
     let self = this;
     const _loadData = async function () {
-      self.getBankAccounts().then($res=>{
+      self.getCompanyManagements().then($res=>{
         if ($res) {
           $res.forEach(obj => {
             _options.push({
-              label: obj.accountName,
+              label: obj.fullName,
               value: obj.id + ''
             });
           });
@@ -33,4 +33,4 @@ const bankAccountModel = {
   }
 }
 
-export default bankAccountModel;
+export default companyManagementModel;

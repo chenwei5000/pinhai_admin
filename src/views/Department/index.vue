@@ -19,17 +19,14 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
-  import bankAccountModel from "../../api/bankAccount";
-  import companyManagementModel from "../../api/companyManagement";
-
 
   export default {
     data() {
       return {
-        title: '付款账户',
+        title: '部门管理',
         tableConfig: {
-          url: '/paymentAccounts',
-          relations: ["creator","bankAccount","companyManagement",],
+          url: '/departments',
+          relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -37,12 +34,9 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'companyManagementId', label: '公司ID', hidden: 'false', "min-width": 120},
-            {prop: 'bankAccountId', label: '银行账号ID', hidden: 'false',"min-width": 160},
-            {prop: 'companyManagement.fullName', label: '公司名', "min-width": 100},
-            {prop: 'bankAccount.accountName', label: '户名', sortable:'custom', "min-width": 60},
-            {prop: 'contact', label: '联系人',  "min-width": 60},
-            {prop: 'phone', label: '联系人电话', "min-width": 80},
+            {prop: 'name', label: '名称', sortable: 'custom', "min-width": 120, fixed: 'left'},
+            {prop: 'userId', label: '部门负责人', sortable: 'custom', "min-width": 120},
+            {prop: 'parentId', label: '父级部门ID', "min-width": 120},
 
             phColumns.creator,
             phColumns.status,
@@ -51,45 +45,43 @@
 
           // 搜索区块定义
           searchForm: [
+            phSearchItems.name,
             phSearchItems.status()
           ],
           //  弹窗表单
           form: [
+            phFromItems.name,
             {
-              $type: 'select',
-              $id: 'bankAccountId',
-              label: '银行账户',
+              $type: 'input',
+              $id: 'name',
+              label: '名称',
               $el: {
-                filterable: true,
-                placeholder: '请选择银行账户'
+                placeholder: '请输入部门名称'
               },
-              $options: bankAccountModel.getSelectOptions(),
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'select',
-              $id: 'companyManagementId',
-              label: '公司名',
-              $el: {
-                filterable: true,
-                placeholder: '请选择公司名'
-              },
-              $options: companyManagementModel.getSelectOptions(),
               rules: [
                 validRules.required
               ]
             },
             {
               $type: 'input',
-              $id: 'contact',
-              label: '联系人',
+              $id: 'userId',
+              label: '部门负责人',
               $el: {
-                placeholder: '请输入联系人'
+                placeholder: '请输入部门负责人'
               },
               rules: [
-                validRules.required
+                validRules.required,
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'parentId',
+              label: '父级部门ID',
+              $el: {
+                placeholder: '请输入父级部门ID'
+              },
+              rules: [
+                validRules.required,
               ]
             },
             phFromItems.status()

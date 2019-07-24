@@ -31,8 +31,8 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'costType', label: '费用类型',"min-width": 100},
-            {prop: 'costName', label: '费用名称',"min-width": 100},
+            {prop: 'costType', label: '费用类型', "min-width": 100},
+            {prop: 'costName', label: '费用名称', "min-width": 100},
             phColumns.status,
             phColumns.lastModified
           ],

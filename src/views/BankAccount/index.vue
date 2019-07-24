@@ -27,7 +27,7 @@
         title: '银行账户',
         tableConfig: {
           url: '/bankAccounts',
-          relations: ["creator"],
+          relations: ["creator","currency"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },

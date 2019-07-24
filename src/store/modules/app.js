@@ -194,6 +194,18 @@ const actions = {
     });
   },
 
+  loadCompanyManagements({commit}) {
+    return new Promise((resolve, reject) => {
+      companyManagementModel.getCompanyManagements().then(async list => {
+        console.log("从后端获取公司信息");
+        commit('SET_COMPANYMANAGEMENTS', list);
+        resolve(list);
+      }).catch(error => {
+        reject(error)
+      });
+    });
+  },
+
   loadHarbours({commit}) {
     return new Promise((resolve, reject) => {
       harbourModel.getHarbours().then(async list => {
