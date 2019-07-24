@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="configInfo" :model="configInfo" label-width="180px" :rules="rules" >
+    <el-form ref="configInfo" :model="configInfo" label-width="180px" :rules="rules" v-loading="loading">
       <el-form-item label="增值税税率1(%)" prop="valueAddedTax1">
         <el-input v-model="configInfo.valueAddedTax1"></el-input>
       </el-form-item>
@@ -47,6 +47,7 @@
     data() {
       return {
         title: '基础配置',
+        loading: false,
         configInfo: {
           valueAddedTax1: '',
           valueAddedTax2: '',
@@ -94,9 +95,13 @@
     computed: {},
     methods: {
         onSubmit: function(){
+          this.loading=true
           this.$refs.configInfo.validate((valid) => {
             if(valid){
               global.axios.put('/configInfos', this.configInfo).then(resp => {
+              setTimeout(() => {
+                this.loading=false
+              }, 500);
               this.$message({
                 message: '修改成功！',
                 type: 'success'
@@ -109,7 +114,9 @@
           
         }
     },
-    watch: {}
+    watch: {
+      //
+    }
   }
 </script>
 

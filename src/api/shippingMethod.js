@@ -21,7 +21,7 @@ const shippingMethodModel = {
       }
       if (list) {
         list.forEach(obj => {
-          _options.push({
+          _shippingMethods.push({
             label: obj.name,
             value: obj.id + ''
           });

@@ -8,7 +8,7 @@
       <el-step title="4.提交审核" icon="el-icon-edit"></el-step>
     </el-steps>
 
-    <el-form :rules="rules" :model="newPlan" status-icon ref="createForm" label-position="right"
+    <el-form :rules="rules" :model="newPlan" v-if="stepsActive==0" status-icon ref="createForm" label-position="right"
              label-width="180px">
 
       <fieldset class="panel-heading">
@@ -42,11 +42,24 @@
           </el-tooltip>
         </el-form-item>
 
+        <el-form-item label="标签" prop="tags">
+          <el-col :span="12">
+            <el-input v-model="newPlan.tags" placeholder="请填写标签" clearable></el-input>
+          </el-col>
+          <el-col :span="2">
+            <el-tooltip class="item" effect="light" content="给计划打上一个标签方便查找" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-col>
+        </el-form-item>
+
         <el-form-item label="备注" prop="note">
-          <el-input type="textarea" v-model="newPlan.note"
-                    maxlength="500"
-                    rows="4"
-                    show-word-limit></el-input>
+          <el-col :span="12">
+            <el-input type="textarea" v-model="newPlan.note"
+                      maxlength="500"
+                      rows="4"
+                      show-word-limit></el-input>
+          </el-col>
         </el-form-item>
 
         <fieldset class="panel-heading">
@@ -219,6 +232,7 @@
           categoryId: null,
           limitTime: null,
           executeTime: null,
+          tags: null,
           note: null,
           merchantId: null,
           warehouseId: null,
@@ -301,10 +315,10 @@
               this.newPlan = resp.data;
               this.newPlan.warehouseId = resp.data.warehouseId ? resp.data.warehouseId.split(",") : "";
 
-              let categoryId=[];//保存转换后的整型字符串
+              let categoryId = [];//保存转换后的整型字符串
 
               this.newPlan.categoryId.forEach(item => {
-                categoryId.push(item+"");
+                categoryId.push(item + "");
               });
 
               this.newPlan.categoryId = categoryId;

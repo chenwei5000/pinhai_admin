@@ -14,7 +14,7 @@
 </template>
 
 <script>
-
+  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -22,38 +22,34 @@
   export default {
     data() {
       return {
-        title: '语言列表',
+        title: '消息管理',
         tableConfig: {
-          url: '/languages',
-          relations: ["creator"],
+          url: '/userNotices',
+          relations: ["notice", "user"],
           tableAttrs: {
-            "row-class-name": this.statusClassName,
+            "row-class-name": this.statusClassName
           },
+          //列表
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'name', label: '名称', 'min-width': 150, fixed: 'left', sortable: 'custom'},
-            {prop: 'code', label: '代码', sortable: 'custom', 'min-width': 150},
-            phColumns.status,
-            phColumns.lastModified
+            {prop: 'notice.title', label: '标题', 'min-width': 120},
+            {prop: 'notice.content', label: '内容', 'min-width': 250},
+            {prop: 'notice.typeName', label: '类型', 'min-width': 50},
+            {prop: 'notice.targetCode', label: '操作对象', 'min-width': 100},
+            {prop: 'notice.targetType', label: '操作类型', 'min-width': 120},
+            {prop: 'notice.senderId', label: '发送者', 'min-width': 100},
+            {prop: 'isRead', label: '是否已读', 'min-width': 100},
+            {prop: 'user.name', label: '接受者', 'min-width': 100},
           ],
-
-          // 搜索区块定义
+          // 搜索
           searchForm: [
-            phSearchItems.name,
-            phSearchItems.status()
-          ],
-          //  弹窗表单, 用于新增与修改
-          form: [
-            phFromItems.code,
-            phFromItems.name,
-            phFromItems.status()
+          
           ]
         }
       }
     },
     computed: {},
-
     methods: {
       statusClassName({row}) {
         if (row.status && row.status !== 0) {
@@ -69,5 +65,6 @@
 </script>
 
 <style scoped>
+
 
 </style>
