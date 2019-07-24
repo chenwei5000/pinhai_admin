@@ -29,6 +29,7 @@ const state = {
   warehouses: null, //仓库
   cartonSpecs: null, //箱规
   currencies: null, //货币
+  bankAccounts:null,//银行账户
   harbours: null,   //港口
   datadics: null, //数据字典
   shippingMethods: null, //运输方式
@@ -50,6 +51,9 @@ const mutations = {
   },
   SET_CURRENCIES: (state, currencies) => {
     state.currencies = currencies
+  },
+  SET_BANKACCOUNTS: (state, bankAccounts) => {
+    state.bankAccounts = bankAccounts
   },
   SET_CARTONSPECS: (state, cartonSpecs) => {
     state.cartonSpecs = cartonSpecs
@@ -171,6 +175,18 @@ const actions = {
       currencyModel.getCurrencies().then(async list => {
         console.log("从后端获取货币信息");
         commit('SET_CURRENCIES', list);
+        resolve(list);
+      }).catch(error => {
+        reject(error)
+      });
+    });
+  },
+
+  loadBankAccounts({commit}) {
+    return new Promise((resolve, reject) => {
+      bankAccountModel.getBankAccounts().then(async list => {
+        console.log("从后端获取银行账户信息");
+        commit('SET_BANKACCOUNTS', list);
         resolve(list);
       }).catch(error => {
         reject(error)

@@ -48,6 +48,7 @@ const getters = {
   warehouses: state => state.app.warehouses, //仓库
   countries: state => state.app.countries,  //国家
   currencies: state => state.app.currencies, //货币
+  bankAccounts: state => state.app.bankAccounts, //银行账户
   cartonSpecs: state => state.app.cartonSpecs, //箱规
   harbours: state => state.app.harbours,   //港口
   merchants: state => state.app.merchants,   //销售渠道

@@ -14,53 +14,53 @@
 </template>
 
 <script>
+
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import bankAccountModel from "../../api/bankAccount";
+
 
   export default {
     data() {
       return {
-        title: '费用管理',
+        title: '付款账户',
         tableConfig: {
-          url: '/costManagements',
+          url: '/paymentAccounts',
+          relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+          //表格内容显示
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'costType', label: '费用类型',"min-width": 100},
-            {prop: 'costName', label: '费用名称',"min-width": 100},
+            {prop: 'companyManagementId', label: '公司ID', hidden: 'false', "min-width": 100},
+            {prop: 'bankAccountId', label: '银行账号ID', hidden: 'false',"min-width": 160},
+            {prop: 'companyManagement.fullName', label: '公司全称', "min-width": 120},
+            {prop: 'bankAccount.accountCard', label: '银行账户', "min-width": 160},
+
+            phColumns.creator,
             phColumns.status,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.status(),
+            phSearchItems.status()
           ],
-          //  弹窗表单, 用于新增与修改
+          //  弹窗表单
           form: [
             {
-              $type: 'input',
-              $id: 'costType',
-              label: '费用类型',
+              $type: 'select',
+              $id: 'bankAccountId',
+              label: '银行账户',
               $el: {
-                placeholder: '请输入费用类型'
+                filterable: true,
+                placeholder: '请选择银行账户'
               },
-              rules: [
-                validRules.required,
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'costName',
-              label: '费用名称',
-              $el: {
-                placeholder: '请输入费用名称'
-              },
+              $options: bankAccountModel.getSelectOptions(),
               rules: [
                 validRules.required
               ]
@@ -73,10 +73,7 @@
         }
       }
     },
-    computed: {},
-
     methods: {
-      // 状态样式
       statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
@@ -84,14 +81,13 @@
         else {
           return 'warning-row';
         }
-      },
+      }
     },
-
-    // 观察data中的值发送变化后，调用
     watch: {}
   }
 </script>
 
 <style scoped>
+
 
 </style>
