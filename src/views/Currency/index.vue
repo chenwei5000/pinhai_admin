@@ -47,7 +47,7 @@
           searchForm: [
             phSearchItems.name,
             phSearchItems.code,
-            phSearchItems.status(),
+            phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [

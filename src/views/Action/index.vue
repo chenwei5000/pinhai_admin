@@ -57,7 +57,7 @@
                 placeholder: '请输入资源标识'
               }
             },
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //添加或修改弹出栏
           form: [

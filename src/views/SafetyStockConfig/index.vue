@@ -46,7 +46,7 @@
           //搜索栏
           searchForm: [
             phSearchItems.name,
-            phSearchItems.status,
+            phSearchItems.status()
           ],
           //添加或修改弹窗
           form: [

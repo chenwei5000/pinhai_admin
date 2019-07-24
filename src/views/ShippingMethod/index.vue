@@ -42,7 +42,7 @@
           searchForm: [
             phSearchItems.name,
             phSearchItems.code,
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //修改或添加弹窗栏
           form: [

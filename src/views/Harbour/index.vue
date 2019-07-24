@@ -41,7 +41,7 @@
 
           searchForm: [
             phSearchItems.name,
-            phSearchItems.status
+            phSearchItems.status()
           ],
           form: [
             phFromItems.name,

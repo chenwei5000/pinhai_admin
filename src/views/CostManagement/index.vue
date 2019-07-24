@@ -31,15 +31,15 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'costType', label: '费用类型', "min-width": 100},
-            {prop: 'costName', label: '费用名称', "min-width": 100},
+            {prop: 'costType', label: '费用类型',"min-width": 100},
+            {prop: 'costName', label: '费用名称',"min-width": 100},
             phColumns.status,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.status(),
+            phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
