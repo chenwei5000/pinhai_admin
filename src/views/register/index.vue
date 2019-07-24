@@ -55,6 +55,7 @@
               @keyup.native="checkCapslock"
               @blur="capsTooltip = false"
               @keyup.enter.native="register"
+              autocomplete="new-password"
             />
 
             <span class="show-pwd" @click="showPwd">
@@ -102,9 +103,7 @@
           />
         </el-form-item>
 
-        <hr class="hr15" />
         <input class="registerin" value="注册" type="button" @click="register" />
-        <hr class="hr20" />
       </el-form>
     </div>
   </div>
@@ -294,7 +293,7 @@ html {
 }
 
 .register {
-  margin: 120px auto 0 auto;
+  margin: 20px auto 0 auto;
   min-height: 420px;
   max-width: 420px;
   padding: 40px;
@@ -406,7 +405,7 @@ html {
 
 @media (max-width: 430px) {
   .register {
-    margin: 50px auto 0 auto;
+    margin: 10px auto 0 auto;
     min-height: 320px;
     max-width: 320px;
 
