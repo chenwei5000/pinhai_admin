@@ -41,7 +41,7 @@
           // 搜索区块定义
           searchForm: [
             phSearchItems.name,
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [

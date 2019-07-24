@@ -49,51 +49,28 @@
       @filter-change="handleFilterChange"
       id="table"
     >
-      <el-table-column
-        prop="imgUrl"
-        label="图片"
-        width="70">
+      <el-table-column prop="id" label="Id" width="90" v-if='false' ></el-table-column>
+      <el-table-column prop="code" label="编号" width="150" fixed="left"></el-table-column>
+      <el-table-column prop="categoryName" label="分类" min-width="120"></el-table-column>
+      <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
+      <el-table-column prop="limitTime" label="下单截止日" width="120"></el-table-column>
+      <el-table-column prop="executeTime" label="交货截止日" width="120"></el-table-column>
+      <el-table-column prop="tags" label="标签" width="120"></el-table-column>
+
+      <el-table-column prop="note" label="备注" width="120">
         <template slot-scope="scope">
-          <el-popover
-            placement="right"
-            title=""
-            trigger="click" v-if="scope.row.imgUrl">
-            <img :src="scope.row.imgUrl.replace('_SL75_','_SL500_')" width="500">
-            <img slot="reference" :src="scope.row.imgUrl" :alt="scope.row.skuCode"
-                 width="50" style="cursor: pointer">
+          <el-popover placement="top-start" title="备注" width="300" trigger="hover" >
+            <div>{{scope.row.note}}</div>
+            <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,10)+'...' : '' }}</span>
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="skuCode" sortable="custom" label="SKU" min-width="150" fixed="left"></el-table-column>
-      <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
-      <el-table-column prop="category.name" label="分类" width="80"></el-table-column>
-      <el-table-column prop="groupName" v-if="unfinishedHide" label="款式" width="80"></el-table-column>
-      <el-table-column prop="model" v-if="unfinishedHide" label="型号" min-width="120"></el-table-column>
-      <el-table-column prop="color" v-if="unfinishedHide" label="颜色" min-width="120"></el-table-column>
-      <el-table-column prop="grossWeight" label="净重(Kg)" sortable="custom" width="100"></el-table-column>
-      <el-table-column prop="length" label="长(Cm)" width="100"></el-table-column>
-      <el-table-column prop="width" label="宽(Cm)" width="100"></el-table-column>
-      <el-table-column prop="height" label="高(Cm)" width="100"></el-table-column>
-      <el-table-column prop="volume" label="体积(Cm³)" sortable="custom" width="120"></el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
-      <el-table-column prop="currencyName" label="结算货币" min-width="100"></el-table-column>
-      <el-table-column prop="price" label="采购价" sortable="custom" min-width="100"></el-table-column>
-      <el-table-column prop="cartonSpec.code" label="箱规" min-width="150"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
-      <el-table-column prop="asin" v-if="unfinishedHide" label="ASIN" min-width="120"></el-table-column>
-      <el-table-column prop="fnSku" v-if="unfinishedHide" label="FN-SKU" min-width="120"></el-table-column>
-      <el-table-column prop="parentSku" v-if="unfinishedHide" label="Parent Asin" min-width="120"></el-table-column>
-      <el-table-column prop="vipLevel" v-if="unfinishedHide" label="Vip级别" min-width="100"
-                       :formatter="vipLevelFormatter"></el-table-column>
-      <el-table-column prop="oversize" v-if="unfinishedHide" label="超大" min-width="100"
-                       :formatter='row => (row.oversize === 1 ? "是" : "否")'></el-table-column>
-      <el-table-column prop="comment" label="备注" min-width="120"></el-table-column>
 
-      <el-table-column prop="status" label="状态" width="80">
+      <el-table-column prop="statusName" label="状态" width="80">
         <template slot-scope="scope">
           <el-tag
-            :type="scope.row.status === 1 ? 'success' : 'info'"
-            disable-transitions>{{ scope.row.status === 1 ? '启用' : '禁用' }}
+            :type="info"
+            disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
@@ -361,25 +338,6 @@
 
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
-        if (row.categoryId == null || row.categoryId == "") { //分类不全
-          return 'danger-row';
-        }
-        if (row.supplierId == null || row.supplierId == "") { //供货商不全
-          return 'danger-row';
-        }
-        if (row.numberOfCarton == null || row.numberOfCarton == "") { //装箱数不全
-          return 'danger-row';
-        }
-        if (row.cartonSpecId == null || row.cartonSpecId == "" || row.cartonSpecId == -1) { //箱规不全
-          return 'danger-row';
-        }
-        if (row.grossWeight == null || row.grossWeight == "" || row.grossWeight <= 0) { //重量不全
-          return 'danger-row';
-        }
-        if (!row.price && (row.price == "" || row.price <= 0)) { //价格不全
-          return 'danger-row';
-        }
-
         return '';
       },
 
