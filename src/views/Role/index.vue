@@ -4,20 +4,29 @@
       <ph-card-header :title="title" type="table">
       </ph-card-header>
       <div class="ph-card-body">
-        <roleTable></roleTable>
+        <roleTable
+        @openRoleList="openRoleList"
+        ></roleTable>
       </div>
     </div>
+
+    <roleList
+    ref="roleList"
+    >
+    </roleList>
   </div>
 </template>
 
 <script>
 
   import roleTable from './components/table'
+  import roleList from './components/roleList'
 
   export default {
     name: 'roleMgr',
     components: {
-      roleTable
+      roleTable,
+      roleList
     },
 
     data() {
@@ -26,7 +35,12 @@
       }
     },
     computed: {},
-    methods: {},
+    methods: {
+      openRoleList(id, name) {
+        console.log('index ', id)
+        this.$refs.roleList.$emit('openDiaLog', id, name)
+      }
+    },
     watch: {}
   }
 </script>

@@ -57,6 +57,7 @@ const getters = {
   personnels: state => state.app.personnels, //人员
   enums: state => state.app.enums, //系统枚举类型
 
+
   //验证是否有该权限
   checkRolePower: (state, roleTxt) => {
     return false;
