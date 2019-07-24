@@ -19,13 +19,14 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import currencyModel from "../../api/currency";
 
   export default {
     data() {
       return {
-        title: '公司管理',
+        title: '银行账户',
         tableConfig: {
-          url: '/companyManagements',
+          url: '/bankAccounts',
           relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
@@ -34,12 +35,12 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'abbreviation', label: '简称', sortable: 'custom', "min-width": 135, },
-            {prop: 'fullName', label: '全称', sortable: 'custom', "min-width": 120},
-            {prop: 'address', label: '地址', "min-width": 120},
-            {prop: 'region', label: '区域', "min-width": 120},
-            {prop: 'contact', label: '联系人', "min-width": 120},
-            {prop: 'phone', label: '联系人电话', "min-width": 120},
+            {prop: 'accountName', label: '户名', "min-width": 100},
+            {prop: 'accountCard', label: '银行卡号', "min-width": 160},
+            {prop: 'openingBank', label: '开户行', "min-width": 120},
+            {prop: 'currencyId', label: '货币类型ID', hidden: 'false', "min-width": 120},
+            {prop: 'currency.name', label: '币种', "min-width": 120},
+
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -47,19 +48,16 @@
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.region,
-            phSearchItems.contact,
             phSearchItems.status()
           ],
-
-          //  弹窗表单,用于新增和修改
+          //  弹窗表单
           form: [
             {
               $type: 'input',
-              $id: 'abbreviation',
-              label: '简称',
+              $id: 'accountName',
+              label: '户名',
               $el: {
-                placeholder: '请输入公司简称'
+                placeholder: '请输入户名'
               },
               rules: [
                 validRules.required
@@ -67,58 +65,37 @@
             },
             {
               $type: 'input',
-              $id: 'fullName',
-              label: '全称',
+              $id: 'accountCard',
+              label: '银行卡号',
               $el: {
-                placeholder: '请输入公司全称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'address',
-              label: '地址',
-              $el: {
-                placeholder: '请输入公司地址'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'region',
-              label: '区域',
-              $el: {
-                placeholder: '请输入公司所在区域'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'contact',
-              label: '联系人',
-              $el: {
-                placeholder: '请输入公司联系人'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'phone',
-              label: '联系人电话',
-              $el: {
-                placeholder: '请输入公司联系人电话'
+                placeholder: '请输入银行卡号'
               },
               rules: [
                 validRules.required,
-                validRules.strMax(13)
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'openingBank',
+              label: '开户行',
+              $el: {
+                placeholder: '请输入开户行'
+              },
+              rules: [
+                validRules.required,
+              ]
+            },
+            {
+              $type: 'select',
+              $id: 'currencyId',
+              label: '币种',
+              $el: {
+                filterable: true,
+                placeholder: '请选择货币类型'
+              },
+              $options: currencyModel.getSelectOptions(),
+              rules: [
+                validRules.required
               ]
             },
             phFromItems.status()
@@ -130,7 +107,6 @@
       }
     },
     methods: {
-      // 状态样式
       statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
@@ -140,7 +116,6 @@
         }
       }
     },
-    // 观察data中的值发送变化后，调用
     watch: {}
   }
 </script>
