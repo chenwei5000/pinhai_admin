@@ -48,6 +48,7 @@
 
           // 搜索区块定义
           searchForm: [
+            phSearchItems.accountName,
             phSearchItems.status()
           ],
           //  弹窗表单

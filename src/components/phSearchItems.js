@@ -27,6 +27,17 @@ const phSearchItems = {
     }
   },
 
+  // 户名搜索
+  accountName: {
+    $type: 'input',
+    $id: 'accountName',
+    label: '户名',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入户名'
+    }
+  },
+
   // 名称搜索
   name: {
     $type: 'input',
