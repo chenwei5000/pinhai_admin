@@ -26,7 +26,7 @@
   export default {
     data() {
       return {
-        title: '付款账户',
+        title: '收款账户',
         tableConfig: {
           url: '/paymentAccounts',
           relations: ["creator","bankAccount","companyManagement",],

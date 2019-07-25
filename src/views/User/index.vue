@@ -22,86 +22,98 @@
   export default {
     data() {
       return {
-        title: '公司管理',
+        title: '用户管理',
         tableConfig: {
-          url: '/companyManagements',
-          relations: ["dataDicItem"],
+          url: '/users',
+          relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'type', label: '类型',"min-width": 100},
-            {prop: 'abbreviation', label: '简称', "min-width": 100},
-            {prop: 'fullName', label: '全称', "min-width": 100},
-            {prop: 'address', label: '地址', "min-width": 100},
-            {prop: 'region', label: '区域', "min-width": 100},
-            {prop: 'contact', label: '联系人', "min-width": 100},
-            {prop: 'phone', label: '联系人电话', "min-width": 100},
-            phColumns.creator,
+            {prop: 'name', label: '用户姓名',"min-width": 100},
+            {prop: 'account', label: '用户账号', "min-width": 100},
+            {prop: 'job', label: '职位描述', "min-width": 100},
+            {prop: 'phoneNo', label: '用户电话', "min-width": 100},
+            {prop: 'password', label: '用户密码', "min-width": 100},
+            {prop: 'config', label: '用户配置', "min-width": 100},
+
             phColumns.status,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.abbreviation,
-            phSearchItems.region,
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.datadicName("type", '公司类型','武汉', 'type'),
             {
               $type: 'input',
-              $id: 'abbreviation',
-              label: '简称',
+              $id: 'name',
+              label: '用户姓名',
               $el: {
-                placeholder: '请输入公司简称'
+                placeholder: '请输入用户姓名'
               },
               rules: [
-                validRules.required
+                validRules.required,
               ]
             },
             {
               $type: 'input',
-              $id: 'fullName',
-              label: '全称',
+              $id: 'account',
+              label: '用户账号',
               $el: {
-                placeholder: '请输入公司简称'
+                placeholder: '请输入用户账号'
               },
               rules: [
-                validRules.required
+                validRules.required,
               ]
             },
             {
               $type: 'input',
-              $id: 'address',
-              label: '地址',
+              $id: 'job',
+              label: '职位描述',
               $el: {
-                placeholder: '请输入公司地址'
+                placeholder: '请填写职位描述'
               },
               rules: [
-                validRules.required
+                validRules.required,
               ]
             },
-            phFromItems.datadic("region", '管理区域', '', 'region'),
             {
               $type: 'input',
-              $id: 'contact',
-              label: '联系人',
+              $id: 'phoneNo',
+              label: '联系方式',
               $el: {
-                placeholder: '请输入联系人'
+                placeholder: '请输入用户手机号/电话'
               },
+              rules: [
+                validRules.required,
+              ]
             },
             {
               $type: 'input',
-              $id: 'phone',
-              label: '联系人电话',
+              $id: 'password',
+              label: '用户密码',
               $el: {
-                placeholder: '请输入联系人电话'
+                placeholder: '请输入用户密码'
               },
+              rules: [
+                validRules.required,
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'config',
+              label: '用户配置',
+              $el: {
+                placeholder: '请填写用户配置'
+              },
+              rules: [
+                validRules.required,
+              ]
             },
             phFromItems.status()
           ],
