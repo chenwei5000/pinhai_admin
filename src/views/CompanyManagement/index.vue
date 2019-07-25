@@ -47,6 +47,8 @@
 
           // 搜索区块定义
           searchForm: [
+            phSearchItems.abbreviation,
+            phSearchItems.region,
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
@@ -92,9 +94,6 @@
               $el: {
                 placeholder: '请输入联系人'
               },
-              rules: [
-                validRules.required
-              ]
             },
             {
               $type: 'input',
@@ -103,9 +102,6 @@
               $el: {
                 placeholder: '请输入联系人电话'
               },
-              rules: [
-                validRules.required
-              ]
             },
             phFromItems.status()
           ],
