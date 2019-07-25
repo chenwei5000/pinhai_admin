@@ -48,7 +48,7 @@
               <i class="el-ph-icon-plus-circle"></i> 创建计划
             </span>
             <keep-alive>
-              <createFrom></createFrom>
+              <createPlan></createPlan>
             </keep-alive>
           </el-tab-pane>
 
@@ -61,16 +61,16 @@
 
 <script>
   import tabPane from './components/TabPane'
-  import createFrom from './components/createFrom'
+  import createPlan from './components/createPlan'
 
   const statusFlag = 's='
 
   export default {
-    components: {tabPane, createFrom},
+    components: {tabPane, createPlan},
 
     data() {
       return {
-        title: '产品管理', // 页面标题
+        title: '采购计划管理', // 页面标题
         activeStatus: location.href.indexOf(statusFlag) > -1
           ? this.$route.query.s !== null ? this.$route.query.s : 'editing' : 'editing',
       }

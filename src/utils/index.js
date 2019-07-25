@@ -373,3 +373,11 @@ export function getObjectVal(row, prop, formatter) {
   }
 
 }
+
+export function intArrToStrArr(intArr) {
+  let strArr = [];//保存转换后的整型字符串
+  intArr.forEach(item => {
+    strArr.push(item + "");
+  });
+  return strArr;
+}

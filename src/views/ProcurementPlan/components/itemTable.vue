@@ -2,46 +2,6 @@
 
   <div class="ph-table">
 
-    <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
-             @submit.native.prevent>
-
-      <!--el-form-item label="分类">
-        <el-select filterable multiple v-model="searchParam.categoryId.value" placeholder="请选择分类">
-          <el-option
-            v-for="(item,idx) in categorySelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-
-        </el-select>
-      </el-form-item-->
-
-      <el-form-item label="名称">
-        <el-input v-model="searchParam.name.value" placeholder="请输入名称"></el-input>
-      </el-form-item>
-
-      <el-form-item label="下单截止日">
-
-        <el-date-picker
-          v-model="searchParam.limitTime.value"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-
-      </el-form-item>
-
-
-      <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
-      </el-form-item>
-    </el-form>
-
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -53,7 +13,6 @@
       :cell-style="{padding: '2px 0', 'font-size': '13px'}"
       :header-cell-style="{padding: '2px 0'}"
       :data="data"
-      :max-height="tableMaxHeight"
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
@@ -80,7 +39,7 @@
       <el-table-column prop="statusName" label="状态" width="80">
         <template slot-scope="scope">
           <el-tag
-            :type="scope.row.status === 8 ? 'info' : 'success'"
+            :type="info"
             disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
@@ -128,7 +87,6 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import categoryModel from '@/api/category'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -142,15 +100,10 @@
     name: 'procurementPlans',
     components: {},
     props: {
-      type: {
-        type: String,
-        default: 'valid'
-      },
-      defaultFilters: {
+      plan: {
         type: Object,
-        default: {}
-      },
-
+        default: null
+      }
     },
     computed: {
       ...mapGetters([
@@ -160,16 +113,6 @@
       phTableAttrs() {
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       },
-
-      //TODO:
-      unfinishedHide() {
-        if (this.type === 'unfinished') {
-          return false;
-        }
-        else {
-          return true;
-        }
-      }
     },
 
     data() {
@@ -191,11 +134,10 @@
         total: 0,
 
         //数据 TODO: 根据实际情况调整
-        url: '/procurementPlans', // 资源URL
-        countUrl: '/procurementPlans/count', // 资源URL
-        relations: ["creator"],  // 关联对象
+        url: this.plan ? 'a' : null, // 资源URL
+        //'/amazonStocks/plans/8a23287966dc9acb0166dca2574c0000?warehouse=3&category=6&safetyStockWeek=2&vip1SafetyStockWeek=3&vip2SafetyStockWeek=2&exclude=1
+        relations: [],  // 关联对象
         data: [],
-        phSort: {prop: "id", order: "desc"},
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
@@ -223,37 +165,7 @@
     },
 
     mounted() {
-      //全屏，表格高度处理
-      window.onresize = () => {
-        this.getTableHeight();
-      }
-
-      //搜索区块，根据url恢复功能
-      // 恢复查询条件
-      let matches = location.href.match(queryPattern)
-      if (matches) {
-        let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
-        let params = qs.parse(query, {delimiter: paramSeparator})
-        // page size 特殊处理
-        this.page = params.currentPage ? params.currentPage * 1 : this.page
-        this.size = params.pageSize ? params.pageSize * 1 : this.size
-        this.phSort.prop = params.sort ? params.sort : this.phSort.prop
-        this.phSort.order = params.dir ? params.dir : this.phSort.order
-
-        //TODO:根据实际情况调整
-        if (params.categoryId) {
-          this.searchParam.categoryId.value = params.categoryId;
-        }
-        if (params.skuCode) {
-          this.searchParam.skuCode.value = params.skuCode;
-        }
-        if (params.name) {
-          this.searchParam.name.value = params.name;
-        }
-      }
-
       this.$nextTick(() => {
-        this.getTableHeight();
         this.initLoadData();
         this.getList();
       })
@@ -262,30 +174,7 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initLoadData() {
-        //加载分类列表
-        this.categorySelectOptions = categoryModel.getMineSelectOptions();
       },
-
-      // 获取表格的高度
-      getTableHeight() {
-        if (this.device !== 'mobile') {
-          //浏览器高度
-          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-          //表格高度
-          let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
-          tableHeight = tableHeight - 82; //减标题高度
-          tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
-          tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
-          tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
-          this.tableMaxHeight = tableHeight;
-        }
-        else {
-          this.tableMaxHeight = 400;
-        }
-      },
-
       /********************* 搜索相关方法  ***************************/
 
       /*搜索*/
@@ -355,7 +244,6 @@
       /*获取列表*/
       getList(shouldStoreQuery) {
         let url = this.url
-        let countUrl = this.countUrl
         let params = ''
         let searchParams = ''
         let size = this.size
@@ -372,12 +260,6 @@
         }
         else {
           url += '?'
-        }
-        if (countUrl.indexOf('?') > -1) {
-          countUrl += '&'
-        }
-        else {
-          countUrl += '?'
         }
 
         // 处理分页信息
@@ -407,8 +289,6 @@
         filters.forEach((param, k) => {
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
-        filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
-
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
@@ -423,21 +303,12 @@
 
         //获取数据
         this.global.axios
-          .get(countUrl + params)
-          .then(resp => {
-            let res = resp.data
-            this.total = res || 0
-          })
-          .catch(err => {
-          })
-
-        //获取数据
-        this.global.axios
           .get(url + params)
           .then(resp => {
             let res = resp.data
             let data = res || []
             this.data = data
+            this.total = res.length || 0
             this.loading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
@@ -453,24 +324,6 @@
             this.$emit('error', err)
             this.loading = false
           })
-
-        // 存储query记录, 便于后面恢复
-        if (shouldStoreQuery > 0) {
-
-          let newUrl = ''
-          let searchQuery = queryFlag + (searchParams)
-            .replace(/&/g, paramSeparator)
-            .replace(equalPattern, valueSeparator) + paramSeparator
-
-          // 非第一次查询
-          if (location.href.indexOf(queryFlag) > -1) {
-            newUrl = location.href.replace(queryPattern, searchQuery)
-          } else {
-            let search = location.hash.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`
-            newUrl = location.origin + location.pathname + location.search + location.hash + search
-          }
-          history.pushState(history.state, 'ph-table search', newUrl)
-        }
       },
 
       /* 多选功能 */
@@ -570,9 +423,9 @@
     }
   }
 
-  .el-form-item__content{
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner{
-      width: 230px  !important;
+  .el-form-item__content {
+    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
+      width: 230px !important;
     }
   }
 </style>

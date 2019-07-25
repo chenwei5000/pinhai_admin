@@ -1,15 +1,15 @@
 <template>
 
-  <productTable :type="type" :defaultFilters="filters"></productTable>
+  <planTable :type="type" :defaultFilters="filters"></planTable>
 
 </template>
 
 <script>
-  import productTable from './table'
+  import planTable from './table'
 
   export default {
     components: {
-      productTable
+      planTable
     },
     props: {
       type: {
@@ -40,7 +40,7 @@
           return {
             field: 'status',
             op: 'in',
-            data: "2, 3, 4, 5, 6, 7"
+            data: "2,3,4,5,6,7"
           }
         }
         else {
