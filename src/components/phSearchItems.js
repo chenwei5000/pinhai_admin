@@ -38,14 +38,25 @@ const phSearchItems = {
     }
   },
 
-  // 名称搜索
-  name: {
+  // 户名搜索
+  accountName: {
     $type: 'input',
-    $id: 'name',
-    label: '名称',
+    $id: 'accountName',
+    label: '户名',
     $el: {
       op: 'bw',
-      placeholder: '请输入名称'
+      placeholder: '请输入户名'
+    }
+  },
+
+  // 简称搜索
+  abbreviation: {
+    $type: 'input',
+    $id: 'abbreviation',
+    label: '简称',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入公司简称'
     }
   },
 

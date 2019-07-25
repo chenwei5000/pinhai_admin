@@ -32,7 +32,7 @@
             {type: 'selection'},
             phColumns.id,
             {prop: 'costType', label: '费用类型',"min-width": 100},
-            {prop: 'costName', label: '费用名称',"min-width": 100},
+            {prop: 'costName', label: '费用名称', hidden: 'false', "min-width": 100},
             phColumns.status,
             phColumns.lastModified
           ],
@@ -52,17 +52,6 @@
               },
               rules: [
                 validRules.required,
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'costName',
-              label: '费用名称',
-              $el: {
-                placeholder: '请输入费用名称'
-              },
-              rules: [
-                validRules.required
               ]
             },
             phFromItems.status()
