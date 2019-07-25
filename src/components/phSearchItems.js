@@ -27,14 +27,14 @@ const phSearchItems = {
     }
   },
 
-  // 户名搜索
-  accountName: {
+  // 名称搜索
+  name: {
     $type: 'input',
-    $id: 'accountName',
-    label: '户名',
+    $id: 'name',
+    label: '名称',
     $el: {
       op: 'bw',
-      placeholder: '请输入户名'
+      placeholder: '请输入名称'
     }
   },
 
