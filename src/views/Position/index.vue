@@ -14,7 +14,6 @@
 </template>
 
 <script>
-
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
@@ -30,13 +29,11 @@
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
-          //表格内容显示
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'name', label: '名称', sortable: 'custom', "min-width": 60, fixed: 'left'},
-            {prop: 'type', label: '职位类别', sortable: 'custom', "min-width": 60},
-
+            {prop: 'type', label: '职位类别',"min-width": 100},
+            {prop: 'name', label: '职位名称', "min-width": 100},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -44,29 +41,27 @@
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.name,
             phSearchItems.status()
           ],
-          //  弹窗表单
+          //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.name,
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                placeholder: '请输入职位名称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
             {
               $type: 'input',
               $id: 'type',
               label: '职位类别',
               $el: {
                 placeholder: '请输入职位类别'
+              },
+              rules: [
+                validRules.required,
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '职位名称',
+              $el: {
+                placeholder: '请输入职位名称'
               },
               rules: [
                 validRules.required,
@@ -80,7 +75,10 @@
         }
       }
     },
+    computed: {},
+
     methods: {
+      // 状态样式
       statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
@@ -88,13 +86,14 @@
         else {
           return 'warning-row';
         }
-      }
+      },
     },
+
+    // 观察data中的值发送变化后，调用
     watch: {}
   }
 </script>
 
 <style scoped>
-
 
 </style>

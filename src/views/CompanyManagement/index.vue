@@ -25,7 +25,7 @@
         title: '公司管理',
         tableConfig: {
           url: '/companyManagements',
-          relations: ["dataDicItem.type"],
+          relations: ["dataDicItem"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -40,7 +40,7 @@
             {prop: 'contact', label: '联系人', "min-width": 100},
             {prop: 'phone', label: '联系人电话', "min-width": 100},
             {prop: 'dataDicItemId', label: '数据字典Id', hidden: 'false', "min-width": 100},
-
+            phColumns.creator,
             phColumns.status,
             phColumns.lastModified
           ],
@@ -53,7 +53,8 @@
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.datadicName("type", '公司类型','全都要', 'type'),            {
+            phFromItems.datadicName("type", '公司类型','武汉', 'type'),
+            {
               $type: 'input',
               $id: 'abbreviation',
               label: '简称',

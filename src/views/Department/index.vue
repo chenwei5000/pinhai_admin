@@ -14,7 +14,6 @@
 </template>
 
 <script>
-
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
@@ -30,14 +29,12 @@
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
-          //表格内容显示
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'name', label: '名称', sortable: 'custom', "min-width": 120, fixed: 'left'},
-            {prop: 'userId', label: '部门负责人', sortable: 'custom', "min-width": 120},
-            {prop: 'parentId', label: '父级部门ID', "min-width": 120},
-
+            {prop: 'parentId', label: '父级部门ID',"min-width": 100},
+            {prop: 'name', label: '部门名称', "min-width": 100},
+            {prop: 'userId', label: '部门负责人', "min-width": 100},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -45,23 +42,10 @@
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.name,
             phSearchItems.status()
           ],
-          //  弹窗表单
+          //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.name,
-            {
-              $type: 'input',
-              $id: 'name',
-              label: '名称',
-              $el: {
-                placeholder: '请输入部门名称'
-              },
-              rules: [
-                validRules.required
-              ]
-            },
             {
               $type: 'input',
               $id: 'userId',
@@ -75,10 +59,10 @@
             },
             {
               $type: 'input',
-              $id: 'parentId',
-              label: '父级部门ID',
+              $id: 'name',
+              label: '部门名称',
               $el: {
-                placeholder: '请输入父级部门ID'
+                placeholder: '请输入部门名称'
               },
               rules: [
                 validRules.required,
@@ -92,7 +76,10 @@
         }
       }
     },
+    computed: {},
+
     methods: {
+      // 状态样式
       statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
@@ -100,13 +87,14 @@
         else {
           return 'warning-row';
         }
-      }
+      },
     },
+
+    // 观察data中的值发送变化后，调用
     watch: {}
   }
 </script>
 
 <style scoped>
-
 
 </style>
