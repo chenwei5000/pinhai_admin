@@ -22,10 +22,15 @@
   export default {
     data() {
       return {
-        title: '消息管理',
+        title: '未绑定Amazon货柜',
         tableConfig: {
-          url: '/notices',
-          relations: ["sender"],
+          url: 'linerShippingPlans/unBoundShipments',
+          countUrl: "",
+          hasPagination: false,
+          relations: [""],
+          hasDelete: false,
+          hasOperation: false,
+          hasNew: false,
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -33,16 +38,17 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'title', label: '标题', 'min-width': 120},
-            {prop: 'content', label: '内容', 'min-width': 250},
-            {prop: 'typeName', label: '类型', 'min-width': 50},
-            {prop: 'target', label: '操作对象', 'min-width': 100},
-            {prop: 'targetType', label: '操作类型', 'min-width': 120},
-            {prop: 'sender.name', label: '发送者', 'min-width': 100},
+            {prop: 'shipmentId', label: 'Shipment ID', 'min-width': 100},
+            {prop: 'shipmentStatus', label: '状态', 'min-width': 100},
+            {prop: 'shipmentName', label: '名称', 'min-width': 100},
+            {prop: 'destinationFulfillmentCenterId', label: '收货仓库', 'min-width': 100},
           ],
-          // 搜索
+          //搜索
           searchForm: [
-          
+             //
+          ],
+          form: [
+            
           ]
         }
       }
