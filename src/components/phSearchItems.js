@@ -82,7 +82,16 @@ const phSearchItems = {
     }
   },
 
-
+  //类型搜索
+  type: {
+    $type: 'input',
+    $id: 'type',
+    label: '类型',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入类型'
+    }
+  },
   // 状态搜索
   status: () => {
     return {

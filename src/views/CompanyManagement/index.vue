@@ -25,7 +25,7 @@
         title: '公司管理',
         tableConfig: {
           url: '/companyManagements',
-          relations: ["dataDicItem"],
+          relations: ["dataDicItem","creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -46,13 +46,14 @@
 
           // 搜索区块定义
           searchForm: [
+            phSearchItems.type,
             phSearchItems.abbreviation,
             phSearchItems.region,
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.datadicName("type", '公司类型','武汉', 'type'),
+            phFromItems.datadicName("type", '公司类型','请选择', 'type'),
             {
               $type: 'input',
               $id: 'abbreviation',
