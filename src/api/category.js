@@ -15,18 +15,12 @@ const categoryModel = {
     return global.searchResource(path, null, null, pageSize).then(data => data);
   },
 
-  // 获取自己能看见的原材料分类列表
-  getMineMaterialCategories: (pageSize = -1) => {
-    let path = '/categories/permissionMaterials?sort=code&order=asc';
-    return global.searchResource(path, null, null, pageSize).then(data => data);
-  },
-
-  // 获取id:name格式下拉框选项
+  // 获取原材料分类id:name格式下拉框选项
   getSelectOptions() {
     let _options = [];
     let self = this;
     const _loadData = async () => {
-      this.getMineMaterialCategories().then($res => {
+      this.getMineCategories('m').then($res => {
         if ($res) {
           $res.forEach(obj => {
             _options.push({

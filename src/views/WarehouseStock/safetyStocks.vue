@@ -88,15 +88,15 @@ import warehouseModel from '../../api/warehouse';
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'skuCode', label: 'SKU编码', 'min-width': 200},
-            {prop: 'productName', label: '材料名', 'min-width': 180},
+            {prop: 'skuCode', label: 'SKU编码', 'min-width': 120},
+            {prop: 'productName', label: '材料名', 'min-width': 120},
             {prop: 'categoryName', label: '分类', 'min-width': 100},
             {prop: 'unit', label: '单位', 'min-width': 100},
             {prop: 'safetyStocks.demandedQty2', label: '4周消耗', 'min-width': 120},
             {prop: 'safetyStocks.stockGapQty3', sortable: true, label: 'P2缺口', 'min-width': 100},
             {prop: 'safetyStocks.stockGapQty4', label: 'P3缺口', 'min-width': 100},
             {prop: 'vipLevelName', label: 'Vip级别', 'min-width': 100},
-            {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 100},
+            {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 180},
             {prop: 'domesticStockQty', label: '国内库存', 'min-width': 100},
 
           ],

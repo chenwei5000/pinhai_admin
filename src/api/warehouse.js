@@ -53,7 +53,10 @@ const warehouseModel = {
   // 获取国内仓库 id:name格式下拉框选项
   getSelectMaterialOptions() {
     var _options = []
-
+    _options.push({
+      label: "采购中库存",
+      value: "-99"
+    });
     const _loadData = async function () {
       warehouseModel.getWarehouses().then(list => {
         list.forEach(obj => {
@@ -64,10 +67,12 @@ const warehouseModel = {
               label: obj.name,
               value: obj.id + ''
             });
+
           }
         });
       });
     };
+
     _loadData();
     return _options;
   },
