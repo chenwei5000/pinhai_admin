@@ -1090,13 +1090,15 @@
 
       // 排序列修改
       handleSortChange: function (column) {
-        if (column.prop) {
-          this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
+        if(column.column.sortable == 'custom'){
+          if (column.prop) {
+            this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
+          }
+          else {
+            this.phSort = '';
+          }
+          this.getList();
         }
-        else {
-          this.phSort = '';
-        }
-        this.getList();
       },
 
       //筛选
