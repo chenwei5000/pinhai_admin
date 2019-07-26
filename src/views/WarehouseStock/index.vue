@@ -32,7 +32,6 @@
         tableConfig: {
           url: '/warehouseStocks/stocks', // 资源URL
           relations: ["warehouse"],//关联数据字典
-
           hasNew: false,
           hasEdit: false,
           hasView: false,
