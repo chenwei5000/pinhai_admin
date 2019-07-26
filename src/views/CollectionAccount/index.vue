@@ -56,19 +56,6 @@
           form: [
             {
               $type: 'select',
-              $id: 'bankAccountId',
-              label: '银行账户',
-              $el: {
-                filterable: true,
-                placeholder: '请选择银行账户'
-              },
-              $options: bankAccountModel.getSelectOptions(),
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'select',
               $id: 'companyManagementId',
               label: '公司名',
               $el: {
@@ -76,6 +63,19 @@
                 placeholder: '请选择公司名'
               },
               $options: companyManagementModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
+            },
+            {
+              $type: 'select',
+              $id: 'bankAccountId',
+              label: '银行账户',
+              $el: {
+                filterable: true,
+                placeholder: '请选择银行账户'
+              },
+              $options: bankAccountModel.getSelectOptions(),
               rules: [
                 validRules.required
               ]
