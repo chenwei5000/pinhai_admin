@@ -46,9 +46,9 @@
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.type,
+            phSearchItems.datadic("type",'类型','type'),
             phSearchItems.abbreviation,
-            phSearchItems.region,
+            phSearchItems.datadic("region",'管理区域','region'),
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
