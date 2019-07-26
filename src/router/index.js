@@ -92,7 +92,7 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/phtpl',
+    path: '/x`',
     component: Layout,
     name: 'documentation',
     meta: {title: '模版', icon: 'documentation'},
@@ -136,6 +136,7 @@ export const constantRoutes = [
       }
     ]
   },
+  
 ]
 
 /**
