@@ -95,12 +95,10 @@ import warehouseModel from '../../api/warehouse';
             {prop: 'safetyStocks.demandedQty2', label: '4周消耗', 'min-width': 120},
             {prop: 'safetyStocks.stockGapQty3', sortable: true, label: 'P2缺口', 'min-width': 100},
             {prop: 'safetyStocks.stockGapQty4', label: 'P3缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty5', label: 'P4缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty6', label: 'P5缺口', 'min-width': 200},
+            {prop: 'vipLevelName', label: 'Vip级别', 'min-width': 100},
             {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 100},
-            {prop: 'domesticStockQty', label: '国内成品库存(含在途)', 'min-width': 100},
-            {prop: 'domesticMaterialStockQty', label: '国内原料库存', 'min-width': 100},
-            {prop: 'supplierStockQty', label: '采购中库存', 'min-width': 100},
+            {prop: 'domesticStockQty', label: '国内库存', 'min-width': 100},
+
           ],
         }
       }
