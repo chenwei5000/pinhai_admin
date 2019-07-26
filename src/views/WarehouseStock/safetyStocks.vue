@@ -15,20 +15,9 @@
       </el-form-item>
 
        <el-form-item label="国内成品库存" prop="warehouse">
-        <el-select v-model="param.warehouse" multiple placeholder="请选择成品仓库">
+        <el-select v-model="param.warehouse" multiple placeholder="请选择仓库">
           <el-option
             v-for="item in warehouses"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-       <el-form-item label="国内原料库存" prop="materialWarehouse">
-        <el-select v-model="param.materialWarehouse" multiple placeholder="请选择原料仓库">
-          <el-option
-            v-for="item in materialWarehouses"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -68,11 +57,10 @@ import warehouseModel from '../../api/warehouse';
   export default {
     data() {
       return {
-        title: '原料安全库存',
+        title: '成品安全库存',
         param:{
           category: '',
           warehouse: '',
-          materialWarehouse: '',
         },
         rules: {
           category: [
@@ -81,13 +69,9 @@ import warehouseModel from '../../api/warehouse';
            warehouse: [
             {required: true, message: '不能为空', trigger: 'blur'}
           ],
-           materialWarehouse: [
-            {required: true, message: '不能为空', trigger: 'blur'}
-          ]
         },
-        categories: categoryModel.getSelectOptions(),
+        categories: categoryModel.getMineSelectOptions(),
         warehouses: warehouseModel.getSelectDomesticOptions(),
-        materialWarehouses: warehouseModel.getSelectMaterialOptions(),
         tableConfig: {
           url: null,
           relations: ["safetyStocks"],
@@ -139,7 +123,7 @@ import warehouseModel from '../../api/warehouse';
       search(){
         this.$refs.searchForm.validate(valid => {
           if(valid){
-            this.tableConfig.url = `/stocks/safetyMaterialStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}&materialWarehous=${this.param.materialWarehouse.join(",")}`
+            this.tableConfig.url = `/stocks/safetyStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}`
             this.$refs.table1.getList();
           }
         })
