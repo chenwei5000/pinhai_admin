@@ -1,82 +1,13 @@
 <template>
-  <el-form :rules="rules" :model="newPlan" status-icon inline
-           ref="createForm" label-position="right"
-           label-width="120px">
+  <div>
+    <el-form :rules="rules" :model="newPlan" status-icon inline
+             ref="smartPlan" label-position="right"
+             label-width="120px"
+    >
 
-    <fieldset class="panel-heading">
+      <fieldset class="panel-heading" style="margin-top: 10px">
 
-      <el-col :md="10">
-        <el-form-item label="分类" prop="categoryId">
-
-          <el-select v-model="newPlan.categoryId" style="width: 220px"
-                     filterable multiple placeholder="请选择分类,可多选">
-            <el-option
-              v-for="(item , idx)  in categorySelectOptions"
-              :label="item.label"
-              :value="item.value"
-              :key="idx"
-            ></el-option>
-          </el-select>
-
-          <el-tooltip class="item" effect="light" content="选择需要备货的分类" placement="right">
-            <i class="el-icon-question">&nbsp;</i>
-          </el-tooltip>
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="12">
-        <el-form-item label="标签" prop="tags">
-          <el-input v-model="newPlan.tags" style="width: 220px" placeholder="请填写标签" clearable></el-input>
-
-          <el-tooltip class="item" effect="light" content="给计划打上一个标签方便查找" placement="right">
-            <i class="el-icon-question">&nbsp;</i>
-          </el-tooltip>
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="10">
-        <el-form-item label="下单截止日" prop="limitTime">
-          <el-date-picker
-            v-model="newPlan.limitTime"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            type="date"
-            placeholder="下单截止日"></el-date-picker>
-
-          <el-tooltip class="item" effect="light" content="本次采购必须在这个日期之前完成交货" placement="right">
-            <i class="el-icon-question">&nbsp;</i>
-          </el-tooltip>
-
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="14">
-        <el-form-item label="交货截止日" prop="executeTime">
-          <el-date-picker
-            v-model="newPlan.executeTime"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            type="date"
-            placeholder="交货截止日"></el-date-picker>
-
-          <el-tooltip class="item" effect="light" content="本次采购必须在这个日期之前向厂家签好采购合同" placement="right">
-            <i class="el-icon-question">&nbsp;</i>
-          </el-tooltip>
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="24">
-        <el-form-item label="备注" prop="note">
-          <el-input type="textarea" v-model="newPlan.note"
-                    maxlength="500"
-                    rows="3"
-                    cols="82"
-                    show-word-limit></el-input>
-        </el-form-item>
-      </el-col>
-
-      <fieldset class="panel-heading">
-        <legend class="panel-title">智能备货(按箱备货)
+        <legend class="panel-title">智能备货
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
               智能备货是通过销量情况、各地库存情况自动推荐备货数量。需要选择以下对应的选项。<BR/>
@@ -104,9 +35,55 @@
           </el-form-item>
         </el-col>
 
+        <el-col :md="14">
+          <el-form-item label="标签" prop="tags">
+            <el-input v-model="newPlan.tags"
+                      maxlength="20"
+                      show-word-limit
+                      style="width: 220px" placeholder="请填写标签" clearable></el-input>
+
+            <el-tooltip class="item" effect="light" content="给计划打上一个标签方便查找" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="10">
+          <el-form-item label="分类" prop="categoryId">
+
+            <el-select v-model="newPlan.categoryId" filterable multiple placeholder="请选择分类,可多选">
+              <el-option
+                v-for="(item , idx)  in categorySelectOptions"
+                :label="item.label"
+                :value="item.value"
+                :key="idx"
+              ></el-option>
+            </el-select>
+
+            <el-tooltip class="item" effect="light" content="选择需要备货的分类" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-form-item>
+        </el-col>
 
         <el-col :md="14">
-          <el-form-item label="国内库存来源" prop="warehouseId">
+          <el-form-item label="下单截止日" prop="limitTime">
+            <el-date-picker
+              v-model="newPlan.limitTime"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              type="date"
+              placeholder="下单截止日"></el-date-picker>
+
+            <el-tooltip class="item" effect="light" content="本次采购必须在这个日期之前完成交货" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="10">
+          <el-form-item label="国内库存" prop="warehouseId">
             <el-select v-model="newPlan.warehouseId"
                        filterable multiple placeholder="请选择库存,可多选">
               <el-option
@@ -121,6 +98,21 @@
               <i class="el-icon-question">&nbsp;</i>
             </el-tooltip>
 
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="14">
+          <el-form-item label="交货截止日" prop="executeTime">
+            <el-date-picker
+              v-model="newPlan.executeTime"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              type="date"
+              placeholder="交货截止日"></el-date-picker>
+
+            <el-tooltip class="item" effect="light" content="本次采购必须在这个日期之前向厂家签好采购合同" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
           </el-form-item>
         </el-col>
 
@@ -176,14 +168,12 @@
               ></el-option>
             </el-select>
 
-
             <el-tooltip class="item" effect="light" content="爆款类型的产品，希望支持销售的周数。可在产品管理中查看产品类型。" placement="right">
               <i class="el-icon-question">&nbsp;</i>
             </el-tooltip>
 
           </el-form-item>
         </el-col>
-
 
         <el-col :md="14">
           <el-form-item label="未完成采购计划处理方式" prop="handleMethod">
@@ -209,18 +199,23 @@
           </el-form-item>
         </el-col>
 
+        <el-col :md="24">
+          <el-row type="flex" justify="center">
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSmartPlan">
+              智能备货
+            </el-button>
+          </el-row>
+        </el-col>
+
       </fieldset>
+    </el-form>
 
-      <el-row type="flex" justify="center">
-        <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreatePlan">
-          智能备货
-        </el-button>
-      </el-row>
+    <!-- 创建 event -->
+    <itemTable
+      ref="itemTable"
+    ></itemTable>
+  </div>
 
-    </fieldset>
-
-
-  </el-form>
 </template>
 
 <script>
@@ -229,9 +224,10 @@
   import merchantModel from '@/api/merchant'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
+  import itemTable from './itemTable'
 
   export default {
-    components: {},
+    components: {itemTable},
     props: {},
     computed: {},
 
@@ -260,16 +256,31 @@
           vip2SafetyStockWeek: null,
         },
         rules: {
-          categoryId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
-          ],
           limitTime: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
           executeTime: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
-          status: [
+          categoryId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          merchantId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          warehouseId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          safetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          vip1SafetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          vip2SafetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          handleMethod: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ]
         },
@@ -311,43 +322,14 @@
     },
     methods: {
       ///////////////创建///////////////////////
-      onCreatePlan() {
-        this.$refs.createForm.validate(valid => {
+      onSmartPlan() {
+        this.$refs.smartPlan.validate(valid => {
           if (!valid) return;
           this.confirmLoading = true
-          // 新增逻辑
-          let url = '/procurementPlans';
-          let method = 'post'
+          // 弹窗
+          this.$refs.itemTable.$emit("openDialog", this.newPlan);
 
-          if (this.newPlan.id != null && this.newPlan.id > 0) {
-            method = 'put'
-            url += `/${this.newPlan.id}`
-          }
-
-          let postDate = JSON.parse(JSON.stringify(this.newPlan));
-          postDate.warehouseId = postDate.warehouseId ? postDate.warehouseId.join(",") : "";
-          this.global.axios[method](url, postDate)
-            .then(resp => {
-              this.newPlan = resp.data;
-              //转化时间
-              this.newPlan.limitTime = resp.data.formatLimitTime;
-              this.newPlan.executeTime = resp.data.formatExecuteTime;
-              //转化分类
-              this.newPlan.categoryId = intArrToStrArr(resp.data.categoryId);
-              //转化仓库
-              this.newPlan.warehouseId = resp.data.warehouseId
-                ? intArrToStrArr(resp.data.warehouseId.split(",")) : [];
-              this.newPlan.handleMethod = resp.data.handleMethod + '';
-
-              this.$message({type: 'success', message: '操作成功'});
-              this.confirmLoading = false;
-              // 回传消息
-              this.$emit("createCBEvent", this.newPlan.id, this.newPlan);
-            })
-            .catch(err => {
-              this.confirmLoading = false;
-              this.$emit("createCBEvent", null, null);
-            })
+          this.confirmLoading = false
         })
       }
     }

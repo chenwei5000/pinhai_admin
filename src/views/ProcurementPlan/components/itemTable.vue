@@ -1,103 +1,81 @@
 <template>
 
-  <div class="ph-table">
+  <el-dialog title="智能备货" :visible.sync="formVisible" fullscreen>
 
-    <!--表格 TODO:根据实际情况调整 el-table-column  -->
-    <el-table
-      ref="table"
-      style="width: 100%"
-      stripe
-      border
-      highlight-current-row
-      :row-class-name="dangerClassName"
-      :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-      :header-cell-style="{padding: '2px 0'}"
-      :data="data"
-      v-loading="loading"
-      @selection-change="handleSelectionChange"
-      @sort-change='handleSortChange'
-      @filter-change="handleFilterChange"
-      id="table"
-    >
-      <el-table-column prop="id" label="Id" width="90" v-if='false'></el-table-column>
-      <el-table-column prop="code" label="编号" width="150" fixed="left"></el-table-column>
-      <el-table-column prop="categoryName" label="分类" min-width="120"></el-table-column>
-      <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
-      <el-table-column prop="formatLimitTime" label="下单截止日" width="120"></el-table-column>
-      <el-table-column prop="formatExecuteTime" label="交货截止日" width="120"></el-table-column>
-      <el-table-column prop="tags" label="标签" width="120"></el-table-column>
+    <div class="ph-table">
 
-      <el-table-column prop="note" label="备注" width="120">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover">
-            <div v-html="scope.row.formatNote"></div>
-            <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-        </template>
-      </el-table-column>
+      <!--表格 TODO:根据实际情况调整 el-table-column  -->
+      <el-table
+        ref="table"
+        style="width: 100%"
+        stripe
+        border
+        highlight-current-row
+        :max-height="tableMaxHeight"
+        :row-class-name="dangerClassName"
+        :cell-style="{padding: '2px 0', 'font-size': '13px'}"
+        :header-cell-style="{padding: '2px 0'}"
+        :data="data"
+        v-loading="loading"
+        show-summary
+        :summary-method="getSummaries"
+        @selection-change="handleSelectionChange"
+        :default-sort="{prop: 'replenishmentCartonPlanQty', order: 'descending'}"
+        id="table"
+      >
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column prop="skuCode" label="SKU" sortable width="200" fixed="left"></el-table-column>
+        <el-table-column prop="categoryName" label="分类" width="120"></el-table-column>
+        <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
+        <el-table-column prop="safetyWeek" label="备货周数" width="90"></el-table-column>
+        <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="130"></el-table-column>
+        <el-table-column prop="sevenAmendQty" sortable label="7日销量(件)" width="120"></el-table-column>
+        <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="200"></el-table-column>
+        <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="130"></el-table-column>
+        <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="130"></el-table-column>
+        <el-table-column prop="saleWeek" sortable label="可售周数" width="120"></el-table-column>
+        <el-table-column prop="productName" label="名称" width="200"></el-table-column>
+        <el-table-column prop="fnSku" label="FNSKU" min-width="120"></el-table-column>
+        <el-table-column prop="vipLevel" label="Vip级别" width="120"></el-table-column>
+        <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+        <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="80">
-        <template slot-scope="scope">
-          <el-tag
-            :type="info"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
 
-      <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
-        <template slot-scope="scope">
+        <el-table-column prop="replenishmentCartonPlanQty" sortable label="采购箱数" width="120"
+                         fixed="right"></el-table-column>
+        <!--默认操作列-->
+        <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
+          <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+            <el-button v-if="hasDelete" type="danger" size="mini"
+                       id="ph-table-del" icon="el-icon-delete" circle
+                       @click="onDefaultDelete(scope.row)">
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-col :md="24">
+        <el-row type="flex" justify="center">
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreatePlan">
+            生成采购计划
           </el-button>
+        </el-row>
+      </el-col>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    </div>
 
-    <!--分页-->
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="page"
-      :page-sizes="paginationSizes"
-      :page-size="size"
-      :total="total"
-      style="text-align: right; padding: 10px 0"
-      background
-      :layout="layout"
-      id="ph-table-page"
-      ref="pageForm"
-    >
-      <el-button icon="el-icon-refresh" @click="onRefreshTable" class="btn-prev" circle></el-button>
-
-    </el-pagination>
-
-  </div>
-
+  </el-dialog>
 
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
-  import qs from 'qs'
-
-  const valueSeparator = '~'
-  const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
-  const paramSeparator = ','
-  const equal = '='
-  const equalPattern = /=/g
-  const queryFlag = 'q='
-  const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
-    name: 'procurementPlans',
     components: {},
     props: {
       plan: {
@@ -108,11 +86,7 @@
     computed: {
       ...mapGetters([
         'device'
-      ]),
-
-      phTableAttrs() {
-        return Object.assign(this.defaultTableAttrs, this.tableAttrs);
-      },
+      ])
     },
 
     data() {
@@ -120,41 +94,22 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
+        formVisible: false,
+
+        confirmLoading: false,
+
         //操作
         hasOperation: true,
         hasEdit: true,
         hasDelete: true,
         selected: [],
 
-        //分页
-        size: 20,
-        page: 1,
-        layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [20, 50, 100],
-        total: 0,
-
         //数据 TODO: 根据实际情况调整
-        url: this.plan ? 'a' : null, // 资源URL
-        //'/amazonStocks/plans/8a23287966dc9acb0166dca2574c0000?warehouse=3&category=6&safetyStockWeek=2&vip1SafetyStockWeek=3&vip2SafetyStockWeek=2&exclude=1
+        plan: null,
+        url: null, // 资源URL
         relations: [],  // 关联对象
         data: [],
         loading: false,
-
-        //搜索 TODO: 根据实际情况调整
-        categorySelectOptions: [],
-        searchParam: {
-          categoryId: {value: null, op: 'in', id: 'categoryId'},
-          name: {value: null, op: 'bw', id: 'name'},
-          limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
-        },
-
-        //弹窗
-        dialogTitle: '新增',
-        dialogVisible: false,
-        isNew: true,
-        isEdit: false,
-        isView: false,
-        confirmLoading: false,
 
         // 记录修改的那一行
         row: {},
@@ -165,7 +120,18 @@
     },
 
     mounted() {
+
+      this.$on("openDialog", plan => {
+        this.plan = plan;
+        this.formVisible = true;
+        this.url = `/amazonStocks/plans/${plan.merchantId}?warehouse=${plan.warehouseId.join(",")}&category=${plan.categoryId.join(",")}&safetyStockWeek=${plan.safetyStockWeek}&vip1SafetyStockWeek=${plan.vip1SafetyStockWeek}&vip2SafetyStockWeek=${plan.vip2SafetyStockWeek}&exclude=${plan.handleMethod}`;
+        this.getTableHeight();
+        this.initLoadData();
+        this.getList();
+      });
+
       this.$nextTick(() => {
+        this.getTableHeight();
         this.initLoadData();
         this.getList();
       })
@@ -175,80 +141,97 @@
       //初始化加载数据 TODO:根据实际情况调整
       initLoadData() {
       },
-      /********************* 搜索相关方法  ***************************/
 
-      /*搜索*/
-      search() {
-        this.$refs.searchForm.validate(valid => {
-          if (!valid) return
-          this.page = 1
-          this.getList(true);
-        })
-      },
-
-      /*重置*/
-      resetSearch() {
-        // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
-        this.$refs.searchForm.resetFields();
-        this.page = 1
-
-        //TODO:根据实际情况调整
-        this.searchParam.categoryId.value = null;
-        this.searchParam.skuCode.value = null;
-        this.searchParam.name.value = null;
-
-        // 重置
-        history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
-
-        this.$nextTick(() => {
-          this.getList()
-        })
-
-        /**
-         * 按下重置按钮后触发,
-         * 另外, 当customQuery.sync时, 会重置customQuery
-         * @event reset
-         */
-        this.$emit('reset')
-
-        this.$emit(
-          'update:customQuery',
-          Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-        )
+      // 获取表格的高度
+      getTableHeight() {
+        if (this.device !== 'mobile') {
+          //浏览器高度
+          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          //表格高度
+          let tableHeight = windowHeight;
+          tableHeight = tableHeight - 160; //减标题高度
+          this.tableMaxHeight = tableHeight;
+        }
+        else {
+          this.tableMaxHeight = 400;
+        }
       },
 
       /********************* 表格相关方法  ***************************/
-      /*格式化列输出*/
-      // Formatter TODO:根据实际情况调整
-      vipLevelFormatter(row, column) {
-        if (row.vipLevel === 0) {
-          return "0-普通"
-        }
-        else if (row.vipLevel === 1) {
-          return "1-热销"
-
-        }
-        else if (row.vipLevel === 2) {
-          return "2-爆款"
-        }
-        else {
-          return row.vipLevel;
-        }
-      },
-
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
         return '';
       },
 
+      onDefaultDelete(row) {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              let idx = null;
+
+              this.data.forEach((item, index) => {
+                  if (item.id == row.id) {
+                    idx = index;
+                    return;
+                  }
+                }
+              );
+
+              this.date = this.data.splice(idx, 1);
+
+              done();
+
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
+      getSummaries(param) {
+        const {columns, data} = param;
+        const sums = [];
+
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计';
+            return;
+          }
+          if (column.property == 'replenishmentCartonPlanQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'skuCode') {
+            const values = data.map(item => item[column.property]);
+
+            sums[index] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+            sums[index] += ' 行';
+
+          }
+        });
+
+        return sums;
+      },
+
       /*获取列表*/
       getList(shouldStoreQuery) {
         let url = this.url
-        let params = ''
-        let searchParams = ''
-        let size = this.size
-        let page = this.page
-
         if (!url) {
           console.warn('url 为空, 不发送请求')
           return
@@ -262,37 +245,6 @@
           url += '?'
         }
 
-        // 处理分页信息
-        // 根据偏移值计算接口正确的页数
-        params += `pageSize=${size}&currentPage=${page}`
-        searchParams += `pageSize=${size}&currentPage=${page}`
-
-        // 处理排序
-        if (this.phSort) {
-          params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
-          searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
-        }
-
-        // 处理查询
-        let filters = [];
-        Object.keys(this.searchParam).filter(k => {
-          return this.searchParam[k] && this.searchParam[k].value !== ''
-            && this.searchParam[k].value !== null && this.searchParam[k].value !== undefined
-        }).forEach(param => {
-          filters.push({
-            'field': param,
-            op: this.searchParam[param].op ? this.searchParam[param].op : 'eq',
-            data: this.searchParam[param].value ? encodeURIComponent(this.searchParam[param].value.toString().trim()) : ''
-          })
-        });
-
-        filters.forEach((param, k) => {
-          searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
-        })
-        if (filters && filters.length > 0) {
-          params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -303,7 +255,7 @@
 
         //获取数据
         this.global.axios
-          .get(url + params)
+          .get(url)
           .then(resp => {
             let res = resp.data
             let data = res || []
@@ -329,42 +281,50 @@
       /* 多选功能 */
       handleSelectionChange(val) {
         this.selected = val
-
-        /**
-         * 多选启用时生效, 返回(selected)已选中行的数组
-         * @event selection-change
-         */
-        this.$emit('selection-change', val)
       },
 
-      /* 排序功能 */
-      handleSortChange: function (column) {
-        if (column.prop) {
-          this.phSort.prop = column.prop;
-          this.phSort.order = column.order === 'ascending' ? 'asc' : 'desc';
+      ///////////////创建///////////////////////
+      onCreatePlan() {
+        if (this.selected == null || this.selected.length == 0) {
+          this.$confirm('您没有选择任何推荐备货的商品，如果您确认。将手工维护采购计划明细，是否继续？', '提示', {
+            type: 'warning',
+            beforeClose: (action, instance, done) => {
+              if (action == 'confirm') {
+                done();
+                this.createPlan();
+              } else done()
+            }
+          }).catch(er => {
+            /*取消*/
+          })
         }
-        this.page = 1;
-        this.getList(true);
-      },
-
-      //筛选 TODO: 待定
-      handleFilterChange: function (filters) {
-        let row = null
-        let val = null
-        // 拷贝filters的值。
-        for (const i in filters) {
-          row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
-          val = filters[i]
+        else{
+          this.createPlan();
         }
-        const filter = [{
-          row: row,
-          op: 'contains',
-          value: val
-        }]
       },
+      // 创建计划
+      createPlan() {
+        let _plan = JSON.parse(JSON.stringify(this.plan));
+        _plan.warehouseId = _plan.warehouseId ? _plan.warehouseId.join(",") : "";
+        this.loading = true;
+        this.confirmLoading = true;
 
-      // 行编辑按钮
-      onDefaultEdit(row) {
+        console.log(this.selected);
+        this.global.axios[method](url, _plan)
+          .then(resp => {
+            let _newPlan = resp.data;
+
+            this.$message({type: 'success', message: '操作成功'});
+            this.loading = false;
+            this.confirmLoading = false;
+            // 回传消息
+            this.$emit("createCBEvent", _newPlan.id);
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+            this.$emit("createCBEvent", null, null);
+          })
 
       },
       cancel() {
@@ -372,29 +332,6 @@
       },
       confirm() {
 
-      },
-
-      /********************* 分页工具条相关方法  ***************************/
-      /* 一页显示数量调整 */
-      handleSizeChange(val) {
-        if (this.size === val) return
-
-        this.page = 1
-        this.size = val
-        this.getList(true)
-      },
-
-      /* 第几页调整 */
-      handleCurrentChange(val) {
-        if (this.page === val) return
-
-        this.page = val
-        this.getList(true)
-      },
-
-      /* 刷新功能 */
-      onRefreshTable: function () {
-        this.getList();
       }
     }
   }

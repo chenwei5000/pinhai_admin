@@ -56,7 +56,7 @@
         let data = this.$refs.tree.getCheckedNodes()
         this.loading = true
         let postData = []
-        
+
         for(let i = 0; i < data.length; i++) {
           const e = data[i]
           let temp = {}
