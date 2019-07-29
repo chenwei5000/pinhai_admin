@@ -69,8 +69,6 @@ const axios = _axios.create({
 // 设置默认Request的Header
 axios.interceptors.request.use(
   config => {
-console.log(11111);
-    console.log(process.env);
     const token = store.state.user.token;
     // 判断是否存在token，如果存在的话，则每个http header都加上TK-Authorization
     if (token && token != '') {
