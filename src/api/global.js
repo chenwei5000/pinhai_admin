@@ -4,12 +4,10 @@ import {Message} from 'element-ui'
 import qs from 'qs'
 
 const config = {
-  NAME: '品海ERP管理系统',
-  VERSION: 'V2.0.0',
-  //ERP_SERVICE_URL: 'http://192.168.10.200/erp-service-v2',         //内外访问
-  //ERP_SERVICE_URL: 'http://115.28.151.125:20080/erp-service-v2', //外网访问
-  ERP_SERVICE_URL: 'http://localhost:9001/erp-service',
-  TENANT_ID: 'ff80808162fb6e100162fb6e213e0000'
+  NAME: process.env.VUE_APP_NAME,
+  VERSION: process.env.VUE_APP_VERSION,
+  ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
+  TENANT_ID: process.env.VUE_APP_TENANT_ID
 }
 
 // 定义全局方法
@@ -71,6 +69,8 @@ const axios = _axios.create({
 // 设置默认Request的Header
 axios.interceptors.request.use(
   config => {
+console.log(11111);
+    console.log(process.env);
     const token = store.state.user.token;
     // 判断是否存在token，如果存在的话，则每个http header都加上TK-Authorization
     if (token && token != '') {
