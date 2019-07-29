@@ -2,7 +2,7 @@
  * 这个应用相关设置状态。
  */
 import Cookies from 'js-cookie'
-import {getLanguage} from '@/lang/index'
+import { getLanguage } from '@/lang/index'
 import categoryModel from '@/api/category'
 import supplierModel from '@/api/supplier'
 import warehouseModel from '@/api/warehouse'
@@ -29,13 +29,15 @@ const state = {
   warehouses: null, //仓库
   cartonSpecs: null, //箱规
   currencies: null, //货币
-  bankAccounts:null,//银行账户
+  bankAccounts: null,//银行账户
   harbours: null,   //港口
   datadics: null, //数据字典
   shippingMethods: null, //运输方式
   personnels: null,  //人员
   enums: null, //枚举
-  merchants: null //销售渠道
+  merchants: null, //销售渠道
+
+
 }
 
 const mutations = {
@@ -77,6 +79,11 @@ const mutations = {
     state.merchants = merchants
   },
 
+  SET_CATEGORIES: (state, categories) => {
+    state.categories = categories
+  },
+
+
   TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened
     state.sidebar.withoutAnimation = false
@@ -106,23 +113,23 @@ const mutations = {
 
 const actions = {
 
-  toggleSideBar({commit}) {
+  toggleSideBar({ commit }) {
     commit('TOGGLE_SIDEBAR')
   },
-  closeSideBar({commit}, {withoutAnimation}) {
+  closeSideBar({ commit }, { withoutAnimation }) {
     commit('CLOSE_SIDEBAR', withoutAnimation)
   },
-  toggleDevice({commit}, device) {
+  toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device)
   },
-  setLanguage({commit}, language) {
+  setLanguage({ commit }, language) {
     commit('SET_LANGUAGE', language)
   },
-  setSize({commit}, size) {
+  setSize({ commit }, size) {
     commit('SET_SIZE', size)
   },
 
-  loadCategories({commit}) {
+  loadCategories({ commit }) {
     return new Promise((resolve, reject) => {
       categoryModel.getMineCategories('p').then(async list => {
         console.log("从后端获取分类信息");
@@ -134,7 +141,7 @@ const actions = {
     });
   },
 
-  loadSuppliers({commit}) {
+  loadSuppliers({ commit }) {
     return new Promise((resolve, reject) => {
       supplierModel.getSuppliers().then(async list => {
         console.log("从后端获取供货商信息");
@@ -146,7 +153,8 @@ const actions = {
     });
   },
 
-  loadWarehouses({commit}) {
+
+  loadWarehouses({ commit }) {
     return new Promise((resolve, reject) => {
       warehouseModel.getWarehouses().then(async list => {
         console.log("从后端获取仓库信息");
@@ -158,7 +166,7 @@ const actions = {
     });
   },
 
-  loadCartonSpecs({commit}) {
+  loadCartonSpecs({ commit }) {
     return new Promise((resolve, reject) => {
       cartonSpecModel.getCartonspecs().then(async list => {
         console.log("从后端获取箱规信息");
@@ -170,7 +178,7 @@ const actions = {
     });
   },
 
-  loadCurrencies({commit}) {
+  loadCurrencies({ commit }) {
     return new Promise((resolve, reject) => {
       currencyModel.getCurrencies().then(async list => {
         console.log("从后端获取货币信息");
@@ -182,7 +190,7 @@ const actions = {
     });
   },
 
-  loadBankAccounts({commit}) {
+  loadBankAccounts({ commit }) {
     return new Promise((resolve, reject) => {
       bankAccountModel.getBankAccounts().then(async list => {
         console.log("从后端获取银行账户信息");
@@ -194,7 +202,7 @@ const actions = {
     });
   },
 
-  loadCompanyManagements({commit}) {
+  loadCompanyManagements({ commit }) {
     return new Promise((resolve, reject) => {
       companyManagementModel.getCompanyManagements().then(async list => {
         console.log("从后端获取公司信息");
@@ -206,7 +214,7 @@ const actions = {
     });
   },
 
-  loadHarbours({commit}) {
+  loadHarbours({ commit }) {
     return new Promise((resolve, reject) => {
       harbourModel.getHarbours().then(async list => {
         console.log("从后端获取港口信息");
@@ -218,7 +226,7 @@ const actions = {
     });
   },
 
-  loadDatadics({commit}) {
+  loadDatadics({ commit }) {
     return new Promise((resolve, reject) => {
       datadicModel.getDatadics().then(async list => {
         console.log("从后端获取字典信息");
@@ -230,7 +238,7 @@ const actions = {
     });
   },
 
-  loadShippingMethods({commit}) {
+  loadShippingMethods({ commit }) {
     return new Promise((resolve, reject) => {
       shippingMethodModel.getShippingMethods().then(async list => {
         console.log("从后端获取运输方式信息");
@@ -242,7 +250,7 @@ const actions = {
     });
   },
 
-  loadPersonnels({commit}) {
+  loadPersonnels({ commit }) {
     return new Promise((resolve, reject) => {
       userModel.getUsers().then(async list => {
         console.log("从后端获取员工信息");
@@ -254,7 +262,7 @@ const actions = {
     });
   },
 
-  loadEnums({commit}) {
+  loadEnums({ commit }) {
     return new Promise((resolve, reject) => {
       enumModel.getEnums().then(async list => {
         console.log("从后端获取枚举信息");
@@ -266,7 +274,7 @@ const actions = {
     });
   },
 
-  loadMerchants({commit}) {
+  loadMerchants({ commit }) {
     return new Promise((resolve, reject) => {
 
       merchantModel.getMerchants().then(async list => {
