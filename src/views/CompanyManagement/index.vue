@@ -70,7 +70,7 @@
               $id: 'fullName',
               label: '全称',
               $el: {
-                placeholder: '请输入公司简称'
+                placeholder: '请输入公司全称'
               },
               rules: [
                 validRules.required

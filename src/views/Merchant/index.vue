@@ -39,7 +39,6 @@
             {prop: 'typeName', label: '类型', 'min-width': 100},
             {prop: 'name', label: '名称', 'min-width': 100},
             {prop: 'country.name', label: '国家', 'min-width': 100},
-
             {prop: 'address', label: '地址', 'min-width': 250},
             {prop: 'linkman', label: '联系人', 'min-width': 100},
             {prop: 'tel', label: '联系电话', 'min-width': 100},

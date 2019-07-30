@@ -95,6 +95,8 @@
               $el: {
                 placeholder: '请输入联系人电话'
               },
+              rules:[
+              ]
             },
             phFromItems.status()
           ],
