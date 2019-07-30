@@ -5,6 +5,7 @@
       </ph-card-header>
       <div class="ph-card-body">
         <procurementTable
+        ref="procurementTable"
         @openEditDialog="openEditDialog"
         ></procurementTable>
       </div>
@@ -12,7 +13,11 @@
 
     <editDialog
     ref="editDialog"
+    @refresh="refreshList"
     ></editDialog>
+
+    
+
   </div>
 </template>
 
@@ -36,8 +41,12 @@
     computed: {},
     methods: {
       openEditDialog(row) {
-        console.log('openEditDialog ')
+        console.log('openEditDialog')
         this.$refs.editDialog.$emit('openDialog', row)
+      },
+      refreshList() {
+        // 更新列表
+        this.$ref.procurementTable.getList()
       }
     },
     watch: {}

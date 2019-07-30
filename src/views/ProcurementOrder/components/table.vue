@@ -41,16 +41,15 @@
       id="table"
     >
       <el-table-column prop="code" label="编码" width="100" fixed="left"></el-table-column>
-      <el-table-column prop="status" label="状态" width="100"></el-table-column>
+      <el-table-column prop="statusName" label="状态" width="100"></el-table-column>
       <el-table-column prop="procurementPlan.name" label="采购计划" width="100"></el-table-column>
-      <el-table-column prop="team.name" label="跟单团队" width="100"></el-table-column>
       <el-table-column prop="merchandiser" label="跟单员" width="100"></el-table-column>
       <el-table-column prop="supplier.name" label="供货商" width="100"></el-table-column>
       <el-table-column prop="warehouse.name" label="收货仓库" width="100"></el-table-column>
       <el-table-column prop="currency.name" label="结算货币" width="100"></el-table-column>
-      <el-table-column prop="settlementMethod" label="结算方式" width="100"></el-table-column>
-      <el-table-column prop="accountPeriod" label="账期" width="100"></el-table-column>
-      <el-table-column prop="procurementPlan.formatCreateTime" label="预计完成日期" width="120"></el-table-column>
+      <el-table-column prop="settlementMethodName" label="结算方式" width="100"></el-table-column>
+      <el-table-column prop="accountPeriod_" label="账期" width="100"></el-table-column>
+      <el-table-column prop="procurementPlan.formatCreateTime_" label="预计完成日期" width="120"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" width="100"></el-table-column>
       <!--默认操作列-->
       <el-table-column label="操作" width="150" fixed="right">
@@ -108,7 +107,7 @@
 <script>
 import { mapGetters } from "vuex";
 import qs from "qs";
-import { constants } from 'crypto';
+import { constants } from "crypto";
 
 const valueSeparator = "~";
 const valueSeparatorPattern = new RegExp(valueSeparator, "g");
@@ -153,7 +152,15 @@ export default {
       url: "/procurementOrders", // 资源URL
       countUrl: "/procurementOrders/count", // 资源URL
 
-      relations: [], // 关联对象
+      relations: [
+        "user",
+        "team",
+        "procurementPlan",
+        "currency",
+        "supplier",
+        "warehouse",
+        "creator"
+      ], // 关联对象
       data: [],
       phSort: { prop: "id", order: "asc" },
       loading: false,
@@ -337,6 +344,11 @@ export default {
         .then(resp => {
           let res = resp.data;
           let data = res || [];
+          // 修改字段
+          for(let i = 0; i < data.length; i++) {
+            data[i].accountPeriod_ = data[i].accountPeriod ? `${data[i].accountPeriod}天` : ''
+            data[i].procurementPlan.formatCreateTime_ = data[i].procurementPlan.formatCreateTime.slice(0, 10)
+          }
           this.data = data;
           this.loading = false;
           /**
@@ -485,7 +497,7 @@ export default {
     },
 
     onDefaultEdit(row) {
-      this.$emit('openEditDialog', row)
+      this.$emit("openEditDialog", row);
     },
 
     cancel() {},
@@ -496,14 +508,17 @@ export default {
     onDefaultDelete(row) {
       this.$confirm("确认删除？")
         .then(_ => {
-          let id = row.id
-          let url = `/procurementOrders/${id}`
-          console.log('delete ', url)
-          this.global.axios.delete(url).then(data => {
-            console.log("data ", data)
-          }).catch((data) => {
-            console.log('删除失败')
-          })
+          let id = row.id;
+          let url = `/procurementOrders/${id}`;
+          console.log("delete ", url);
+          this.global.axios
+            .delete(url)
+            .then(data => {
+              console.log("data ", data);
+            })
+            .catch(data => {
+              console.log("删除失败");
+            });
         })
         .catch(_ => {});
     }

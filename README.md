@@ -176,3 +176,17 @@ Detailed changes for each release are documented in the [release notes](https://
 
 [在线 Demo](https://panjiachen.github.io/vue-element-admin)
 
+
+## 线上环境配置
+
+````
+cd /opt/install/
+wget https://npm.taobao.org/mirrors/node/v10.14.1/node-v10.14.1-linux-x64.tar.gz
+yum remove -y npm
+ln -s /opt/install/node-v10.14.1-linux-x64/bin/node /usr/bin/node
+ln -s /opt/install/node-v10.14.1-linux-x64/bin/npm  /usr/bin/npm
+
+node -v
+npm -version
+
+```
