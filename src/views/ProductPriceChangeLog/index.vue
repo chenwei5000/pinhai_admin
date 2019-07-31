@@ -67,7 +67,15 @@
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.skuCode,
+            {
+                $type: 'input',
+                $id: 'productSkuCode',
+                label: 'SKU编码',
+                $el: {
+                  op: 'bw',
+                    placeholder: '请输入SKU编码'
+                }
+            },
             phSearchItems.status()
           ],
         }
