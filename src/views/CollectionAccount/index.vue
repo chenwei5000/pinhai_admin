@@ -28,7 +28,7 @@
       return {
         title: '收款账户',
         tableConfig: {
-          url: '/paymentAccounts',
+          url: '/collectionAccounts',
           relations: ["creator","bankAccount","companyManagement",],
           tableAttrs: {
             "row-class-name": this.statusClassName
@@ -95,6 +95,8 @@
               $el: {
                 placeholder: '请输入联系人电话'
               },
+              rules:[
+              ]
             },
             phFromItems.status()
           ],
