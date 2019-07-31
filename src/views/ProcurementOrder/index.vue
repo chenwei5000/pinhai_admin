@@ -1,60 +1,61 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
+      <ph-card-header :title="title" type="table"></ph-card-header>
       <div class="ph-card-body">
-        <procurementTable
-        ref="procurementTable"
-        @openEditDialog="openEditDialog"
-        ></procurementTable>
+        <procurementTable 
+          ref="procurementTable" 
+          @openEditDialog="openEditDialog"
+          @openDetailDialog="openDetailDialog"
+          ></procurementTable>
       </div>
     </div>
 
-    <editDialog
-    ref="editDialog"
-    @refresh="refreshList"
-    ></editDialog>
+    <editDialog ref="editDialog" @refresh="refreshList"></editDialog>
 
-    
-
+    <detailDialog ref="detailDialog"></detailDialog>
   </div>
 </template>
 
 <script>
+import procurementTable from "./components/table";
+import editDialog from "./components/editDialog";
+import detailDialog from "./components/detailDialog";
 
-  import procurementTable from './components/table'
-  import editDialog from './components/editDialog'
+export default {
+  name: "procurement",
+  components: {
+    procurementTable,
+    editDialog,
+    detailDialog
+  },
 
-  export default {
-    name: 'procurement',
-    components: {
-      procurementTable,
-      editDialog
+  data() {
+    return {
+      title: "采购单列表"
+    };
+  },
+  computed: {},
+  methods: {
+    openEditDialog(row) {
+      console.log("openEditDialog");
+      this.$refs.editDialog.$emit("openDialog", row);
     },
-
-    data() {
-      return {
-        title: '采购单列表'
-      }
+    openDetailDialog(row) {
+      console.log("openDetailDialog");
+      this.$refs.detailDialog.$emit("openDialog", row);
     },
-    computed: {},
-    methods: {
-      openEditDialog(row) {
-        console.log('openEditDialog')
-        this.$refs.editDialog.$emit('openDialog', row)
-      },
-      refreshList() {
-        // 更新列表
-        this.$ref.procurementTable.getList()
-      }
-    },
-    watch: {}
-  }
+    refreshList() {
+      // 更新列表
+      this.$ref.procurementTable.getList();
+    }
+  },
+  watch: {}
+};
 </script>
 
 <style scoped>
-  .ph-table {
-    padding: 10px 15px;
-  }
+.ph-table {
+  padding: 10px 15px;
+}
 </style>

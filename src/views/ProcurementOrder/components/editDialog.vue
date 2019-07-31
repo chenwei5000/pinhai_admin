@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="'采购单修改 '" :visible.sync="formVisible" width="70%">
+  <el-dialog :title="'采购单修改 '" v-if="formVisible" :visible.sync="formVisible" width="70%">
     <el-form
       :model="form"
       :rules="rules"
@@ -204,7 +204,7 @@ export default {
                   }
                   this.loading = false;
 
-                  this.emit("refresh");
+                  this.$emit("refresh");
                 })
                 .catch(_ => {
                   this.$message.info("修改失败");
@@ -222,6 +222,7 @@ export default {
   },
   mounted() {
     this.$on("openDialog", row => {
+      this.loading = true
       this.row = row;
       this.formVisible = true;
       this.suppliers = supplierModel.getSelectOptions();
@@ -238,6 +239,7 @@ export default {
           }
           this.form = d;
         }
+        this.loading = false
       });
     });
   }
