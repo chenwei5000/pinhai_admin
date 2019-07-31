@@ -32,7 +32,7 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'type', label: '职位类别',"min-width": 100, hidden: 'false'},
+            {prop: 'type', label: '职位类别',"min-width": 100},
             {prop: 'name', label: '职位名称', "min-width": 100},
             phColumns.creator,
             phColumns.status,
@@ -51,6 +51,17 @@
               label: '职位名称',
               $el: {
                 placeholder: '请输入职位名称'
+              },
+              rules: [
+                validRules.required,
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'type',
+              label: '职位类别',
+              $el: {
+                placeholder: '请输入职位类别'
               },
               rules: [
                 validRules.required,
