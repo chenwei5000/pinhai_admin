@@ -73,7 +73,7 @@
               label: '银行账户',
               $el: {
                 filterable: true,
-                placeholder: '请选择银行账户'
+                placeholder: '请选择银行账户(户名)'
               },
               $options: bankAccountModel.getSelectOptions(),
               rules: [

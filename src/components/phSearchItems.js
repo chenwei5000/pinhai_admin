@@ -92,6 +92,18 @@ const phSearchItems = {
       placeholder: '请输入类型'
     }
   },
+
+  //产品名搜索
+  productName: {
+    $type: 'input',
+    $id: 'productName',
+    label: '产品名',
+    $el: {
+      op: 'bw',
+      placeholder: '请输入产品名'
+    }
+  },
+
   // 状态搜索
   status: () => {
     return {
