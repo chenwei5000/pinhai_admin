@@ -129,6 +129,8 @@ export default {
 
           if (!d.accountPeriod) {
             d.accountPeriod_ = '无';
+          } else {
+            d.accountPeriod_ = `${d.accountPeriod}天`
           }
           d.settlementMethod_ = mapped[d.settlementMethod]
           this.form = d;
