@@ -76,7 +76,15 @@
                 }
               ]
             },
-            phSearchItems.name,
+            {
+              $type: 'input',
+              $id: 'title',
+              label: '名称',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入名称'
+              }
+            },
             {
               $type: 'input',
               $id: 'actionId',
