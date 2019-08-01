@@ -1,7 +1,7 @@
 <template>
   <div class="ph-table">
     <!--搜索-->
-    <el-form
+    <!-- <el-form
       :inline="true"
       :model="searchParam"
       ref="searchForm"
@@ -20,7 +20,7 @@
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <!--表格-->
     <el-table
@@ -159,7 +159,7 @@ export default {
   mounted() {
     console.log(11111);
     //全屏，表格高度处理
-    
+
     window.onresize = () => {
       this.getTableHeight();
     };

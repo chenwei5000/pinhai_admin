@@ -56,8 +56,8 @@
 
     <itemTable ref="itemTable"></itemTable>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="formVisible = false">取 消</el-button>
-      <el-button type="primary" @click="save">保 存</el-button>
+      <el-button @click="formVisible = false">关 闭</el-button>
+      <!-- <el-button type="primary" @click="save">保 存</el-button> -->
     </div>
   </el-dialog>
 </template>
