@@ -221,7 +221,7 @@ export default {
           let url = `/users/register`;
           this.global.axios.post(url, this.user).then(data => {
             if (data.status == 200) {
-              this.$message.info("注册成功");
+              this.$message.info("注册成功，待管理员审核");
               this.$router.push({
                 path: "/login"
               });
