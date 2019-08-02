@@ -70,7 +70,8 @@
                 placeholder: '请选择状态'
               },
           $options: phEnumModel.getSelectOptions('UserStatus')
-    }
+    },
+            phSearchItems.name,
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -81,9 +82,6 @@
               $el: {
                 placeholder: '请输入用户姓名'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -92,9 +90,6 @@
               $el: {
                 placeholder: '请输入用户账号'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -103,9 +98,6 @@
               $el: {
                 placeholder: '请填写职位描述'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -114,9 +106,6 @@
               $el: {
                 placeholder: '请输入用户手机号/电话'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -125,9 +114,6 @@
               $el: {
                 placeholder: '请输入用户密码'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -136,9 +122,6 @@
               $el: {
                 placeholder: '请填写用户配置'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             phFromItems.status()
           ],
