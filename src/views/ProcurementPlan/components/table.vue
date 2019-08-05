@@ -6,17 +6,6 @@
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
-      <!--el-form-item label="分类">
-        <el-select filterable multiple v-model="searchParam.categoryId.value" placeholder="请选择分类">
-          <el-option
-            v-for="(item,idx) in categorySelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-
-        </el-select>
-      </el-form-item-->
-
       <el-form-item label="名称">
         <el-input v-model="searchParam.name.value" placeholder="请输入名称"></el-input>
       </el-form-item>
@@ -57,10 +46,9 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
-      @filter-change="handleFilterChange"
       id="table"
     >
-      <el-table-column prop="id" label="Id" width="90" v-if='false'></el-table-column>
+      <el-table-column prop="id" label="ID" width="90"></el-table-column>
       <el-table-column prop="code" label="编号" width="150" fixed="left"></el-table-column>
       <el-table-column prop="categoryName" label="分类" min-width="120"></el-table-column>
       <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
@@ -120,15 +108,18 @@
 
     </el-pagination>
 
-  </div>
+    <!--编辑对话框-->
+    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
+    </editDialog>
 
+  </div>
 
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import categoryModel from '@/api/category'
+  import editDialog from './editPlan/dialog'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -140,7 +131,9 @@
 
   export default {
     name: 'procurementPlans',
-    components: {},
+    components: {
+      editDialog
+    },
     props: {
       type: {
         type: String,
@@ -156,20 +149,6 @@
       ...mapGetters([
         'device'
       ]),
-
-      phTableAttrs() {
-        return Object.assign(this.defaultTableAttrs, this.tableAttrs);
-      },
-
-      //TODO:
-      unfinishedHide() {
-        if (this.type === 'unfinished') {
-          return false;
-        }
-        else {
-          return true;
-        }
-      }
     },
 
     data() {
@@ -177,10 +156,11 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作
+        //操作按钮控制
         hasOperation: true,
         hasEdit: true,
         hasDelete: true,
+        // 多选记录对象
         selected: [],
 
         //分页
@@ -190,12 +170,13 @@
         paginationSizes: [20, 50, 100],
         total: 0,
 
-        //数据 TODO: 根据实际情况调整
+        //抓数据 TODO: 根据实际情况调整
         url: '/procurementPlans', // 资源URL
         countUrl: '/procurementPlans/count', // 资源URL
         relations: ["creator"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
+        // 表格加载效果
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
@@ -223,47 +204,50 @@
     },
 
     mounted() {
+
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
       }
 
-      //搜索区块，根据url恢复功能
+      // 搜索区块，根据url恢复功能
       // 恢复查询条件
-      let matches = location.href.match(queryPattern)
-      if (matches) {
-        let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
-        let params = qs.parse(query, {delimiter: paramSeparator})
-        // page size 特殊处理
-        this.page = params.currentPage ? params.currentPage * 1 : this.page
-        this.size = params.pageSize ? params.pageSize * 1 : this.size
-        this.phSort.prop = params.sort ? params.sort : this.phSort.prop
-        this.phSort.order = params.dir ? params.dir : this.phSort.order
+      {
+        let matches = location.href.match(queryPattern)
+        if (matches) {
+          let query = matches[0].substr(2).replace(valueSeparatorPattern, equal)
+          let params = qs.parse(query, {delimiter: paramSeparator})
+          // page size 特殊处理
+          this.page = params.currentPage ? params.currentPage * 1 : this.page
+          this.size = params.pageSize ? params.pageSize * 1 : this.size
+          this.phSort.prop = params.sort ? params.sort : this.phSort.prop
+          this.phSort.order = params.dir ? params.dir : this.phSort.order
 
-        //TODO:根据实际情况调整
-        if (params.categoryId) {
-          this.searchParam.categoryId.value = params.categoryId;
-        }
-        if (params.skuCode) {
-          this.searchParam.skuCode.value = params.skuCode;
-        }
-        if (params.name) {
-          this.searchParam.name.value = params.name;
+          //TODO:根据实际情况调整
+          if (params.categoryId) {
+            this.searchParam.categoryId.value = params.categoryId;
+          }
+          if (params.limitTime) {
+            this.searchParam.limitTime.value = params.limitTime;
+          }
+          if (params.name) {
+            this.searchParam.name.value = params.name;
+          }
         }
       }
 
+      // 渲染完毕，控件加载完毕后执行
       this.$nextTick(() => {
         this.getTableHeight();
-        this.initLoadData();
+        this.initData();
         this.getList();
       })
     },
     methods: {
       /********************* 基础方法  *****************************/
-      //初始化加载数据 TODO:根据实际情况调整
-      initLoadData() {
-        //加载分类列表
-        this.categorySelectOptions = categoryModel.getMineSelectOptions();
+      //初始化数据 TODO:根据实际情况调整
+      initData() {
+
       },
 
       // 获取表格的高度
@@ -287,17 +271,18 @@
       },
 
       /********************* 搜索相关方法  ***************************/
-
       /*搜索*/
       search() {
         this.$refs.searchForm.validate(valid => {
-          if (!valid) return
+          if (!valid) {
+            return
+          }
           this.page = 1
           this.getList(true);
         })
       },
 
-      /*重置*/
+      /*搜索重置*/
       resetSearch() {
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
@@ -305,10 +290,10 @@
 
         //TODO:根据实际情况调整
         this.searchParam.categoryId.value = null;
-        this.searchParam.skuCode.value = null;
+        this.searchParam.limitTime.value = null;
         this.searchParam.name.value = null;
 
-        // 重置
+        // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
 
         this.$nextTick(() => {
@@ -329,30 +314,38 @@
       },
 
       /********************* 表格相关方法  ***************************/
-      /*格式化列输出*/
-      // Formatter TODO:根据实际情况调整
-      vipLevelFormatter(row, column) {
-        if (row.vipLevel === 0) {
-          return "0-普通"
-        }
-        else if (row.vipLevel === 1) {
-          return "1-热销"
-
-        }
-        else if (row.vipLevel === 2) {
-          return "2-爆款"
-        }
-        else {
-          return row.vipLevel;
-        }
+      /*格式化列输出 Formatter*/
+      //  TODO:根据实际情况调整
+      exempleFormatter(row, column) {
+        // 代码示例
+        // if (row.exemple === 0) {
+        //   return "0-普通"
+        // }
+        // else if (row.exemple === 1) {
+        //   return "1-热销"
+        //
+        // }
+        // else if (row.exemple === 2) {
+        //   return "2-爆款"
+        // }
+        // else {
+        //   return row.exemple;
+        // }
+        return '';
       },
 
-      //报警样式 TODO:根据实际情况调整
+      /*报警样式 */
+      //  TODO:根据实际情况调整
       dangerClassName({row}) {
+        // 代码示例 return 为css定义的样式 -row 结尾
+        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
+        //   return 'warning-row';
+        // }
         return '';
       },
 
       /*获取列表*/
+      /* shouldStoreQuery 是否开启通过url记录查询参数， true表示开启 */
       getList(shouldStoreQuery) {
         let url = this.url
         let countUrl = this.countUrl
@@ -366,6 +359,11 @@
           return
         }
 
+        if (!countUrl) {
+          console.warn('countUrl 为空, 异常！如果不需要统计结果数量。请查找删除 countUrl 相关代码!')
+          return
+        }
+
         // 构造查询url
         if (url.indexOf('?') > -1) {
           url += '&'
@@ -373,6 +371,7 @@
         else {
           url += '?'
         }
+
         if (countUrl.indexOf('?') > -1) {
           countUrl += '&'
         }
@@ -466,7 +465,7 @@
           if (location.href.indexOf(queryFlag) > -1) {
             newUrl = location.href.replace(queryPattern, searchQuery)
           } else {
-            let search = location.hash.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`
+            let search = location.href.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`
             newUrl = location.origin + location.pathname + location.search + location.hash + search
           }
           history.pushState(history.state, 'ph-table search', newUrl)
@@ -494,38 +493,12 @@
         this.getList(true);
       },
 
-      //筛选 TODO: 待定
-      handleFilterChange: function (filters) {
-        let row = null
-        let val = null
-        // 拷贝filters的值。
-        for (const i in filters) {
-          row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
-          val = filters[i]
-        }
-        const filter = [{
-          row: row,
-          op: 'contains',
-          value: val
-        }]
-      },
-
-      // 行编辑按钮
-      onDefaultEdit(row) {
-
-      },
-      cancel() {
-
-      },
-      confirm() {
-
-      },
-
       /********************* 分页工具条相关方法  ***************************/
       /* 一页显示数量调整 */
       handleSizeChange(val) {
-        if (this.size === val) return
-
+        if (this.size === val) {
+          return
+        }
         this.page = 1
         this.size = val
         this.getList(true)
@@ -533,8 +506,9 @@
 
       /* 第几页调整 */
       handleCurrentChange(val) {
-        if (this.page === val) return
-
+        if (this.page === val) {
+          return
+        }
         this.page = val
         this.getList(true)
       },
@@ -542,7 +516,23 @@
       /* 刷新功能 */
       onRefreshTable: function () {
         this.getList();
-      }
+      },
+
+      /********************* 操作按钮相关方法  ***************************/
+      /* 行编辑按钮 */
+      onDefaultEdit(row) {
+        // 弹窗
+        this.$refs.editDialog.openDialog(row.id);
+      },
+
+      /* 行删除按钮 */
+      onDefaultDelete(row) {
+        console.log("行删除功能", row);
+      },
+      /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
+      modifyCBEvent(plan) {
+        this.getList();
+      },
     }
   }
 </script>
@@ -570,9 +560,9 @@
     }
   }
 
-  .el-form-item__content{
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner{
-      width: 230px  !important;
+  .el-form-item__content {
+    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
+      width: 230px !important;
     }
   }
 </style>

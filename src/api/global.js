@@ -99,8 +99,12 @@ axios.interceptors.response.use(data => {
   else {
     if (err.response.data) {
       console.log(err.response)
-      Message.error({message: '[' + err.response.data.code + ']' + err.response.data.message});
-      return {};
+      Message.error({
+        message: '[' + (err.response.data.code ? err.response.data.code : err.response.status) + ']'
+        + (err.response.data.description ? err.response.data.description.replace(/\n/g, '<br/>')
+          : err.response.data.message)
+      });
+      throw err
     } else {
       if (err.response.status == 504 || err.response.status == 404) {
         Message.error({message: '服务器被吃了⊙﹏⊙∥'})
@@ -109,7 +113,7 @@ axios.interceptors.response.use(data => {
       } else {
         Message.error({message: '未知错误!'})
       }
-      return {};
+      throw err
     }
   }
   throw err
