@@ -42,7 +42,7 @@
             {prop: 'companyManagement.fullName', label: '公司名', "min-width": 100},
             {prop: 'bankAccount.accountName', label: '户名', sortable:'custom', "min-width": 60},
             {prop: 'contact', label: '联系人',  "min-width": 60},
-            {prop: 'phone', label: '联系人电话', "min-width": 80},
+            {prop: 'phoneHide', label: '联系人电话', "min-width": 80},
 
             phColumns.status,
             phColumns.lastModified
@@ -73,7 +73,7 @@
               label: '银行账户',
               $el: {
                 filterable: true,
-                placeholder: '请选择银行账户'
+                placeholder: '请选择银行账户(户名)'
               },
               $options: bankAccountModel.getSelectOptions(),
               rules: [

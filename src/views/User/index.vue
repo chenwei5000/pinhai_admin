@@ -18,6 +18,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import phEnumModel from '@/api/phEnum'
 
   export default {
     data() {
@@ -39,13 +40,38 @@
             {prop: 'password', label: '用户密码', "min-width": 100},
             {prop: 'config', label: '用户配置', "min-width": 100},
 
-            phColumns.status,
+            {
+    prop: 'status',
+    label: '状态',
+    width: 80,
+    formatter: row => {
+      let _status = phEnumModel.getSelectOptions("UserStatus");
+      let _label = '';
+      _status.forEach(s => {
+        if (s.value === row.status + '') {
+          _label = s.label;
+          return;
+        }
+      });
+      return _label;
+    }
+  },
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.status()
+            {
+              $type: 'select',
+              $id: 'status',
+              label: '状态',
+              $el: {
+                op: 'eq',
+                placeholder: '请选择状态'
+              },
+          $options: phEnumModel.getSelectOptions('UserStatus')
+    },
+            phSearchItems.name,
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -56,9 +82,6 @@
               $el: {
                 placeholder: '请输入用户姓名'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -67,9 +90,6 @@
               $el: {
                 placeholder: '请输入用户账号'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -78,9 +98,6 @@
               $el: {
                 placeholder: '请填写职位描述'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -89,9 +106,6 @@
               $el: {
                 placeholder: '请输入用户手机号/电话'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -100,9 +114,6 @@
               $el: {
                 placeholder: '请输入用户密码'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -111,9 +122,6 @@
               $el: {
                 placeholder: '请填写用户配置'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             phFromItems.status()
           ],

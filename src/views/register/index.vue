@@ -7,7 +7,6 @@
         <small>{{ global.config.VERSION }}</small>
       </div>
       <div id="darkbannerwrap" />
-
       <el-form
         ref="user"
         :model="user"
@@ -131,14 +130,13 @@ export default {
     };
     return {
       user: {
-        tenantId: this.global.TENANT_ID,
+        tenantId: this.global.config.TENANT_ID,
         account: "",
         job: "",
         name: "",
         password: "",
         phoneNo: "",
-        repeatPassword: "",
-        tenantId: ""
+        repeatPassword: ""
       },
       registerRules: {
         account: [
@@ -219,18 +217,24 @@ export default {
         if (valid) {
           this.loading = true;
           let url = `/users/register`;
-          this.global.axios.post(url, this.user).then(data => {
-            if (data.status == 200) {
-              this.$message.info("注册成功");
-              this.$router.push({
-                path: "/login"
-              });
+          console.log("this.user", this.user);
+          this.global.axios
+            .post(url, this.user)
+            .then(data => {
+              if (data.status == 200) {
+                this.$message.info("注册成功，待管理员审核");
+                this.$router.push({
+                  path: "/login"
+                });
+                this.loading = false;
+                return;
+              }
               this.loading = false;
-              return;
-            }
-            this.loading = false;
-            this.$message.info("注册失败");
-          });
+              this.$message.info("注册失败");
+            })
+            .catch(_ => {
+              this.loading = false;
+            });
         } else {
           return false;
         }

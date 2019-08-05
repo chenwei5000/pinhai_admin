@@ -50,7 +50,7 @@
             phColumns.id,
             {prop: 'warehouseName', label: '仓库', 'min-width': 150},
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200, fixed: 'left'},
-            {prop: 'locationCode', label: '货位'},
+            {prop: 'locationCode', label: '货位', hidden: 'false'},
             {prop: 'productName', label: '产品名', fixed: 'left', 'min-width': 250},
             {prop: 'numberOfCarton', label: '装箱数', width: 100},
             {prop: 'qty', label: '库存件数', width: 100},

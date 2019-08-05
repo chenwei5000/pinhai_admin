@@ -6,7 +6,8 @@ import qs from 'qs'
 const config = {
   NAME: process.env.VUE_APP_NAME,
   VERSION: process.env.VUE_APP_VERSION,
-  ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
+  // ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
+  ERP_SERVICE_URL: 'http://192.168.10.200/erp-service-v2/',
   TENANT_ID: process.env.VUE_APP_TENANT_ID
 }
 

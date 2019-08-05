@@ -1,7 +1,7 @@
 <template>
   <div class="ph-table">
     <!--搜索-->
-    <el-form
+    <!-- <el-form
       :inline="true"
       :model="searchParam"
       ref="searchForm"
@@ -20,7 +20,7 @@
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <!--表格-->
     <el-table
@@ -37,52 +37,21 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortChange"
-      @filter-change="handleFilterChange"
       id="table"
     >
-      <el-table-column prop="code" label="编码" width="100" fixed="left"></el-table-column>
-      <el-table-column prop="statusName" label="状态" width="100"></el-table-column>
-      <el-table-column prop="procurementPlan.name" label="采购计划" width="100"></el-table-column>
-      <el-table-column prop="merchandiser" label="跟单员" width="100"></el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" width="100"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" width="100"></el-table-column>
-      <el-table-column prop="currency.name" label="结算货币" width="100"></el-table-column>
-      <el-table-column prop="settlementMethodName" label="结算方式" width="100"></el-table-column>
-      <el-table-column prop="accountPeriod_" label="账期" width="100"></el-table-column>
-      <el-table-column prop="procurementPlan.formatCreateTime_" label="预计完成日期" width="120"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" width="100"></el-table-column>
-      <!--默认操作列-->
-      <el-table-column label="操作" width="150" fixed="right">
-        <template slot-scope="scope">
-          <el-button
-            v-if="hasEdit"
-            size="mini"
-            icon="el-icon-edit"
-            circle
-            @click="onDefaultEdit(scope.row)"
-            type="primary"
-            id="ph-table-edit"
-          ></el-button>
-          <el-button
-            v-if="hasDelete"
-            type="danger"
-            size="mini"
-            id="ph-table-del"
-            icon="el-icon-delete"
-            circle
-            @click="onDefaultDelete(scope.row)"
-          ></el-button>
-          <el-button
-            v-if="hasEdit"
-            size="mini"
-            icon="el-icon-view"
-            circle
-            @click="onDefaultView(scope.row)"
-            type="primary"
-            id="ph-table-edit"
-          ></el-button>
-        </template>
-      </el-table-column>
+      <el-table-column prop="statusName" label="状态" width="100" fixed="left"></el-table-column>
+      <el-table-column prop="skuCode" label="SKU编码" width="100"></el-table-column>
+      <el-table-column prop="product.name" label="产品名" width="100"></el-table-column>
+      <el-table-column prop="priorityName" label="优先级" width="100"></el-table-column>
+      <el-table-column prop="cartonSpecName" label="箱规" width="100"></el-table-column>
+      <el-table-column prop="qty" label="采购件数" width="100"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="采购箱数" width="100"></el-table-column>
+      <!-- 销售要求未知 -->
+      <el-table-column prop="wu" label="销售要求" width="100"></el-table-column>
+      <el-table-column prop="price" label="采购价" width="100"></el-table-column>
+      <el-table-column prop="amount" label="总金额" width="100"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货数量" width="100"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货数量" width="100"></el-table-column>
     </el-table>
 
     <!--分页-->
@@ -149,24 +118,28 @@ export default {
       total: 0,
 
       //数据
-      url: "/procurementOrders", // 资源URL
-      countUrl: "/procurementOrders/count", // 资源URL
+      url: "/procurementOrderItems", // 资源URL
 
       relations: [
-        "user",
-        "team",
-        "procurementPlan",
+        "product",
         "currency",
-        "supplier",
-        "warehouse",
-        "creator"
+        "cartonSpec",
+        "procurementOrder",
+        "procurementPlanItem",
+        "product.supplier"
       ], // 关联对象
+
       data: [],
       phSort: { prop: "id", order: "asc" },
       loading: false,
 
       //搜索
       searchParam: {
+        procurementOrderId: {
+          value: "511",
+          op: "eq",
+          id: "procurementOrderId"
+        },
         name: { value: null, op: "bw", id: "name" },
         status: { value: null, op: "eq", id: "status" }
       },
@@ -184,31 +157,14 @@ export default {
   created() {},
 
   mounted() {
+    console.log(11111);
     //全屏，表格高度处理
+
     window.onresize = () => {
       this.getTableHeight();
     };
 
-    //搜索区块，根据url恢复功能
-    // 恢复查询条件
-    let matches = location.href.match(queryPattern);
-
-    if (matches) {
-      let query = matches[0].substr(2).replace(valueSeparatorPattern, equal);
-      let params = qs.parse(query, { delimiter: paramSeparator });
-      // page size 特殊处理
-      this.page = params.currentPage ? params.currentPage * 1 : this.page;
-      this.size = params.pageSize ? params.pageSize * 1 : this.size;
-      this.phSort.prop = params.sort ? params.sort : this.phSort.prop;
-      this.phSort.order = params.dir ? params.dir : this.phSort.order;
-
-      if (params.name) {
-        this.searchParam.name.value = params.name;
-      }
-      if (params.status !== null) {
-        this.searchParam.status.value = params.status;
-      }
-    }
+    this.getList();
 
     this.$nextTick(() => {
       this.getTableHeight();
@@ -218,40 +174,13 @@ export default {
   methods: {
     // 获取表格的高度
     getTableHeight() {
-      if (this.device !== "mobile") {
-        //浏览器高度
-        let windowHeight =
-          window.innerHeight ||
-          document.documentElement.clientHeight ||
-          document.body.clientHeight;
-        //表格高度
-        let tableHeight = windowHeight;
-        tableHeight = tableHeight - 84; //减框架头部高度
-        tableHeight = tableHeight - 82; //减标题高度
-        tableHeight =
-          tableHeight -
-          (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
-        tableHeight =
-          tableHeight -
-          (this.$refs.operationForm
-            ? this.$refs.operationForm.$el.offsetHeight
-            : 0); //减操作区块高度
-        tableHeight =
-          tableHeight -
-          (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-        tableHeight = tableHeight - 42; //减去一些padding,margin，border偏差
-        this.tableMaxHeight = tableHeight;
-      } else {
-        this.tableMaxHeight = 400;
-      }
+      this.tableMaxHeight = 500;
     },
 
     /*获取列表*/
     getList(shouldStoreQuery) {
       let url = this.url;
-      let countUrl = this.countUrl;
       let params = "";
-      let searchParams = "";
       let size = this.size;
       let page = this.page;
 
@@ -267,22 +196,13 @@ export default {
         url += "?";
       }
 
-      // 构造查询url
-      if (countUrl.indexOf("?") > -1) {
-        countUrl += "&";
-      } else {
-        countUrl += "?";
-      }
-
       // 处理分页信息
       // 根据偏移值计算接口正确的页数
       params += `pageSize=${size}&currentPage=${page}`;
-      searchParams += `pageSize=${size}&currentPage=${page}`;
 
       // 处理排序
       if (this.phSort) {
         params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`;
-        searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`;
       }
 
       // 处理查询
@@ -308,14 +228,6 @@ export default {
           });
         });
 
-      filters.forEach((param, k) => {
-        searchParams +=
-          "&" +
-          param.field +
-          "=" +
-          encodeURIComponent(param.data ? param.data.toString().trim() : "");
-      });
-
       if (filters && filters.length > 0) {
         params +=
           "&filters=" + JSON.stringify({ groupOp: "AND", rules: filters });
@@ -331,25 +243,14 @@ export default {
 
       //获取数据
       this.global.axios
-        .get(countUrl + params)
-        .then(resp => {
-          let res = resp.data;
-          this.total = res || 0;
-        })
-        .catch(err => {});
-
-      //获取数据
-      this.global.axios
         .get(url + params)
         .then(resp => {
           let res = resp.data;
           let data = res || [];
           // 修改字段
-          for(let i = 0; i < data.length; i++) {
-            data[i].accountPeriod_ = data[i].accountPeriod ? `${data[i].accountPeriod}天` : ''
-            data[i].procurementPlan.formatCreateTime_ = data[i].procurementPlan.formatCreateTime.slice(0, 10)
-          }
           this.data = data;
+          this.total = data.length || 0;
+
           this.loading = false;
           /**
            * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
@@ -365,34 +266,6 @@ export default {
           this.$emit("error", err);
           this.loading = false;
         });
-
-      // 存储query记录, 便于后面恢复
-      if (shouldStoreQuery > 0) {
-        let newUrl = "";
-        let searchQuery =
-          queryFlag +
-          searchParams
-            .replace(/&/g, paramSeparator)
-            .replace(equalPattern, valueSeparator) +
-          paramSeparator;
-
-        // 非第一次查询
-        if (location.href.indexOf(queryFlag) > -1) {
-          newUrl = location.href.replace(queryPattern, searchQuery);
-        } else {
-          let search =
-            location.hash.indexOf("?") > -1
-              ? `&${searchQuery}`
-              : `?${searchQuery}`;
-          newUrl =
-            location.origin +
-            location.pathname +
-            location.search +
-            location.hash +
-            search;
-        }
-        history.pushState(history.state, "ph-table search", newUrl);
-      }
     },
 
     search() {
@@ -421,18 +294,6 @@ export default {
       this.$nextTick(() => {
         this.getList();
       });
-
-      /**
-       * 按下重置按钮后触发,
-       * 另外, 当customQuery.sync时, 会重置customQuery
-       * @event reset
-       */
-      this.$emit("reset");
-
-      this.$emit(
-        "update:customQuery",
-        Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-      );
     },
 
     //报警样式
@@ -478,29 +339,11 @@ export default {
       this.getList(true);
     },
 
-    //筛选
-    handleFilterChange: function(filters) {
-      let row = null;
-      let val = null;
-      // 拷贝filters的值。
-      for (const i in filters) {
-        row = i; // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
-        val = filters[i];
-      }
-      const filter = [
-        {
-          row: row,
-          op: "contains",
-          value: val
-        }
-      ];
-    },
-
     onDefaultEdit(row) {
       this.$emit("openEditDialog", row);
     },
     onDefaultView(row) {
-      this.$emit("openDetailDialog", row);
+      this.$emit("onDefaultView", row);
     },
 
     cancel() {},
