@@ -6,9 +6,10 @@
              :model="newObject"
              status-icon
              inline
-             ref="smartPlan"
+             ref="smart"
              label-position="right"
              label-width="120px"
+             v-loading="loading"
     >
 
       <fieldset class="panel-heading">
@@ -218,7 +219,7 @@
 
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSmartPlan">
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSmart">
               智能备货
             </el-button>
           </el-row>
@@ -251,6 +252,8 @@
 
     data() {
       return {
+        // 表单加载状态
+        loading: false,
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
@@ -317,6 +320,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
+        this.loading = true;
         // 加载选择框数据
         this.categorySelectOptions = categoryModel.getMineSelectOptions();
         this.merchantSelectOptions = merchantModel.getSelectOptions();
@@ -347,12 +351,13 @@
           this.warehouseSelectOptions.unshift({label: '供货商库存', value: "-99"})
         }
 
+        this.loading = false;
       },
 
       /********************* 操作按钮相关方法  ***************************/
       // 智能备货 TODO:
-      onSmartPlan() {
-        this.$refs.smartPlan.validate(valid => {
+      onSmart() {
+        this.$refs.smart.validate(valid => {
           if (!valid) {
             return;
           }
@@ -368,7 +373,7 @@
        * 创建成功之后，将子组件发送的数据继续向上传递给父组件
        */
       createCBEvent(newObjectId) {
-        this.$emit("smartPlanCBEvent", newObjectId);
+        this.$emit("smartCBEvent", newObjectId);
       }
     }
   }

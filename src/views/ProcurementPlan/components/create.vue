@@ -9,10 +9,10 @@
     </el-steps>
 
     <!-- 智能备货组件 -->
-    <smartPlan
+    <smart
       v-if="stepsActive==0"
-      @smartPlanCBEvent="smartPlanCBEvent" >
-    </smartPlan>
+      @smartCBEvent="smartCBEvent" >
+    </smart>
 
     <!-- 采购计划组件 -->
 
@@ -21,11 +21,11 @@
 </template>
 
 <script>
-  import smartPlan from './smartPlan/smartPlan'
+  import smart from './smart/smart'
 
   export default {
     components: {
-      smartPlan
+      smart
     },
 
     props: {},
@@ -52,7 +52,7 @@
 
     methods: {
       // 智能备货成功之后回调
-      smartPlanCBEvent(objectId) {
+      smartCBEvent(objectId) {
         // 继续向父组件抛出时间，创建成功后刷新列表
         this.$emit("createCBEvent", objectId);
 

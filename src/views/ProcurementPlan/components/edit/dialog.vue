@@ -1,7 +1,9 @@
 <template>
 
+  <!-- 修改弹窗 TODO: title -->
   <el-dialog title="编辑采购计划" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
 
+    <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
 
       <el-collapse-item name="infoFrom">
@@ -22,7 +24,7 @@
 
 <script>
   import infoFrom from './from'
-  import itemTable from '../planItem/table'
+  import itemTable from '../detail/table'
 
   export default {
     components: {
@@ -34,9 +36,9 @@
 
     data() {
       return {
-        primaryId: null,
-        dialogVisible: false,
-        activeNames: [],
+        primaryId: null,  //主ID
+        dialogVisible: false, //Dialog 是否开启
+        activeNames: [],   //折叠面板开启项
       }
     },
 
@@ -48,14 +50,19 @@
       });
     },
     methods: {
+
+      /* 开启弹出编辑框 需要传主键ID */
       openDialog(primaryId) {
         this.primaryId = primaryId;
         this.dialogVisible = true;
+        // 默认展开所有折叠面板
         this.activeNames = ['infoFrom', 'itemTable'];
       },
 
-      modifyCBEvent(obj) {
-        this.$emit("modifyCBEvent", obj);
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.$emit("modifyCBEvent", object);
       },
     }
   }

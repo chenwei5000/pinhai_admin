@@ -6,14 +6,13 @@
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
-      <el-form-item label="分类">
-        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
-      </el-form-item>
-
       <el-form-item label="SKU">
         <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
 
+      <el-form-item label="分类">
+        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
@@ -282,7 +281,7 @@
             let res = resp.data
             let data = res || []
             this.data = data
-            this.tableData = data
+            this.search()
             this.loading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
@@ -314,7 +313,7 @@
             beforeClose: (action, instance, done) => {
               if (action == 'confirm') {
                 done();
-                this.createPlan();
+                this.createObject();
               } else done()
             }
           }).catch(er => {
@@ -322,12 +321,12 @@
           })
         }
         else {
-          this.createPlan();
+          this.createObject();
         }
       },
 
       // 创建计划
-      createPlan() {
+      createObject() {
         this.loading = true;
         this.confirmLoading = true;
 
@@ -394,7 +393,7 @@
         this.searchParam.skuCode=null;
         this.searchParam.category=null;
 
-        this.tableData = this.data;
+        this.search();
       }
     }
   }

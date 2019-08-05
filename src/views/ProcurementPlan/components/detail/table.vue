@@ -1,17 +1,18 @@
 <template>
 
+  <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
 
-    <!--搜索 TODO: 更加实际情况调整 el-form-item -->
+    <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
-      <el-form-item label="分类">
-        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
-      </el-form-item>
-
       <el-form-item label="SKU">
         <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+      </el-form-item>
+
+      <el-form-item label="分类">
+        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
       </el-form-item>
 
       <el-form-item>
@@ -20,10 +21,10 @@
       </el-form-item>
     </el-form>
 
+    <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
     >
-
     </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
@@ -108,7 +109,7 @@
       tableToolBar
     },
     props: {
-      planId: {
+      primaryId: {
         type: Number,
         default: null
       }
@@ -124,16 +125,19 @@
 
     data() {
       return {
-        //样式
+        // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
 
+        // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        //操作
+        //操作按钮控制
         hasOperation: true,
         hasAdd: true,
         hasEdit: true,
         hasDelete: true,
+
+        // 多选记录对象
         selected: [],
 
         //数据 TODO: 根据实际情况调整
@@ -146,17 +150,19 @@
           {
             field: "procurementPlanId",
             op: 'eq',
-            data: this.planId ? this.planId : -1
+            data: this.primaryId ? this.primaryId : -1
           }
         ],   //搜索对象
         relations: ["cartonSpec", "product", "product.currency", "product.category"],  // 关联对象
-        data: [],
-        tableData: [],
+        data: [], // 从后台加载的数据
+        tableData: [],  // 前端表格显示的数据，本地搜索用
+        // 表格加载效果
         loading: false,
 
         // 记录修改的那一行
         row: {},
 
+        // 表格工具条配置
         toolbarConfig:{
           hasEdit: true,
           hasDelete: true,
@@ -170,17 +176,17 @@
 
     mounted() {
       this.$nextTick(() => {
-        console.log(this.toolbarConfig);
-        this.initLoadData();
+        this.initData();
         this.getList();
       })
-
     },
+
     methods: {
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
-      initLoadData() {
+      initData() {
       },
+
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
@@ -188,36 +194,6 @@
           return 'warning-row';
         }
         return '';
-      },
-
-      onDefaultEdit(row){
-
-
-      },
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              let idx = null;
-
-              this.data.forEach((item, index) => {
-                  if (item.id == row.id) {
-                    idx = index;
-                    return;
-                  }
-                }
-              );
-
-              this.date = this.data.splice(idx, 1);
-
-              done();
-
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
       },
 
       /*汇总数据*/
@@ -274,7 +250,7 @@
       },
 
       /*获取列表*/
-      getList(shouldStoreQuery) {
+      getList() {
         let url = this.url;
         let params = '';
 
@@ -304,7 +280,7 @@
             let data = res || []
 
             this.data = data
-            this.tableData = data
+            this.search()
 
             this.total = res.length || 0
             this.loading = false
@@ -329,9 +305,33 @@
         this.selected = val
       },
 
+      /********************* 操作按钮相关方法  ***************************/
+      /* 行修改功能 */
+      onDefaultEdit(row){
+        this.getList();
+      },
+
+      /* 行删除功能 */
+      onDefaultDelete(row) {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+
+              this.getList();
+
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
+      /********************* 搜索相关方法  ***************************/
+      /*本地搜索*/
       search() {
         this.tableData = this.data;
-
         if (this.searchParam.category != null && this.searchParam.category != '') {
           this.tableData = this.tableData.filter(
             item => {
@@ -351,6 +351,7 @@
         }
       },
 
+      /*本地重置搜索*/
       resetSearch() {
         this.$refs.searchForm.resetFields();
 
@@ -358,15 +359,8 @@
         this.searchParam.skuCode=null;
         this.searchParam.category=null;
 
-        this.tableData = this.data;
+        this.search();
       },
-
-
-      cancel() {
-
-      },
-      confirm() {
-      }
     }
   }
 </script>

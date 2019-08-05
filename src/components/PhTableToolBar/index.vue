@@ -75,7 +75,6 @@
     },
     mounted() {
       this.$nextTick(() => {
-        console.log(this.hasAdd);
       })
     },
     methods: {

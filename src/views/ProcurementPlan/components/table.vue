@@ -119,7 +119,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './editPlan/dialog'
+  import editDialog from './edit/dialog'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -130,7 +130,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
-    name: 'procurementPlans',
+
     components: {
       editDialog
     },
@@ -529,8 +529,9 @@
       onDefaultDelete(row) {
         console.log("行删除功能", row);
       },
+
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(plan) {
+      modifyCBEvent(object) {
         this.getList();
       },
     }
