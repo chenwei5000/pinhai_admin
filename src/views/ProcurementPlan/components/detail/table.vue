@@ -15,6 +15,26 @@
         <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
       </el-form-item>
 
+      <el-form-item label="状态">
+        <el-select filterable v-model="searchParam.status" placeholder="请选择状态">
+          <el-option
+            v-for="(item,idx) in statusSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="优先级">
+        <el-select filterable v-model="searchParam.priority" placeholder="请选择优先级">
+          <el-option
+            v-for="(item,idx) in prioritySelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
@@ -24,6 +44,12 @@
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
+      @onToolBarAdd="onToolBarAdd"
+      @onToolBarEdit="onToolBarEdit"
+      @onToolBarDelete="onToolBarDelete"
+      @onToolBarDownloadTpl="onToolBarDownloadTpl"
+      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarImportData="onToolBarImportData"
     >
     </tableToolBar>
 
@@ -47,8 +73,26 @@
       id="table"
     >
       <el-table-column prop="product.skuCode" label="SKU" sortable width="200" fixed="left"></el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
+      <el-table-column prop="statusName" label="状态" width="100"></el-table-column>
       <el-table-column prop="product.category.name" label="分类" width="120"></el-table-column>
+
+      <el-table-column prop="priority" label="优先级" sortable width="100">
+        <template slot-scope="scope">
+          {{ scope.row.priorityName }}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="priorityNote" label="优先要求" width="120">
+
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="优先要求" width="250" trigger="hover">
+            <div v-html="scope.row.priorityNote"></div>
+            <span slot="reference">{{ scope.row.priorityNote ? scope.row.priorityNote.substr(0,8)+'..' : '' }}</span>
+          </el-popover>
+        </template>
+
+      </el-table-column>
+
       <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
       <el-table-column prop="safetyStockWeek" label="备货周数" width="90"></el-table-column>
       <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="130"></el-table-column>
@@ -61,11 +105,16 @@
       <el-table-column prop="product.vipLevel" label="Vip级别" width="120"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
       <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
+      <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
-      <el-table-column prop="saleWeek" sortable label="可售周数" width="120"
+
+      <el-table-column prop="saleWeek" sortable label="可售周数" width="110"
                        fixed="right"></el-table-column>
 
-      <el-table-column prop="amount" sortable label="金额" width="120"
+      <el-table-column prop="cartonQty" sortable label="采购箱数" width="110"
+                       fixed="right"></el-table-column>
+
+      <el-table-column prop="amount" sortable label="金额" width="100"
                        fixed="right">
 
         <template slot-scope="scope">
@@ -73,9 +122,6 @@
         </template>
 
       </el-table-column>
-
-      <el-table-column prop="cartonQty" sortable label="采购箱数" width="120"
-                       fixed="right"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="120" fixed="right">
@@ -94,6 +140,9 @@
       </el-table-column>
     </el-table>
 
+    <!-- 编辑明细对话框 -->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primaryId">
+    </itemDialog>
   </div>
 
 </template>
@@ -103,10 +152,13 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
+  import phEnumModel from '@/api/phEnum'
+  import itemDialog from './dialog'
 
   export default {
     components: {
-      tableToolBar
+      tableToolBar,
+      itemDialog
     },
     props: {
       primaryId: {
@@ -125,6 +177,10 @@
 
     data() {
       return {
+        // 选择项
+        statusSelectOptions: [],
+        prioritySelectOptions: [],
+
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
 
@@ -144,7 +200,9 @@
         url: "/procurementPlanItems", // 资源URL
         searchParam: {
           skuCode: null,
-          category: null
+          category: null,
+          status: null,
+          priority: null,
         },
         filters: [
           {
@@ -163,10 +221,10 @@
         row: {},
 
         // 表格工具条配置
-        toolbarConfig:{
+        toolbarConfig: {
           hasEdit: true,
-          hasDelete: true,
-          hasAdd : true
+          hasDelete: false,
+          hasAdd: true,
         }
       }
     },
@@ -185,6 +243,8 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
+        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
       },
 
       /********************* 表格相关方法  ***************************/
@@ -305,29 +365,6 @@
         this.selected = val
       },
 
-      /********************* 操作按钮相关方法  ***************************/
-      /* 行修改功能 */
-      onDefaultEdit(row){
-        this.getList();
-      },
-
-      /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-
-              this.getList();
-
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
-
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {
@@ -349,6 +386,22 @@
               }
             });
         }
+        if (this.searchParam.status != null && this.searchParam.status != '') {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.status == this.searchParam.status) {
+                return true;
+              }
+            });
+        }
+        if (this.searchParam.priority != null && this.searchParam.priority != '') {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.priority == this.searchParam.priority) {
+                return true;
+              }
+            });
+        }
       },
 
       /*本地重置搜索*/
@@ -356,11 +409,63 @@
         this.$refs.searchForm.resetFields();
 
         //TODO:根据实际情况调整
-        this.searchParam.skuCode=null;
-        this.searchParam.category=null;
+        this.searchParam.skuCode = null;
+        this.searchParam.category = null;
+        this.searchParam.priority = null;
+        this.searchParam.status = null;
 
         this.search();
       },
+
+
+      /********************* 操作按钮相关方法  ***************************/
+      /* 行修改功能 */
+      onDefaultEdit(row) {
+        this.$refs.itemDialog.openDialog(row.id);
+      },
+
+      /* 行删除功能 */
+      onDefaultDelete(row) {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+
+              this.getList();
+
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.getList();
+      },
+
+      /********************* 工具条按钮  ***************************/
+      onToolBarAdd() {
+        this.$refs.itemDialog.openDialog(null);
+      },
+      onToolBarEdit() {
+
+      },
+      onToolBarDelete() {
+
+      },
+      onToolBarDownloadTpl() {
+
+      },
+      onToolBarDownloadData() {
+
+      },
+      onToolBarImportData() {
+
+      }
     }
   }
 </script>

@@ -34,43 +34,25 @@
         type: Boolean,
         default: false
       },
-      onAdd: {
-        type: Function
-      },
       hasEdit: {
         type: Boolean,
         default: false
-      },
-      onEdit: {
-        type: Function
       },
       hasDelete: {
         type: Boolean,
         default: false
       },
-      onDelete: {
-        type: Function
-      },
       hasExport: {
         type: Boolean,
         default: false
-      },
-      onExport: {
-        type: Function
       },
       hasExportTpl: {
         type: Boolean,
         default: false
       },
-      onExportTpl: {
-        type: Function
-      },
       hasImport: {
         type: Boolean,
         default: false
-      },
-      onImport: {
-        type: Function
       },
     },
     mounted() {
@@ -79,55 +61,23 @@
     },
     methods: {
       onDefaultAdd() {
-        if (this.onAdd) {
-          this.onAdd();
-        }
-        else {
-          this.$message.error("未指定处理方法!");
-        }
+        this.$emit("onToolBarAdd");
       },
       onDefaultEdit() {
-        if (this.onEdit) {
-          this.onEdit();
-        }
-        else {
-          this.$message.error("未指定处理方法!");
-        }
+        this.$emit("onToolBarEdit");
       },
       onDefaultDelete() {
-        if (this.onDelete) {
-          this.onDelete();
-        }
-        else {
-          this.$message.error("未指定处理方法!");
-        }
+        this.$emit("onToolBarDelete");
       },
       onDefaultCommand(command) {
         if (command == 'downloadTpl') {
-
-          if (this.onExportTpl) {
-            this.onExportTpl();
-          }
-          else {
-            this.$message.error("未指定处理方法!");
-          }
+          this.$emit("onToolBarDownloadTpl");
         }
         else if (command == 'downloadData') {
-
-          if (this.onExport) {
-            this.onExport();
-          }
-          else {
-            this.$message.error("未指定处理方法!");
-          }
+          this.$emit("onToolBarDownloadData");
         }
         else if (command == 'importData') {
-          if (this.onImport) {
-            this.onImport();
-          }
-          else {
-            this.$message.error("未指定处理方法!");
-          }
+          this.$emit("onToolBarImportData");
         }
       }
     }

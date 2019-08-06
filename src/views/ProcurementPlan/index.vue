@@ -47,6 +47,16 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="all" lazy>
+            <span slot="label">
+              <i class="el-icon-s-claim"></i> 全部
+            </span>
+            <keep-alive>
+              <phTab type="all"/>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="create" lazy>
             <span slot="label">
               <i class="el-ph-icon-plus-circle"></i> 创建计划

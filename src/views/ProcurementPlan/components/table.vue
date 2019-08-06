@@ -24,6 +24,16 @@
 
       </el-form-item>
 
+      <el-form-item label="状态">
+        <el-select filterable v-model="searchParam.status.value" placeholder="请选择状态">
+          <el-option
+            v-for="(item,idx) in statusSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
@@ -65,7 +75,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="80">
+      <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.status === 8 ? 'info' : 'success'"
@@ -120,6 +130,7 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import editDialog from './edit/dialog'
+  import phEnumModel from '@/api/phEnum'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -180,11 +191,13 @@
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
+        statusSelectOptions: [],
         categorySelectOptions: [],
         searchParam: {
           categoryId: {value: null, op: 'in', id: 'categoryId'},
           name: {value: null, op: 'bw', id: 'name'},
           limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
+          status: {value: null, op: 'eq', id: 'status'},
         },
 
         //弹窗
@@ -233,6 +246,9 @@
           if (params.name) {
             this.searchParam.name.value = params.name;
           }
+          if (params.status) {
+            this.searchParam.status.value = params.status;
+          }
         }
       }
 
@@ -247,7 +263,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
       },
 
       // 获取表格的高度
@@ -292,6 +308,7 @@
         this.searchParam.categoryId.value = null;
         this.searchParam.limitTime.value = null;
         this.searchParam.name.value = null;
+        this.searchParam.status.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))

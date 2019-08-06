@@ -44,17 +44,20 @@
             data: "2,3,4,5,6,7"
           }
         }
-        else {
+        else if (this.type === 'complete') {
           return {
             field: 'status',
             op: 'in',
             data: 8
           }
         }
+        else if (this.type === 'all') {
+          return {}
+        }
       }
     },
     methods: {
-      onRefreshTable(){
+      onRefreshTable() {
         this.$refs.infoTable.onRefreshTable();
       }
     }
