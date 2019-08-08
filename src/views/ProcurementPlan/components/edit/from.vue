@@ -350,7 +350,7 @@
               this.$emit('error', err)
             })
 
-          this.categorySelectOptions = categoryModel.getMineSelectOptions();
+          this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
           this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
 

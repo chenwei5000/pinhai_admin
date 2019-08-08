@@ -265,7 +265,7 @@ export default {
       this.harbours = harbourModel.getSelectNameOptions();
 
       // 分类
-      this.categorys = categoryModel.getMineSelectNameOptions();
+      this.categorys = categoryModel.getMineSelectProdcutNameOptions();
 
       // 负责人
       this.users = userModel.getSelectNameOptions();

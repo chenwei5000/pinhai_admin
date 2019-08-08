@@ -34,7 +34,7 @@
               filterable: true,
               placeholder: '请选择分类,可筛选'
             },
-            $options: categoryModel.getMineSelectOptions('p'),
+            $options: categoryModel.getMineSelectProdcutOptions(),
             rules: [
               validRules.required
             ]

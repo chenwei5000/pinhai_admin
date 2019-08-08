@@ -184,10 +184,6 @@
       defaultFilters: {
         type: Object,
         default: {}
-      },
-      hasCompleteness: {
-        type: [Boolean],
-        default: true
       }
     },
     computed: {

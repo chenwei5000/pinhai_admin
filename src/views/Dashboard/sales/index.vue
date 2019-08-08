@@ -129,7 +129,7 @@
       }
     },
     created() {
-      this.categorySelectOptions = categoryModel.getMineSelectOptions();
+      this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
       this.merchantSelectOptions = merchantOptions;
       this.weekSelectOptions = weekSelectOptions;
     },

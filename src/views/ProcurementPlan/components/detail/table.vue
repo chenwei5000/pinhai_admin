@@ -73,7 +73,19 @@
       id="table"
     >
       <el-table-column prop="product.skuCode" label="SKU" sortable width="200" fixed="left"></el-table-column>
-      <el-table-column prop="statusName" label="状态" width="100"></el-table-column>
+      <el-table-column prop="statusName" label="状态" width="100">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.status === 1
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : scope.row.status === 2
+            ? 'primary' : scope.row.status === 8
+            ? 'info' : 'success'"
+            disable-transitions>{{ scope.row.statusName }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="product.category.name" label="分类" width="120"></el-table-column>
 
       <el-table-column prop="priority" label="优先级" sortable width="100">

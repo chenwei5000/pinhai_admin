@@ -322,7 +322,8 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.categorySelectOptions = categoryModel.getMineSelectOptions();
+        this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
+
         this.merchantSelectOptions = merchantModel.getSelectOptions();
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
 
