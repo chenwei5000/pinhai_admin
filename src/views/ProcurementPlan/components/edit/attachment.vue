@@ -1,8 +1,19 @@
 <template>
+  <div>
 
 
-  <el-button class="button-new-tag" @click="onUpload">+ 添加附件</el-button>
+    <el-upload
+      class="upload-demo"
+      :action="uploadUrl"
+      :on-preview="handlePreview"
+      :before-remove="beforeRemove"
+      :on-success="handleSuccess"
+      multiple
+      :file-list="attachments">
+      <el-button class="button-new-tag">+ 添加附件</el-button>
+    </el-upload>
 
+  </div>
 </template>
 
 <script>
@@ -16,7 +27,11 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      uploadUrl() {
+        return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
+      }
+    },
 
     data() {
       return {
@@ -56,7 +71,16 @@
             .get(url)
             .then(resp => {
               let res = resp.data;
-              this.attachments =  res || [];
+              let data = res || [];
+              this.attachments = [];
+              data.forEach(obj => {
+                //https://erp.kuihuajia.com/erp-service/attachments/linerShippingPlan/view/8a2328796ab95c3f016b027628f1002c?accessToken=NDAzRDREQ0Y3OEMzRTZDMzczMjZFOTU4NEExM0FGQUIsMg==
+                this.attachments.push({
+                  id: obj.id,
+                  name: obj.fileName,
+                  url: `${this.global.generateUrl(this.url)}/view/${obj.id}?accessToken=${this.$store.state.user.token}`
+                });
+              });
             })
             .catch(err => {
             });
@@ -64,10 +88,29 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 保存对象 */
-      onUpload() {
-
+      //上传成功
+      handleSuccess(){
+        this.initData();
       },
+      // 预览
+      handlePreview(file) {
+        window.open(file.url, '_blank');
+      },
+      // 删除
+      beforeRemove(file, fileList) {
+
+        return this.$confirm(`确定移除 ${ file.name }？`, '提示',{//    type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+            } else {
+              done(false);
+            }
+          }
+        }).catch(er => {
+          /*取消*/
+          return false;
+        });
+      }
     }
   }
 </script>

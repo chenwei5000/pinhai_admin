@@ -161,7 +161,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primaryId">
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primary.id">
     </itemDialog>
   </div>
 
