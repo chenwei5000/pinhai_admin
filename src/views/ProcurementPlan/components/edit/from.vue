@@ -245,9 +245,9 @@
   export default {
     components: {},
     props: {
-      primaryId: {
-        type: Number,
-        default: null
+      primary: {
+        type: [Object],
+        default: {}
       }
     },
     computed: {},
@@ -328,29 +328,19 @@
        */
       initData() {
         this.loading = true;
-        if (this.primaryId) {
+        if (this.primary) {
           //获取计划数据
-          this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
-            .then(resp => {
-              let res = resp.data
-              this.editObject = res || {}
-              this.editObject = resp.data;
-              //转化时间
-              this.editObject.limitTime = resp.data.formatLimitTime;
-              this.editObject.executeTime = resp.data.formatExecuteTime;
-              //转化分类
-              this.editObject.categoryId = intArrToStrArr(resp.data.categoryId);
-              //转化仓库
-              this.editObject.warehouseId = resp.data.warehouseId ? intArrToStrArr(resp.data.warehouseId.split(",")) : [];
-              this.editObject.handleMethod = resp.data.handleMethod + '';
-              this.$emit('update', this.editObject, res)
-            })
-            .catch(err => {
-              this.$emit('error', err)
-            })
+          this.editObject = this.primary;
+          //转化时间
+          this.editObject.limitTime = this.primary.formatLimitTime;
+          this.editObject.executeTime = this.primary.formatExecuteTime;
+          //转化分类
+          this.editObject.categoryId = intArrToStrArr(this.primary.categoryId);
+          //转化仓库
+          this.editObject.warehouseId = this.primary.warehouseId ? intArrToStrArr(this.primary.warehouseId.split(",")) : [];
+          this.editObject.handleMethod = this.primary.handleMethod + '';
 
-          this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
+          this.categorySelectOptions = categoryModel.getMineSelectOptions();
           this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
 

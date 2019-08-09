@@ -3,6 +3,7 @@
              append-to-body
              v-if="dialogVisible"
              width="80%"
+             top="20px"
              :visible.sync="dialogVisible">
 
     <!-- 编辑表单 TODO:-->
@@ -29,7 +30,7 @@
           <el-form-item label="采购箱数" prop="cartonQty">
 
             <el-input-number v-model="detailItem.cartonQty"
-                             :precision="3"
+                             :precision="2"
                              :min="1"
                              :step="1"
                              :max="100000" label="采购箱数">
@@ -116,6 +117,65 @@
 
           </el-form-item>
         </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :md="10">
+          <el-form-item label="7日销量(件)" prop="sevenSalesCount">
+
+            <el-input v-model.trim="detailItem.sevenSalesCount"
+                      style="width: 220px" placeholder="请填写7日销量，件数" clearable></el-input>
+
+            <el-tooltip class="item" effect="light" content="7日销售件数" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="14">
+          <el-form-item label="亚马逊含在途(箱)" prop="amazonTotalStock">
+
+            <el-input v-model.trim="detailItem.amazonTotalStock"
+                      style="width: 200px" placeholder="亚马逊含在途，箱数" clearable></el-input>
+
+            <el-tooltip class="item" effect="light" content="亚马逊含在途库存箱数" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+
+          </el-form-item>
+        </el-col>
+
+      </el-row>
+
+      <el-row>
+
+        <el-col :md="10">
+          <el-form-item label="国内库存(箱)" prop="domesticStockQty">
+
+            <el-input v-model.trim="detailItem.domesticStockQty"
+                      style="width: 220px" placeholder="国内库存，箱数" clearable></el-input>
+
+            <el-tooltip class="item" effect="light" content="国内仓库库存箱数" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="14">
+          <el-form-item label="国内在途(箱)" prop="unfinishedPlanQty">
+
+            <el-input v-model.trim="detailItem.unfinishedPlanQty"
+                      style="width: 200px" placeholder="国内在途，箱数" clearable></el-input>
+
+            <el-tooltip class="item" effect="light" content="未完成采购计划箱数" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+
+          </el-form-item>
+        </el-col>
+
       </el-row>
 
       <el-row>
@@ -225,6 +285,18 @@
           ],
           numberOfCarton: [
             validRules.integer
+          ],
+          sevenSalesCount: [
+            validRules.number
+          ],
+          amazonTotalStock: [
+            validRules.number
+          ],
+          domesticStockQty: [
+            validRules.number
+          ],
+          unfinishedPlanQty: [
+            validRules.number
           ]
         },
       }

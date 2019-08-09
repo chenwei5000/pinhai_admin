@@ -18,20 +18,32 @@ const categoryModel = {
   // 获取 分类id:name格式下拉框选项 原料+商品
   getMineSelectOptions() {
     let _options = [];
-    let self = this;
     const _loadData = async () => {
-      let tmp1 = this.getMineSelectProdcutOptions();
-      let tmp2 = this.getMineSelectMaterialOptions();
-      if(!tmp1){
-        tmp1 = [];
+      let list = store.getters.categories;
+      if (list == null) {
+        list = await store.dispatch('app/loadCategories');
       }
-      if(!tmp2){
-        tmp2 = [];
+      if (list) {
+        list.forEach(obj => {
+          _options.push({
+            label: obj.name,
+            value: obj.id + ''
+          });
+        });
       }
-      _options = tmp1.concat(tmp2);
+      await this.getMineCategories('m').then($res => {
+        if ($res) {
+          $res.forEach(obj => {
+            _options.push({
+              label: obj.name,
+              value: obj.id + ''
+            });
+          });
+        }
+      })
     };
-
     _loadData();
+
     return _options;
   },
 
@@ -96,7 +108,7 @@ const categoryModel = {
     let _options = [];
     let self = this;
     const _loadData = async () => {
-      this.getMineCategories('m').then($res => {
+      await this.getMineCategories('m').then($res => {
         if ($res) {
           $res.forEach(obj => {
             _options.push({

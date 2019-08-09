@@ -94,16 +94,22 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="priorityNote" label="优先要求" width="120">
+      <el-table-column prop="priorityNote" label="优先要求" width="130">
 
         <template slot-scope="scope">
           <el-popover placement="top-start" title="优先要求" width="250" trigger="hover">
             <div v-html="scope.row.priorityNote"></div>
-            <span slot="reference">{{ scope.row.priorityNote ? scope.row.priorityNote.substr(0,8)+'..' : '' }}</span>
+            <span slot="reference">{{ scope.row.priorityNote ? scope.row.priorityNote.substr(0,15) : '' }}</span>
           </el-popover>
         </template>
 
       </el-table-column>
+
+      <el-table-column prop="qty" label="采购件数" width="100"></el-table-column>
+
+      <el-table-column prop="orderQty" label="下单件数" width="100"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货件数" width="100"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货件数" width="100"></el-table-column>
 
       <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
       <el-table-column prop="safetyStockWeek" label="备货周数" width="90"></el-table-column>
@@ -136,7 +142,9 @@
       </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="120" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation"
+                       no-export="true"
+                       width="120" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
@@ -173,8 +181,8 @@
       itemDialog
     },
     props: {
-      primaryId: {
-        type: Number,
+      primary: {
+        type: [Object],
         default: null
       }
     },
@@ -210,6 +218,7 @@
 
         //数据 TODO: 根据实际情况调整
         url: "/procurementPlanItems", // 资源URL
+        downloadUrl: "", //下载Url
         searchParam: {
           skuCode: null,
           category: null,
@@ -220,7 +229,7 @@
           {
             field: "procurementPlanId",
             op: 'eq',
-            data: this.primaryId ? this.primaryId : -1
+            data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
         relations: ["cartonSpec", "product", "product.currency", "product.category"],  // 关联对象
@@ -237,6 +246,9 @@
           hasEdit: true,
           hasDelete: false,
           hasAdd: true,
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: false,
         }
       }
     },
@@ -255,15 +267,32 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
+        this.loading = true;
+
         this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
+
+        // 设置下载链接
+        this.downloadUrl = this.url;
+        if (this.filters && this.filters.length > 0) {
+          this.downloadUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
+        }
+
+        // 处理关联加载
+        if (this.relations && this.relations.length > 0) {
+          this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
+        }
+
       },
 
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
-        if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
+        if (row.saleWeek == 0 || row.safetyStockWeek - row.saleWeek > 2) { //可售周数不足
           return 'warning-row';
+        }
+        else if (row.saleWeek - row.safetyStockWeek > 2) { //可售周数超2周
+          return 'danger-row';
         }
         return '';
       },
@@ -470,10 +499,35 @@
 
       },
       onToolBarDownloadTpl() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
 
+        import('@/vendor/Export2Excel').then(excel => {
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: "采购计划内容-模版",
+            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
+            tpl: true,
+          })
+        })
       },
       onToolBarDownloadData() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
 
+        import('@/vendor/Export2Excel').then(excel => {
+          this.loading = true;
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: "采购计划内容",
+            noExportProps: ['操作', '金额', 'ID']
+          })
+          this.loading = false;
+        })
       },
       onToolBarImportData() {
 
