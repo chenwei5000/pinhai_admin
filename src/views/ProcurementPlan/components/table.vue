@@ -201,7 +201,7 @@
           return false;
         }
         //执行中
-        else if (this.type === 'executeing') {
+        else if (this.type === 'executing') {
           return true;
         }
         else if (this.type === 'complete') {
@@ -322,7 +322,7 @@
           this.hasDelete = false;
         }
         //执行中 无删除
-        else if (this.type === 'executeing') {
+        else if (this.type === 'executing') {
           this.hasDelete = false;
         }//完成 无删除
         else if (this.type === 'complete') {
