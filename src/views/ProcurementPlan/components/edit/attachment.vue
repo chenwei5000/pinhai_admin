@@ -74,7 +74,7 @@
               let data = res || [];
               this.attachments = [];
               data.forEach(obj => {
-                //https://erp.kuihuajia.com/erp-service/attachments/linerShippingPlan/view/8a2328796ab95c3f016b027628f1002c?accessToken=NDAzRDREQ0Y3OEMzRTZDMzczMjZFOTU4NEExM0FGQUIsMg==
+                ///attachments/linerShippingPlan/view/8a2328796ab95c3f016b027628f1002c?accessToken=NDAzRDREQ0Y3OEMzRTZDMzczMjZFOTU4NEExM0FGQUIsMg==
                 this.attachments.push({
                   id: obj.id,
                   name: obj.fileName,
@@ -87,9 +87,23 @@
         }
       },
 
+      remove(file){
+        if (this.primary) {
+          ///attachments/procurementPlan/ff8080816c2e2a89016c855d7be40001?accessToken=MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg==
+          let url = `${this.global.generateUrl(this.url)}/${file.id}?accessToken=${this.$store.state.user.token}`;
+          this.global.axios
+            .delete(url)
+            .then(resp => {
+              this.$message.info("附件删除成功!");
+            })
+            .catch(err => {
+            });
+        }
+      },
+
       /********************* 操作按钮相关方法  ***************************/
       //上传成功
-      handleSuccess(){
+      handleSuccess() {
         this.initData();
       },
       // 预览
@@ -98,18 +112,16 @@
       },
       // 删除
       beforeRemove(file, fileList) {
-
-        return this.$confirm(`确定移除 ${ file.name }？`, '提示',{//    type: 'warning',
+        return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
+              this.remove(file);
+              done(true);
             } else {
               done(false);
             }
           }
-        }).catch(er => {
-          /*取消*/
-          return false;
-        });
+        })
       }
     }
   }
