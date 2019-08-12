@@ -58,8 +58,41 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
       <el-table-column prop="code" label="编号" width="150" fixed="left"></el-table-column>
+
+      <el-table-column prop="statusName" label="状态" width="100">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.status === 1
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : scope.row.status === 2
+            ? 'primary' : scope.row.status === 8
+            ? 'info' : 'success'"
+            disable-transitions>{{ scope.row.statusName }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="note" label="完成度" width="120" v-if="hasCompleteness">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
+            <div>
+              完成度：{{ scope.row.qty.completeness }}%<BR/>
+              总件数：{{ scope.row.qty.qty }} 件<BR/>
+              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
+              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
+              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
+            </div>
+            <span slot="reference">
+              <el-progress :text-inside="true" :stroke-width="16"
+                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
+                           status="success"
+              ></el-progress>
+            </span>
+          </el-popover>
+
+        </template>
+      </el-table-column>
+
       <el-table-column prop="categoryName" label="分类" min-width="120"></el-table-column>
       <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
       <el-table-column prop="formatLimitTime" label="下单截止日" width="120"></el-table-column>
@@ -75,14 +108,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 8 ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
+
+      <el-table-column prop="creator.name" label="创建人" width="120"></el-table-column>
+
+      <el-table-column prop="id" label="ID" width="90"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
@@ -131,6 +160,7 @@
   import qs from 'qs'
   import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
+  import phPercentage from '@/components/PhPercentage/index'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -143,7 +173,8 @@
   export default {
 
     components: {
-      editDialog
+      editDialog,
+      phPercentage
     },
     props: {
       type: {
@@ -153,13 +184,33 @@
       defaultFilters: {
         type: Object,
         default: {}
-      },
-
+      }
     },
     computed: {
       ...mapGetters([
         'device'
       ]),
+
+      // 显示进度条
+      hasCompleteness() {
+        if (this.type === 'editing') {
+          return false;
+        }
+        //待审核
+        else if (this.type === 'auditing') {
+          return false;
+        }
+        //执行中
+        else if (this.type === 'executeing') {
+          return true;
+        }
+        else if (this.type === 'complete') {
+          return true;
+        }
+        else if (this.type === 'all') {
+          return true;
+        }
+      }
     },
 
     data() {
@@ -178,7 +229,7 @@
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [20, 50, 100],
+        paginationSizes: [1, 20, 50, 100],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
@@ -206,7 +257,6 @@
         isNew: true,
         isEdit: false,
         isView: false,
-        confirmLoading: false,
 
         // 记录修改的那一行
         row: {},
@@ -264,6 +314,22 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
+
+        if (this.type === 'editing') {
+        }
+        //待审核 无删除
+        else if (this.type === 'auditing') {
+          this.hasDelete = false;
+        }
+        //执行中 无删除
+        else if (this.type === 'executeing') {
+          this.hasDelete = false;
+        }//完成 无删除
+        else if (this.type === 'complete') {
+          this.hasDelete = false;
+        }
+        else if (this.type === 'all') {
+        }
       },
 
       // 获取表格的高度
@@ -544,6 +610,30 @@
 
       /* 行删除按钮 */
       onDefaultDelete(row) {
+        let url = `${this.url}/${row.id}`;
+        this.$confirm('确认删除吗?', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              this.loading = true
+
+              this.global.axios
+                .delete(url)
+                .then(resp => {
+                  this.loading = false
+                  this.$message.info("删除成功!");
+                  done()
+                  this.getList()
+                })
+                .catch(er => {
+                  this.loading = false
+                })
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+
         console.log("行删除功能", row);
       },
 

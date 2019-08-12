@@ -13,12 +13,12 @@
       </el-button>
     </el-col>
 
-    <el-dropdown @command="onDefaultCommand">
+    <el-dropdown @command="onDefaultCommand" v-if="hasExportTpl || hasExport || hasImport">
       <el-button type="primary" icon="el-icon-folder-opened" size="small">
         导入导出<i class="el-icon-arrow-down el-icon--right"></i>
       </el-button>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="downloadTpl">下载模版</el-dropdown-item>
+        <el-dropdown-item command="downloadTpl" v-if="hasExportTpl">下载模版</el-dropdown-item>
         <el-dropdown-item command="downloadData" v-if="hasExport" divided>导出数据</el-dropdown-item>
         <el-dropdown-item command="importData" v-if="hasImport" divided>导入数据</el-dropdown-item>
       </el-dropdown-menu>
