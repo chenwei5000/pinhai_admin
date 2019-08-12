@@ -88,7 +88,7 @@
                 op: 'eq',
                 placeholder: '请选择分类'
               },
-              $options: categoryModel.getMineCategoriesOptions,
+              $options: categoryModel.getMineSelectMaterialOptions(),
             },
             phSearchItems.name
 
@@ -115,7 +115,7 @@
                 op: 'eq',
                 placeholder: '请输入分类'
               },
-              $options: categoryModel.getMineCategoriesOptions,
+              $options: categoryModel.getMineSelectMaterialOptions(),
               rules: [
                 validRules.required
               ]

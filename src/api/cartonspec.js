@@ -6,7 +6,7 @@ const cartonspecModel = {
 
   // 获取箱规列表
   getCartonspecs: (pagesize = -1) => {
-    const path = '/cartonSpecs?sort=code&order=asc';
+    const path = '/cartonSpecs?sort=groupCode&order=asc';
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
@@ -22,7 +22,7 @@ const cartonspecModel = {
       if (list) {
         list.forEach(obj => {
           _options.push({
-            label: obj.code,
+            label: `[${obj.groupCode}]${obj.code}`,
             value: obj.id + ''
           });
         });

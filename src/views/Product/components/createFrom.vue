@@ -282,7 +282,7 @@
       }
     },
     created() {
-      this.categorySelectOptions = categoryModel.getMineSelectOptions();
+      this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
       this.cartonspecSelectOptions = cartonspecModel.getSelectOptions();
       this.supplierSelectOptions = supplierModel.getSelectOptions();
       this.currencySelectOptions = currencyModel.getSelectOptions();

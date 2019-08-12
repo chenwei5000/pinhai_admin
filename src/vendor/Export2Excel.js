@@ -1,6 +1,7 @@
 /* eslint-disable */
 require('script-loader!file-saver');
 import XLSX from 'xlsx'
+import global from '@/api/global'
 
 function generateArray(table) {
   var out = [];
@@ -38,7 +39,8 @@ function generateArray(table) {
             c: outRow.length + colspan - 1
           }
         });
-      };
+      }
+      ;
 
       //Handle Value
       outRow.push(cellValue !== "" ? cellValue : null);
@@ -70,6 +72,7 @@ function sheet_from_array_of_arrays(data, opts) {
       r: 0
     }
   };
+
   for (var R = 0; R != data.length; ++R) {
     for (var C = 0; C != data[R].length; ++C) {
       if (range.s.r > R) range.s.r = R;
@@ -145,20 +148,20 @@ export function export_table_to_excel(id) {
 }
 
 export function export_json_to_excel({
-  multiHeader = [],
-  header,
-  data,
-  filename,
-  merges = [],
-  autoWidth = true,
-  bookType=  'xlsx'
-} = {}) {
+                                       multiHeader = [],
+                                       header,
+                                       data,
+                                       filename,
+                                       merges = [],
+                                       autoWidth = true,
+                                       bookType = 'xlsx'
+                                     } = {}) {
   /* original data */
   filename = filename || 'excel-list'
   data = [...data]
   data.unshift(header);
 
-  for (let i = multiHeader.length-1; i > -1; i--) {
+  for (let i = multiHeader.length - 1; i > -1; i--) {
     data.unshift(multiHeader[i])
   }
 
@@ -218,3 +221,79 @@ export function export_json_to_excel({
     type: "application/octet-stream"
   }), `${filename}.${bookType}`);
 }
+
+//TODO: add By Tankai
+export function export_el_table_to_excel({
+                                           table,  //表格对象
+                                           downloadUrl, //下载链接
+                                           filename,   //导出文件名
+                                           noExportProps = [], //不需要导出的字段
+                                           tpl = false,  //是否是模版
+                                         } = {}) {
+
+  // 导出头部标题
+  let tHeader = [];
+  // 需要哪些属性导出
+  let props = [];
+  // 导出数据内容
+  let data = [];
+
+  // 解析表格列
+  let columns = (table && table.columns) ? table.columns : [];
+  columns.forEach(obj => {
+    if (noExportProps.indexOf(obj.label) > -1) { //去掉不需要导出的属性
+      return;
+    }
+    tHeader.push(obj.label);
+    props.push(obj.property);
+  });
+
+  if (tpl) {
+    export_json_to_excel({
+      header: tHeader,
+      data,
+      filename: filename,
+      autoWidth: true,
+      bookType: 'xlsx'
+    })
+  }
+  else {
+    //获取数据
+    global.axios
+      .get(downloadUrl)
+      .then(resp => {
+        let res = resp.data
+        data = res || []
+        data = data.map(v => props.map(j => {
+          let _val;
+          if (j.indexOf(".") > -1) {
+            let tmp = j.split(".");
+            let _obj = v;
+
+            tmp.forEach(obj => {
+              if (_obj[obj]) {
+                _obj = _obj[obj];
+              }
+            });
+            _val = _obj;
+          }
+          else {
+            _val = v[j];
+          }
+          return _val;
+        }));
+
+        export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: filename,
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
+      })
+      .catch(err => {
+
+      });
+  }
+}
+

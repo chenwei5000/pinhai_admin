@@ -3,52 +3,66 @@
 
     <div class="ph-card">
       <div class="ph-card-body">
-        <!-- 表格 -->
+
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="editing" class="fontColor" lazy>
             <span slot="label">
               <i class="el-icon-edit"></i> 编辑中
             </span>
             <keep-alive>
-              <tab-pane type="editing"/>
+              <phTab type="editing" ref="editTable"/>
             </keep-alive>
           </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="auditing" lazy>
             <span slot="label">
               <i class="el-icon-s-check"></i> 待审核
             </span>
             <keep-alive>
-              <tab-pane type="auditing"/>
+              <phTab type="auditing"/>
             </keep-alive>
           </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executeing" lazy>
             <span slot="label">
-              <i class="el-icon-s-order"></i> 执行中
+              <i class="el-icon-s-flag"></i> 执行中
             </span>
             <keep-alive>
-              <tab-pane type="executeing"/>
+              <phTab type="executeing"/>
             </keep-alive>
           </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="complete" lazy>
             <span slot="label">
               <i class="el-icon-s-claim"></i> 完成
             </span>
             <keep-alive>
-              <tab-pane type="complete"/>
+              <phTab type="complete"/>
             </keep-alive>
           </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="all" lazy>
+            <span slot="label">
+              <i class="el-icon-s-order"></i> 全部
+            </span>
+            <keep-alive>
+              <phTab type="all"/>
+            </keep-alive>
+          </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="create" lazy>
             <span slot="label">
               <i class="el-ph-icon-plus-circle"></i> 创建计划
             </span>
             <keep-alive>
-              <createPlan></createPlan>
+              <phCreate @createCBEvent="createCBEvent"></phCreate>
             </keep-alive>
           </el-tab-pane>
 
@@ -60,43 +74,55 @@
 </template>
 
 <script>
-  import tabPane from './components/TabPane'
-  import createPlan from './components/createPlan'
+  import phTab from './components/tab'
+  import phCreate from './components/create'
 
-  const statusFlag = 's='
+  const actionFlag = 's='
 
   export default {
-    components: {tabPane, createPlan},
+
+    components: {
+      phTab,
+      phCreate
+    },
 
     data() {
       return {
-        title: '采购计划管理', // 页面标题
-        activeStatus: location.href.indexOf(statusFlag) > -1
-          ? this.$route.query.s !== null ? this.$route.query.s : 'editing' : 'editing',
+        // TODO 页面标题
+        title: '采购计划管理',
+
+        // TODO 默认Tab激活状态
+        activeStatus: location.href.indexOf(actionFlag) > -1
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'editing')
+          : 'editing',
       }
     },
 
-    // 计算属性，用于跟模版进行数据交互。
-    // computed属性，属于持续变化跟踪。在computed属性定义的时候，这个computed属性就与给它赋值的变量绑定了。
-    // 改变这个赋值变量，computed属性值会随之改变。
-    // 主要用于用过其它第三变量，间接跟页面进行数据交互时使用。
     computed: {},
 
     // 各种相关方法定义
     methods: {
-      // 状态样式
+      /* 点击Tag相应事件 */
+      // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
+        const queryFlag = '?s=';
+        const queryPath = '/m2/ProcurementPlan_index';
+        let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
+        history.pushState(history.state, 'ph-table search', newUrl);
+      },
+      /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
+      createCBEvent(objectId) {
+        if (objectId) {
+          if (this.$refs.editTable) {
+            this.$refs.editTable.onRefreshTable();
+          }
+        }
       }
     },
 
-    // 观察data中的值发送变化后，调用
-    watch: {}
   }
 </script>
 
-<style scoped>
-  .ph-table {
-    padding: 10px 15px;
-  }
+<style type="text/less" lang="scss" scoped>
 
 </style>

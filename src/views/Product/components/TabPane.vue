@@ -50,7 +50,7 @@
     //             op: 'eq',
     //             placeholder: '请选择分类'
     //           },
-    //           $options: categoryModel.getMineSelectOptions()
+    //           $options: categoryModel.getMineSelectProdcutOptions()
     //         },
     //         phFromItems.name,
     //         {

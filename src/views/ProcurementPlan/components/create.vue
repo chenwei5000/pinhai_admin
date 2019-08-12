@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    <!-- 步骤条 TODO: -->
     <el-steps :active="stepsActive" finish-status="success" align-center simple>
       <el-step title="1.智能备货" icon="el-icon-reading"></el-step>
       <el-step title="2.采购计划" icon="el-icon-picture"></el-step>
@@ -8,23 +8,24 @@
       <el-step title="4.提交审核" icon="el-icon-edit"></el-step>
     </el-steps>
 
-    <smartPlan
+    <!-- 智能备货组件 -->
+    <smart
       v-if="stepsActive==0"
-      @smartPlanCBEvent="smartPlanCBEvent">
-    </smartPlan>
+      @smartCBEvent="smartCBEvent" >
+    </smart>
 
+    <!-- 采购计划组件 -->
 
   </div>
-
 
 </template>
 
 <script>
-  import smartPlan from './smartPlan'
+  import smart from './smart/smart'
 
   export default {
     components: {
-      smartPlan
+      smart
     },
 
     props: {},
@@ -33,11 +34,11 @@
 
     data() {
       return {
-        //
+        // 默认选择的步骤 从0开始
         stepsActive: 0,
 
         // 新对象
-        plan: {
+        object: {
           id: null
         }
       }
@@ -50,16 +51,17 @@
     },
 
     methods: {
+      // 智能备货成功之后回调
+      smartCBEvent(objectId) {
+        // 继续向父组件抛出时间，创建成功后刷新列表
+        this.$emit("createCBEvent", objectId);
 
-      //智能备货成功之后回调
-      smartPlanCBEvent(id, plan) {
-        this.plan = plan;
-        //this.stepsActive = 1;
-        console.log(this.plan);
-        console.log(this.stepsActive);
-        this.$refs.itemTable.getList(true);
+        if (objectId) {
+          this.object.id = objectId;
+          // 切换到第二步
+          this.stepsActive = 1;
+        }
       }
-
     }
   }
 </script>

@@ -1,15 +1,15 @@
 <template>
 
-  <planTable :type="type" :defaultFilters="filters"></planTable>
+  <infoTable ref="infoTable" :type="type" :defaultFilters="filters"></infoTable>
 
 </template>
 
 <script>
-  import planTable from './table'
+  import infoTable from './table'
 
   export default {
     components: {
-      planTable
+      infoTable
     },
     props: {
       type: {
@@ -18,8 +18,8 @@
       }
     },
     computed: {
+      // TODO: 设置默认的搜索条件
       filters() {
-        //编辑中
         if (this.type === 'editing') {
           return {
             'field': 'status',
@@ -43,16 +43,23 @@
             data: "2,3,4,5,6,7"
           }
         }
-        else {
+        else if (this.type === 'complete') {
           return {
             field: 'status',
             op: 'in',
             data: 8
           }
         }
+        else if (this.type === 'all') {
+          return {}
+        }
       }
     },
-    methods: {}
+    methods: {
+      onRefreshTable() {
+        this.$refs.infoTable.onRefreshTable();
+      }
+    }
   }
 </script>
 

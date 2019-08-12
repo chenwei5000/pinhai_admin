@@ -10,7 +10,7 @@ const enumModel = {
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
-// 获取字典id:name格式下拉框选项
+// 获取枚举 id:name格式下拉框选项
   getSelectOptions(type) {
     let _options = [];
 

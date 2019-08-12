@@ -1,7 +1,25 @@
 <template>
 
-  <el-dialog title="智能备货" :visible.sync="formVisible" fullscreen>
+  <el-dialog title="智能备货" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
 
+    <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
+    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+             @submit.native.prevent>
+
+      <el-form-item label="SKU">
+        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+      </el-form-item>
+
+      <el-form-item label="分类">
+        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+        <el-button @click="resetSearch" size="small">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
     <div class="ph-table">
 
       <!--表格 TODO:根据实际情况调整 el-table-column  -->
@@ -15,7 +33,7 @@
         :row-class-name="dangerClassName"
         :cell-style="{padding: '2px 0', 'font-size': '13px'}"
         :header-cell-style="{padding: '2px 0'}"
-        :data="data"
+        :data="tableData"
         v-loading="loading"
         show-summary
         :summary-method="getSummaries"
@@ -36,14 +54,13 @@
         <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="200"></el-table-column>
         <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="130"></el-table-column>
         <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="130"></el-table-column>
-        <el-table-column prop="saleWeek" sortable label="可售周数" width="120"></el-table-column>
         <el-table-column prop="productName" label="名称" width="200"></el-table-column>
         <el-table-column prop="fnSku" label="FNSKU" min-width="120"></el-table-column>
         <el-table-column prop="vipLevel" label="Vip级别" width="120"></el-table-column>
         <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
         <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
 
-
+        <el-table-column prop="saleWeek" sortable label="可售周数" width="120" fixed="right"></el-table-column>
         <el-table-column prop="replenishmentCartonPlanQty" sortable label="采购箱数" width="120"
                          fixed="right"></el-table-column>
         <!--默认操作列-->
@@ -60,7 +77,7 @@
 
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreatePlan">
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateObject">
             生成采购计划
           </el-button>
         </el-row>
@@ -77,12 +94,8 @@
 
   export default {
     components: {},
-    props: {
-      plan: {
-        type: Object,
-        default: null
-      }
-    },
+    props: {},
+
     computed: {
       ...mapGetters([
         'device'
@@ -91,24 +104,31 @@
 
     data() {
       return {
-        //样式
+        // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
-
-        formVisible: false,
-
+        // 对话框是否可见
+        dialogVisible: false,
+        // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        //操作
+        //操作按钮控制
         hasOperation: true,
-        hasEdit: true,
         hasDelete: true,
+
+        // 多选记录对象
         selected: [],
 
-        //数据 TODO: 根据实际情况调整
-        plan: null,
+        //抓数据 TODO: 根据实际情况调整
+        object: null,
         url: null, // 资源URL
+        searchParam: {
+          skuCode: null,
+          category: null
+        },
         relations: [],  // 关联对象
-        data: [],
+        data: [],  // 从后台加载的数据
+        tableData: [],  // 前端表格显示的数据，本地搜索用
+        // 表格加载效果
         loading: false,
 
         // 记录修改的那一行
@@ -120,26 +140,16 @@
     },
 
     mounted() {
-
-      this.$on("openDialog", plan => {
-        this.plan = plan;
-        this.formVisible = true;
-        this.url = `/amazonStocks/plans/${plan.merchantId}?warehouse=${plan.warehouseId.join(",")}&category=${plan.categoryId.join(",")}&safetyStockWeek=${plan.safetyStockWeek}&vip1SafetyStockWeek=${plan.vip1SafetyStockWeek}&vip2SafetyStockWeek=${plan.vip2SafetyStockWeek}&exclude=${plan.handleMethod}`;
-        this.getTableHeight();
-        this.initLoadData();
-        this.getList();
-      });
-
       this.$nextTick(() => {
         this.getTableHeight();
-        this.initLoadData();
+        this.initData();
         this.getList();
       })
     },
     methods: {
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
-      initLoadData() {
+      initData() {
       },
 
       // 获取表格的高度
@@ -149,12 +159,23 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 160; //减标题高度
+          tableHeight = tableHeight - 200; //减标题高度
           this.tableMaxHeight = tableHeight;
         }
         else {
           this.tableMaxHeight = 400;
         }
+      },
+
+      // 打开Dialog TODO:
+      openDialog(object) {
+        this.dialogVisible = true;
+        this.object = object;
+        this.url = `/amazonStocks/plans/${object.merchantId}?warehouse=${object.warehouseId.join(",")}&category=${object.categoryId.join(",")}&safetyStockWeek=${object.safetyStockWeek}&vip1SafetyStockWeek=${object.vip1SafetyStockWeek}&vip2SafetyStockWeek=${object.vip2SafetyStockWeek}&exclude=${object.handleMethod}`;
+
+        this.getTableHeight();
+        this.initData();
+        this.getList();
       },
 
       /********************* 表格相关方法  ***************************/
@@ -163,6 +184,7 @@
         return '';
       },
 
+      // 删除功能， 本地删除
       onDefaultDelete(row) {
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
@@ -171,17 +193,16 @@
               let idx = null;
 
               this.data.forEach((item, index) => {
-                  if (item.id == row.id) {
+                  if (item.skuCode === row.skuCode) {
                     idx = index;
                     return;
                   }
                 }
               );
-
               this.date = this.data.splice(idx, 1);
+              this.search();
 
               done();
-
             } else done()
           }
         }).catch(er => {
@@ -189,6 +210,7 @@
         })
       },
 
+      // 统计功能 TODO:
       getSummaries(param) {
         const {columns, data} = param;
         const sums = [];
@@ -230,10 +252,9 @@
       },
 
       /*获取列表*/
-      getList(shouldStoreQuery) {
+      getList() {
         let url = this.url
         if (!url) {
-          console.warn('url 为空, 不发送请求')
           return
         }
 
@@ -260,7 +281,7 @@
             let res = resp.data
             let data = res || []
             this.data = data
-            this.total = res.length || 0
+            this.search()
             this.loading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
@@ -283,55 +304,96 @@
         this.selected = val
       },
 
-      ///////////////创建///////////////////////
-      onCreatePlan() {
+      /********************* 操作按钮相关方法  ***************************/
+      //** 创建对象 TODO: **/
+      onCreateObject() {
         if (this.selected == null || this.selected.length == 0) {
           this.$confirm('您没有选择任何推荐备货的商品，如果您确认。将手工维护采购计划明细，是否继续？', '提示', {
             type: 'warning',
             beforeClose: (action, instance, done) => {
               if (action == 'confirm') {
                 done();
-                this.createPlan();
+                this.createObject();
               } else done()
             }
           }).catch(er => {
             /*取消*/
           })
         }
-        else{
-          this.createPlan();
+        else {
+          this.createObject();
         }
       },
+
       // 创建计划
-      createPlan() {
-        let _plan = JSON.parse(JSON.stringify(this.plan));
-        _plan.warehouseId = _plan.warehouseId ? _plan.warehouseId.join(",") : "";
+      createObject() {
         this.loading = true;
         this.confirmLoading = true;
 
-        console.log(this.selected);
-        this.global.axios[method](url, _plan)
-          .then(resp => {
-            let _newPlan = resp.data;
+        //转义字段
+        let _object = JSON.parse(JSON.stringify(this.object));
+        _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
 
+        let items = [];
+        this.selected.forEach(obj => {
+          obj.safetyStockWeek = obj.safetyWeek;
+          obj.cartonQty = obj.replenishmentCartonPlanQty;
+          obj.sevenSalesCount = obj.sevenAmendQty;
+          obj.amazonTotalStock = obj.totalQty;
+          items.push(obj);
+        });
+
+        _object.planItems = JSON.parse(JSON.stringify(items));
+
+        this.global.axios.post("/procurementPlans", _object)
+          .then(resp => {
+            let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});
             this.loading = false;
             this.confirmLoading = false;
             // 回传消息
-            this.$emit("createCBEvent", _newPlan.id);
+            this.dialogVisible = false;
+            this.$emit("createCBEvent", _newObject.id);
           })
           .catch(err => {
             this.loading = false;
             this.confirmLoading = false;
-            this.$emit("createCBEvent", null, null);
           })
 
       },
-      cancel() {
 
+      /********************* 搜索相关方法  ***************************/
+      /*本地搜索*/
+      search() {
+        this.tableData = this.data;
+
+        if (this.searchParam.category != null && this.searchParam.category != '') {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.categoryName && item.categoryName.indexOf(this.searchParam.category) !== -1) {
+                return true;
+              }
+            });
+        }
+        if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.skuCode.indexOf(this.searchParam.skuCode) !== -1) {
+                return true;
+              }
+            });
+        }
       },
-      confirm() {
 
+      /*本地重置搜索*/
+      resetSearch() {
+        this.$refs.searchForm.resetFields();
+
+        //TODO:根据实际情况调整
+        this.searchParam.skuCode=null;
+        this.searchParam.category=null;
+
+        this.search();
       }
     }
   }

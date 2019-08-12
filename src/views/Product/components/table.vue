@@ -214,7 +214,7 @@
       }
     },
     created() {
-      this.categorySelectOptions = categoryModel.getMineSelectOptions();
+      this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
     },
 
     mounted() {

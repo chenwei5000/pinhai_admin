@@ -34,7 +34,7 @@
       <ph-card-header :title="title" type="table">
       </ph-card-header>
       <div class="ph-card-body">
-         
+
         <ph-table
           ref="table1"
           v-bind="tableConfig"
@@ -70,7 +70,7 @@ import warehouseModel from '../../api/warehouse';
             {required: true, message: '不能为空', trigger: 'blur'}
           ],
         },
-        categories: categoryModel.getMineSelectOptions(),
+        categories: categoryModel.getMineSelectProdcutOptions(),
         warehouses: warehouseModel.getSelectDomesticOptions(),
         tableConfig: {
           url: null,
@@ -125,7 +125,7 @@ import warehouseModel from '../../api/warehouse';
             this.$refs.table1.getList();
           }
         })
-        
+
       }
     },
     watch: {

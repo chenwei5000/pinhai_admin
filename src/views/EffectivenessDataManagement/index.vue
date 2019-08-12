@@ -6,7 +6,7 @@
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
-          
+
         >
         </ph-table>
       </div>
@@ -54,7 +54,7 @@
               $type: 'select',
               $id: 'categoryId',
               label: '分类',
-              $options: categoryModel.getMineSelectOptions(),
+              $options: categoryModel.getMineSelectProdcutOptions(),
               $el: {
                 op: 'eq',
                 placeholder: '请输入分类名称'
@@ -64,7 +64,7 @@
           ],
           //  弹窗表单
           form: [
-          
+
           ],
           //提交后执行
           afterConfirm: () => {
