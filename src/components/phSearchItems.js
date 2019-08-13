@@ -23,7 +23,8 @@ const phSearchItems = {
     label: '编码',
     $el: {
       op: 'bw',
-      placeholder: '请输入编码'
+      placeholder: '请输入编码',
+      clearable: true
     }
   },
 
@@ -34,7 +35,8 @@ const phSearchItems = {
     label: '名称',
     $el: {
       op: 'bw',
-      placeholder: '请输入名称'
+      placeholder: '请输入名称',
+      clearable: true
     }
   },
 
@@ -45,7 +47,8 @@ const phSearchItems = {
     label: '户名',
     $el: {
       op: 'bw',
-      placeholder: '请输入户名'
+      placeholder: '请输入户名',
+      clearable: true
     }
   },
 
@@ -56,7 +59,8 @@ const phSearchItems = {
     label: '简称',
     $el: {
       op: 'bw',
-      placeholder: '请输入公司简称'
+      placeholder: '请输入公司简称',
+      clearable: true
     }
   },
 
@@ -67,7 +71,8 @@ const phSearchItems = {
     label: '区域',
     $el: {
       op: 'bw',
-      placeholder: '请输入公司所在区域'
+      placeholder: '请输入公司所在区域',
+      clearable: true
     }
   },
 
@@ -78,7 +83,8 @@ const phSearchItems = {
     label: '联系人',
     $el: {
       op: 'bw',
-      placeholder: '请输入联系人'
+      placeholder: '请输入联系人',
+      clearable: true
     }
   },
 
@@ -89,7 +95,8 @@ const phSearchItems = {
     label: '类型',
     $el: {
       op: 'bw',
-      placeholder: '请输入类型'
+      placeholder: '请输入类型',
+      clearable: true
     }
   },
 
@@ -100,7 +107,8 @@ const phSearchItems = {
     label: '产品名',
     $el: {
       op: 'bw',
-      placeholder: '请输入产品名'
+      placeholder: '请输入产品名',
+      clearable: true
     }
   },
 
