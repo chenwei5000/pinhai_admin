@@ -10,7 +10,7 @@ const phColumns = {
   status: {
     prop: 'status',
     label: '状态',
-    width: 50,
+    width: 80,
     formatter: row => {
       let _status = phEnumModel.getSelectOptions("Status");
       let _label = '';
