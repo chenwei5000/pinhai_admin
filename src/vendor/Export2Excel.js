@@ -217,6 +217,7 @@ export function export_json_to_excel({
     bookSST: false,
     type: 'binary'
   });
+
   saveAs(new Blob([s2ab(wbout)], {
     type: "application/octet-stream"
   }), `${filename}.${bookType}`);
@@ -241,6 +242,9 @@ export function export_el_table_to_excel({
   // 解析表格列
   let columns = (table && table.columns) ? table.columns : [];
   columns.forEach(obj => {
+    if(!obj.label || !obj.property){
+      return;
+    }
     if (noExportProps.indexOf(obj.label) > -1) { //去掉不需要导出的属性
       return;
     }

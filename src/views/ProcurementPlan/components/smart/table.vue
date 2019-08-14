@@ -2,7 +2,7 @@
 
   <el-dialog title="智能备货" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
 
-    <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
+    <!--本地搜索 TODO: 根据实际情况调整 el-form-item -->
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 

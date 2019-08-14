@@ -29,10 +29,19 @@
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+
+          //工具按钮
+          maxUploadCount: 1, //导出一次提交一个请求
+          tplNoExportProps: ['操作', '修改时间', 'ID', '创建人', '状态'],
+          exportFileName: '数据字典列表',
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: true,
+
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'type', label: '字典类型', sortable: 'custom', fixed: 'left', 'min-width': 100},
+            {prop: 'type', label: '字典类型', sortable: 'custom', 'min-width': 100},
             {prop: 'name', label: '字典类型名称', sortable: 'custom', 'min-width': 100},
             {prop: 'valueId', label: '字典值ID', 'min-width': 100},
             {prop: 'valueName', label: '字典值名称', 'min-width': 100},
@@ -45,19 +54,25 @@
             {
               $type: 'input',
               $id: 'name',
-              label: '字典类型名称',
+              label: '字典类型名',
               $el: {
                 op: 'bw',
-                placeholder: '请输入字典类型名称'
+                placeholder: '请输入字典类型名称',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               }
             },
             {
               $type: 'input',
               $id: 'valueName',
-              label: '字典值名称',
+              label: '字典值名',
               $el: {
                 op: 'bw',
-                placeholder: '请输入字典值名称'
+                placeholder: '请输入字典值名称',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               }
             },
             phSearchItems.status()
@@ -69,19 +84,25 @@
               $id: 'type',
               label: '字典类型',
               $el: {
-                placeholder: '请输入字典类型'
+                placeholder: '请输入字典类型',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               },
               rules: [
                 validRules.required
               ]
             },
-            phFormItems.name,
+            phFormItems.name(40),
             {
               $type: 'input',
               $id: 'valueId',
               label: '字典值ID',
               $el: {
-                placeholder: '请输入字典值ID'
+                placeholder: '请输入字典值ID',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               },
               rules: [
                 validRules.required
@@ -90,9 +111,12 @@
             {
               $type: 'input',
               $id: 'valueName',
-              label: '字典值名称',
+              label: '字典值',
               $el: {
-                placeholder: '请输入字典值名称'
+                placeholder: '请输入字典值',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               },
               rules: [
                 validRules.required

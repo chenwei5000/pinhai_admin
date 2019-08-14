@@ -36,7 +36,7 @@
           }
         }
         //执行中
-        else if (this.type === 'executeing') {
+        else if (this.type === 'executing') {
           return {
             field: 'status',
             op: 'in',

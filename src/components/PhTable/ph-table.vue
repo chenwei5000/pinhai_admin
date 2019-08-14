@@ -64,11 +64,23 @@
     </div>
 
     <!--新增、编辑-->
-    <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
+    <tableToolBar
+      v-bind="toolbarConfig"
+      @onToolBarAdd="onToolBarAdd"
+      @onToolBarEdit="onToolBarEdit"
+      @onToolBarDelete="onToolBarDelete"
+      @onToolBarDownloadTpl="onToolBarDownloadTpl"
+      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarImportData="onToolBarImportData"
+    >
+    </tableToolBar>
+
+    <!--el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
       <el-form-item>
         <el-button v-if="hasNew" type="primary" size="small"
                    @click="onDefaultNew" id="ph-table-add">新增
         </el-button>
+
         <self-loading-button v-for="(btn, i) in headerButtons"
                              v-if="'show' in btn ? btn.show(selected) : true"
                              :disabled="'disabled' in btn ? btn.disabled(selected) : false"
@@ -79,12 +91,14 @@
                              :key="i"
                              size="small" id="ph-table-edit">{{btn.text}}
         </self-loading-button>
+
         <el-button v-if="hasSelect && hasDelete" type="danger" size="small"
                    @click="onDefaultDelete($event)"
                    :disabled="single ? (!selected.length || selected.length > 1) : !selected.length">删除
         </el-button>
+
       </el-form-item>
-    </el-form>
+    </el-form -->
 
     <!--表格-->
     <el-table
@@ -226,6 +240,7 @@
       id="ph-table-page"
       ref="pageForm"
     >
+      <el-button icon="el-icon-refresh" @click="onRefreshTable" class="btn-prev" circle></el-button>
     </el-pagination>
 
     <!--弹出框-->
@@ -256,7 +271,7 @@
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
   import {mapGetters} from 'vuex'
-  import {getObjectVal} from '@/utils'
+  import {getObjectVal, parseTime} from '@/utils'
   // 过滤功能
   import editFilter from './Filters/edit.vue'
   import dateFilter from './Filters/date.vue'
@@ -265,6 +280,7 @@
   import radiosFilter from './Filters/radio.vue'
   import rangeFilter from './Filters/range.vue'
   import {doDeleteFilter} from './js/index.js'
+  import tableToolBar from '@/components/PhTableToolBar'
 
   const myFilterComponts = {
     edit: editFilter,
@@ -332,7 +348,8 @@
   export default {
     name: 'ElDataTable',
     components: {
-      SelfLoadingButton
+      SelfLoadingButton,
+      tableToolBar
     },
     props: {
       /**
@@ -349,6 +366,24 @@
         type: String,
         default: '/count'
       },
+      maxUploadCount:{
+        type: Number,
+        default: 1
+      },
+      tplNoExportProps: {
+        type: Array,
+        default() {
+          return ['操作', '修改时间', 'ID', '创建人', '状态']
+        }
+      },
+
+      noExportProps: {
+        type: Array,
+        default() {
+          return ['操作', '修改时间']
+        }
+      },
+
       /**
        * 主键，默认值 id，
        * 修改/删除时会用到,请求会根据定义的属性值获取主键,即row[this.id]
@@ -356,6 +391,10 @@
       id: {
         type: String,
         default: defaultId
+      },
+      exportFileName: {
+        type: String,
+        default: '列表'
       },
       /**
        * 分页请求的第一页的值(有的接口0是第一页)
@@ -464,6 +503,22 @@
         type: Boolean,
         default: true
       },
+
+      hasExportTpl: {
+        type: Boolean,
+        default: false
+      },
+
+      hasExport: {
+        type: Boolean,
+        default: false
+      },
+
+      hasImport: {
+        type: Boolean,
+        default: false
+      },
+
       /**
        * 是否有查看按钮
        */
@@ -521,7 +576,7 @@
        */
       paginationLayout: {
         type: String,
-        default: 'total, sizes, prev, pager, next, jumper'
+        default: 'total, sizes, slot, prev, pager, next, jumper'
       },
       /**
        * 分页组件的每页显示个数选择器的选项设置，对应element-ui pagination的page-sizes属性
@@ -707,6 +762,7 @@
     },
     data() {
       return {
+        downloadUrl: "", //下载Url
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
         data: [],
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
@@ -737,6 +793,16 @@
         confirmLoading: false,
         // 要修改的那一行
         row: {},
+
+        // 表格工具条配置
+        toolbarConfig: {
+          hasEdit: this.hasEdit,
+          hasDelete: this.hasDelete,
+          hasAdd: this.hasNew,
+          hasExportTpl: this.hasExportTpl,
+          hasExport: this.hasExport,
+          hasImport: this.hasImport,
+        },
 
         // 初始的customQuery值, 重置查询时, 会用到
         // JSON.stringify是为了后面深拷贝作准备
@@ -926,6 +992,7 @@
 
         // 请求开始
         this.loading = true
+        this.downloadUrl = url + params;
 
         //获取列表数量数据
         this.global.axios
@@ -1088,9 +1155,13 @@
         this.$emit('selection-change', val)
       },
 
+      onRefreshTable: function () {
+        this.getList();
+      },
+
       // 排序列修改
       handleSortChange: function (column) {
-        if(column.column.sortable == 'custom'){
+        if (column.column.sortable == 'custom') {
           if (column.prop) {
             this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
           }
@@ -1291,6 +1362,12 @@
                     instance.confirmButtonLoading = false
                   })
               } else {
+                if (this.selected.length <= 0) {
+                  this.$message.error("请选择要删除的行!");
+                  instance.confirmButtonLoading = false;
+                  done(false);
+                  return;
+                }
                 // 多选模式
                 let ids = this.selected.map(v => v[this.id]).toString();
                 if (!ids && ids == '') {
@@ -1378,6 +1455,121 @@
             message: '操作失败'
           })
         }
+      },
+
+      /********************* 工具条按钮  ***************************/
+      onToolBarAdd() {
+        this.onDefaultNew();
+      },
+      onToolBarEdit() {
+
+      },
+      onToolBarDelete() {
+        this.onDefaultDelete();
+      },
+      onToolBarDownloadTpl() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+
+        import('@/vendor/Export2Excel').then(excel => {
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: `${this.exportFileName}-模版-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.tplNoExportProps,
+            tpl: true,
+          })
+        })
+      },
+      onToolBarDownloadData() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+        downloadUrl = downloadUrl.replace(/pageSize=\d*/, 'pageSize=-1');
+        downloadUrl = downloadUrl.replace(/currentPage=\d*/, 'currentPage=1');
+        import('@/vendor/Export2Excel').then(excel => {
+          this.loading = true;
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: `${this.exportFileName}-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.noExportProps
+          })
+          this.loading = false;
+        })
+      },
+
+      uploadPromise(res) {
+        let url = this.url + '';
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      async onToolBarImportData(excelData) {
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        this.loading = true;
+        let table = this.$refs.table;
+        let columns = (table && table.columns) ? table.columns : [];
+        let header = [];
+        // 处理头部映射
+        excelData.header.forEach(_head => {
+          columns.forEach(_col => {
+            if (_head == _col.label) {
+              header[_head] = _col.property;
+            }
+          });
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          excelData.header.forEach(_head => {
+            let prop = header[_head];
+            if (prop.indexOf('.') !== false) {
+              let tmps = prop.split('.');
+              for (var i = 0; i < tmps.length; i++) {
+                if (i === 0) {
+                  prop = tmps[0];
+                }
+                else {
+                  prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
+                }
+              }
+            }
+            _res[prop] = obj[_head];
+          });
+          resData.push(_res);
+        });
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+          });
+        }
+
+        this.$message.info("导入成功");
+        this.loading = false;
+        this.getList();
       }
     }
   }
@@ -1444,4 +1636,5 @@
     }
 
   }
+
 </style>

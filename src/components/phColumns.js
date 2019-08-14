@@ -3,14 +3,14 @@ import phEnumModel from '../api/phEnum'
 
 const phColumns = {
 
-  id: {prop: 'id', label: 'ID', sortable: 'true', hidden: true, width: 100},
+  id: {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 80},
 
   creator: {prop: 'creator.name', label: '创建人', width: 100},
 
   status: {
     prop: 'status',
     label: '状态',
-    width: 50,
+    width: 80,
     formatter: row => {
       let _status = phEnumModel.getSelectOptions("Status");
       let _label = '';

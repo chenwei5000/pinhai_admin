@@ -27,12 +27,12 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="executeing" lazy>
+          <el-tab-pane name="executing" lazy>
             <span slot="label">
               <i class="el-icon-s-flag"></i> 执行中
             </span>
             <keep-alive>
-              <phTab type="executeing"/>
+              <phTab type="executing"/>
             </keep-alive>
           </el-tab-pane>
 

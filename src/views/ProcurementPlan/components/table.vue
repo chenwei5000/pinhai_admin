@@ -6,8 +6,12 @@
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
+      <el-form-item label="编码">
+        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+      </el-form-item>
+
       <el-form-item label="名称">
-        <el-input v-model="searchParam.name.value" placeholder="请输入名称"></el-input>
+        <el-input v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="下单截止日">
@@ -25,7 +29,7 @@
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status.value" placeholder="请选择状态">
+        <el-select filterable v-model="searchParam.status.value" style="width: 120px"  placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
@@ -201,7 +205,7 @@
           return false;
         }
         //执行中
-        else if (this.type === 'executeing') {
+        else if (this.type === 'executing') {
           return true;
         }
         else if (this.type === 'complete') {
@@ -249,6 +253,7 @@
           name: {value: null, op: 'bw', id: 'name'},
           limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
           status: {value: null, op: 'eq', id: 'status'},
+          code:  {value: null, op: 'bw', id: 'name'},
         },
 
         //弹窗
@@ -299,6 +304,9 @@
           if (params.status) {
             this.searchParam.status.value = params.status;
           }
+          if (params.code) {
+            this.searchParam.code.value = params.code;
+          }
         }
       }
 
@@ -322,7 +330,7 @@
           this.hasDelete = false;
         }
         //执行中 无删除
-        else if (this.type === 'executeing') {
+        else if (this.type === 'executing') {
           this.hasDelete = false;
         }//完成 无删除
         else if (this.type === 'complete') {
@@ -375,6 +383,7 @@
         this.searchParam.limitTime.value = null;
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
+        this.searchParam.code.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))

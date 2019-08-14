@@ -15,6 +15,7 @@
 
 <script>
   import validRules from '../../components/validRules'
+  import userModel from '../../api/user'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
@@ -25,16 +26,24 @@
         title: '部门管理',
         tableConfig: {
           url: '/departments',
-          relations: ["creator"],
+          relations: ["creator", "user"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+
+          //工具按钮
+          tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
+          exportFileName: '部门列表',
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: true,
+
           columns: [
             {type: 'selection'},
-            phColumns.id,
-            {prop: 'parentId', label: '父级部门ID',"min-width": 100},
-            {prop: 'name', label: '部门名称', "min-width": 100},
-            {prop: 'userId', label: '部门负责人', "min-width": 100},
+            {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
+            {prop: 'allName', label: '部门', "min-width": 300},
+            {prop: 'name', label: '名称', "min-width": 100},
+            {prop: 'user.name', label: '负责人', "min-width": 100},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -42,31 +51,35 @@
 
           // 搜索区块定义
           searchForm: [
+            phSearchItems.name,
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
             {
               $type: 'input',
-              $id: 'userId',
-              label: '部门负责人',
+              $id: 'allName',
+              label: '部门',
               $el: {
-                placeholder: '请输入部门负责人'
+                placeholder: '上下级部门间用‘/’隔开，且从最上级部门开始，例如"品海/华东供应链/苏州分公司"。',
+                maxlength: "200",
+                "show-word-limit": true,
+                clearable: true
               },
               rules: [
                 validRules.required,
               ]
             },
             {
-              $type: 'input',
-              $id: 'name',
-              label: '部门名称',
+              $type: 'select',
+              $id: 'userId',
+              label: '部门负责人',
               $el: {
-                placeholder: '请输入部门名称'
+                placeholder: '请选择部门负责人,可筛选',
+                filterable: true
               },
-              rules: [
-                validRules.required,
-              ]
+              $options: userModel.getSelectOptions(),
+              rules: []
             },
             phFromItems.status()
           ],
