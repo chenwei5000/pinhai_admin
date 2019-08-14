@@ -1,0 +1,256 @@
+<template>
+ 
+  <!-- 编辑表单 TODO:-->
+  <el-form :rules="rules" :model="editObject" status-icon inline
+           ref="editObject" label-position="right"
+           label-width="120px"
+           v-loading="loading"
+  >
+  {{editObject}}
+    <el-row>
+      <el-col :md="10">
+        <el-form-item label="采购单编码" prop="code">
+          <el-input v-model="editObject.code"
+                    show-word-limit
+                    style="width: 220px" placeholder="请填写编码" clearable></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col :md="14">
+        <el-form-item label="发货厂商" prop="supplierId">
+          <el-input v-model="editObject.supplier.name"
+                    style="width: 220px" placeholder="请填写编码" clearable></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+        <el-row>
+      <el-col :md="10">
+        <el-form-item label="收货仓库" prop="warehouseId">
+          <el-select v-model="editObject.warehouse.name" style="width: 220px"
+                      filterable placeholder="请选择">
+              <el-option
+                v-for="(item , idx)  in warehouseSelectOptions"
+                :label="item.label"
+                :value="item.value"
+                :key="idx"
+              ></el-option>
+            </el-select>
+       </el-form-item>
+      </el-col>
+
+      <el-col :md="14">
+        <el-form-item label="预计发货时间" prop="expectTime">
+          <el-date-picker
+            v-model="editObject.expectTime"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            type="date"
+            placeholder="交货截止日"></el-date-picker>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :md="24">
+        <el-form-item label="备注" prop="note">
+          <el-col :span="22">
+            <el-input type="textarea" v-model="editObject.note"
+                      maxlength="500"
+                      show-word-limit
+                      rows="3"
+                      cols="80"
+                      show-word-limit></el-input>
+          </el-col>
+
+          <el-col :span="2">
+            <el-tooltip class="item" effect="light" content="备注信息。支持换行！" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-col>
+
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :md="24">
+        <el-row type="flex" justify="center">
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
+            保存基本信息
+          </el-button>
+        </el-row>
+      </el-col>
+    </el-row>
+
+  </el-form>
+
+</template>
+
+<script>
+
+  import categoryModel from '@/api/category'
+  import warehouseModel from '@/api/warehouse'
+  import merchantModel from '@/api/merchant'
+  import systemModel from '@/api/system'
+  import {intArrToStrArr} from '@/utils'
+
+  export default {
+    components: {},
+    props: {
+      primary: {
+        type: [Object],
+        default: {}
+      }
+    },
+    computed: {},
+
+    data() {
+      return {
+        // 表单加载状态
+        loading: false,
+        // 点击按钮之后，按钮锁定不可在点
+        confirmLoading: false,
+
+        // 选择框 TODO:
+        warehouseSelectOptions: [],
+
+        // 编辑对象 TODO
+        editObject: {},
+
+        // 字段验证规则 TODO:
+        rules: {
+          code: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          supplierId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          warehouseId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ]
+        },
+      }
+    },
+
+    created() {
+    },
+
+    mounted() {
+      this.$nextTick(() => {
+        this.initData();
+      });
+    },
+    methods: {
+      /********************* 基础方法  *****************************/
+      /**
+       * 初始化数据
+       */
+      initData() {
+        this.loading = true;
+        if (this.primary) {
+          //获取计划数据
+          this.editObject = this.primary;
+          //转化时间
+          this.editObject.limitTime = this.primary.formatLimitTime;
+          this.editObject.executeTime = this.primary.formatExecuteTime;
+
+          console.log("warehouseId;dfjslkdfjkldsjfkl;sdjl", this.primary.warehouseId)
+          //转化仓库
+
+          this.categorySelectOptions = categoryModel.getMineSelectOptions();
+          this.merchantSelectOptions = merchantModel.getSelectOptions();
+          this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+
+          //设置默认安全库存
+          systemModel.getConfigInfos().then(data => {
+            if (this.editObject.safetyStockWeek == null) {
+              this.editObject.safetyStockWeek = data.safetyStockWeek;
+            }
+            if (this.editObject.vip1SafetyStockWeek == null) {
+              this.editObject.vip1SafetyStockWeek = data.vip1SafetyStockWeek;
+            }
+            if (this.editObject.vip2SafetyStockWeek == null) {
+              this.editObject.vip2SafetyStockWeek = data.vip2SafetyStockWeek;
+            }
+          });
+
+          let flg = true;
+          this.warehouseSelectOptions.forEach(obj => {
+            if (obj.value == "-99") {
+              flg = false;
+            }
+          });
+
+          if (flg) {
+            this.warehouseSelectOptions.unshift({label: '供货商库存', value: "-99"})
+          }
+          this.loading = false;
+        }
+        else {
+          this.$message.error("无效的采购计划!");
+          this.loading = false;
+        }
+      },
+
+      /********************* 操作按钮相关方法  ***************************/
+      /* 保存对象 */
+      onSave() {
+        this.$confirm('注意保存基本信息只会修改对应的参数，不会重新计算明细数据，您是否继续？', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              done();
+              this.modifyObject();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
+      // 创建或修改发货计划
+      modifyObject() {
+        let _object = JSON.parse(JSON.stringify(this.editObject));
+        console.log("参数dfjlskdjflksd", _object)
+        this.loading = true;
+        this.confirmLoading = true;
+
+        this.global.axios.put(`/procurementShippedOrders/${this.editObject.id}`, _object)
+          .then(resp => {
+            let _newObject = resp.data;
+            this.$message({type: 'success', message: '操作成功'});
+            this.loading = false;
+            this.confirmLoading = false;
+            // 回传消息
+            this.formVisible = false;
+            this.$emit("modifyCBEvent", _newObject);
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
+    }
+  }
+</script>
+
+<style type="text/less" lang="scss" scoped>
+
+  .panel-heading {
+    color: #444;
+    border: 1px #cfd9db solid;
+  }
+
+  .panel-title {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+  }
+
+  .el-form-item {
+    //margin-bottom: 7px;
+  }
+
+</style>
+
