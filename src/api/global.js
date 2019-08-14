@@ -6,10 +6,9 @@ import qs from 'qs'
 const config = {
   NAME: process.env.VUE_APP_NAME,
   VERSION: process.env.VUE_APP_VERSION,
-<<<<<<< HEAD
   ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
   // ERP_SERVICE_URL: 'http://192.168.10.200/erp-service-v2/',
-=======
+
   // 修改方法一： 请修改 /.env.development 中 VUE_APP_ERP_SERVICE_URL配置
   // 修改方法二：
   //     我的示例:
@@ -17,7 +16,6 @@ const config = {
   //        2. 修改 package.json 增加一行 第9行。 window系统使用 SET 设置环境变量
   //        3. 使用 npm run tankai 启动
   ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
->>>>>>> b30d02ab705f1595b858d5908869fe23315b8df9
   TENANT_ID: process.env.VUE_APP_TENANT_ID
 }
 
