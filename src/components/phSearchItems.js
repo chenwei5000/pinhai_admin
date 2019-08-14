@@ -36,7 +36,9 @@ const phSearchItems = {
     $el: {
       op: 'bw',
       placeholder: '请输入名称',
-      clearable: true
+      clearable: true,
+      maxlength: "40",
+      "show-word-limit": true,
     }
   },
 

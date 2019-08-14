@@ -29,11 +29,18 @@
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+          maxUploadCount: 1, //导出一次提交一个请求
+          tplNoExportProps: ['操作', '修改时间', 'ID', '创建人', '状态'],
+          exportFileName: '职位列表',
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: true,
+
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'type', label: '职位类别',"min-width": 100},
             {prop: 'name', label: '职位名称', "min-width": 100},
+            {prop: 'level', label: '岗位级别', "min-width": 100},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -41,6 +48,7 @@
 
           // 搜索区块定义
           searchForm: [
+            phSearchItems.name,
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
@@ -50,23 +58,16 @@
               $id: 'name',
               label: '职位名称',
               $el: {
-                placeholder: '请输入职位名称'
+                placeholder: '请输入职位名称',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               },
               rules: [
                 validRules.required,
               ]
             },
-            {
-              $type: 'input',
-              $id: 'type',
-              label: '职位类别',
-              $el: {
-                placeholder: '请输入职位类别'
-              },
-              rules: [
-                validRules.required,
-              ]
-            },
+            phFromItems.datadic("positionLevel", '岗位级别', '', "level"),
             phFromItems.status()
           ],
           //提交后执行

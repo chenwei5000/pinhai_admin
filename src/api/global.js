@@ -6,6 +6,9 @@ import qs from 'qs'
 const config = {
   NAME: process.env.VUE_APP_NAME,
   VERSION: process.env.VUE_APP_VERSION,
+  ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
+  // ERP_SERVICE_URL: 'http://192.168.10.200/erp-service-v2/',
+
   // 修改方法一： 请修改 /.env.development 中 VUE_APP_ERP_SERVICE_URL配置
   // 修改方法二：
   //     我的示例:

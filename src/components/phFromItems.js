@@ -44,16 +44,21 @@ const phFromItems = {
   },
 
   //名称
-  name: {
-    $type: 'input',
-    $id: 'name',
-    label: '名称',
-    $el: {
-      placeholder: '请输入名称'
-    },
-    rules: [
-      validRules.required
-    ]
+  name: (maxlength = 20) => {
+    return {
+      $type: 'input',
+      $id: 'name',
+      label: '名称',
+      $el: {
+        placeholder: '请输入名称',
+        clearable: true,
+        maxlength: maxlength + '',
+        "show-word-limit": true,
+      },
+      rules: [
+        validRules.required
+      ]
+    }
   },
 
   //代码
