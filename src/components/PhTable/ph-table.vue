@@ -366,7 +366,10 @@
         type: String,
         default: '/count'
       },
-
+      maxUploadCount:{
+        type: Number,
+        default: 1
+      },
       tplNoExportProps: {
         type: Array,
         default() {
@@ -1505,7 +1508,8 @@
           .catch(err => {
           })
       },
-      onToolBarImportData(excelData) {
+
+      async onToolBarImportData(excelData) {
         if (!excelData) {
           this.$message.error("导入失败!");
           return false;
@@ -1525,11 +1529,11 @@
 
         // 导入数据
         let promiseArr = [];
+        let resData = [];
 
+        // 创建提交列表
         excelData.results.forEach(obj => {
           let _res = {};
-          // 默认新增/修改逻辑
-          let method = 'post'
           excelData.header.forEach(_head => {
             let prop = header[_head];
             if (prop.indexOf('.') !== false) {
@@ -1538,21 +1542,34 @@
                 if (i === 0) {
                   prop = tmps[0];
                 }
-                else{
+                else {
                   prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
                 }
               }
             }
             _res[prop] = obj[_head];
           });
+          resData.push(_res);
+        });
 
-          promiseArr.push(this.uploadPromise(_res));
-        });
-        Promise.all(promiseArr).then(_res => {
-          this.$message.info("导入成功");
-          this.loading = false;
-          this.getList();
-        });
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+          });
+        }
+
+        this.$message.info("导入成功");
+        this.loading = false;
+        this.getList();
       }
     }
   }

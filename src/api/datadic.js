@@ -6,7 +6,7 @@ const datadicModel = {
 
   //获取所有数据字典
   getDatadics: (pagesize = -1) => {
-    const path = '/dataDicItems?sort=valueName&order=asc';
+    const path = '/dataDicItems?sort=id&order=asc';
 
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
@@ -34,7 +34,9 @@ const datadicModel = {
         list = await store.dispatch('app/loadDatadics');
       }
       if (list) {
+        console.log(list);
         list.forEach(obj => {
+          console.log(obj.type + "-" + type);
           if (obj.type && obj.type == type) {
             _options.push({
               label: obj.valueName,
@@ -42,6 +44,8 @@ const datadicModel = {
             });
           }
         });
+
+        console.log(_options);
       }
     }
     _loadData();
