@@ -1,23 +1,26 @@
 import global from './global.js'
 
 
-const countryModel = {
+const departmentModel = {
 
-  // 获取国家列表
-  getCountries: (pagesize = -1) => {
-    const path = '/countries';
+  // 获取职位列表
+  getDepartments: (tenantId = null, pagesize = -1) => {
+    let path = '/departments';
+    if(tenantId){
+      path += '?tenantId='+tenantId;
+    }
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 获取id:name格式下拉框选项
-  getSelectOptions() {
+  getSelectOptions(tenantId = null) {
     let _options = [];
     const _loadData = async () => {
-      this.getCountries().then($res => {
+      this.getDepartments(tenantId).then($res => {
         if ($res) {
           $res.forEach(obj => {
             _options.push({
-              label: obj.name,
+              label: obj.allName,
               value: obj.id + ''
             });
           });
@@ -29,4 +32,4 @@ const countryModel = {
   }
 }
 
-export default countryModel;
+export default departmentModel;

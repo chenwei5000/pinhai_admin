@@ -40,7 +40,7 @@
 
           columns: [
             {type: 'selection'},
-            {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
+            phColumns.id,
             {prop: 'allName', label: '部门', "min-width": 300},
             {prop: 'name', label: '名称', "min-width": 100},
             {prop: 'user.name', label: '负责人', "min-width": 100},

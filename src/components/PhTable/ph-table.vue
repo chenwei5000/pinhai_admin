@@ -244,7 +244,7 @@
     </el-pagination>
 
     <!--弹出框-->
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog">
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog" top="3vh">
 
       <el-scrollbar class="menu-wrapper" noresize>
         <el-row>
@@ -366,7 +366,7 @@
         type: String,
         default: '/count'
       },
-      maxUploadCount:{
+      maxUploadCount: {
         type: Number,
         default: 1
       },
@@ -1349,7 +1349,7 @@
 
               // 默认删除逻辑
               // 单个删除
-              if (!this.hasSelect) {
+              if (!this.hasSelect || row) {
                 this.global.axios
                   .delete(this.url + '/' + row[this.id])
                   .then(resp => {
@@ -1535,19 +1535,22 @@
         excelData.results.forEach(obj => {
           let _res = {};
           excelData.header.forEach(_head => {
+
             let prop = header[_head];
-            if (prop.indexOf('.') !== false) {
-              let tmps = prop.split('.');
-              for (var i = 0; i < tmps.length; i++) {
-                if (i === 0) {
-                  prop = tmps[0];
-                }
-                else {
-                  prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
+            if (prop) {
+              if (prop.indexOf('.') !== false) {
+                let tmps = prop.split('.');
+                for (var i = 0; i < tmps.length; i++) {
+                  if (i === 0) {
+                    prop = tmps[0];
+                  }
+                  else {
+                    prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
+                  }
                 }
               }
+              _res[prop] = obj[_head];
             }
-            _res[prop] = obj[_head];
           });
           resData.push(_res);
         });
