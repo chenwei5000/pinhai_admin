@@ -1425,10 +1425,8 @@
         return tmp
       },
       showRow(row) {
-        const show = row.row.parent
-          ? row.row.parent._expanded && row.row.parent._show
-          : true
-        row.row._show = show
+        const show = true
+        row.row._show = true
         return show
           ? 'animation:treeTableShow 1s-webkit-animation:treeTableShow 1s'
           : 'display:none'
