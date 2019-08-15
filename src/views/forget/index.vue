@@ -6,6 +6,7 @@
         <img src="../../assets/logo-2.png">
         找回密码
       </div>
+
       <div id="darkbannerwrap"/>
 
       <el-form
@@ -15,37 +16,47 @@
         auto-complete="on"
         label-position="left"
       >
-        <el-form-item prop="username">
+        <el-form-item prop="email">
           <span class="svg-container">
             <svg-icon icon-class="user"/>
           </span>
 
           <el-input
-            ref="username"
-            v-model="user.username"
+            ref="email"
+            v-model="user.email"
             placeholder="请输入验证邮箱"
-            name="username"
+            name="email"
             type="text"
             tabindex="1"
             auto-complete="on"
           />
         </el-form-item>
         <hr class="hr15">
-        <el-button class="loginin" type="success" :disabled="user.flag" @click="verification">{{ user.buttonValue}}</el-button>  
+        <el-button class="loginin" type="success" :disabled="user.flag" @click="verification">{{ user.buttonValue}}
+        </el-button>
         <hr class="hr20">
       </el-form>
-      <router-link to="/login">返回登录</router-link>
-       
+
+      <router-link class="btnBack" to="/login"><返回登录</router-link>
+
     </div>
   </div>
 </template>
 
 <style type="text/less" lang="scss" scoped>
-  .loginin{
+  .loginin {
     color: white;
     width: 340px;
     height: 50px;
     font-size: 18px;
+  }
+
+  .btnBack {
+    background: #409EFF;
+    padding: 10px;
+    border: 1px solid #DCDFE6;
+    color: #FFFFFF;
+    border-radius: 4px;
   }
 
   body, html {
@@ -55,7 +66,7 @@
     height: 100%;
   }
 
-  .el-button--primary{
+  .el-button--primary {
     float: right;
     margin-top: 20px;
   }
@@ -188,7 +199,7 @@
   .svg-container {
     padding: 6px 5px 6px 15px;
     position: absolute;
-    z-index: 10000px;
+    z-index: 10000;
     top: 0;
     left: 0;
     color: #889aa4;
@@ -236,12 +247,12 @@
 <script>
   import {validEmail} from '@/utils/validate'
   import global from '../../api/global.js'
-  import { globalAgent } from 'http';
-import { setInterval, clearInterval } from 'timers';
+  import {clearInterval, setInterval} from 'timers';
+
   export default {
     name: 'Login',
     data() {
-      const validateUsername = (rule, value, callback) => {
+      const validateEmail = (rule, value, callback) => {
         if (!validEmail(value)) {
           callback(new Error('账号为邮箱格式!'))
         } else {
@@ -252,12 +263,13 @@ import { setInterval, clearInterval } from 'timers';
         user: {
           flag: false,
           buttonValue: "验证",
-          resendTime: 60
+          resendTime: 60,
+          email: null,
         },
         loginRules: {
-          username: [
-            {required: true, message: '请输入验证账号', trigger: 'blur'},
-            {required: true, trigger: 'blur', validator: validateUsername}
+          email: [
+            {required: true, message: '请输入验证邮箱', trigger: 'blur'},
+            {required: true, trigger: 'blur', validator: validateEmail}
           ],
         },
         capsTooltip: false,
@@ -277,9 +289,9 @@ import { setInterval, clearInterval } from 'timers';
     created() {
     },
     mounted() {
-      if (this.user.username === '') {
-        this.$refs.username.focus()
-      }
+      this.$nextTick(() => {
+        this.$refs.email.focus();
+      });
     },
     destroyed() {
 
@@ -287,28 +299,28 @@ import { setInterval, clearInterval } from 'timers';
     methods: {
       verification() {
         this.$refs.user.validate(valid => {
-           if(valid){
+          if (valid) {
             global.axios.post("users/forgetPassword", this.user).then(resp => {
-          //成功的回调
-          var id = setInterval(() => {
-             this.user.buttonValue = this.user.resendTime + "S 后可重新发送";
-             this.user.resendTime --;
-             if(this.user.resendTime <0 ){
-               clearInterval(id);
-               this.user.flag = false;
-               this.user.buttonValue = "验证";
-               this.user.resendTime = 60;
-             }
-          }, 1000);
-          this.user.flag = true;
-           this.$message({
-          message: '发送成功！',
-          type: 'success'
-        });
-        }).catch(err => {
-          console.log(err)
-        })
-        }
+              //成功的回调
+              var id = setInterval(() => {
+                this.user.buttonValue = this.user.resendTime + "S 后可重新发送";
+                this.user.resendTime--;
+                if (this.user.resendTime < 0) {
+                  clearInterval(id);
+                  this.user.flag = false;
+                  this.user.buttonValue = "验证";
+                  this.user.resendTime = 60;
+                }
+              }, 1000);
+              this.user.flag = true;
+              this.$message({
+                message: '发送成功！',
+                type: 'success'
+              });
+            }).catch(err => {
+              console.log(err)
+            })
+          }
         })
       }
     }

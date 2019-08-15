@@ -16,7 +16,7 @@
         auto-complete="on"
         label-position="left"
       >
-       
+
         <el-form-item prop="username">
           <span class="svg-container">
             <svg-icon icon-class="user"/>
@@ -64,12 +64,22 @@
         </el-tooltip>
 
         <hr class="hr15">
-        <input class="loginin" value="登录" type="button" @click="login">
-        <router-link to="/register">账号注册</router-link>
-        <router-link to="/forget">忘记密码</router-link>
+        <input class="loginin" value="登录" type="button" @click="login" />
+
+        <hr class="hr20">
+
+        <el-row type="flex" justify="space-between">
+          <el-col :span="12">
+            <router-link to="/register" class="btnRegister"><账号注册</router-link>
+          </el-col>
+
+          <el-col :span="12" style="text-align: right">
+            <router-link to="/forget" class="btnForget">忘记密码></router-link>
+          </el-col>
+        </el-row>
         <hr class="hr20">
       </el-form>
-      
+
     </div>
   </div>
 </template>
@@ -83,9 +93,25 @@
     height: 100%;
   }
 
-  .el-button--primary{
+  .el-button--primary {
     float: right;
     margin-top: 20px;
+  }
+
+  .btnRegister {
+    background: #409EFF;
+    padding: 10px;
+    border: 1px solid #DCDFE6;
+    color: #FFFFFF;
+    border-radius: 4px;
+  }
+
+  .btnForget {
+    background: #67C23A;
+    padding: 10px;
+    border: 1px solid #DCDFE6;
+    color: #FFFFFF;
+    border-radius: 4px;
   }
 
   .el-input {

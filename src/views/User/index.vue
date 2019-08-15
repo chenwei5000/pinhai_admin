@@ -14,11 +14,14 @@
 </template>
 
 <script>
-  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
-  import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import phSearchItems from '../../components/phSearchItems'
   import phEnumModel from '@/api/phEnum'
+  import departmentModel from '@/api/department'
+  import positionModel from '@/api/position'
+  import userModel from '@/api/user'
+  import validRules from '../../components/validRules'
 
   export default {
     data() {
@@ -26,41 +29,65 @@
         title: '用户管理',
         tableConfig: {
           url: '/users',
-          relations: ["creator"],
+          relations: ["creator", "department", "position", "parent"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+          //工具按钮
+          tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
+          exportFileName: '用户列表',
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: true,
+
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'name', label: '用户姓名',"min-width": 100},
-            {prop: 'account', label: '用户账号', "min-width": 100},
-            {prop: 'job', label: '职位描述', "min-width": 100},
-            {prop: 'phoneNo', label: '用户电话', "min-width": 100},
-            {prop: 'password', label: '用户密码', "min-width": 100},
-            {prop: 'config', label: '用户配置', "min-width": 100},
-
+            {prop: 'account', label: '账号', "min-width": 200},
+            {prop: 'name', label: '姓名', sortable: 'custom', "min-width": 100},
+            {prop: 'department.allName', label: '部门', "min-width": 100},
+            {prop: 'position.name', label: '职位', "min-width": 100},
+            {prop: 'parent.name', label: '上级领导', "min-width": 100},
             {
-    prop: 'status',
-    label: '状态',
-    width: 80,
-    formatter: row => {
-      let _status = phEnumModel.getSelectOptions("UserStatus");
-      let _label = '';
-      _status.forEach(s => {
-        if (s.value === row.status + '') {
-          _label = s.label;
-          return;
-        }
-      });
-      return _label;
-    }
-  },
+              prop: 'phoneNo', label: '用户电话', "min-width": 150,
+              formatter: row => {
+                return row.phoneNo ? row.phoneNo.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") : '';
+              }
+            },
+            {
+              prop: 'status',
+              label: '状态',
+              width: 80,
+              formatter: row => {
+                let _status = phEnumModel.getSelectOptions("UserStatus");
+                let _label = '';
+                _status.forEach(s => {
+                  if (s.value === row.status + '') {
+                    _label = s.label;
+                    return;
+                  }
+                });
+                return _label;
+              }
+            },
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
+            {
+              $type: 'input',
+              $id: 'account',
+              label: '账号',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入账号',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
+              }
+            },
+            phSearchItems.name,
             {
               $type: 'select',
               $id: 'status',
@@ -69,35 +96,76 @@
                 op: 'eq',
                 placeholder: '请选择状态'
               },
-          $options: phEnumModel.getSelectOptions('UserStatus')
-    },
-            phSearchItems.name,
+              $options: phEnumModel.getSelectOptions('UserStatus')
+            }
           ],
           //  弹窗表单, 用于新增与修改
           form: [
             {
               $type: 'input',
-              $id: 'name',
-              label: '用户姓名',
-              $el: {
-                placeholder: '请输入用户姓名'
-              },
-            },
-            {
-              $type: 'input',
               $id: 'account',
-              label: '用户账号',
+              label: '账号',
               $el: {
-                placeholder: '请输入用户账号'
+                placeholder: '请输入用户账号',
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
               },
+              rules: [
+                validRules.required
+              ],
             },
             {
               $type: 'input',
-              $id: 'job',
-              label: '职位描述',
+              $id: 'name',
+              label: '姓名',
               $el: {
-                placeholder: '请填写职位描述'
+                placeholder: '请输入用户姓名',
+                clearable: true,
+                maxlength: "20",
+                "show-word-limit": true,
               },
+              rules: [
+                validRules.required
+              ],
+            },
+            {
+              $type: 'select',
+              $id: 'departmentId',
+              label: "所在部门",
+              $el: {
+                placeholder: '请选择用户所在部门',
+                filterable: true,
+              },
+              rules: [
+                validRules.required
+              ],
+              $options: departmentModel.getSelectOptions()
+            },
+            {
+              $type: 'select',
+              $id: 'positionId',
+              label: "职位",
+              $el: {
+                placeholder: '请选择用户职位',
+                filterable: true,
+              },
+              rules: [
+                validRules.required
+              ],
+              $options: positionModel.getSelectOptions()
+            },
+            {
+              $type: 'select',
+              $id: 'parentId',
+              label: "上级领导",
+              $el: {
+                placeholder: '请选择用户的上级领导',
+                filterable: true,
+              },
+              rules: [
+              ],
+              $options: userModel.getSelectOptions(),
             },
             {
               $type: 'input',
@@ -112,7 +180,7 @@
               $id: 'password',
               label: '用户密码',
               $el: {
-                placeholder: '请输入用户密码'
+                placeholder: '请输入用户密码,不输入不修改'
               },
             },
             {
@@ -120,7 +188,8 @@
               $id: 'config',
               label: '用户配置',
               $el: {
-                placeholder: '请填写用户配置'
+                placeholder: '请填写用户配置',
+                type: "textarea"
               },
             },
             phFromItems.status()
@@ -131,7 +200,8 @@
         }
       }
     },
-    computed: {},
+    computed: {}
+    ,
 
     methods: {
       // 状态样式
@@ -142,8 +212,10 @@
         else {
           return 'warning-row';
         }
-      },
-    },
+      }
+      ,
+    }
+    ,
 
     // 观察data中的值发送变化后，调用
     watch: {}

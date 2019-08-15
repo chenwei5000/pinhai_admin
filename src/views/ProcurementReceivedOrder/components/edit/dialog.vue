@@ -5,7 +5,7 @@
 
     <el-row style="margin-bottom: 20px;">
 
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
+      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">确认收货</el-button>
       <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
 
@@ -27,20 +27,18 @@
         <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
       </el-collapse-item>
 
-      <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购计划内容</div>
+      <el-collapse-item name="confirm" style="margin-top: 10px">
+        <div slot="title" class="title">2. 确认收货</div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
+
         <attachment ref="attachment" :primary="primary"></attachment>
+
       </el-collapse-item>
 
-      <el-collapse-item name="person" style="margin-top: 10px">
-        <div slot="title" class="title">4. 采购负责人</div>
-        <person ref="person" :primary="primary"></person>
-      </el-collapse-item>
 
     </el-collapse>
 
@@ -52,14 +50,12 @@
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
-  import person from './person'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment,
-      person
+      attachment
     },
     props: {},
     computed: {

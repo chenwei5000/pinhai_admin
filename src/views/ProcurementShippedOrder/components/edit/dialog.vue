@@ -28,19 +28,17 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购计划内容</div>
+        <div slot="title" class="title">2. 采购单内容</div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
+
         <attachment ref="attachment" :primary="primary"></attachment>
+
       </el-collapse-item>
 
-      <el-collapse-item name="person" style="margin-top: 10px">
-        <div slot="title" class="title">4. 采购负责人</div>
-        <person ref="person" :primary="primary"></person>
-      </el-collapse-item>
 
     </el-collapse>
 
@@ -52,14 +50,12 @@
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
-  import person from './person'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment,
-      person
+      attachment
     },
     props: {},
     computed: {
@@ -82,6 +78,8 @@
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
         activeNames: [],   //折叠面板开启项
+        relations: ["supplier", "warehouse"],
+        url: "/procurementOrders",
       }
     },
 
@@ -96,9 +94,14 @@
       initData() {
         if (this.primaryId) {
           //获取计划数据
+        let url = `${this.url}/${this.primaryId}`;
+          if (this.relations && this.relations.length > 0) {
+            url += "?relations=" + JSON.stringify(this.relations);
+          }
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(url)
             .then(resp => {
+              console.log("没有关联查询的结果！", resp.data)
               let res = resp.data;
               this.primary = res || {};
               this.dialogVisible = true;

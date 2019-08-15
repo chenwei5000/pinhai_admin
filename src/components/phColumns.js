@@ -3,7 +3,7 @@ import phEnumModel from '../api/phEnum'
 
 const phColumns = {
 
-  id: {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 80},
+  id: {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, width: 80},
 
   creator: {prop: 'creator.name', label: '创建人', width: 100},
 

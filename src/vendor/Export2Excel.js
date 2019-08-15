@@ -278,7 +278,11 @@ export function export_el_table_to_excel({
               if (_obj[obj]) {
                 _obj = _obj[obj];
               }
+              else{
+                _obj = '';
+              }
             });
+
             _val = _obj;
           }
           else {

@@ -1,19 +1,22 @@
 import global from './global.js'
 
 
-const countryModel = {
+const positionModel = {
 
-  // 获取国家列表
-  getCountries: (pagesize = -1) => {
-    const path = '/countries';
+  // 获取职位列表
+  getPositions: (tenantId = null, pagesize = -1) => {
+    let path = '/positions';
+    if(tenantId){
+      path += '?tenantId='+tenantId;
+    }
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 获取id:name格式下拉框选项
-  getSelectOptions() {
+  getSelectOptions(tenantId = null) {
     let _options = [];
     const _loadData = async () => {
-      this.getCountries().then($res => {
+      this.getPositions(tenantId).then($res => {
         if ($res) {
           $res.forEach(obj => {
             _options.push({
@@ -29,4 +32,4 @@ const countryModel = {
   }
 }
 
-export default countryModel;
+export default positionModel;
