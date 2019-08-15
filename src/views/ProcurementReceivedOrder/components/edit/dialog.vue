@@ -5,19 +5,8 @@
 
     <el-row style="margin-bottom: 20px;">
 
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">确认收货</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
+      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">确认收货</el-button>
 
-      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
-      </el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
-
-      <el-button type="primary" icon="el-icon-user-solid" v-if="hasExecute" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="hasExecute" @click="onShare">分享</el-button>
-
-    </el-row>
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
@@ -42,6 +31,7 @@
 
     </el-collapse>
 
+    </el-row>
   </el-dialog>
 
 </template>
@@ -93,7 +83,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/procurementReceivedOrders/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};

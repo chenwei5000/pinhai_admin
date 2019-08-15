@@ -69,8 +69,8 @@
       <el-table-column prop="supplier.name" label="供货商" min-width="120"></el-table-column>
       <el-table-column prop="warehouse.name" label="收货仓库" min-width="120"></el-table-column>
       <el-table-column prop="trackNumber" label="物流信息" width="120"></el-table-column>
-      <el-table-column prop="createTime" label="预计到货日期" width="120"></el-table-column>
-      <el-table-column prop="expectTime" label="到货日期" width="120"></el-table-column>
+      <el-table-column prop="expectTime" label="预计到货日期" width="120"></el-table-column>
+      <el-table-column prop="receivedTime" label="收货日期" width="120"></el-table-column>
 
       <el-table-column prop="remark" label="备注" width="120">
         <template slot-scope="scope">
@@ -202,7 +202,7 @@
         },
 
         //弹窗
-        dialogTitle: '新增',
+
         dialogVisible: false,
         isNew: true,
         isEdit: false,

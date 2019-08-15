@@ -11,7 +11,6 @@
         <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
 
-
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
@@ -21,11 +20,6 @@
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
-      @onToolBarEdit="onToolBarEdit"
-      @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
-      @onToolBarDownloadData="onToolBarDownloadData"
-      @onToolBarImportData="onToolBarImportData"
     >
     </tableToolBar>
 
@@ -48,14 +42,12 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="sortNum" label="序号" sortable width="50" fixed="left"></el-table-column>
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="sortNum" label="序号" sortable width="50" fixed="left"></el-table-column>      <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
           <el-tag
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
+            :type="scope.row.status === 0
+            ? 'warning' : scope.row.status === 3
+            ? 'primary' : scope.row.status === 6
             ? 'info' : 'success'"
             disable-transitions>{{ scope.row.statusName }}
           </el-tag>
@@ -71,7 +63,7 @@
       <el-table-column prop="receivedQty" label="收货数量" width="100"></el-table-column>
       <el-table-column prop="receivedNote" label="异常备注" width="100"></el-table-column>
       <el-table-column prop="receivedCartonQty" label="合计箱数" width="100"></el-table-column>
-      <el-table-column prop="boxShippingPrice" label="运费" width="90"></el-table-column>
+
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -83,6 +75,11 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="hasDelete" type="danger" size="mini"
+                     id="ph-table-del" icon="el-icon-delete" circle
+                     @click="onDefaultDelete(scope.row)">
+
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -97,9 +94,7 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
 
   export default {
@@ -119,14 +114,10 @@
       ])
     },
     filters: {
-      currency: currency
     },
 
     data() {
       return {
-        // 选择项
-        statusSelectOptions: [],
-        prioritySelectOptions: [],
 
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
@@ -136,7 +127,7 @@
 
         //操作按钮控制
         hasOperation: true,
-        hasAdd: true,
+        hasAdd: false,
         hasEdit: true,
         hasDelete: true,
 
@@ -144,22 +135,19 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-       // url: "/procurementReceivedOrderItems", // 资源URL
+        url: "/procurementReceivedOrderItems", // 资源URL
         downloadUrl: "", //下载Url
         searchParam: {
           skuCode: null,
-          category: null,
-          status: null,
-          priority: null,
         },
         filters: [
           {
-            field: "procurementReceivedOrderId",
+            field: "procurementShippedOrderId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["cartonSpec", "product", "product.name", "product.category"],  // 关联对象
+        relations: ["product", "cartonSpec", "procurementShippedOrder", "procurementOrderItem", "storageLocation"],
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -196,9 +184,6 @@
       initData() {
         this.loading = true;
 
-        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
-
         // 设置下载链接
         this.downloadUrl = this.url;
         if (this.filters && this.filters.length > 0) {
@@ -214,68 +199,8 @@
 
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
-      dangerClassName({row}) {
-        if (row.saleWeek == 0 || row.safetyStockWeek - row.saleWeek > 2) { //可售周数不足
-          return 'warning-row';
-        }
-        else if (row.saleWeek - row.safetyStockWeek > 2) { //可售周数超2周
-          return 'danger-row';
-        }
-        return '';
-      },
 
       /*汇总数据*/
-      getSummaries(param) {
-        const {columns, data} = param;
-        const sums = [];
-
-        columns.forEach((column, index) => {
-          if (column.property == 'product.skuCode') {
-            const values = data.map(item => item[column.property]);
-            sums[index] = values.reduce((prev) => {
-              return prev + 1;
-            }, 0);
-            sums[index] = '合计: ' + sums[index] + ' 行';
-          }
-
-          if (column.property == 'cartonQty') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] += ' 箱';
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-          if (column.property == 'amount') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] = currency(sums[index]);
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-        });
-
-        return sums;
-      },
 
       /*获取列表*/
       getList() {
@@ -329,43 +254,15 @@
       },
 
       /* 多选功能 */
-      handleSelectionChange(val) {
-        this.selected = val
-      },
 
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {
         this.tableData = this.data;
-        if (this.searchParam.category != null && this.searchParam.category != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.product && item.product.category &&
-                item.product.category.name.indexOf(this.searchParam.category) !== -1) {
-                return true;
-              }
-            });
-        }
         if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
           this.tableData = this.tableData.filter(
             item => {
               if (item.product && item.product.skuCode.indexOf(this.searchParam.skuCode) !== -1) {
-                return true;
-              }
-            });
-        }
-        if (this.searchParam.status != null && this.searchParam.status != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.status == this.searchParam.status) {
-                return true;
-              }
-            });
-        }
-        if (this.searchParam.priority != null && this.searchParam.priority != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.priority == this.searchParam.priority) {
                 return true;
               }
             });
@@ -416,50 +313,7 @@
       },
 
       /********************* 工具条按钮  ***************************/
-      onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
-      },
-      onToolBarEdit() {
-
-      },
-      onToolBarDelete() {
-
-      },
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
-            tpl: true,
-          })
-        })
-      },
-      onToolBarDownloadData() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
-          this.loading = false;
-        })
-      },
-      onToolBarImportData() {
-
       }
-    }
   }
 </script>
 
