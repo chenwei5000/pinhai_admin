@@ -39,7 +39,7 @@
 
       <el-collapse-item name="person" style="margin-top: 10px">
         <div slot="title" class="title">4. 采购负责人</div>
-        <person ref="person" :primary="primary"></person>
+        <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary"></person>
       </el-collapse-item>
 
     </el-collapse>
@@ -120,6 +120,10 @@
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
+      },
+      /* 重新加载 */
+      reloadCBEvent(){
+        this.initData();
       },
       //提交审核
       onCommit() {

@@ -34,6 +34,7 @@
             "row-class-name": this.statusClassName
           },
           //工具按钮
+
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '用户列表',
           hasExportTpl: true,
@@ -63,6 +64,22 @@
                 let _label = '';
                 _status.forEach(s => {
                   if (s.value === row.status + '') {
+                    _label = s.label;
+                    return;
+                  }
+                });
+                return _label;
+              }
+            },
+            {
+              prop: 'hide',
+              label: '隐藏',
+              width: 80,
+              formatter: row => {
+                let _status = phEnumModel.getSelectOptions("YesOrNo");
+                let _label = '';
+                _status.forEach(s => {
+                  if (s.value === row.hide + '') {
                     _label = s.label;
                     return;
                   }
@@ -151,7 +168,6 @@
                 filterable: true,
               },
               rules: [
-                validRules.required
               ],
               $options: positionModel.getSelectOptions()
             },
@@ -192,7 +208,15 @@
                 type: "textarea"
               },
             },
-            phFromItems.status()
+            phFromItems.status(),
+            {
+              $type: 'radio-button',
+              $id: 'hide',
+              label: '隐藏',
+              $el: {},
+              $default: '0',
+              $options: phEnumModel.getSelectOptions('YesOrNo')
+            }
           ],
           //提交后执行
           afterConfirm: () => {

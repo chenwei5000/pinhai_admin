@@ -1,11 +1,13 @@
 <template>
 
-  <el-dialog :title="title" :visible.sync="dialogVisible" width="65%" top="5vh">
+  <el-dialog :title="title" :visible.sync="dialogVisible" v-if="dialogVisible" fullscreen>
     <div class="custom-tree-container">
+
       <el-input
         placeholder="输入关键字进行过滤"
         v-model="filterText">
       </el-input>
+
       <div class="block" style="height: 400px;">
         <el-scrollbar style="height: 100%">
           <el-tree
@@ -24,8 +26,8 @@
 
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="formVisible = false">取 消</el-button>
       <el-button type="primary" @click="save">保 存</el-button>
+      <el-button @click="dialogVisible = false">取 消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -64,7 +66,6 @@
           postData.push(temp)
         }
         let url = `/rolePowers?roleId=${this.roleId}`
-        console.log('data ', postData)
         this.global.axios.post(url, postData).then(data => {
           if(data.status == 200) {
             this.$message.info('操作成功！')
@@ -87,7 +88,6 @@
               };
               selected.push(temp);
             }
-            console.log('selected ', selected)
             this.$refs.tree.setCheckedNodes(selected);
             this.loading = false;
           }

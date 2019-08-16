@@ -283,6 +283,10 @@
           this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
 
+        // 控制按钮
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
+          this.hasDelete = false;
+        }
       },
 
       /********************* 表格相关方法  ***************************/
