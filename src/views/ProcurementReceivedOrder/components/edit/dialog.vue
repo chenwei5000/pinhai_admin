@@ -5,17 +5,8 @@
 
     <el-row style="margin-bottom: 20px;">
 
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">确认收货</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onConfirm">确认收货</el-button>
 
-      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
-      </el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
-
-      <el-button type="primary" icon="el-icon-user-solid" v-if="hasExecute" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="hasExecute" @click="onShare">分享</el-button>
 
     </el-row>
 
@@ -117,29 +108,8 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
       },
-      //提交审核
-      onCommit() {
-      },
-      //同意审核
-      onAgree() {
-      },
-      //拒绝审核
-      onRefuse() {
-      },
-      //撤回
-      onWithdraw() {
-      },
-      //指派
-      onAssign() {
-      },
-      //交接
-      onHandover() {
-      },
-      //分享
-      onShare() {
-      },
-      //完成
-      onComplete() {
+      //确认收货
+      onConfirm() {
       }
     }
   }
