@@ -70,8 +70,8 @@
       <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
       <el-table-column prop="shippedMsg" label="物流信息" min-width="120"></el-table-column>
       <el-table-column prop="shippingPrice" label="运费" min-width="120"></el-table-column>
-      <el-table-column prop="expectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="receivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
       <el-table-column prop="remark" label="备注" min-width="120"></el-table-column>
       <!-- <el-table-column prop="id" label="ID" width="90"></el-table-column> -->
 
@@ -120,7 +120,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
+  import editDialog from './edit/dialog2'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'

@@ -6,10 +6,9 @@
            label-width="120px"
            v-loading="loading"
   >
-  {{editObject}}
     <el-row>
       <el-col :md="10">
-        <el-form-item label="采购单编码" prop="code">
+        <el-form-item label="发货计划编码" prop="code">
           <el-input v-model="editObject.code"
                     show-word-limit
                     style="width: 220px" placeholder="请填写编码" clearable></el-input>
@@ -28,7 +27,7 @@
       <el-col :md="10">
         <el-form-item label="收货仓库" prop="warehouseId">
           <el-select v-model="editObject.warehouse.name" style="width: 220px"
-                      filterable placeholder="请选择">
+                      filterable placeholder="请选择" :change="warehouseChange()">
               <el-option
                 v-for="(item , idx)  in warehouseSelectOptions"
                 :label="item.label"
@@ -44,7 +43,6 @@
           <el-date-picker
             v-model="editObject.expectTime"
             format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
             type="date"
             placeholder="交货截止日"></el-date-picker>
         </el-form-item>
@@ -155,9 +153,7 @@
           this.editObject.limitTime = this.primary.formatLimitTime;
           this.editObject.executeTime = this.primary.formatExecuteTime;
 
-          console.log("warehouseId;dfjslkdfjkldsjfkl;sdjl", this.primary.warehouseId)
           //转化仓库
-
           this.categorySelectOptions = categoryModel.getMineSelectOptions();
           this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
@@ -213,6 +209,7 @@
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
         console.log("参数dfjlskdjflksd", _object)
+        this.editObject.warehouseId = this.editObject.warehouse.name;
         this.loading = true;
         this.confirmLoading = true;
 
@@ -231,6 +228,12 @@
             this.confirmLoading = false;
           })
       },
+
+      //监听仓库el-select变化
+      warehouseChange(){
+        this.editObject.warehouseId = this.editObject.warehouse.name;
+
+      }
     }
   }
 </script>

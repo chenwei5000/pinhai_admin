@@ -2,39 +2,13 @@
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
-
     <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form" 
              @submit.native.prevent>
-
       <el-form-item label="SKU">
         <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
-
-      <el-form-item label="分类">
-        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
-      </el-form-item>
-
-      <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status" placeholder="请选择状态">
-          <el-option
-            v-for="(item,idx) in statusSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="优先级">
-        <el-select filterable v-model="searchParam.priority" placeholder="请选择优先级">
-          <el-option
-            v-for="(item,idx) in prioritySelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
+      
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
@@ -72,8 +46,9 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="200" fixed="left"></el-table-column>
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
+      <el-table-column prop="product.skuCode" label="SKU编码" sortable min-width="200"></el-table-column>
+      <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.status === 1
@@ -85,62 +60,13 @@
           </el-tag>
         </template>
       </el-table-column>
-
-      <el-table-column prop="product.category.name" label="分类" width="120"></el-table-column>
-
-      <el-table-column prop="priority" label="优先级" sortable width="100">
-        <template slot-scope="scope">
-          {{ scope.row.priorityName }}
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="priorityNote" label="优先要求" width="130">
-
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="优先要求" width="250" trigger="hover">
-            <div v-html="scope.row.priorityNote"></div>
-            <span slot="reference">{{ scope.row.priorityNote ? scope.row.priorityNote.substr(0,15) : '' }}</span>
-          </el-popover>
-        </template>
-
-      </el-table-column>
-
-      <el-table-column prop="qty" label="采购件数" width="100"></el-table-column>
-
-      <el-table-column prop="orderQty" label="下单件数" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货件数" width="100"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货件数" width="100"></el-table-column>
-
-      <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
-      <el-table-column prop="safetyStockWeek" label="备货周数" width="90"></el-table-column>
-      <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="130"></el-table-column>
-      <el-table-column prop="sevenSalesCount" sortable label="7日销量(件)" width="120"></el-table-column>
-      <el-table-column prop="amazonTotalStock" sortable label="亚马逊含在途库存(件)" width="200"></el-table-column>
-      <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="130"></el-table-column>
-      <el-table-column prop="unfinishedPlanQty" sortable label="国内在途(箱)" width="130"></el-table-column>
-      <el-table-column prop="product.name" label="名称" width="200"></el-table-column>
-      <el-table-column prop="product.fnSku" label="FNSKU" min-width="120"></el-table-column>
-      <el-table-column prop="product.vipLevel" label="Vip级别" width="120"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
-      <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
-
-
-      <el-table-column prop="saleWeek" sortable label="可售周数" width="110"
-                       fixed="right"></el-table-column>
-
-      <el-table-column prop="cartonQty" sortable label="采购箱数" width="110"
-                       fixed="right"></el-table-column>
-
-      <el-table-column prop="amount" sortable label="金额" width="100"
-                       fixed="right">
-
-        <template slot-scope="scope">
-          {{scope.row.amount, scope.row.product.currency.symbolLeft | currency}}
-        </template>
-
-      </el-table-column>
-
+      <el-table-column prop="product.name" label="产品名" min-width="100"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" min-width="100"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="100"></el-table-column>
+      <el-table-column prop="procurementBoxQty" sortable label="采购数量(箱)" min-width="130"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="100"></el-table-column>
+      <el-table-column prop="shippedQty" sortable label="出货件数" min-width="120"></el-table-column>
+      <el-table-column prop="shippedNote" sortable label= "备注" min-width="200"></el-table-column>
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
@@ -232,6 +158,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
+        // sort: "product.groupName asc, procurementShippedOrderItem.sortNum",
         relations: ["cartonSpec", "product", "product.currency", "product.category"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
@@ -369,6 +296,12 @@
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
         }
+
+        // // 处理排序相关
+        // if (this.sort && this.sort.length > 0){
+        //   params += "&sort=" + this.sort;
+        // }
+
 
         // 请求开始
         this.loading = true
