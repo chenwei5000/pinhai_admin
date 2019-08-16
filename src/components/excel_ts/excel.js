@@ -3,8 +3,8 @@ import ExcelDataClass from './data'
 
 let excelData = new ExcelDataClass();
 
-function getLocation(col, row) {
-  let location = `${row}`;
+function getLocation(col, row, hasRow = false) {
+  let location = hasRow ? '' : `${row}`;
   let allUppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   if (col < 26) {
@@ -14,7 +14,24 @@ function getLocation(col, row) {
   }
 }
 
-function download(data, name) {
+function replaceAll(str, oldpart, newpart) {
+  return str.split(oldpart).join(newpart);
+}
+function writeCellWithValue(ws, location, type, value) {
+  ws[location] = {
+    t: type,
+    v: value
+  }
+}
+
+function writeCellWithFormulae(ws, formulae, location) {
+  ws[location] = {
+    t: 'f',
+    f: formulae,
+    F: `${location}:${location}`
+  }
+}
+function download(data) {
   let firstRowName = []
   let wb = XLSX.utils.book_new();
   // 创建第一行
@@ -26,46 +43,51 @@ function download(data, name) {
   }
   let ws = XLSX.utils.aoa_to_sheet([firstRowName]);
 
+  // eslint-disable-next-line no-unused-vars
+  let ROW = {
+    start: 1,
+    end: data.length + 1
+  }
   for (let i = 0; i < data.length; i++) {
     let row = i + 2;
     for (let j = 0; j < firstRow.length; j++) {
       const e = firstRow[j];
       const name = e.name
       let location = getLocation(excelData.findByName(name), row);
-      if (e.type === 'n') {
-        ws[location] = {
-          t: 'n',
-          v: data[i][e.name.slice(1, -1)]
-        }
-      } else if (e.type === 's') {
-        ws[location] = {
-          t: 's',
-          v: data[i][e.name.slice(1, -1)]
-        }
+      if (e.type === 'n' || e.type === 's') {
+        writeCellWithValue(ws, location, e.type, data[i][e.name.slice(1, -1)]);
       } else {
-        // 公式
-        let formulae = e.formulae;
-        // 替换字符串
+        // 匹配列名
+        let formulae = e.formulae
         e.relation.forEach(source => {
           let col = excelData.findByName(source);
-          let replaceStr = getLocation(col, row);
-          formulae = formulae.split(source).join(replaceStr);
+          let replaceStr = getLocation(col, row, e.hasRow);
+          formulae = replaceAll(formulae, source, replaceStr);
         })
-        ws[location] = {
-          t: 'f',
-          f: formulae,
-          F: `${location}:${location}`
+        if (e.hasRow) {
+          // 匹配行号
+          let regexp = /#.*?#/g;
+          let allMatch = [...formulae.matchAll(regexp)];
+          allMatch.forEach(content => {
+            let rawContent = content[0]
+            // console.log('rawContent ', rawContent)
+            let evalContent = rawContent.slice(1, -1)
+            // eslint-disable-next-line no-eval
+            let value = eval(evalContent);
+            formulae = replaceAll(formulae, rawContent, `${value}`)
+          })
         }
+
+        writeCellWithFormulae(ws, formulae, location);
       }
     }
   }
+
   // 更改 !ref
   ws['!ref'] = `A1:${getLocation(firstRow.length - 1, data.length + 1)}`;
-  console.log('ws', ws)
   XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-  return XLSX.writeFile(wb, `${name}.xlsx`);
+  return XLSX.writeFile(wb, 'des.xlsx');
 }
-
 export default {
   download
 }
