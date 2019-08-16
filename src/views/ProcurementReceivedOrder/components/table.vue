@@ -43,7 +43,6 @@
       stripe
       border
       highlight-current-row
-      :row-class-name="dangerClassName"
       :cell-style="{padding: '2px 0', 'font-size': '13px'}"
       :header-cell-style="{padding: '2px 0'}"
       :data="data"
@@ -351,15 +350,6 @@
         return '';
       },
 
-      /*报警样式 */
-      //  TODO:根据实际情况调整
-      dangerClassName({row}) {
-        // 代码示例 return 为css定义的样式 -row 结尾
-        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
-        //   return 'warning-row';
-        // }
-        return '';
-      },
 
       /*获取列表*/
       /* shouldStoreQuery 是否开启通过url记录查询参数， true表示开启 */
@@ -487,17 +477,6 @@
           }
           history.pushState(history.state, 'ph-table search', newUrl)
         }
-      },
-
-      /* 多选功能 */
-      handleSelectionChange(val) {
-        this.selected = val
-
-        /**
-         * 多选启用时生效, 返回(selected)已选中行的数组
-         * @event selection-change
-         */
-        this.$emit('selection-change', val)
       },
 
       /* 排序功能 */

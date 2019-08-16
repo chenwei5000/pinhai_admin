@@ -56,6 +56,7 @@
 
       <el-table-column prop="skuCode" label="SKU编码" width="120"></el-table-column>
       <el-table-column prop="product.name" label="产品名" width="120"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="120"></el-table-column>
       <el-table-column prop="boxCode" label="箱码" sortable width="100"></el-table-column>
       <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="130"></el-table-column>
       <el-table-column prop="storageLocation.code" label="存放货位" width="100"></el-table-column>
@@ -75,11 +76,6 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -160,9 +156,9 @@
         toolbarConfig: {
           hasEdit: true,
           hasDelete: false,
-          hasAdd: true,
-          hasExportTpl: true,
-          hasExport: true,
+          hasAdd: false,
+          hasExportTpl: false,
+          hasExport: false,
           hasImport: false,
         }
       }
@@ -275,9 +271,6 @@
 
         //TODO:根据实际情况调整
         this.searchParam.skuCode = null;
-        this.searchParam.category = null;
-        this.searchParam.priority = null;
-        this.searchParam.status = null;
 
         this.search();
       },
@@ -290,21 +283,6 @@
       },
 
       /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-
-              this.getList();
-
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {

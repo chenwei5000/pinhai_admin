@@ -5,8 +5,10 @@
 
     <el-row style="margin-bottom: 20px;">
 
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">确认收货</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onConfirm">确认收货</el-button>
 
+
+    </el-row>
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
@@ -31,7 +33,6 @@
 
     </el-collapse>
 
-    </el-row>
   </el-dialog>
 
 </template>
@@ -83,7 +84,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementReceivedOrders/${this.primaryId}`)
+            .get(`/procurementPlans/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -107,29 +108,8 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
       },
-      //提交审核
-      onCommit() {
-      },
-      //同意审核
-      onAgree() {
-      },
-      //拒绝审核
-      onRefuse() {
-      },
-      //撤回
-      onWithdraw() {
-      },
-      //指派
-      onAssign() {
-      },
-      //交接
-      onHandover() {
-      },
-      //分享
-      onShare() {
-      },
-      //完成
-      onComplete() {
+      //确认收货
+      onConfirm() {
       }
     }
   }
