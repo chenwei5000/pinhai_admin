@@ -9,33 +9,31 @@
 
     <el-row>
       <el-col :md="10">
-        <el-form-item label="采购单编码" prop="code">
-          <el-input v-model="editObject.code"
-                    show-word-limit
-                    style="width: 220px" placeholder="请填写编码" clearable></el-input>
+        <el-form-item label="编码" prop="code">
+          <el-input v-model="editObject.code" style="width: 220px" ></el-input>
+        </el-form-item>
+      </el-col>
+
+    </el-row>
+
+    <el-row>
+      <el-col :md="14">
+        <el-form-item label="供货商" prop="supplierId">
+          <el-select v-model="editObject.supplierId" style="width: 220px">
+            <el-option
+              v-for="(item , idx)  in supplierSelectOptions"
+              :label="item.label"
+              :value="item.value"
+              :key="idx"
+            ></el-option>
+          </el-select>
+
         </el-form-item>
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="供货商" prop="supplierId">
-          <el-select v-model="editObject.supplierId" style="width: 220px"
-                     filterable placeholder="请选择">
-          <el-option
-            v-for="(item , idx)  in supplierSelectOptions"
-            :label="item.label"
-            :value="item.value"
-            :key="idx">
-          </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col :md="10">
         <el-form-item label="收货仓库" prop="warehouseId">
-          <el-select v-model="editObject.warehouseId" style="width: 220px"
-                     filterable placeholder="请选择">
+          <el-select v-model="editObject.warehouseId" style="width: 220px">
             <el-option
               v-for="(item , idx)  in warehouseSelectOptions"
               :label="item.label"
@@ -43,19 +41,23 @@
               :key="idx"
             ></el-option>
           </el-select>
-        </el-form-item>
-      </el-col>
 
-      <el-col :md="14">
-        <el-form-item label="预计到货时间" prop="expectTime">
-          <el-date-picker
-            v-model="editObject.expectTime"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            type="date">
-          </el-date-picker>
         </el-form-item>
       </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :md="14">
+      <el-form-item label="预计到货时间" prop="expectTime">
+        <el-date-picker
+          v-model="editObject.expectTime"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+          type="date"
+          placeholder="预计到货时间">
+        </el-date-picker>
+      </el-form-item>
+    </el-col>
     </el-row>
 
     <el-row>
@@ -69,6 +71,13 @@
                       cols="80"
                       show-word-limit></el-input>
           </el-col>
+
+          <el-col :span="2">
+            <el-tooltip class="item" effect="light" content="请根据要求填写物流信息！" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-col>
+
         </el-form-item>
       </el-col>
     </el-row>
@@ -84,6 +93,13 @@
                       cols="80"
                       show-word-limit></el-input>
           </el-col>
+
+          <el-col :span="2">
+            <el-tooltip class="item" effect="light" content="备注信息。支持换行！" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-col>
+
         </el-form-item>
       </el-col>
     </el-row>
@@ -104,9 +120,7 @@
 
 <script>
 
-  import categoryModel from '@/api/category'
   import warehouseModel from '@/api/warehouse'
-  import merchantModel from '@/api/merchant'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
   import supplierModel from "../../../../api/supplier";
@@ -129,37 +143,51 @@
         confirmLoading: false,
 
         // 选择框 TODO:
-        categorySelectOptions: [],
+
         warehouseSelectOptions: [],
-        merchantSelectOptions: [],
-        supplierSelectOptions:[],
+        supplierSelectOptions: [],
+
 
         // 编辑对象 TODO
         editObject: {
-          code: null,
-          supplierId: null,
-          trackNumber: null,
-          remark: null,
-          expectTime: null,
           id: null,
-          categoryId: null,
-          limitTime: null,
-          executeTime: null,
-          tags: null,
-          note: null,
-          merchantId: null,
+          code: null,
           warehouseId: null,
-          handleMethod: "3",
-          safetyStockWeek: null,
-          vip1SafetyStockWeek: null,
-          vip2SafetyStockWeek: null,
+          supplierId: null,
+          remark: null,
+          trackNumber: null,
+          expectTime: null
         },
 
         // 字段验证规则 TODO:
         rules: {
+          limitTime: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          executeTime: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          categoryId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          merchantId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
           warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
+          safetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          vip1SafetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          vip2SafetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          handleMethod: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ]
         },
       }
     },
@@ -185,17 +213,13 @@
           //转化时间
           this.editObject.limitTime = this.primary.formatLimitTime;
           this.editObject.executeTime = this.primary.formatExecuteTime;
-          //转化分类
-          this.editObject.categoryId = intArrToStrArr(this.primary.categoryId);
+          this.editObject.expectTime = this.primary.formatExpectTime;
+
+
+
           //转化仓库
-          this.editObject.warehouseId = this.primary.warehouseId ? intArrToStrArr(this.primary.warehouseId.split(",")) : [];
-          this.editObject.handleMethod = this.primary.handleMethod + '';
-
-          this.editObject.supplierId = this.primary.supplierId ? intArrToStrArr(this.primary.supplierId.split(",")) : [];
-
-          this.categorySelectOptions = categoryModel.getMineSelectOptions();
-          this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+
           this.supplierSelectOptions = supplierModel.getSelectOptions();
 
 

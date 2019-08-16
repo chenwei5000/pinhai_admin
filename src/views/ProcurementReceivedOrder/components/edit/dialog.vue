@@ -5,6 +5,7 @@
 
     <el-row style="margin-bottom: 20px;">
 
+
       <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onConfirm">确认收货</el-button>
 
 
@@ -18,18 +19,20 @@
         <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
       </el-collapse-item>
 
-      <el-collapse-item name="confirm" style="margin-top: 10px">
+      <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 确认收货</div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-
         <attachment ref="attachment" :primary="primary"></attachment>
-
       </el-collapse-item>
 
+      <el-collapse-item name="person" style="margin-top: 10px">
+        <div slot="title" class="title">4. 采购负责人</div>
+        <person ref="person" :primary="primary"></person>
+      </el-collapse-item>
 
     </el-collapse>
 
@@ -41,12 +44,14 @@
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
+  import person from './person'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment
+      attachment,
+      person
     },
     props: {},
     computed: {
@@ -59,7 +64,7 @@
         }
       },
       title() {
-        return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        return '编辑采购计划 -- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -84,7 +89,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/procurementReceivedOrders/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -108,9 +113,11 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
       },
-      //确认收货
-      onConfirm() {
-      }
+
+      //确认
+      onConfirm(){
+      },
+
     }
   }
 </script>
