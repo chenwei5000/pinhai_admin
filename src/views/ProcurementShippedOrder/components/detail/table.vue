@@ -172,9 +172,9 @@
         toolbarConfig: {
           hasEdit: true,
           hasDelete: false,
-          hasAdd: true,
-          hasExportTpl: true,
-          hasExport: true,
+          hasAdd: false,
+          hasExportTpl: false,
+          hasExport: false,
           hasImport: false,
         }
       }

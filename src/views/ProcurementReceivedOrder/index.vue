@@ -6,11 +6,10 @@
 
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
-
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="shipped" lazy>
             <span slot="label">
-              <i class="el-icon-s-check"></i> 待收货
+              <i class="el-icon-s-flag"></i> 待收货
             </span>
             <keep-alive>
               <phTab type="shipped"/>
@@ -20,7 +19,7 @@
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="complete" lazy>
             <span slot="label">
-              <i class="el-icon-s-claim"></i> 已完成
+              <i class="el-icon-s-claim"></i> 完成
             </span>
             <keep-alive>
               <phTab type="complete"/>
@@ -36,7 +35,6 @@
               <phTab type="all"/>
             </keep-alive>
           </el-tab-pane>
-
         </el-tabs>
       </div>
     </div>
@@ -46,6 +44,7 @@
 
 <script>
   import phTab from './components/tab'
+  import phCreate from './components/create'
 
   const actionFlag = 's='
 
@@ -53,6 +52,7 @@
 
     components: {
       phTab,
+      phCreate
     },
 
     data() {
@@ -62,8 +62,8 @@
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'all')
-          : 'all',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'shipped')
+          : 'shipped',
       }
     },
 
