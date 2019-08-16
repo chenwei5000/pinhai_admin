@@ -68,7 +68,8 @@
         primaryId: null,  //主ID
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
-        activeNames: [],   //折叠面板开启项
+        activeNames: [], //折叠面板开启项
+
       }
     },
 

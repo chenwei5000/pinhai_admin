@@ -39,7 +39,7 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="箱码" prop="productId">
+          <el-form-item label="产品名" prop="productId">
             <el-input v-model="detailItem.productId" style="width: 220px" ></el-input>
           </el-form-item>
         </el-col>
@@ -158,7 +158,7 @@
           receivedQty: null,
           receivedNote: null,
           receivedCartonQty: null,
-          productId: null
+          productId:  null
 
         },
 

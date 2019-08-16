@@ -127,6 +127,8 @@
   import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
+  import supplierModel from "../../../api/supplier";
+  import warehouseModel from "../../../api/warehouse";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -191,6 +193,7 @@
 
         supplierSelectOptions:[],
         warehouseSelectOptions: [],
+        statusSelectOptions: [],
 
 
         searchParam: {
@@ -272,6 +275,8 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
+        this.supplierSelectOptions = supplierModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
 
         //待收货 无删除
       //   if (this.type === 'shipped') {

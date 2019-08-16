@@ -215,13 +215,12 @@
           this.editObject.executeTime = this.primary.formatExecuteTime;
           this.editObject.expectTime = this.primary.formatExpectTime;
 
-
-
           //转化仓库
+          this.editObject.warehouseId = this.editObject.warehouseId + '';
+          this.editObject.supplierId = this.editObject.supplierId + '';
+
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
-
           this.supplierSelectOptions = supplierModel.getSelectOptions();
-
 
           //设置默认安全库存
           systemModel.getConfigInfos().then(data => {
