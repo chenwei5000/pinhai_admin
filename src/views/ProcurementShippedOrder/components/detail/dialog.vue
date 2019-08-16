@@ -46,7 +46,7 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="箱规" prop="cartonSpecId">
+          <el-form-item label="箱规" prop="cartonSpecId">0
 
             <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
                        style="width: 220px">
