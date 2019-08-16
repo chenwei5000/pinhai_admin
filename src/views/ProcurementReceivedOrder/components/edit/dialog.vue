@@ -29,11 +29,6 @@
         <attachment ref="attachment" :primary="primary"></attachment>
       </el-collapse-item>
 
-      <el-collapse-item name="person" style="margin-top: 10px">
-        <div slot="title" class="title">4. 采购负责人</div>
-        <person ref="person" :primary="primary"></person>
-      </el-collapse-item>
-
     </el-collapse>
 
   </el-dialog>

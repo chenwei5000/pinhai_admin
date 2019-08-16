@@ -39,6 +39,14 @@
 
       <el-row>
         <el-col :md="10">
+          <el-form-item label="箱码" prop="productId">
+            <el-input v-model="detailItem.productId" style="width: 220px" ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :md="10">
           <el-form-item label="发货数量(箱)" prop="shippedCartonQty">
             <el-input v-model="detailItem.shippedCartonQty" style="width: 220px" ></el-input>
           </el-form-item>
@@ -150,6 +158,7 @@
           receivedQty: null,
           receivedNote: null,
           receivedCartonQty: null,
+          productId: null
 
         },
 

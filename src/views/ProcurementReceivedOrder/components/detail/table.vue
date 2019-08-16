@@ -62,6 +62,7 @@
       </el-table-column>
 
       <el-table-column prop="skuCode" label="SKU编码" width="120"></el-table-column>
+      <el-table-column prop="product.name" label="产品名" width="100"></el-table-column>
       <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
       <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
       <el-table-column prop="storageLocation.code" label="存放货位" width="100"></el-table-column>
@@ -146,9 +147,6 @@
         downloadUrl: "", //下载Url
         searchParam: {
           skuCode: null,
-          category: null,
-          status: null,
-          priority: null,
         },
         filters: [
           {
@@ -212,13 +210,7 @@
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
-        if (row.saleWeek == 0 || row.safetyStockWeek - row.saleWeek > 2) { //可售周数不足
-          return 'warning-row';
-        }
-        else if (row.saleWeek - row.safetyStockWeek > 2) { //可售周数超2周
-          return 'danger-row';
-        }
-        return '';
+
       },
 
       /*汇总数据*/
@@ -375,9 +367,7 @@
 
         //TODO:根据实际情况调整
         this.searchParam.skuCode = null;
-        this.searchParam.category = null;
-        this.searchParam.priority = null;
-        this.searchParam.status = null;
+
 
         this.search();
       },

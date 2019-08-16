@@ -11,7 +11,7 @@
       </el-form-item>
 
       <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId" style="width: 120px"  placeholder="请选择供货商">
+        <el-select filterable v-model="searchParam.supplierId.value" style="width: 120px"  placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -21,7 +21,7 @@
       </el-form-item>
 
       <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId" style="width: 120px"  placeholder="请选择收货仓库">
+        <el-select filterable v-model="searchParam.warehouseId.value" style="width: 120px"  placeholder="请选择收货仓库">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
