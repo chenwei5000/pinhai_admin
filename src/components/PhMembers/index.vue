@@ -21,6 +21,8 @@
             show-checkbox
             ref="tree"
             node-key="id"
+            icon-class="el-icon-s-home"
+            :default-expanded-keys="expandedNodes"
             :default-expand-all="false"
             :filter-node-method="filterNode"
             :check-on-click-node="true"
@@ -31,7 +33,7 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave">保 存</el-button>
+      <el-button type="primary" @click="onSave" :loading="confirmLoading" >保 存</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </div>
 
@@ -71,11 +73,18 @@
     },
 
 
-    computed: {},
+    computed: {
+      expandedNodes() {
+        if (this.data && this.data.length > 0) {
+          let arr = [];
+          arr.push(this.data[0].id);
+          return arr;
+        }
+      }
+    },
 
     watch: {
       filterText(val) {
-        console.log(val);
         this.$refs.tree.filter(val);
       }
     },
@@ -120,6 +129,7 @@
 
       // 保存
       onSave() {
+        this.confirmLoading = true;
         let checkedNodes = this.$refs.tree.getCheckedNodes();
         if (checkedNodes == null || checkedNodes.length <= 0) {
           this.$message.error("请选择人员");
@@ -129,7 +139,7 @@
         checkedNodes.forEach(node => {
           ids.push(node.id);
         });
-
+        this.confirmLoading = false;
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("saveCBEvent", ids);
 

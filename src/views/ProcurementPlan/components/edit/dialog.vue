@@ -13,9 +13,11 @@
       </el-button>
       <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
-      <el-button type="primary" icon="el-icon-user-solid" v-if="hasExecute" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="hasExecute" @click="onShare">分享</el-button>
+      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
+
+      <el-button type="primary" icon="el-icon-user-solid" v-if="false" @click="onAssign">指派处理人</el-button>
+      <el-button type="primary" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
+      <el-button type="primary" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
 
     </el-row>
 
@@ -38,12 +40,13 @@
       </el-collapse-item>
 
       <el-collapse-item name="person" style="margin-top: 10px">
-        <div slot="title" class="title">4. 采购负责人</div>
+        <div slot="title" class="title">4. 指派采购负责人</div>
         <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary"></person>
       </el-collapse-item>
 
     </el-collapse>
 
+    <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus" :objStatus="primary.status"></phStatus>
   </el-dialog>
 
 </template>
@@ -53,13 +56,15 @@
   import itemTable from '../detail/table'
   import attachment from './attachment'
   import person from './person'
+  import phStatus from '@/components/PhStatus'
 
   export default {
     components: {
       infoFrom,
       itemTable,
       attachment,
-      person
+      person,
+      phStatus
     },
     props: {},
     computed: {
@@ -70,6 +75,9 @@
         else {
           return false;
         }
+      },
+      hasAdmin(){
+        return true;
       },
       title() {
         return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
@@ -125,20 +133,83 @@
       reloadCBEvent(){
         this.initData();
       },
+
+      // 管理员修改状态
+      onStatus(){
+        this.$refs.phStatus.openDialog();
+      },
+      saveStatusCBEvent(status){
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let url = `/procurementPlans/status/${this.primaryId}/${status}`;
+        this.global.axios.put(url)
+          .then(resp => {
+            this.$refs.phStatus.closeDialog();
+            this.$message.info('操作成功!');
+            loading.close();
+            this.initData();
+            // 继续向父组件抛出事件 修改成功刷新列表
+            this.$emit("modifyCBEvent");
+          })
+          .catch(err => {
+            loading.close();
+          });
+      },
+
+      // 业务
+      business(title, bAction, message){
+        this.$confirm(title, '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+              });
+
+              let url = `/procurementPlans/${bAction}/${this.primaryId}`;
+              this.global.axios.put(url)
+                .then(resp => {
+                  done();
+                  this.$message.info(message);
+                  loading.close();
+                  this.initData();
+                  // 继续向父组件抛出事件 修改成功刷新列表
+                  this.$emit("modifyCBEvent");
+                })
+                .catch(err => {
+                  loading.close();
+                });
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
       //提交审核
       onCommit() {
+        this.business('确认将该计划提交给上级审核吗?', 'commit', "提交成功,请耐心等待上级处理!");
       },
       //同意审核
       onAgree() {
+        this.business('确认同意该计划吗?', 'agree', "操作成功!");
       },
       //拒绝审核
       onRefuse() {
+        this.business('确认拒绝该计划吗?', 'refuse', "操作成功!");
       },
       //撤回
       onWithdraw() {
-      },
-      //指派
-      onAssign() {
+        this.business('确认撤回该计划吗?', 'withdraw', "操作成功!");
       },
       //交接
       onHandover() {

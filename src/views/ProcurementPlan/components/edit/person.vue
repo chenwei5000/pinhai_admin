@@ -80,14 +80,23 @@
       // 添加负责人回调
       saveCBEvent(ids) {
         if (ids && this.primary) {
+
+          const loading = this.$loading({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+
           let assignArr = [];
           ids.forEach(id => {
-            assignArr.push(assign(id));
+            assignArr.push(this.assign(id));
           });
           // 控制多个异步请求，保证所有请求全部完成
           Promise.all(assignArr).then(obj => {
             this.$refs.members.closeDialog();
             this.$message.info("操作成功!");
+            loading.close();
 
             // 继续向父组件抛出事件 修改成功刷新列表
             this.$emit("reloadCBEvent");
@@ -95,8 +104,39 @@
         }
       },
       // 删除负责人
-      handleRemove() {
-        this.initData();
+      handleRemove(item) {
+        if (item && item.userId) {
+          this.$confirm('确认删除吗', '提示', {
+            type: 'warning',
+            beforeClose: (action, instance, done) => {
+              if (action == 'confirm') {
+                const loading = this.$loading({
+                  lock: true,
+                  text: 'Loading',
+                  spinner: 'el-icon-loading',
+                  background: 'rgba(0, 0, 0, 0.7)'
+                });
+
+                let url = `${this.url}/cancelAssign/${this.primary.id}/${item.userId}`;
+                this.global.axios.put(url)
+                  .then(resp => {
+                    done();
+                    this.$message.info("操作成功!");
+                    loading.close();
+                    // 继续向父组件抛出事件 修改成功刷新列表
+                    this.$emit("reloadCBEvent");
+                  })
+                  .catch(err => {
+                    loading.close();
+                  });
+
+                done();
+              } else done()
+            }
+          }).catch(er => {
+            /*取消*/
+          })
+        }
       },
     }
   }

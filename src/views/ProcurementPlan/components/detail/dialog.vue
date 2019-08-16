@@ -30,7 +30,7 @@
           <el-form-item label="采购箱数" prop="cartonQty">
 
             <el-input-number v-model="detailItem.cartonQty"
-                             :precision="2"
+                             :precision="0"
                              :min="1"
                              :step="1"
                              :max="100000" label="采购箱数">
@@ -216,7 +216,7 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
               保存
             </el-button>
           </el-row>
@@ -236,8 +236,8 @@
   export default {
     components: {},
     props: {
-      primaryId: {
-        type: Number,
+      primary: {
+        type: [Object],
         default: null
       }
     },
@@ -248,6 +248,15 @@
         }
         else {
           return "修改采购计划明细";
+        }
+      },
+      hasEdit(){
+        // 控制按钮
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        else{
+          return true;
         }
       }
     },
@@ -351,7 +360,7 @@
             safetyStockWeek: 10,
             numberOfCarton: null,
             cartonQty: 1,
-            procurementPlanId: this.primaryId
+            procurementPlanId: this.primary.id
           }
 
         }

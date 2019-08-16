@@ -161,7 +161,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primary.id">
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
     </itemDialog>
   </div>
 
@@ -284,8 +284,10 @@
         }
 
         // 控制按钮
-        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
           this.hasDelete = false;
+          this.toolbarConfig.hasAdd = false;
+          this.toolbarConfig.hasImport = false;
         }
       },
 
