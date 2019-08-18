@@ -26,27 +26,34 @@
 
       <el-collapse-item name="infoFrom">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 采购计划内容</div>
-        <itemTable ref="itemTable" :primary="primary"></itemTable>
+        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete" ></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary"></attachment>
+        <attachment ref="attachment" :primary="primary" v-if="primaryComplete" ></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="person" style="margin-top: 10px">
         <div slot="title" class="title">4. 指派采购负责人</div>
-        <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary"></person>
+        <person @reloadCBEvent="reloadCBEvent" ref="person" v-if="primaryComplete" :primary="primary"></person>
       </el-collapse-item>
 
+      <el-collapse-item name="logs" style="margin-top: 10px">
+        <div slot="title" class="title">5. 日志</div>
+        <logs @reloadCBEvent="reloadCBEvent" ref="logs" :logs="logs" v-if="logComplete"></logs>
+      </el-collapse-item>
     </el-collapse>
 
-    <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus" :objStatus="primary.status"></phStatus>
+    <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
+              :objStatus="primary.status"></phStatus>
+
+    <auditing ref="auditing" @saveAuditCBEvent="saveAuditCBEvent"></auditing>
   </el-dialog>
 
 </template>
@@ -55,8 +62,10 @@
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
+  import logs from './logs';
   import person from './person'
   import phStatus from '@/components/PhStatus'
+  import auditing from '@/components/PhAuditing'
 
   export default {
     components: {
@@ -64,7 +73,9 @@
       itemTable,
       attachment,
       person,
-      phStatus
+      phStatus,
+      auditing,
+      logs
     },
     props: {},
     computed: {
@@ -76,7 +87,7 @@
           return false;
         }
       },
-      hasAdmin(){
+      hasAdmin() {
         return true;
       },
       title() {
@@ -88,6 +99,9 @@
       return {
         primaryId: null,  //主ID
         primary: {}, //主对象
+        logs: [], //日志对象
+        primaryComplete: false,
+        logComplete: false,
         dialogVisible: false, //Dialog 是否开启
         activeNames: [],   //折叠面板开启项
       }
@@ -110,6 +124,32 @@
               let res = resp.data;
               this.primary = res || {};
               this.dialogVisible = true;
+              this.primaryComplete = true;
+            })
+            .catch(err => {
+            });
+
+          // 获取日志数据
+          let filters = [];
+          let logUrl = '/procurementPlanLogs';
+          let relations = ["creator"]
+
+          filters.push({
+            'field': 'procurementPlanId',
+            op: 'eq',
+            data: this.primaryId
+          })
+          logUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          logUrl += "&sort=id&dir=desc";
+          logUrl += "&relations=" + JSON.stringify(relations);
+
+          this.global.axios
+            .get(logUrl)
+            .then(resp => {
+              let res = resp.data;
+              this.logs = res || [];
+              this.logComplete = true;
+              this.dialogVisible = true;
             })
             .catch(err => {
             });
@@ -130,15 +170,15 @@
         this.$emit("modifyCBEvent", object);
       },
       /* 重新加载 */
-      reloadCBEvent(){
+      reloadCBEvent() {
         this.initData();
       },
 
       // 管理员修改状态
-      onStatus(){
+      onStatus() {
         this.$refs.phStatus.openDialog();
       },
-      saveStatusCBEvent(status){
+      saveStatusCBEvent(status) {
         const loading = this.$loading({
           lock: true,
           text: 'Loading',
@@ -162,7 +202,7 @@
       },
 
       // 业务
-      business(title, bAction, message){
+      business(title, bAction, message, note) {
         this.$confirm(title, '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
@@ -175,11 +215,12 @@
               });
 
               let url = `/procurementPlans/${bAction}/${this.primaryId}`;
-              this.global.axios.put(url)
+              this.global.axios.put(url, note)
                 .then(resp => {
                   done();
                   this.$message.info(message);
                   loading.close();
+                  this.$refs.auditing.closeDialog();
                   this.initData();
                   // 继续向父组件抛出事件 修改成功刷新列表
                   this.$emit("modifyCBEvent");
@@ -195,17 +236,33 @@
         })
       },
 
-      //提交审核
+
+      // 提交审核
+      saveAuditCBEvent(note, type) {
+        //提交审核
+        if (type == 'commit') {
+          this.business('确认将该计划提交给上级审核吗?', 'commit', "提交成功,请耐心等待上级处理!", note);
+        }
+        //同意审核
+        else if (type == 'agree') {
+          this.business('确认同意该计划吗?', 'agree', "操作成功!", note);
+        }
+        //拒绝审核
+        else if (type == 'refuse') {
+          this.business('确认拒绝该计划吗?', 'refuse', "操作成功!", note);
+        }
+      },
+
       onCommit() {
-        this.business('确认将该计划提交给上级审核吗?', 'commit', "提交成功,请耐心等待上级处理!");
+        this.$refs.auditing.openDialog('commit');
       },
-      //同意审核
+
       onAgree() {
-        this.business('确认同意该计划吗?', 'agree', "操作成功!");
+        this.$refs.auditing.openDialog('agree');
       },
-      //拒绝审核
+
       onRefuse() {
-        this.business('确认拒绝该计划吗?', 'refuse', "操作成功!");
+        this.$refs.auditing.openDialog('refuse');
       },
       //撤回
       onWithdraw() {
