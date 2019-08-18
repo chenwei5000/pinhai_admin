@@ -253,7 +253,6 @@
           if (valid) {
             this.loading = true;
             let url = `/users/register`;
-            console.log("this.user", this.user);
             this.global.axios
               .post(url, this.user)
               .then(data => {

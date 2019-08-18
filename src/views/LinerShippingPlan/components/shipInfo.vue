@@ -175,11 +175,10 @@ export default {
               }
             });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
-    },    
+    },
     navigateTo() {
       console.log("跳转");
       this.$router.push({ path: "/dashboard" });

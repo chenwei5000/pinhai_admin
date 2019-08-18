@@ -200,7 +200,6 @@ export default {
                 .then(data => {
                   if (data.status == 200) {
                     this.$message.info("修改成功");
-                    console.log("data ", data);
                   }
                   this.loading = false;
 

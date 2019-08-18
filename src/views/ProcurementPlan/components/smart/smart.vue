@@ -340,6 +340,9 @@
           }
         });
 
+        // 获取参数中的id
+        this.newObject.merchantId = this.$route.query.merchantId !== null ? this.$route.query.merchantId : '';
+
         // 仓库追加供货商库存选项
         let flg = true;
         this.warehouseSelectOptions.forEach(obj => {

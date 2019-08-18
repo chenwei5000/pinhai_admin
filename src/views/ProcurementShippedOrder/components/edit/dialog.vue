@@ -101,7 +101,6 @@
           this.global.axios
             .get(url)
             .then(resp => {
-              console.log("没有关联查询的结果！", resp.data)
               let res = resp.data;
               this.primary = res || {};
               this.dialogVisible = true;

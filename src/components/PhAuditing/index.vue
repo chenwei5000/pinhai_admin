@@ -63,7 +63,6 @@
 
     computed: {
       dialogTitle() {
-        console.log(this.type);
         if (this.type == 'commit') {
           return "提交审核";
         }

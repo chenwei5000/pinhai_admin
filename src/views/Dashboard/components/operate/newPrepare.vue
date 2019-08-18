@@ -1,16 +1,20 @@
 <template>
 
-  <div class="card-panel">
-    <router-link :to="'/phtpl/table?merchantId='+mine.merchantId">
-      <div class="card-panel-icon-wrapper icon-green">
-        <svg-icon icon-class="prepare" class-name="card-panel-icon"/>
-      </div>
+  <el-badge :value="count" type="primary">
+    <div class="card-panel">
 
-      <div class="card-panel-text">
-        备货
-      </div>
-    </router-link>
-  </div>
+      <router-link to="/m2/ProcurementPlan_index?s=editing">
+        <div class="card-panel-icon-wrapper icon-green">
+          <svg-icon icon-class="prepare" class-name="card-panel-icon"/>
+        </div>
+
+        <div class="card-panel-text">
+          备货
+        </div>
+      </router-link>
+
+    </div>
+  </el-badge>
 
 </template>
 
@@ -23,7 +27,39 @@
       }
     },
     components: {},
-    methods: {}
+
+    data() {
+      return {
+        count: null
+      }
+    },
+
+    mounted() {
+      this.$nextTick(() => {
+        this.initData();
+      });
+    },
+
+    methods: {
+      initData() {
+        let url = '/procurementPlans/count';
+        let filters = [];
+        filters.push({
+          'field': "status",
+          op: 'eq',
+          data: '1'
+        })
+        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data;
+            this.count = res || null;
+          })
+          .catch(err => {
+          });
+      }
+    }
   }
 </script>
 

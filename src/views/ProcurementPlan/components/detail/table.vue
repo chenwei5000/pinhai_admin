@@ -136,7 +136,7 @@
                        fixed="right">
 
         <template slot-scope="scope">
-          {{scope.row.amount, scope.row.product.currency.symbolLeft | currency}}
+          {{scope.row.amount, scope.row.product.currency ? scope.row.product.currency.symbolLeft : '' | currency}}
         </template>
 
       </el-table-column>

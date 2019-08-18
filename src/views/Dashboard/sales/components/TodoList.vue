@@ -8,19 +8,19 @@
     <el-collapse>
 
       <el-collapse-item v-for="(todo, index) in filteredTodos"
-                        :key="index"
-                        :title="todo.text" :name="index">
+                        :key="todo.id" :name="todo.id">
 
         <template slot="title">
           <div class="todo-title">
-            <i class="header-icon el-icon-info" style="color: #f25542;margin-right: 5px;"></i> {{todo.text}}
+            <i class="header-icon el-icon-info" style="color: #f25542;margin-right: 5px;"></i>
+            {{todo.notice.title}}
           </div>
         </template>
 
         <div class="todo-centent">
 
           <p>
-            {{todo.centent}}
+            {{todo.notice.content}}
           </p>
 
           <p style="text-align: right">
@@ -104,9 +104,10 @@
     },
     data() {
       return {
+        url: '/userNotices',
         visibility: 'all',
         filters,
-        todos: defalutList
+        todos: []
       }
     },
     computed: {
@@ -114,13 +115,43 @@
         return this.todos.every(todo => todo.done)
       },
       filteredTodos() {
-        return filters[this.visibility](this.todos)
+        console.log(filters[this.visibility](this.todos));
+        return filters[this.visibility](this.todos);
       },
       remaining() {
         return this.todos.filter(todo => !todo.done).length
       }
     },
+
+    mounted() {
+      this.$nextTick(() => {
+        this.initData();
+      });
+    },
+
     methods: {
+      initData() {
+        let url = this.url;
+        let filters = [];
+        filters.push({
+          'field': "isRead",
+          op: 'eq',
+          data: '0'
+        })
+        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        let relations =["notice"];
+        url += "&relations=" + JSON.stringify(relations);
+
+        this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data || [];
+            this.todos = res || [];
+          })
+          .catch(err => {
+          });
+
+      },
       setLocalStorage() {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
       },
@@ -231,10 +262,11 @@
     padding: 5px 20px;
     font-size: 14px;
 
-    p{
-      max-height: 410px;
-      overflow-y: hidden;
-    }
+  p {
+    max-height: 410px;
+    overflow-y: hidden;
+  }
+
   }
 
   .footer {

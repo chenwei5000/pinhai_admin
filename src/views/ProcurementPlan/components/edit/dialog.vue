@@ -31,12 +31,12 @@
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 采购计划内容</div>
-        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete" ></itemTable>
+        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary" v-if="primaryComplete" ></attachment>
+        <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="person" style="margin-top: 10px">
@@ -134,11 +134,12 @@
           let logUrl = '/procurementPlanLogs';
           let relations = ["creator"]
 
-          filters.push({
-            'field': 'procurementPlanId',
-            op: 'eq',
-            data: this.primaryId
-          })
+          filters.push(
+            {
+              field: "procurementPlanId",
+              op: 'eq',
+              data: this.primaryId
+            })
           logUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
           logUrl += "&sort=id&dir=desc";
           logUrl += "&relations=" + JSON.stringify(relations);

@@ -1,5 +1,5 @@
 <template>
- 
+
   <!-- 编辑表单 TODO:-->
   <el-form :rules="rules" :model="editObject" status-icon inline
            ref="editObject" label-position="right"
@@ -208,7 +208,6 @@
       // 创建或修改发货计划
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
-        console.log("参数dfjlskdjflksd", _object)
         this.editObject.warehouseId = this.editObject.warehouse.name;
         this.loading = true;
         this.confirmLoading = true;

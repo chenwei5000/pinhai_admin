@@ -216,7 +216,7 @@ import warehouseModel from '../../../api/warehouse';
           limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
           supplierId: {value: null, op: 'eq', id: 'supplierId'},
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
-          status: {value: null, op: 'eq', id: 'status'},  
+          status: {value: null, op: 'eq', id: 'status'},
           code:  {value: null, op: 'bw', id: 'name'},
         },
 
@@ -309,7 +309,7 @@ import warehouseModel from '../../../api/warehouse';
         // }
         // else if (this.type === 'all') {
         // }
-      }, 
+      },
 
       // 获取表格的高度
       getTableHeight() {
@@ -354,7 +354,7 @@ import warehouseModel from '../../../api/warehouse';
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
         this.searchParam.code.value = null;
-        this.searchParam.supplierId.value = null; 
+        this.searchParam.supplierId.value = null;
         this.searchParam.warehouseId.value = null;
 
         // 重置url
@@ -370,7 +370,7 @@ import warehouseModel from '../../../api/warehouse';
          * @event reset
          */
         this.$emit('reset')
-        
+
         //TODO：此处报错未处理
         // this.$emit(
         //   'update:customQuery',
@@ -616,7 +616,6 @@ import warehouseModel from '../../../api/warehouse';
           /*取消*/
         })
 
-        console.log("行删除功能", row);
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */

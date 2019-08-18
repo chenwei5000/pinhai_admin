@@ -43,7 +43,6 @@ let data = [
     "单箱体积(m³)": 22
   }
 ];
-console.log(excel);
 
 export default {
   methods: {

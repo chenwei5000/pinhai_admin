@@ -513,11 +513,9 @@ export default {
         .then(_ => {
           let id = row.id;
           let url = `/procurementOrders/${id}`;
-          console.log("delete ", url);
           this.global.axios
             .delete(url)
             .then(data => {
-              console.log("data ", data);
             })
             .catch(data => {
               console.log("删除失败");

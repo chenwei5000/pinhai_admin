@@ -99,11 +99,10 @@ export default {
           this.$confirm("确认修改？")
             .then(_ => {
               // 确定
-              
+
             })
             .catch(_ => {});
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -114,8 +113,6 @@ export default {
       this.loading = true;
       this.row = row;
       this.formVisible = true;
-
-      // console.log('asdasd')
 
       let url = `/procurementOrders/${row.id}?relations=["user", "team", "procurementPlan","currency","supplier","warehouse", "creator"]`;
       this.global.axios.get(url).then(data => {

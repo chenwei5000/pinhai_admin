@@ -150,7 +150,6 @@
               }
             }
             this.list = goal;
-            console.log("goal ", this.list);
             this.setDefault(id);
           }
         });

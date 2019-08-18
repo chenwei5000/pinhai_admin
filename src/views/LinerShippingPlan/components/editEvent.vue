@@ -194,7 +194,6 @@ export default {
         if (valid) {
           this.form.category = this.form.categoryId.join(",");
           this.form.merchandiser = this.form.merchandiserId.join(",");
-          console.log("this.form ", this.form)
           showLoading();
           this.global.axios
             .put(`/linerShippingPlans/${this.event_id}`, this.form)

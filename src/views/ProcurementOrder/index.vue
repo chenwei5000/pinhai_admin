@@ -3,8 +3,8 @@
     <div class="ph-card">
       <ph-card-header :title="title" type="table"></ph-card-header>
       <div class="ph-card-body">
-        <procurementTable 
-          ref="procurementTable" 
+        <procurementTable
+          ref="procurementTable"
           @openEditDialog="openEditDialog"
           @openDetailDialog="openDetailDialog"
           ></procurementTable>
@@ -38,11 +38,9 @@ export default {
   computed: {},
   methods: {
     openEditDialog(row) {
-      console.log("openEditDialog");
       this.$refs.editDialog.$emit("openDialog", row);
     },
     openDetailDialog(row) {
-      console.log("openDetailDialog");
       this.$refs.detailDialog.$emit("openDialog", row);
     },
     refreshList() {
