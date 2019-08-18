@@ -341,6 +341,7 @@
         if (this.primary) {
           //获取计划数据
           this.editObject = this.primary;
+
           //转化时间
           this.editObject.limitTime = this.primary.formatLimitTime;
           this.editObject.executeTime = this.primary.formatExecuteTime;

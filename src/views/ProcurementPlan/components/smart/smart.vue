@@ -374,7 +374,7 @@
        * 创建成功之后，将子组件发送的数据继续向上传递给父组件
        */
       createCBEvent(newObjectId) {
-        this.$emit("smartCBEvent", newObjectId);
+        this.$emit("step1CBEvent", newObjectId);
       }
     }
   }

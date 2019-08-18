@@ -380,6 +380,7 @@ export function intArrToStrArr(intArr) {
     intArr.forEach(item => {
       strArr.push(item + "");
     });
+    console.log(strArr);
     return strArr;
   }
   else {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="tag-group">
-      <el-tag
+      <el-tag type="success"
         :key="item.userId"
         v-for="item in primary.dataAuthories"
         closable
