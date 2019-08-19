@@ -216,7 +216,7 @@
               });
 
               let url = `/procurementPlans/${bAction}/${this.primaryId}`;
-              this.global.axios.put(url, note)
+              this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
                   this.$message.info(message);
