@@ -11,7 +11,8 @@
                         placement="top">
         <el-card>
           <h4>{{log.content}}</h4>
-          {{ log.note }}
+          <p v-html="br(log.note)">
+          </p>
           <hr/>
           <p>{{ log.userName}} 提交于 {{ log.timestamp }}</p>
         </el-card>
@@ -22,8 +23,8 @@
 </template>
 
 <script>
-  import {intArrToStrArr, parseTime} from '@/utils'
-  import phMembers from '@/components/PhMembers'
+  import {intArrToStrArr, parseTime, parseLineBreak} from '@/utils';
+  import phMembers from '@/components/PhMembers';
 
   export default {
     components: {
@@ -115,6 +116,9 @@
       });
     },
     methods: {
+      br(text) {
+        return parseLineBreak(text);
+      },
       /********************* 基础方法  *****************************/
       /**
        * 初始化数据

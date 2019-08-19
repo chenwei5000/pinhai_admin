@@ -3,7 +3,7 @@
   <el-badge :value="count" type="primary">
     <div class="card-panel">
 
-      <router-link to="/m2/ProcurementPlan_index?s=editing">
+      <router-link to="/m2/ProcurementPlan_index?s=create">
         <div class="card-panel-icon-wrapper icon-green">
           <svg-icon icon-class="prepare" class-name="card-panel-icon"/>
         </div>
@@ -42,22 +42,22 @@
 
     methods: {
       initData() {
-        let url = '/procurementPlans/count';
-        let filters = [];
-        filters.push({
-          'field': "status",
-          op: 'eq',
-          data: '1'
-        })
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        this.global.axios
-          .get(url)
-          .then(resp => {
-            let res = resp.data;
-            this.count = res || null;
-          })
-          .catch(err => {
-          });
+        // let url = '/procurementPlans/count';
+        // let filters = [];
+        // filters.push({
+        //   'field': "status",
+        //   op: 'eq',
+        //   data: '1'
+        // })
+        // url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        // this.global.axios
+        //   .get(url)
+        //   .then(resp => {
+        //     let res = resp.data;
+        //     this.count = res || null;
+        //   })
+        //   .catch(err => {
+        //   });
       }
     }
   }

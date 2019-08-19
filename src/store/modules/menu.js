@@ -46,7 +46,9 @@ const actions = {
   loadMenus({commit}) {
     return new Promise((resolve, reject) => {
       //优先判断 Storage中是否存在菜单信息。
-      let menus = sessionStorage.getItem(SESSION_MENU) ? JSON.parse(sessionStorage.getItem(SESSION_MENU)) : false;
+      let menus = (sessionStorage.getItem(SESSION_MENU)
+        && sessionStorage.getItem(SESSION_MENU) != 'undefined')
+        ? JSON.parse(sessionStorage.getItem(SESSION_MENU)) : false;
       if (menus) {
         console.log("从本地获取菜单信息");
         resolve(menus);

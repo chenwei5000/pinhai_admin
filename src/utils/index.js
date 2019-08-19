@@ -389,6 +389,7 @@ export function intArrToStrArr(intArr) {
 }
 
 const digitsRE = /(\d{3})(?=\d)/g
+
 export function currency(value, currency, decimals) {
   value = parseFloat(value)
   if (!isFinite(value) || (!value && value !== 0)) return ''
@@ -409,4 +410,13 @@ export function currency(value, currency, decimals) {
   return sign + currency + head +
     _int.slice(i).replace(digitsRE, '$1,') +
     _float
+}
+
+export function parseLineBreak(text) {
+  if (text) {
+    return text.replace(/\n/g, "<br/>");
+  }
+  else {
+    return text;
+  }
 }

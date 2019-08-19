@@ -8,7 +8,7 @@
         </div>
 
         <div class="card-panel-text">
-          审核采购计划
+          审核计划
         </div>
       </router-link>
     </div>
