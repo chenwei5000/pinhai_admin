@@ -6,8 +6,8 @@
     <el-row style="margin-bottom: 20px;">
 
 
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onConfirm">确认收货</el-button>
-      <el-button type="success" icon="el-icon-s-calim" v-if="hasExecute" @click="onComplete">收货完成</el-button>
+      <el-button type="success" icon="el-icon-s-flag" v-if="hasExecute" @click="onConfirm">一键确认</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">收货完成</el-button>
 
 
     </el-row>
@@ -132,8 +132,9 @@
       onComplete(){
         this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
           .then(resp => {
-            this.initData();
             this.$message.info("收货完成");
+            this.initData();
+
           })
           .catch(err => {
             this.loading = false;
