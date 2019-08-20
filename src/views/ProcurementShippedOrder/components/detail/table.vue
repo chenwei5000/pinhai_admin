@@ -48,18 +48,6 @@
     >
       <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
       <el-table-column prop="product.skuCode" label="SKU编码" sortable min-width="200"></el-table-column>
-      <el-table-column prop="statusName" label="状态" min-width="100">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
-            ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column prop="product.name" label="产品名" min-width="100"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="100"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="100"></el-table-column>
