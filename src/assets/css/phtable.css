@@ -1,0 +1,35 @@
+@charset "utf-8";
+.ph-table .el-table /deep/ .ph-header-small {
+  font-size: 20px !important;
+}
+.ph-table .el-table /deep/ tr.warning-row {
+  background: #e9e9eb !important;
+}
+.ph-table .el-table /deep/ tr.warning-row td {
+  background: #e9e9eb !important;
+}
+.ph-table .el-table /deep/ tr.danger-row {
+  background: #fde2e2 !important;
+}
+.ph-table .el-table /deep/ tr.danger-row td {
+  background: #fde2e2 !important;
+}
+.ph-table .el-table /deep/ .ph-cell {
+  padding: 0 !important;
+  font-size: 12px !important;
+}
+.ph-table .el-table /deep/ .ph-cell-header {
+  padding: 1px 0 !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: #333;
+}
+.ph-table .el-form /deep/ .el-form-item__label {
+  font-size: 13px !important;
+  font-weight: bold !important;
+  color: #333;
+}
+.ph-table .el-form /deep/ .el-form-item {
+  margin-bottom: 5px !important;
+}
+/*# sourceMappingURL=phtable.css.map */
