@@ -7,6 +7,7 @@
 
 
       <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onConfirm">确认收货</el-button>
+      <el-button type="success" icon="el-icon-s-calim" v-if="hasExecute" @click="onComplete">收货完成</el-button>
 
 
     </el-row>
@@ -69,6 +70,7 @@
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
         activeNames: [], //折叠面板开启项
+        url: "/procurementReceivedOrders/confirmTask",
 
       }
     },
@@ -110,10 +112,34 @@
         this.$emit("modifyCBEvent", object);
       },
 
-      //确认
+
+      //确认收货
       onConfirm(){
+        this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
+          .then(resp => {
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            this.$message.info("确认收货成功");
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
       },
 
+      //收货完成
+      onComplete(){
+        this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
+          .then(resp => {
+            this.initData();
+            this.$message.info("收货完成");
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
     }
   }
 </script>

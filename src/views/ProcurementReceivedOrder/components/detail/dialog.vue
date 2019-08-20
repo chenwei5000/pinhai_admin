@@ -110,9 +110,6 @@
 </template>
 
 <script>
-  import cartonspecModel from '@/api/cartonspec'
-  import phEnumModel from '@/api/phEnum'
-  import validRules from '@/components/validRules'
 
   export default {
     components: {},
@@ -206,17 +203,6 @@
             })
         }
         else {
-          // 设置添加默认值
-          this.detailItem = {
-            skuCode: '',
-            priorityNote: '',
-            cartonSpecId: null,
-            priority: '2',
-            safetyStockWeek: 10,
-            numberOfCarton: null,
-            cartonQty: 1,
-            procurementPlanId: this.primaryId
-          }
 
         }
       },
@@ -238,7 +224,6 @@
           this.confirmLoading = true;
           let method = 'post'
           let url = this.url + '';
-          console.log(!this.detailItemId && this.detailItemId > 0)
           if (this.detailItemId && this.detailItemId > 0) {
             method = 'put';
             url = `${this.url}/${this.detailItemId}`;
