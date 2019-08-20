@@ -2,21 +2,11 @@
 
   <!-- 修改弹窗 TODO: title -->
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
-
     <el-row style="margin-bottom: 20px;">
-
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
-
-      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
+      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status == 4" @click="onWithdraw">撤回
       </el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
-
-      <el-button type="primary" icon="el-icon-user-solid" v-if="hasExecute" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="hasExecute" @click="onShare">分享</el-button>
-
+      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 3" @click="onComplete">确认发货</el-button>
+      <el-button type="primary" icon="el-icon-s-goods" v-if="primary.status == 3" @click="onPrint">打印发货单</el-button>
     </el-row>
 
     <!-- 折叠面板 -->
@@ -68,7 +58,7 @@
         }
       },
       title() {
-        return '编辑发货计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        return '编辑发货计划 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -134,18 +124,50 @@
       },
       //撤回
       onWithdraw() {
+          this.global.axios.put(`/procurementShippedOrders/withdraw/${this.primary.id}`)
+          .then(resp => {
+            let _newObject = resp.data;
+            this.$message({type: 'success', message: '操作成功'});
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            // 回传消息
+            this.formVisible = false;
+            this.$emit("modifyCBEvent", _newObject);
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
       },
       //指派
       onAssign() {
       },
       //交接
-      onHandover() {
+      onPrint() {
       },
       //分享
       onShare() {
       },
-      //完成
+      //确认发货
       onComplete() {
+          this.global.axios.put(`/procurementShippedOrders/shippedOrderConfirm/${this.primary.id}`)
+          .then(resp => {
+            let _newObject = resp.data;
+            this.$message({type: 'success', message: '操作成功'});
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            // 回传消息
+            this.formVisible = false;
+            this.$emit("modifyCBEvent", _newObject);
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+
+
       }
     }
   }

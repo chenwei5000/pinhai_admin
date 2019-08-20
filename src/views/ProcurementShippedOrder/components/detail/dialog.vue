@@ -68,7 +68,7 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="采购数量(箱)" prop="safetyStockWeek">
+          <el-form-item label="采购数量(箱)" prop="procurementBoxQty">
             <el-input v-model="detailItem.procurementBoxQty"
                              :max="100000" label="采购数量(箱)">
             </el-input>
@@ -76,18 +76,10 @@
         </el-col>
 
         <el-col :md="14">
-          <el-form-item label="应发箱数" prop="priority">
-
-            <el-select v-model="detailItem.shippedCartonQty"
-                       filterable
-                       style="width: 200px"
-                       placeholder="请选择优先级,可筛选">
-              <el-option
-                v-for="(item,idx) in prioritySelectOptions"
-                :label="item.label" :value="item.value"
-                :key="idx"
-              ></el-option>
-            </el-select>
+          <el-form-item label="应发箱数" prop="shippedCartonQty">
+            <el-input v-model="detailItem.shippedCartonQty"
+                             :max="100000" label="应发箱数">
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>

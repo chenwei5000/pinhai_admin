@@ -59,7 +59,7 @@
 
      <el-row>
       <el-col :md="10">
-        <el-form-item label="单号" prop="code">
+        <el-form-item label="单号" prop="trackNumber">
           <el-input v-model="editObject.trackNumber"
                     show-word-limit
                     style="width: 220px" placeholder="请填写单号" clearable></el-input>
@@ -67,7 +67,7 @@
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="公司" prop="supplierId">
+        <el-form-item label="公司" prop="channel">
           <el-input v-model="editObject.channel"
                     style="width: 220px" placeholder="请填写公司" clearable></el-input>
         </el-form-item>
@@ -76,7 +76,7 @@
 
      <el-row>
       <el-col :md="10">
-        <el-form-item label="车牌" prop="code">
+        <el-form-item label="车牌" prop="plateNumber">
           <el-input v-model="editObject.plateNumber"
                     show-word-limit
                     style="width: 220px" placeholder="请填写车牌" clearable></el-input>
@@ -84,21 +84,21 @@
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="联系人" prop="supplierId">
+        <el-form-item label="联系人" prop="linkman">
           <el-input v-model="editObject.linkman"
                     style="width: 220px" placeholder="请填写联系人" clearable></el-input>
         </el-form-item>
       </el-col>
 
       <el-col :md="18">
-        <el-form-item label="电话" prop="supplierId">
+        <el-form-item label="电话" prop="tel">
           <el-input v-model="editObject.tel"
                     style="width: 220px" placeholder="请填写电话" clearable></el-input>
         </el-form-item>
       </el-col>
 
       <el-col :md="22">
-        <el-form-item label="运费" prop="supplierId">
+        <el-form-item label="运费" prop="shippingPrice">
           <el-input v-model="editObject.shippingPrice"
                     style="width: 220px" placeholder="请填写编运费" clearable></el-input>
         </el-form-item>
