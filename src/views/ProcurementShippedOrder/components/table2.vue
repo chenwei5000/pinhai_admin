@@ -68,7 +68,17 @@
       </el-table-column>
       <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
       <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="120"></el-table-column>
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="120">
+        <template slot-scope="scope">
+        物流单号: {{ scope.row.trackNumber}}<br>
+        物流公司:  {{ scope.row.channel}}<br>
+        车牌:  {{ scope.row.plateNumber }}<br>
+        联系人: {{ scope.row.linkman }}<br>
+        电话: {{ scope.row.tel }}<br>
+        </template>
+       
+
+      </el-table-column>
       <el-table-column prop="shippingPrice" label="运费" min-width="120"></el-table-column>
       <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
       <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
