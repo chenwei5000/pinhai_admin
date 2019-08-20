@@ -285,3 +285,11 @@ aside {
   }
 }
 
+.ph-dialog{
+  /deep/ .el-dialog__body{
+    padding: 10px 20px;
+  }
+  /deep/ .el-dialog__header{
+    padding: 10px 20px;
+  }
+}

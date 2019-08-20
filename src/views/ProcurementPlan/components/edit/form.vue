@@ -483,10 +483,11 @@
         })
       },
 
-      // 创建计划
+      // 修改计划
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
         _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
+        _object.groupName =  _object.groupName ? _object.groupName.join(",") : "";
         this.loading = true;
         this.confirmLoading = true;
 

@@ -102,10 +102,10 @@
 
       <el-table-column prop="categoryName" label="分类" min-width="150">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.category && scope.row.categoryName.length > 17">
+          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
             <div v-html="scope.row.categoryName"></div>
             <span slot="reference">{{
-              scope.row.categoryName ? scope.row.categoryName.length > 17 ? scope.row.categoryName.substr(0,15)+'..' : scope.row.categoryName : ''
+              scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
               }}</span>
           </el-popover>
           <span v-else>
@@ -117,10 +117,10 @@
 
       <el-table-column prop="name" label="名称" min-width="250">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 32">
+          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 27">
             <div v-html="scope.row.name"></div>
             <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 32 ? scope.row.name.substr(0,30)+'..' : scope.row.name : ''
+              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
               }}</span>
           </el-popover>
           <span v-else>
