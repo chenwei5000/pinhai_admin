@@ -44,7 +44,6 @@
 
 <script>
   import phTab from './components/tab'
-  import phCreate from './components/create'
 
   const actionFlag = 's='
 
@@ -52,7 +51,6 @@
 
     components: {
       phTab,
-      phCreate
     },
 
     data() {

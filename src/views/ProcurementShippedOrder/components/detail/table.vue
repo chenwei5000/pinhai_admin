@@ -3,12 +3,12 @@
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
     <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form" 
+    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
       <el-form-item label="SKU">
         <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
-      
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
         <el-button @click="resetSearch" size="small">重置</el-button>
@@ -46,7 +46,7 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
+      <el-table-column prop="sortNum" label="序号" min-width="50" ></el-table-column>
       <el-table-column prop="product.skuCode" label="SKU编码" sortable min-width="200"></el-table-column>
       <el-table-column prop="product.name" label="产品名" min-width="100"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="100"></el-table-column>

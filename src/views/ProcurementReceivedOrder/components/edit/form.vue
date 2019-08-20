@@ -10,7 +10,7 @@
     <el-row>
       <el-col :md="10">
         <el-form-item label="编码" prop="code">
-          <el-input v-model="editObject.code" style="width: 220px" ></el-input>
+          <el-input v-model="editObject.code" style="width: 220px" :disabled="true"></el-input>
         </el-form-item>
       </el-col>
 
@@ -18,8 +18,8 @@
 
     <el-row>
       <el-col :md="14">
-        <el-form-item label="供货商" prop="supplierId">
-          <el-select v-model="editObject.supplierId" style="width: 220px">
+        <el-form-item label="供货商" prop="supplierId" >
+          <el-select v-model="editObject.supplierId" style="width: 220px" :disabled="true">
             <el-option
               v-for="(item , idx)  in supplierSelectOptions"
               :label="item.label"
@@ -33,7 +33,7 @@
 
       <el-col :md="14">
         <el-form-item label="收货仓库" prop="warehouseId">
-          <el-select v-model="editObject.warehouseId" style="width: 220px">
+          <el-select v-model="editObject.warehouseId" style="width: 220px" :disabled="true">
             <el-option
               v-for="(item , idx)  in warehouseSelectOptions"
               :label="item.label"
@@ -54,6 +54,7 @@
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
           type="date"
+          :disabled="true"
           placeholder="预计到货时间">
         </el-date-picker>
       </el-form-item>
@@ -69,7 +70,8 @@
                       show-word-limit
                       rows="3"
                       cols="80"
-                      show-word-limit></el-input>
+                      show-word-limit
+                      :disabled="true"></el-input>
           </el-col>
 
           <el-col :span="2">
@@ -91,6 +93,7 @@
                       show-word-limit
                       rows="3"
                       cols="80"
+                      :disabled="true"
                       show-word-limit></el-input>
           </el-col>
 
@@ -101,16 +104,6 @@
           </el-col>
 
         </el-form-item>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col :md="24">
-        <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
-            保存基本信息
-          </el-button>
-        </el-row>
       </el-col>
     </el-row>
 
@@ -255,24 +248,11 @@
 
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
-      onSave() {
-        this.$confirm('注意保存基本信息只会修改对应的参数，不会重新计算明细数据，您是否继续？', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              done();
-              this.modifyObject();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
+
 
       // 创建计划
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
-        _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
         this.loading = true;
         this.confirmLoading = true;
 

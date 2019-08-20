@@ -16,7 +16,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="序号" prop="sortNum">
-            <el-input v-model="detailItem.sortNum" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.sortNum" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -24,7 +24,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="SKU编码" prop="skuCode">
-            <el-input v-model="detailItem.skuCode" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.skuCode" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -32,7 +32,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="箱码" prop="boxCode">
-            <el-input v-model="detailItem.boxCode" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.boxCode" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -40,7 +40,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="产品名" prop="productId">
-            <el-input v-model="detailItem.productId" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.productId" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -48,7 +48,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="发货数量(箱)" prop="shippedCartonQty">
-            <el-input v-model="detailItem.shippedCartonQty" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.shippedCartonQty" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -56,7 +56,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="存放货位" prop="storageLocationId">
-            <el-input v-model="detailItem.storageLocationId" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.storageLocationId" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -64,7 +64,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="总发货件数" prop="shippedQty">
-            <el-input v-model="detailItem.shippedQty" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.shippedQty" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -88,7 +88,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="合计箱数" prop="receivedCartonQty">
-            <el-input v-model="detailItem.receivedCartonQty" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.receivedCartonQty" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -164,15 +164,7 @@
 
 
         // 字段验证规则 TODO:
-        rules: {
-          skuCode: [
-            validRules.required
-          ],
-
-          receivedQty: [
-            validRules.required
-          ],
-        },
+        rules: {}
       }
     },
 
@@ -207,8 +199,8 @@
               let data = res || {}
               this.detailItem = data
               // 转字段
-              this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.priority = data.priority + '';
+              this.detailItem.storageLocationId = this.detailItem.storageLocationId + '';
+              this.detailItem.productId = this.detailItem.productId + '';
 
               this.loading = false
             })
@@ -246,7 +238,8 @@
           this.confirmLoading = true;
           let method = 'post'
           let url = this.url + '';
-          if (!this.detailItemId && this.detailItemId > 0) {
+          console.log(!this.detailItemId && this.detailItemId > 0)
+          if (this.detailItemId && this.detailItemId > 0) {
             method = 'put';
             url = `${this.url}/${this.detailItemId}`;
           }
