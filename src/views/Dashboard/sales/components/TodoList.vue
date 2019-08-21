@@ -114,7 +114,6 @@
           .then(resp => {
             let res = resp.data || [];
             this.todos = res || [];
-            console.log(this.todos);
           })
           .catch(err => {
           });

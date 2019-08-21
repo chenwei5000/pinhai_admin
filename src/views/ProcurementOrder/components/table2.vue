@@ -157,7 +157,6 @@ export default {
   created() {},
 
   mounted() {
-    console.log(11111);
     //全屏，表格高度处理
 
     window.onresize = () => {
@@ -356,11 +355,10 @@ export default {
         .then(_ => {
           let id = row.id;
           let url = `/procurementOrders/${id}`;
-          console.log("delete ", url);
           this.global.axios
             .delete(url)
             .then(data => {
-              console.log("data ", data);
+              //console.log("data ", data);
             })
             .catch(data => {
               console.log("删除失败");
