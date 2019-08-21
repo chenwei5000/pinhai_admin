@@ -140,15 +140,6 @@
             this.confirmLoading = false;
           })
       },
-      //指派
-      onAssign() {
-      },
-      //交接
-      onPrint() {
-      },
-      //分享
-      onShare() {
-      },
       //确认发货
       onComplete() {
           this.global.axios.put(`/procurementShippedOrders/shippedOrderConfirm/${this.primary.id}`)

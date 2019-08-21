@@ -8,6 +8,7 @@
 
       <el-button type="success" icon="el-icon-s-flag" v-if="primary.status == 4" @click="onConfirm">一键确认</el-button>
       <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 4" @click="onComplete">收货完成</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 4" @click="onPrint" :disabled="true">打印收货单</el-button>
 
 
     </el-row>
@@ -127,6 +128,22 @@
             this.confirmLoading = true;
             this.dialogVisible = true;
             this.$message.info("收货完成");
+
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
+
+      //打印收货单
+      onPrint(){
+        this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
+          .then(resp => {
+            this.loading = true;
+            this.confirmLoading = true;
+            this.dialogVisible = true;
+            this.$message.info("打印收货单");
 
           })
           .catch(err => {

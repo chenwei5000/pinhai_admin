@@ -39,8 +39,8 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="产品名" prop="productId">
-            <el-input v-model="detailItem.productId" style="width: 220px" :disabled="true"></el-input>
+          <el-form-item label="产品名" prop="product.name">
+            <el-input v-model="detailItem.product.name" style="width: 320px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -55,8 +55,8 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="存放货位" prop="storageLocationId">
-            <el-input v-model="detailItem.storageLocationId" style="width: 220px" :disabled="true"></el-input>
+          <el-form-item label="存放货位" prop="storageLocation.code">
+            <el-input v-model="detailItem.storageLocation.code" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -228,7 +228,6 @@
           }
 
           //转义字段
-          let _object = JSON.parse(JSON.stringify(this.detailItem));
 
           this.global.axios[method](url, _object)
             .then(resp => {
