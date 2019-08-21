@@ -1,16 +1,19 @@
 <template>
-  <button class="btn btn-success" @click="download">Export</button>
+  <div>
+    <button class="btn btn-success" @click="download1">Export</button>
+    <button class="btn btn-success" @click="download2">Export</button>
+  </div>
 </template>
 
 <script>
-import excel from "./excel";
+import excel from "../node/excel";
 
-let data = [
+let data1 = [
   {
     'SKU编码': "a",
     '产品名': "a",
     '分类': "a",
-    'Vip级别': "a",
+    'Vip级别': 1,
     '箱规': "a",
     '装箱数': 74,
     '托盘装箱数': 5,
@@ -28,7 +31,25 @@ let data = [
     'SKU编码': "b",
     '产品名': "b",
     '分类': "b",
-    'Vip级别': "b",
+    'Vip级别': 2,
+    '箱规': "b",
+    '装箱数': 93,
+    '托盘装箱数': 88,
+    "7日销量(件)": 99,
+    '运输周数': 20,
+    '销售周数': 34,
+    '覆盖周数': 87,
+    "需求总量(箱)": 82,
+    "有效库存(件)": 13,
+    "国内库存(箱)": 42,
+    '应发箱数': 74,
+    "单箱体积(m³)": 22
+  },
+  {
+    'SKU编码': "b",
+    '产品名': "b",
+    '分类': "b",
+    'Vip级别': 3,
     '箱规': "b",
     '装箱数': 93,
     '托盘装箱数': 88,
@@ -43,12 +64,19 @@ let data = [
     "单箱体积(m³)": 22
   }
 ];
-console.log(excel);
 
+let data2 = [
+  {'SKU编码': 'a', '产品名': 'a', '分类': '窗帘', 'Vip级别': 1, '箱规': 'a', '装箱数': 10, '托盘装箱数': 1, '7日销量(件)': 0, '备货周数': 2, '需求总量(箱)': 0, '在途加亚马逊库存(件)': 335, '国内库存(箱)': 0, '未完成采购计划数(箱)': 0, '采购箱数': 0},
+  {'SKU编码': 'b', '产品名': 'b', '分类': '窗帘', 'Vip级别': 1, '箱规': 'b', '装箱数': 10, '托盘装箱数': 1, '7日销量(件)': 0, '备货周数': 2, '需求总量(箱)': 0, '在途加亚马逊库存(件)': 335, '国内库存(箱)': 0, '未完成采购计划数(箱)': 0, '采购箱数': 0},
+  {'SKU编码': 'c', '产品名': 'c', '分类': '窗帘', 'Vip级别': 1, '箱规': 'v', '装箱数': 10, '托盘装箱数': 1, '7日销量(件)': 0, '备货周数': 2, '需求总量(箱)': 0, '在途加亚马逊库存(件)': 335, '国内库存(箱)': 0, '未完成采购计划数(箱)': 0, '采购箱数': 0}
+]
 export default {
   methods: {
-    download() {
-      return excel.download(data, 'final')
+    download1() {
+      return excel.download(data1, 'dataFormat1', 'des.xlsx')
+    },
+    download2() {
+      return excel.download(data2, 'dataFormat2', 'des.xlsx')
     }
   }
 };
