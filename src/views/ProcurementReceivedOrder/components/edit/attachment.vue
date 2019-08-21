@@ -6,11 +6,10 @@
       class="upload-demo"
       :action="uploadUrl"
       :on-preview="handlePreview"
-      :before-remove="beforeRemove"
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag">+ 添加附件</el-button>
+
     </el-upload>
 
   </div>

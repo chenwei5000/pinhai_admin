@@ -6,8 +6,8 @@
     <el-row style="margin-bottom: 20px;">
 
 
-      <el-button type="success" icon="el-icon-s-flag" v-if="hasExecute" @click="onConfirm">一键确认</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">收货完成</el-button>
+      <el-button type="success" icon="el-icon-s-flag" v-if="primary.status == 4" @click="onConfirm">一键确认</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 4" @click="onComplete">收货完成</el-button>
 
 
     </el-row>
@@ -51,16 +51,8 @@
     },
     props: {},
     computed: {
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
       title() {
-        return '编辑采购计划 -- (' + this.primary.statusName + "状态)";
+        return '采购入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -70,7 +62,6 @@
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
         activeNames: [], //折叠面板开启项
-        url: "/procurementReceivedOrders/confirmTask",
 
       }
     },
@@ -117,9 +108,9 @@
       onConfirm(){
         this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
           .then(resp => {
-            this.loading = false;
-            this.confirmLoading = false;
-            this.dialogVisible = false;
+            this.loading = true;
+            this.confirmLoading = true;
+            this.dialogVisible = true;
             this.$message.info("确认收货成功");
           })
           .catch(err => {
@@ -132,8 +123,10 @@
       onComplete(){
         this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
           .then(resp => {
+            this.loading = true;
+            this.confirmLoading = true;
+            this.dialogVisible = true;
             this.$message.info("收货完成");
-            this.initData();
 
           })
           .catch(err => {

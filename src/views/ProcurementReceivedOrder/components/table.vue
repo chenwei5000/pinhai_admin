@@ -100,6 +100,10 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="hasView" size="small" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -179,6 +183,7 @@
         hasOperation: true,
         hasEdit: true,
         hasDelete: true,
+        hasView: true,
         // 多选记录对象
         selected: [],
 
@@ -287,18 +292,20 @@
         this.supplierSelectOptions = supplierModel.getSelectOptions();
         this.warehouseSelectOptions = warehouseModel.getSelectOptions();
 
-        //待收货 无删除
-      //   if (this.type === 'shipped') {
-      //   }
-      //
-      //   //已完成 无删除
-      //   else if (this.type === 'complete') {
-      //     this.hasDelete = false;
-      //   }
-      //
-      //   else if (this.type === 'all') {
-      //   }
-      //
+     //   待收货 无删除
+        if (this.type === 'shipped') {
+          this.hasView = false
+        }
+
+        //已完成 无删除
+        else if (this.type === 'complete') {
+          this.hasEdit = false;
+        }
+
+        else if (this.type === 'all') {
+          this.hasEdit = false;
+        }
+
         },
 
       // 获取表格的高度
@@ -577,32 +584,13 @@
         this.$refs.editDialog.openDialog(row.id);
       },
 
-      /* 行删除按钮 */
-      onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.loading = true
+      /* 行查看按钮 */
+      onDefaultView(row) {
+        this.$refs.editDialog.openDialog(row.id);
+        },
 
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false
-                  this.$message.info("删除成功!");
-                  done()
-                  this.getList()
-                })
-                .catch(er => {
-                  this.loading = false
-                })
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
+      /* 行删除按钮 */
+
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
       modifyCBEvent(object) {

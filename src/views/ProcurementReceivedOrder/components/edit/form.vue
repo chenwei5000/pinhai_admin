@@ -62,26 +62,47 @@
     </el-row>
 
     <el-row>
-      <el-col :md="24">
-        <el-form-item label="物流信息" prop="trackNumber">
-          <el-col :span="22">
-            <el-input type="textarea" v-model="editObject.trackNumber"
-                      maxlength="500"
-                      show-word-limit
-                      rows="3"
-                      cols="80"
-                      show-word-limit
-                      :disabled="true"></el-input>
-          </el-col>
+      <el-col>
+      <el-form-item label="物流单号" prop="trackNumber">
+        <el-input v-model="editObject.trackNumber"
+                  show-word-limit
+                  style="width: 220px" placeholder="请填写单号" :disabled="true"></el-input>
+      </el-form-item>
+        </el-col>
 
-          <el-col :span="2">
-            <el-tooltip class="item" effect="light" content="请根据要求填写物流信息！" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-          </el-col>
-
+      <el-col>
+        <el-form-item label="物流公司" prop="channel">
+          <el-input v-model="editObject.channel"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
         </el-form-item>
       </el-col>
+
+      <el-col>
+        <el-form-item label="车牌" prop="plateNumber">
+          <el-input v-model="editObject.plateNumber"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col>
+        <el-form-item label="联系人" prop="linkman">
+          <el-input v-model="editObject.linkman"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col>
+        <el-form-item label="电话" prop="tel">
+          <el-input v-model="editObject.tel"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+
     </el-row>
 
     <el-row>

@@ -23,9 +23,7 @@
       @onToolBarAdd="onToolBarAdd"
       @onToolBarEdit="onToolBarEdit"
       @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
-      @onToolBarDownloadData="onToolBarDownloadData"
-      @onToolBarImportData="onToolBarImportData"
+
     >
     </tableToolBar>
 
@@ -78,10 +76,13 @@
                        width="120" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+          <el-button v-if="primary.status === 4 " size="small" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="primary.status !== 4 " size="small" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
 
         </template>
       </el-table-column>
@@ -204,8 +205,9 @@
         if (this.relations && this.relations.length > 0) {
           this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
-
       },
+
+
 
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
@@ -379,23 +381,10 @@
         this.$refs.itemDialog.openDialog(row.id);
       },
 
-      /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-
-              this.getList();
-
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
+      /* 行查看功能 */
+      onDefaultView(row) {
+        this.$refs.itemDialog.openDialog(row.id);
       },
-
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
@@ -412,40 +401,7 @@
       onToolBarDelete() {
 
       },
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
 
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
-            tpl: true,
-          })
-        })
-      },
-      onToolBarDownloadData() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
-          this.loading = false;
-        })
-      },
-      onToolBarImportData() {
-
-      }
     }
   }
 </script>
