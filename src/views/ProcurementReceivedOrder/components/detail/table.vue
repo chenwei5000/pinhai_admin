@@ -91,6 +91,8 @@
     <!-- 编辑明细对话框 -->
     <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primary.id">
     </itemDialog>
+    <itemDialog2 @modifyCBEvent="modifyCBEvent2" ref="itemDialog2" :primaryId="primary.id">
+    </itemDialog2>
   </div>
 
 </template>
@@ -102,11 +104,14 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
+  import itemDialog2 from './dialog2'
+
 
   export default {
     components: {
       tableToolBar,
-      itemDialog
+      itemDialog,
+      itemDialog2
     },
     props: {
       primary: {
@@ -383,10 +388,15 @@
 
       /* 行查看功能 */
       onDefaultView(row) {
-        this.$refs.itemDialog.openDialog(row.id);
+        this.$refs.itemDialog2.openDialog(row.id);
       },
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.getList();
+      },
+
+      modifyCBEvent2(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.getList();
       },
