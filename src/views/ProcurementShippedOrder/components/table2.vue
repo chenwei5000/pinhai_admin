@@ -44,8 +44,8 @@
       border
       highlight-current-row
       :row-class-name="dangerClassName"
-      :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-      :header-cell-style="{padding: '2px 0'}"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       :data="data"
       :max-height="tableMaxHeight"
       v-loading="loading"
@@ -76,7 +76,7 @@
         联系人: {{ scope.row.linkman }}<br>
         电话: {{ scope.row.tel }}<br>
         </template>
-       
+
 
       </el-table-column>
       <el-table-column prop="shippingPrice" label="运费" min-width="120"></el-table-column>
@@ -162,7 +162,7 @@ import warehouseModel from '../../../api/warehouse';
     },
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower'
       ]),
 
       // 显示进度条

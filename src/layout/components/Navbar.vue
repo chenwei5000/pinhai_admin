@@ -110,7 +110,7 @@
 
       ...mapGetters([
         'sidebar',
-        'device'
+        'device','rolePower'
       ])
     },
     methods: {

@@ -17,6 +17,8 @@
       <el-button type="primary" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
       <el-button type="primary" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
 
+      <el-button type="primary" @click="closeDialog">取 消</el-button>
+
     </el-row>
 
     <!-- 折叠面板 -->
@@ -57,6 +59,8 @@
 </template>
 
 <script>
+
+  import {mapGetters} from 'vuex'
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
@@ -77,6 +81,11 @@
     },
     props: {},
     computed: {
+      ...mapGetters([
+        'device',
+        'rolePower'
+      ]),
+
       hasExecute() {
         if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
           return true;

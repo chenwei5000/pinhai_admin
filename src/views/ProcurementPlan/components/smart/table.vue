@@ -2,25 +2,25 @@
 
   <el-dialog title="智能备货" v-if="dialogVisible" :visible.sync="dialogVisible" @close='closeDialog' fullscreen>
 
-    <!--本地搜索 TODO: 根据实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
-             @submit.native.prevent>
-
-      <el-form-item label="SKU">
-        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
-      </el-form-item>
-
-      <el-form-item label="分类">
-        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
-      </el-form-item>
-    </el-form>
-
     <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
     <div class="ph-table">
+
+      <!--本地搜索 TODO: 根据实际情况调整 el-form-item -->
+      <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+               @submit.native.prevent>
+
+        <el-form-item label="SKU">
+          <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+        </el-form-item>
+
+        <el-form-item label="分类">
+          <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+          <el-button @click="resetSearch" size="small">重置</el-button>
+        </el-form-item>
+      </el-form>
 
       <!--表格 TODO:根据实际情况调整 el-table-column  -->
       <el-table
@@ -45,8 +45,8 @@
           type="selection"
           width="50">
         </el-table-column>
-        <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left">
 
+        <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left">
           <template slot-scope="scope">
             <el-popover placement="top-start" width="200" trigger="hover"
                         v-if="scope.row.skuCode && scope.row.skuCode.length > 22">
@@ -59,8 +59,8 @@
             {{ scope.row.skuCode }}
           </span>
           </template>
-
         </el-table-column>
+
         <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
 
         <el-table-column prop="groupName" label="款式" width="150">
@@ -86,8 +86,8 @@
         <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="180"></el-table-column>
         <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="120"></el-table-column>
         <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="120"></el-table-column>
-        <el-table-column prop="productName" label="名称" width="200">
 
+        <el-table-column prop="productName" label="名称" width="200">
           <template slot-scope="scope">
             <el-popover placement="top-start" width="200" trigger="hover"
                         v-if="scope.row.productName && scope.row.productName.length > 17">
@@ -100,8 +100,8 @@
             {{ scope.row.productName }}
             </span>
           </template>
-
         </el-table-column>
+
         <el-table-column prop="fnSku" label="FNSKU" min-width="120"></el-table-column>
         <el-table-column prop="vipLevel" label="Vip级别" width="100"></el-table-column>
         <el-table-column prop="cartonSpecCode" label="箱规" width="120" v-if="false"></el-table-column>
@@ -145,7 +145,7 @@
 
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower','rolePower'
       ])
     },
     watch: {
@@ -386,7 +386,7 @@
         //转义字段
         let _object = JSON.parse(JSON.stringify(this.object));
         _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
-        _object.groupName =  _object.groupName ? _object.groupName.join(",") : "";
+        _object.groupName = _object.groupName ? _object.groupName.join(",") : "";
 
         let items = [];
         this.selected.forEach(obj => {

@@ -30,8 +30,8 @@
       border
       highlight-current-row
       :row-class-name="dangerClassName"
-      :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-      :header-cell-style="{padding: '2px 0'}"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       :data="data"
       :max-height="tableMaxHeight"
       v-loading="loading"
@@ -157,7 +157,6 @@ export default {
   created() {},
 
   mounted() {
-    console.log(11111);
     //全屏，表格高度处理
 
     window.onresize = () => {
@@ -356,11 +355,10 @@ export default {
         .then(_ => {
           let id = row.id;
           let url = `/procurementOrders/${id}`;
-          console.log("delete ", url);
           this.global.axios
             .delete(url)
             .then(data => {
-              console.log("data ", data);
+              //console.log("data ", data);
             })
             .catch(data => {
               console.log("删除失败");

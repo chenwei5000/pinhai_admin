@@ -1,5 +1,5 @@
 <template>
-  <div class="block">
+  <div class="block ph-form">
     <el-timeline>
 
       <el-timeline-item v-for="(log, index) in logLine"
