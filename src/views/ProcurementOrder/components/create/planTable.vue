@@ -65,7 +65,7 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="采购计划编号" width="140"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
@@ -79,19 +79,17 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="note" label="完成度" width="120" v-if="hasCompleteness">
+      <el-table-column prop="note" label="下单完成度" width="120">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
+          <el-popover placement="top-start" title="下单完成度" width="250" trigger="hover">
             <div>
-              完成度：{{ scope.row.qty.completeness }}%<BR/>
+              完成度：{{ scope.row.qty.orderedCompleteness }}%<BR/>
               总件数：{{ scope.row.qty.qty }} 件<BR/>
-              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
-              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
-              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
+              已下单：{{scope.row.qty.orderQty}} 件 <BR/>
             </div>
             <span slot="reference">
               <el-progress :text-inside="true" :stroke-width="16"
-                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
+                           :percentage="scope.row.qty.orderedCompleteness > 100 ? 100: scope.row.qty.orderedCompleteness"
                            status="success"
               ></el-progress>
             </span>
@@ -102,7 +100,8 @@
 
       <el-table-column prop="categoryName" label="分类" min-width="150">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
             <div v-html="scope.row.categoryName"></div>
             <span slot="reference">{{
               scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
@@ -117,10 +116,11 @@
 
       <el-table-column prop="name" label="名称" min-width="250">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 27">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.name && scope.row.name.length > 18">
             <div v-html="scope.row.name"></div>
             <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
+              scope.row.name ? scope.row.name.length > 18 ? scope.row.name.substr(0,16)+'..' : scope.row.name : ''
               }}</span>
           </el-popover>
           <span v-else>
@@ -130,14 +130,17 @@
       </el-table-column>
 
       <el-table-column prop="formatLimitTime" label="期望交货日期" width="100"></el-table-column>
-      <el-table-column prop="tags" label="标签" width="120"></el-table-column>
 
-      <el-table-column prop="note" label="备注" width="120" v-if="false">
+      <el-table-column prop="note" label="交货要求" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover">
+          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
+                      v-if="scope.row.note && scope.row.note.length > 10">
             <div v-html="scope.row.formatNote"></div>
             <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,8)+'..' : '' }}</span>
           </el-popover>
+          <span v-else>
+            {{ scope.row.formatNote }}
+          </span>
         </template>
       </el-table-column>
 
@@ -147,17 +150,13 @@
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="60" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          <el-button v-if="hasEdit" size="small" icon="el-icon-document-add" circle
+                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -181,8 +180,8 @@
     </el-pagination>
 
     <!--编辑对话框-->
-    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
-    </editDialog>
+    <createDialog @createCBEvent="createCBEvent" ref="createDialog">
+    </createDialog>
 
   </div>
 
@@ -191,8 +190,8 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
+  import createDialog from './dialog'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -205,7 +204,7 @@
   export default {
 
     components: {
-      editDialog
+      createDialog
     },
     props: {
       type: {
@@ -219,7 +218,7 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower','rolePower'
+        'device', 'rolePower', 'rolePower'
       ]),
 
       // 显示进度条
@@ -268,7 +267,7 @@
         countUrl: '/procurementPlans/count', // 资源URL
         relations: ["creator"],  // 关联对象
         data: [],
-        phSort: {prop: "id", order: "desc"},
+        phSort: {prop: "limitTime", order: "asc"},
         // 表格加载效果
         loading: false,
 
@@ -441,6 +440,17 @@
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
+        if (row.limitTime > 0) {
+          var day = (row.limitTime - new Date()) / 86400000;
+
+          if (day > 0 && day <= 10) { //交期15天预警
+            return 'warning-row';
+          }
+          else if (day <= 0 ) { //可售周数超2周
+            return 'danger-row';
+          }
+        }
+
         return '';
       },
 
@@ -622,38 +632,11 @@
       /* 行编辑按钮 */
       onDefaultEdit(row) {
         // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
-      },
-
-      /* 行删除按钮 */
-      onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.loading = true
-
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false
-                  this.$message.info("删除成功!");
-                  done()
-                  this.getList()
-                })
-                .catch(er => {
-                  this.loading = false
-                })
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
+        this.$refs.createDialog.openDialog(row.id);
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(object) {
+      createCBEvent(object) {
         this.getList();
       },
     }

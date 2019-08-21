@@ -1,59 +1,138 @@
 <template>
   <div class="app-container">
+
     <div class="ph-card">
-      <ph-card-header :title="title" type="table"></ph-card-header>
       <div class="ph-card-body">
-        <procurementTable
-          ref="procurementTable"
-          @openEditDialog="openEditDialog"
-          @openDetailDialog="openDetailDialog"
-          ></procurementTable>
+
+        <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
+
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="create" lazy>
+            <span slot="label">
+              <i class="el-icon-circle-plus-outline"></i> 待下单
+            </span>
+            <keep-alive>
+              <planTable @createCBEvent="createCBEvent" :defaultFilters="filters"></planTable>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="editing" class="fontColor" lazy>
+            <span slot="label">
+              <i class="el-icon-edit"></i> 编辑中
+            </span>
+            <keep-alive>
+              <phTab type="editing" ref="editTable"/>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="auditing" lazy>
+            <span slot="label">
+              <i class="el-icon-s-check"></i> 待审核
+            </span>
+            <keep-alive>
+              <phTab type="auditing"/>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="executing" lazy>
+            <span slot="label">
+              <i class="el-icon-s-flag"></i> 执行中
+            </span>
+            <keep-alive>
+              <phTab type="executing"/>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="complete" lazy>
+            <span slot="label">
+              <i class="el-icon-s-claim"></i> 完成
+            </span>
+            <keep-alive>
+              <phTab type="complete"/>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="all" lazy>
+            <span slot="label">
+              <i class="el-icon-s-order"></i> 全部
+            </span>
+            <keep-alive>
+              <phTab type="all"/>
+            </keep-alive>
+          </el-tab-pane>
+
+
+        </el-tabs>
       </div>
     </div>
 
-    <editDialog ref="editDialog" @refresh="refreshList"></editDialog>
-
-    <detailDialog ref="detailDialog"></detailDialog>
   </div>
 </template>
 
 <script>
-import procurementTable from "./components/table";
-import editDialog from "./components/editDialog";
-import detailDialog from "./components/detailDialog";
+  import phTab from './components/tab'
+  import planTable from './components/create/planTable'
 
-export default {
-  name: "procurement",
-  components: {
-    procurementTable,
-    editDialog,
-    detailDialog
-  },
+  const actionFlag = 's='
 
-  data() {
-    return {
-      title: "采购单列表"
-    };
-  },
-  computed: {},
-  methods: {
-    openEditDialog(row) {
-      this.$refs.editDialog.$emit("openDialog", row);
+  export default {
+    components: {
+      phTab,
+      planTable
     },
-    openDetailDialog(row) {
-      this.$refs.detailDialog.$emit("openDialog", row);
+
+    data() {
+      return {
+        // TODO 页面标题
+        title: '采购单管理',
+
+        // TODO 默认Tab激活状态
+        activeStatus: location.href.indexOf(actionFlag) > -1
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'editing')
+          : 'editing',
+      }
     },
-    refreshList() {
-      // 更新列表
-      this.$ref.procurementTable.getList();
-    }
-  },
-  watch: {}
-};
+
+    computed: {
+      // TODO: 设置默认的搜索条件
+      filters() {
+        // 待下单、部分下单的采购计划
+        return {
+          field: 'status',
+          op: 'in',
+          data: "2,3 "
+        }
+      }
+    },
+
+    // 各种相关方法定义
+    methods: {
+      /* 点击Tag相应事件 */
+      // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
+      handleTabClick(tab, event) {
+        const queryFlag = '?s=';
+        const queryPath = '/m2/ProcurementOrder_index';
+        let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
+        history.pushState(history.state, 'ph-table search', newUrl);
+      },
+      /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
+      createCBEvent(objectId) {
+        if (objectId) {
+          if (this.$refs.editTable) {
+            this.$refs.editTable.onRefreshTable();
+          }
+        }
+      }
+    },
+
+  }
 </script>
 
-<style scoped>
-.ph-table {
-  padding: 10px 15px;
-}
+<style type="text/less" lang="scss" scoped>
+
 </style>

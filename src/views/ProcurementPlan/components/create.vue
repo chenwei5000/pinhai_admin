@@ -2,10 +2,10 @@
   <div>
     <!-- 步骤条 TODO: -->
     <el-steps :active="stepsActive" finish-status="success" align-center simple>
-      <el-step title="1.智能备货" icon="el-icon-reading"></el-step>
-      <el-step title="2.采购计划" icon="el-icon-picture"></el-step>
-      <el-step title="3.指派工作" icon="el-icon-upload"></el-step>
-      <el-step title="4.提交审核" icon="el-icon-edit"></el-step>
+      <el-step title="1.智能备货" icon="el-icon-s-opportunity"></el-step>
+      <el-step title="2.采购计划" icon="el-icon-edit-outline"></el-step>
+      <el-step title="3.指派工作" icon="el-icon-s-custom"></el-step>
+      <el-step title="4.提交审核" icon="el-icon-s-check"></el-step>
     </el-steps>
 
     <!-- 智能备货组件 -->
