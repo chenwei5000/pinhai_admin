@@ -44,8 +44,8 @@
       border
       highlight-current-row
       :row-class-name="dangerClassName"
-      :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-      :header-cell-style="{padding: '2px 0'}"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       :data="data"
       :max-height="tableMaxHeight"
       v-loading="loading"
@@ -68,10 +68,20 @@
       </el-table-column>
       <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
       <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="120"></el-table-column>
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="120">
+        <template slot-scope="scope">
+        物流单号: {{ scope.row.trackNumber}}<br>
+        物流公司:  {{ scope.row.channel}}<br>
+        车牌:  {{ scope.row.plateNumber }}<br>
+        联系人: {{ scope.row.linkman }}<br>
+        电话: {{ scope.row.tel }}<br>
+        </template>
+
+
+      </el-table-column>
       <el-table-column prop="shippingPrice" label="运费" min-width="120"></el-table-column>
-      <el-table-column prop="expectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="receivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
       <el-table-column prop="remark" label="备注" min-width="120"></el-table-column>
       <!-- <el-table-column prop="id" label="ID" width="90"></el-table-column> -->
 
@@ -120,7 +130,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
+  import editDialog from './edit/dialog2'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
@@ -152,7 +162,7 @@ import warehouseModel from '../../../api/warehouse';
     },
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower'
       ]),
 
       // 显示进度条
@@ -216,7 +226,7 @@ import warehouseModel from '../../../api/warehouse';
           limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
           supplierId: {value: null, op: 'eq', id: 'supplierId'},
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
-          status: {value: null, op: 'eq', id: 'status'},  
+          status: {value: null, op: 'eq', id: 'status'},
           code:  {value: null, op: 'bw', id: 'name'},
         },
 
@@ -309,7 +319,7 @@ import warehouseModel from '../../../api/warehouse';
         // }
         // else if (this.type === 'all') {
         // }
-      }, 
+      },
 
       // 获取表格的高度
       getTableHeight() {
@@ -354,7 +364,7 @@ import warehouseModel from '../../../api/warehouse';
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
         this.searchParam.code.value = null;
-        this.searchParam.supplierId.value = null; 
+        this.searchParam.supplierId.value = null;
         this.searchParam.warehouseId.value = null;
 
         // 重置url
@@ -370,7 +380,7 @@ import warehouseModel from '../../../api/warehouse';
          * @event reset
          */
         this.$emit('reset')
-        
+
         //TODO：此处报错未处理
         // this.$emit(
         //   'update:customQuery',
@@ -616,7 +626,6 @@ import warehouseModel from '../../../api/warehouse';
           /*取消*/
         })
 
-        console.log("行删除功能", row);
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */

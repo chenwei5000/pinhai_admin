@@ -24,13 +24,13 @@
     </div>
 
     <!-- 创建 event -->
-    <createEvent 
+    <createEvent
     ref="createEvent"
     @addCalendarEvent="addCalendarEvent"
     ></createEvent>
 
     <!-- 编辑 event -->
-    <editEvent 
+    <editEvent
     ref="editEvent"
     @editCalendarEvent="editCalendarEvent"
     ></editEvent>
@@ -54,7 +54,7 @@ import planModel from "../../api/linerShippingPlan";
 // 创建 event dialog
 import createEvent from "./components/createEvent";
 
-// 
+//
 import editEvent from "./components/editEvent";
 
 // 订船信息
@@ -84,7 +84,6 @@ export default {
           day: "日视图"
         },
         eventRender: function(event) {
-          // console.log(event);
           // 事件显示
           event.el.innerHTML = event.event.title;
         }

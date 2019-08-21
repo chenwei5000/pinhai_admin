@@ -1,34 +1,40 @@
 <template>
- 
+
   <!-- 编辑表单 TODO:-->
   <el-form :rules="rules" :model="editObject" status-icon inline
            ref="editObject" label-position="right"
            label-width="120px"
            v-loading="loading"
   >
-  {{editObject}}
     <el-row>
       <el-col :md="10">
-        <el-form-item label="采购单编码" prop="code">
+        <el-form-item label="发货计划编码" prop="code">
           <el-input v-model="editObject.code"
                     show-word-limit
                     style="width: 220px" placeholder="请填写编码" clearable></el-input>
         </el-form-item>
       </el-col>
 
-      <el-col :md="14">
+        <el-col :md="10">
         <el-form-item label="发货厂商" prop="supplierId">
-          <el-input v-model="editObject.supplier.name"
-                    style="width: 220px" placeholder="请填写编码" clearable></el-input>
-        </el-form-item>
+          <el-select v-model="editObject.supplierId" style="width: 220px"
+                      filterable placeholder="请选择" >
+              <el-option
+                v-for="(item , idx)  in supplierSelectOptions"
+                :label="item.label"
+                :value="item.value"
+                :key="idx"
+              ></el-option>
+            </el-select>
+       </el-form-item>
       </el-col>
     </el-row>
 
         <el-row>
       <el-col :md="10">
         <el-form-item label="收货仓库" prop="warehouseId">
-          <el-select v-model="editObject.warehouse.name" style="width: 220px"
-                      filterable placeholder="请选择">
+          <el-select v-model="editObject.warehouseId" style="width: 220px"
+                      filterable placeholder="请选择" :change="warehouseChange()">
               <el-option
                 v-for="(item , idx)  in warehouseSelectOptions"
                 :label="item.label"
@@ -44,9 +50,57 @@
           <el-date-picker
             v-model="editObject.expectTime"
             format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
             type="date"
             placeholder="交货截止日"></el-date-picker>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+
+     <el-row>
+      <el-col :md="10">
+        <el-form-item label="单号" prop="trackNumber">
+          <el-input v-model="editObject.trackNumber"
+                    show-word-limit
+                    style="width: 220px" placeholder="请填写单号" clearable></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col :md="14">
+        <el-form-item label="公司" prop="channel">
+          <el-input v-model="editObject.channel"
+                    style="width: 220px" placeholder="请填写公司" clearable></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+     <el-row>
+      <el-col :md="10">
+        <el-form-item label="车牌" prop="plateNumber">
+          <el-input v-model="editObject.plateNumber"
+                    show-word-limit
+                    style="width: 220px" placeholder="请填写车牌" clearable></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col :md="14">
+        <el-form-item label="联系人" prop="linkman">
+          <el-input v-model="editObject.linkman"
+                    style="width: 220px" placeholder="请填写联系人" clearable></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col :md="18">
+        <el-form-item label="电话" prop="tel">
+          <el-input v-model="editObject.tel"
+                    style="width: 220px" placeholder="请填写电话" clearable></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col :md="22">
+        <el-form-item label="运费" prop="shippingPrice">
+          <el-input v-model="editObject.shippingPrice"
+                    style="width: 220px" placeholder="请填写编运费" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -55,7 +109,7 @@
       <el-col :md="24">
         <el-form-item label="备注" prop="note">
           <el-col :span="22">
-            <el-input type="textarea" v-model="editObject.note"
+            <el-input type="textarea" v-model="editObject.remark"
                       maxlength="500"
                       show-word-limit
                       rows="3"
@@ -92,6 +146,7 @@
   import categoryModel from '@/api/category'
   import warehouseModel from '@/api/warehouse'
   import merchantModel from '@/api/merchant'
+  import supplierModel from '@/api/supplier'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
 
@@ -114,6 +169,7 @@
 
         // 选择框 TODO:
         warehouseSelectOptions: [],
+        supplierSelectOptions: [],
 
         // 编辑对象 TODO
         editObject: {},
@@ -155,12 +211,16 @@
           this.editObject.limitTime = this.primary.formatLimitTime;
           this.editObject.executeTime = this.primary.formatExecuteTime;
 
-          console.log("warehouseId;dfjslkdfjkldsjfkl;sdjl", this.primary.warehouseId)
           //转化仓库
-
           this.categorySelectOptions = categoryModel.getMineSelectOptions();
           this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+          this.supplierSelectOptions = supplierModel.getSelectOptions();
+
+          this.editObject.warehouseId = this.editObject.warehouseId + '';
+          this.editObject.supplierId = this.editObject.supplierId + '';
+
+
 
           //设置默认安全库存
           systemModel.getConfigInfos().then(data => {
@@ -212,7 +272,7 @@
       // 创建或修改发货计划
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
-        console.log("参数dfjlskdjflksd", _object)
+        console.log("fdfdlfjd", _object)
         this.loading = true;
         this.confirmLoading = true;
 
@@ -231,6 +291,12 @@
             this.confirmLoading = false;
           })
       },
+
+      //监听仓库el-select变化
+      warehouseChange(){
+        // this.editObject.warehouseId = this.editObject.warehouse.name;
+
+      }
     }
   }
 </script>

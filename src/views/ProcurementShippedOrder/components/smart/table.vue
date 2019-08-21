@@ -31,8 +31,8 @@
         highlight-current-row
         :max-height="tableMaxHeight"
         :row-class-name="dangerClassName"
-        :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-        :header-cell-style="{padding: '2px 0'}"
+        cell-class-name="ph-cell"
+        header-cell-class-name="ph-cell-header"
         :data="tableData"
         v-loading="loading"
         show-summary
@@ -98,7 +98,7 @@
 
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower','rolePower'
       ])
     },
 

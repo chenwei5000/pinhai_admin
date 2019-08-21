@@ -9,33 +9,31 @@
 
     <el-row>
       <el-col :md="10">
-        <el-form-item label="采购单编码" prop="code">
-          <el-input v-model="editObject.code"
-                    show-word-limit
-                    style="width: 220px" placeholder="请填写编码" clearable></el-input>
+        <el-form-item label="编码" prop="code">
+          <el-input v-model="editObject.code" style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+    </el-row>
+
+    <el-row>
+      <el-col :md="14">
+        <el-form-item label="供货商" prop="supplierId" >
+          <el-select v-model="editObject.supplierId" style="width: 220px" :disabled="true">
+            <el-option
+              v-for="(item , idx)  in supplierSelectOptions"
+              :label="item.label"
+              :value="item.value"
+              :key="idx"
+            ></el-option>
+          </el-select>
+
         </el-form-item>
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="供货商" prop="supplierId">
-          <el-select v-model="editObject.supplierId" style="width: 220px"
-                     filterable placeholder="请选择">
-          <el-option
-            v-for="(item , idx)  in supplierSelectOptions"
-            :label="item.label"
-            :value="item.value"
-            :key="idx">
-          </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col :md="10">
         <el-form-item label="收货仓库" prop="warehouseId">
-          <el-select v-model="editObject.warehouseId" style="width: 220px"
-                     filterable placeholder="请选择">
+          <el-select v-model="editObject.warehouseId" style="width: 220px" :disabled="true">
             <el-option
               v-for="(item , idx)  in warehouseSelectOptions"
               :label="item.label"
@@ -43,34 +41,68 @@
               :key="idx"
             ></el-option>
           </el-select>
-        </el-form-item>
-      </el-col>
 
-      <el-col :md="14">
-        <el-form-item label="预计到货时间" prop="expectTime">
-          <el-date-picker
-            v-model="editObject.expectTime"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            type="date">
-          </el-date-picker>
         </el-form-item>
       </el-col>
     </el-row>
 
     <el-row>
-      <el-col :md="24">
-        <el-form-item label="物流信息" prop="trackNumber">
-          <el-col :span="22">
-            <el-input type="textarea" v-model="editObject.trackNumber"
-                      maxlength="500"
-                      show-word-limit
-                      rows="3"
-                      cols="80"
-                      show-word-limit></el-input>
-          </el-col>
+      <el-col :md="14">
+      <el-form-item label="预计到货时间" prop="expectTime">
+        <el-date-picker
+          v-model="editObject.expectTime"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+          type="date"
+          :disabled="true"
+          placeholder="预计到货时间">
+        </el-date-picker>
+      </el-form-item>
+    </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col>
+      <el-form-item label="物流单号" prop="trackNumber">
+        <el-input v-model="editObject.trackNumber"
+                  show-word-limit
+                  style="width: 220px" placeholder="请填写单号" :disabled="true"></el-input>
+      </el-form-item>
+        </el-col>
+
+      <el-col>
+        <el-form-item label="物流公司" prop="channel">
+          <el-input v-model="editObject.channel"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
         </el-form-item>
       </el-col>
+
+      <el-col>
+        <el-form-item label="车牌" prop="plateNumber">
+          <el-input v-model="editObject.plateNumber"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col>
+        <el-form-item label="联系人" prop="linkman">
+          <el-input v-model="editObject.linkman"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+      <el-col>
+        <el-form-item label="电话" prop="tel">
+          <el-input v-model="editObject.tel"
+                    show-word-limit
+                    style="width: 220px" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+
+
     </el-row>
 
     <el-row>
@@ -82,19 +114,17 @@
                       show-word-limit
                       rows="3"
                       cols="80"
+                      :disabled="true"
                       show-word-limit></el-input>
           </el-col>
-        </el-form-item>
-      </el-col>
-    </el-row>
 
-    <el-row>
-      <el-col :md="24">
-        <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
-            保存基本信息
-          </el-button>
-        </el-row>
+          <el-col :span="2">
+            <el-tooltip class="item" effect="light" content="备注信息。支持换行！" placement="right">
+              <i class="el-icon-question">&nbsp;</i>
+            </el-tooltip>
+          </el-col>
+
+        </el-form-item>
       </el-col>
     </el-row>
 
@@ -104,9 +134,7 @@
 
 <script>
 
-  import categoryModel from '@/api/category'
   import warehouseModel from '@/api/warehouse'
-  import merchantModel from '@/api/merchant'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
   import supplierModel from "../../../../api/supplier";
@@ -129,37 +157,51 @@
         confirmLoading: false,
 
         // 选择框 TODO:
-        categorySelectOptions: [],
+
         warehouseSelectOptions: [],
-        merchantSelectOptions: [],
-        supplierSelectOptions:[],
+        supplierSelectOptions: [],
+
 
         // 编辑对象 TODO
         editObject: {
-          code: null,
-          supplierId: null,
-          trackNumber: null,
-          remark: null,
-          expectTime: null,
           id: null,
-          categoryId: null,
-          limitTime: null,
-          executeTime: null,
-          tags: null,
-          note: null,
-          merchantId: null,
+          code: null,
           warehouseId: null,
-          handleMethod: "3",
-          safetyStockWeek: null,
-          vip1SafetyStockWeek: null,
-          vip2SafetyStockWeek: null,
+          supplierId: null,
+          remark: null,
+          trackNumber: null,
+          expectTime: null
         },
 
         // 字段验证规则 TODO:
         rules: {
+          limitTime: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          executeTime: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          categoryId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          merchantId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
           warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
+          safetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          vip1SafetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          vip2SafetyStockWeek: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          handleMethod: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ]
         },
       }
     },
@@ -185,19 +227,14 @@
           //转化时间
           this.editObject.limitTime = this.primary.formatLimitTime;
           this.editObject.executeTime = this.primary.formatExecuteTime;
-          //转化分类
-          this.editObject.categoryId = intArrToStrArr(this.primary.categoryId);
+          this.editObject.expectTime = this.primary.formatExpectTime;
+
           //转化仓库
-          this.editObject.warehouseId = this.primary.warehouseId ? intArrToStrArr(this.primary.warehouseId.split(",")) : [];
-          this.editObject.handleMethod = this.primary.handleMethod + '';
+          this.editObject.warehouseId = this.editObject.warehouseId + '';
+          this.editObject.supplierId = this.editObject.supplierId + '';
 
-          this.editObject.supplierId = this.primary.supplierId ? intArrToStrArr(this.primary.supplierId.split(",")) : [];
-
-          this.categorySelectOptions = categoryModel.getMineSelectOptions();
-          this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
-
 
           //设置默认安全库存
           systemModel.getConfigInfos().then(data => {
@@ -232,24 +269,11 @@
 
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
-      onSave() {
-        this.$confirm('注意保存基本信息只会修改对应的参数，不会重新计算明细数据，您是否继续？', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              done();
-              this.modifyObject();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
+
 
       // 创建计划
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
-        _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
         this.loading = true;
         this.confirmLoading = true;
 

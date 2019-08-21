@@ -15,20 +15,14 @@
         <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
       </el-form-item>
 
+      <el-form-item label="款式">
+        <el-input v-model="searchParam.groupName" placeholder="请输入产品款式" clearable></el-input>
+      </el-form-item>
+
       <el-form-item label="状态">
         <el-select filterable v-model="searchParam.status" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="优先级">
-        <el-select filterable v-model="searchParam.priority" placeholder="请选择优先级">
-          <el-option
-            v-for="(item,idx) in prioritySelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -62,8 +56,8 @@
       highlight-current-row
       :max-height="tableMaxHeight"
       :row-class-name="dangerClassName"
-      :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-      :header-cell-style="{padding: '2px 0'}"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       :data="tableData"
       v-loading="loading"
       show-summary
@@ -72,8 +66,22 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="200" fixed="left"></el-table-column>
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
+            <div v-html="scope.row.product.skuCode"></div>
+            <span slot="reference">{{
+              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.skuCode }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="statusName" label="状态" width="90">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.status === 1
@@ -86,15 +94,77 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.category.name" label="分类" width="120"></el-table-column>
+      <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
+      <el-table-column prop="product.groupName" label="款式" width="150">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
+            <div v-html="scope.row.product.groupName"></div>
+            <span slot="reference">{{
+              scope.row.product.groupName ? scope.row.product.groupName.length > 12 ? scope.row.product.groupName.substr(0,10)+'..' : scope.row.product.groupName : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.product.groupName }}
+            </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+      <el-table-column prop="safetyStockWeek" label="备货周数" width="80"></el-table-column>
+      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
+      <el-table-column prop="sevenSalesCount" label="7日销量(件)" width="100"></el-table-column>
+      <el-table-column prop="amazonTotalStock" label="亚马逊含在途库存(件)" width="140"></el-table-column>
+      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100"></el-table-column>
+      <el-table-column prop="unfinishedPlanQty" label="国内在途(箱)" width="100"></el-table-column>
 
-      <el-table-column prop="priority" label="优先级" sortable width="100">
+
+      <el-table-column prop="qty" label="采购件数" width="80"></el-table-column>
+
+      <el-table-column prop="orderQty" label="下单件数" width="80" v-if="hasExecute"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货件数" width="80" v-if="hasExecute"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货件数" width="80" v-if="hasExecute"></el-table-column>
+
+      <el-table-column prop="productName" label="名称" width="200">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.name && scope.row.product.name.length > 17">
+            <div v-html="scope.row.product.name"></div>
+            <span slot="reference">{{
+              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.product.name }}
+            </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="product.fnSku" label="FNSKU" min-width="120"></el-table-column>
+      <el-table-column prop="product.vipLevel" label="Vip级别" width="100"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+      <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
+      <el-table-column prop="id" label="ID" width="80"></el-table-column>
+
+      <el-table-column prop="saleWeek" sortable label="可售周数" width="110"
+                       fixed="right"></el-table-column>
+
+      <el-table-column prop="cartonQty" sortable label="采购箱数" width="110"
+                       fixed="right"></el-table-column>
+
+      <el-table-column prop="amount" sortable label="金额" width="100"
+                       fixed="right">
+        <template slot-scope="scope">
+          {{scope.row.amount, scope.row.product.currency ? scope.row.product.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="priority" label="优先级" sortable width="100" v-if="false">
         <template slot-scope="scope">
           {{ scope.row.priorityName }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="priorityNote" label="优先要求" width="130">
+      <el-table-column prop="priorityNote" label="优先要求" width="130" v-if="false">
 
         <template slot-scope="scope">
           <el-popover placement="top-start" title="优先要求" width="250" trigger="hover">
@@ -105,41 +175,6 @@
 
       </el-table-column>
 
-      <el-table-column prop="qty" label="采购件数" width="100"></el-table-column>
-
-      <el-table-column prop="orderQty" label="下单件数" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货件数" width="100"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货件数" width="100"></el-table-column>
-
-      <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
-      <el-table-column prop="safetyStockWeek" label="备货周数" width="90"></el-table-column>
-      <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="130"></el-table-column>
-      <el-table-column prop="sevenSalesCount" sortable label="7日销量(件)" width="120"></el-table-column>
-      <el-table-column prop="amazonTotalStock" sortable label="亚马逊含在途库存(件)" width="200"></el-table-column>
-      <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="130"></el-table-column>
-      <el-table-column prop="unfinishedPlanQty" sortable label="国内在途(箱)" width="130"></el-table-column>
-      <el-table-column prop="product.name" label="名称" width="200"></el-table-column>
-      <el-table-column prop="product.fnSku" label="FNSKU" min-width="120"></el-table-column>
-      <el-table-column prop="product.vipLevel" label="Vip级别" width="120"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
-      <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
-
-
-      <el-table-column prop="saleWeek" sortable label="可售周数" width="110"
-                       fixed="right"></el-table-column>
-
-      <el-table-column prop="cartonQty" sortable label="采购箱数" width="110"
-                       fixed="right"></el-table-column>
-
-      <el-table-column prop="amount" sortable label="金额" width="100"
-                       fixed="right">
-
-        <template slot-scope="scope">
-          {{scope.row.amount, scope.row.product.currency.symbolLeft | currency}}
-        </template>
-
-      </el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -161,7 +196,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primary.id">
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
     </itemDialog>
   </div>
 
@@ -188,8 +223,17 @@
     },
     computed: {
       ...mapGetters([
-        'device'
-      ])
+        'device',
+        'rolePower'
+      ]),
+      hasExecute() {
+        if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
     },
     filters: {
       currency: currency
@@ -223,7 +267,7 @@
           skuCode: null,
           category: null,
           status: null,
-          priority: null,
+          groupName: null,
         },
         filters: [
           {
@@ -268,7 +312,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-
         this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
 
@@ -283,16 +326,24 @@
           this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
 
+        // 控制按钮
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          this.hasDelete = false;
+          this.toolbarConfig.hasAdd = false;
+          this.toolbarConfig.hasImport = false;
+        }
       },
 
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
-      dangerClassName({row}) {
-        if (row.saleWeek == 0 || row.safetyStockWeek - row.saleWeek > 2) { //可售周数不足
-          return 'warning-row';
-        }
-        else if (row.saleWeek - row.safetyStockWeek > 2) { //可售周数超2周
-          return 'danger-row';
+      dangerClassName({row, rowIndex}) {
+        if (row.saleWeek > 0) {
+          if (row.safetyStockWeek - row.saleWeek >= 2) { //可售周数不足2周
+            return 'warning-row';
+          }
+          else if (row.saleWeek - row.safetyStockWeek >= 2) { //可售周数超2周
+            return 'danger-row';
+          }
         }
         return '';
       },
@@ -435,10 +486,10 @@
               }
             });
         }
-        if (this.searchParam.priority != null && this.searchParam.priority != '') {
+        if (this.searchParam.groupName != null && this.searchParam.groupName != '') {
           this.tableData = this.tableData.filter(
             item => {
-              if (item.priority == this.searchParam.priority) {
+              if (item.product && item.product.groupName.indexOf(this.searchParam.groupName) !== -1) {
                 return true;
               }
             });
@@ -452,7 +503,7 @@
         //TODO:根据实际情况调整
         this.searchParam.skuCode = null;
         this.searchParam.category = null;
-        this.searchParam.priority = null;
+        this.searchParam.groupName = null;
         this.searchParam.status = null;
 
         this.search();
@@ -550,39 +601,5 @@
     padding: 0 10px;
   }
 
-  .el-form-item {
-    //margin-bottom: 7px;
-  }
-
-  .ph-table {
-    width: 100%;
-  }
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(250, 236, 216) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(250, 236, 216) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 230px !important;
-    }
-  }
 </style>
 

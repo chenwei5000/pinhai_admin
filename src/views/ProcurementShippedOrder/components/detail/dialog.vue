@@ -16,8 +16,6 @@
         <el-col :md="10">
           <el-form-item label="SKU" prop="skuCode">
             <el-input v-model.trim="detailItem.skuCode"
-                      maxlength="50"
-                      show-word-limit
                       style="width: 220px" placeholder="请填写SKU" clearable></el-input>
 
             <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
@@ -27,19 +25,11 @@
         </el-col>
 
         <el-col :md="14">
-          <el-form-item label="采购箱数" prop="cartonQty">
+          <el-form-item label="产品名" prop="cartonQty">
 
-            <el-input-number v-model="detailItem.cartonQty"
-                             :precision="2"
-                             :min="1"
-                             :step="1"
-                             :max="100000" label="采购箱数">
-
-            </el-input-number>
-
-            <el-tooltip class="item" effect="light" content="按箱采购，请输入箱数，支持3位小数！" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
+            <el-input v-model="detailItem.product.name"
+                             :max="100000" label="产品名">
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -48,7 +38,7 @@
         <el-col :md="10">
           <el-form-item label="箱规" prop="cartonSpecId">
 
-            <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
+            <el-select filterable v-model="detailItem.cartonSpecCode" placeholder="外箱包装材料规格,可筛选"
                        style="width: 220px">
               <el-option
                 v-for="(item,idx) in cartonspecSelectOptions"
@@ -78,120 +68,42 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="备货周数" prop="safetyStockWeek">
-            <el-select v-model="detailItem.safetyStockWeek" style="width: 220px"
-                       filterable placeholder="请选择备货周数">
-              <el-option
-                v-for="week in 52"
-                :label="week"
-                :value="week"
-                :key="week"
-              ></el-option>
-            </el-select>
-
-            <el-tooltip class="item" effect="light" content="产品希望支持销售的周数。" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-
+          <el-form-item label="采购数量(箱)" prop="procurementBoxQty">
+            <el-input v-model="detailItem.procurementBoxQty"
+                             :max="100000" label="采购数量(箱)">
+            </el-input>
           </el-form-item>
         </el-col>
 
         <el-col :md="14">
-          <el-form-item label="优先级" prop="priority">
-
-            <el-select v-model="detailItem.priority"
-                       filterable
-                       style="width: 200px"
-                       placeholder="请选择优先级,可筛选">
-
-              <el-option
-                v-for="(item,idx) in prioritySelectOptions"
-                :label="item.label" :value="item.value"
-                :key="idx"
-              ></el-option>
-            </el-select>
-
-            <el-tooltip class="item" effect="light" content="本产品在该采购计划中的优先等级" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-
+          <el-form-item label="应发箱数" prop="shippedCartonQty">
+            <el-input v-model="detailItem.shippedCartonQty"
+                             :max="100000" label="应发箱数">
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="7日销量(件)" prop="sevenSalesCount">
+          <el-form-item label="出货件数" prop="sevenSalesCount">
 
-            <el-input v-model.trim="detailItem.sevenSalesCount"
-                      style="width: 220px" placeholder="请填写7日销量，件数" clearable></el-input>
-
-            <el-tooltip class="item" effect="light" content="7日销售件数" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-
+            <el-input v-model.trim="detailItem.shippedQty"
+                      style="width: 220px" placeholder="出货件数" clearable></el-input>
           </el-form-item>
         </el-col>
-
-        <el-col :md="14">
-          <el-form-item label="亚马逊含在途(箱)" prop="amazonTotalStock">
-
-            <el-input v-model.trim="detailItem.amazonTotalStock"
-                      style="width: 200px" placeholder="亚马逊含在途，箱数" clearable></el-input>
-
-            <el-tooltip class="item" effect="light" content="亚马逊含在途库存箱数" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-
-          </el-form-item>
-        </el-col>
-
-      </el-row>
-
-      <el-row>
-
-        <el-col :md="10">
-          <el-form-item label="国内库存(箱)" prop="domesticStockQty">
-
-            <el-input v-model.trim="detailItem.domesticStockQty"
-                      style="width: 220px" placeholder="国内库存，箱数" clearable></el-input>
-
-            <el-tooltip class="item" effect="light" content="国内仓库库存箱数" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="14">
-          <el-form-item label="国内在途(箱)" prop="unfinishedPlanQty">
-
-            <el-input v-model.trim="detailItem.unfinishedPlanQty"
-                      style="width: 200px" placeholder="国内在途，箱数" clearable></el-input>
-
-            <el-tooltip class="item" effect="light" content="未完成采购计划箱数" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-
-          </el-form-item>
-        </el-col>
-
       </el-row>
 
       <el-row>
         <el-col :md="24">
-          <el-form-item label="优先要求" prop="priorityNote">
+          <el-form-item label="备注" prop="priorityNote">
             <el-col :span="22">
-              <el-input type="textarea" v-model="detailItem.priorityNote"
+              <el-input type="textarea" v-model="detailItem.shippedNote"
                         maxlength="500"
                         show-word-limit
                         rows="3"
                         cols="80"
-                        placeholder="示例:
-2018-08-16 : 5箱
-2018-08-26 : 45件
-2018-09-16 : 2箱"
-                        show-word-limit></el-input>
+                        ></el-input>
             </el-col>
 
             <el-col :span="2">
@@ -263,7 +175,7 @@
 
         // 资源URL
         url: "/procurementShippedOrderItems",
-        relations: ["product"],  // 关联对象
+        relations: ["product", "cartonSpec"],  // 关联对象
         //明细对象ID
         detailItemId: null,
         //明细对象
@@ -276,27 +188,6 @@
         rules: {
           skuCode: [
             validRules.required
-          ],
-          cartonQty: [
-            validRules.required
-          ],
-          priority: [
-            validRules.required
-          ],
-          numberOfCarton: [
-            validRules.integer
-          ],
-          sevenSalesCount: [
-            validRules.number
-          ],
-          amazonTotalStock: [
-            validRules.number
-          ],
-          domesticStockQty: [
-            validRules.number
-          ],
-          unfinishedPlanQty: [
-            validRules.number
           ]
         },
       }

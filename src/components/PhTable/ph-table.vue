@@ -828,7 +828,7 @@
 
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower'
       ]),
 
       phTableAttrs() {
@@ -1512,7 +1512,13 @@
           this.$message.error("导入失败!");
           return false;
         }
-        this.loading = true;
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
         let table = this.$refs.table;
         let columns = (table && table.columns) ? table.columns : [];
         let header = [];
@@ -1552,11 +1558,11 @@
           });
           resData.push(_res);
         });
-
         for (var i = 0; i < resData.length; i++) {
           promiseArr.push(this.uploadPromise(resData[i]));
           if (promiseArr.length >= this.maxUploadCount) {
             await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i+1) + "]条";
               promiseArr = [];
             });
             promiseArr = [];
@@ -1565,11 +1571,12 @@
 
         if (promiseArr.length > 0) {
           await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
           });
         }
 
+        loading.close();
         this.$message.info("导入成功");
-        this.loading = false;
         this.getList();
       }
     }

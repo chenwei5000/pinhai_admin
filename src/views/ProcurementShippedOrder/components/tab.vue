@@ -58,7 +58,7 @@
           return {
             field: 'status',
             op: 'in',
-            data: 8
+            data: 4
           }
         }
         //完成

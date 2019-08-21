@@ -1,26 +1,26 @@
 <template>
 
-  <el-dialog title="智能备货" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
-
-    <!--本地搜索 TODO: 根据实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
-             @submit.native.prevent>
-
-      <el-form-item label="SKU">
-        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
-      </el-form-item>
-
-      <el-form-item label="分类">
-        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
-      </el-form-item>
-    </el-form>
+  <el-dialog title="智能备货" v-if="dialogVisible" :visible.sync="dialogVisible" @close='closeDialog' fullscreen>
 
     <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
     <div class="ph-table">
+
+      <!--本地搜索 TODO: 根据实际情况调整 el-form-item -->
+      <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+               @submit.native.prevent>
+
+        <el-form-item label="SKU">
+          <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+        </el-form-item>
+
+        <el-form-item label="分类">
+          <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+          <el-button @click="resetSearch" size="small">重置</el-button>
+        </el-form-item>
+      </el-form>
 
       <!--表格 TODO:根据实际情况调整 el-table-column  -->
       <el-table
@@ -31,8 +31,8 @@
         highlight-current-row
         :max-height="tableMaxHeight"
         :row-class-name="dangerClassName"
-        :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-        :header-cell-style="{padding: '2px 0'}"
+        cell-class-name="ph-cell"
+        header-cell-class-name="ph-cell-header"
         :data="tableData"
         v-loading="loading"
         show-summary
@@ -43,25 +43,72 @@
       >
         <el-table-column
           type="selection"
-          width="55">
+          width="50">
         </el-table-column>
-        <el-table-column prop="skuCode" label="SKU" sortable width="200" fixed="left"></el-table-column>
-        <el-table-column prop="categoryName" label="分类" width="120"></el-table-column>
-        <el-table-column prop="numberOfCarton" label="装箱数" width="100"></el-table-column>
-        <el-table-column prop="safetyWeek" label="备货周数" width="90"></el-table-column>
-        <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="130"></el-table-column>
+
+        <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" width="200" trigger="hover"
+                        v-if="scope.row.skuCode && scope.row.skuCode.length > 22">
+              <div v-html="scope.row.skuCode"></div>
+              <span slot="reference">{{
+              scope.row.skuCode ? scope.row.skuCode.length > 22 ? scope.row.skuCode.substr(0,20)+'..' : scope.row.skuCode : ''
+              }}</span>
+            </el-popover>
+            <span v-else>
+            {{ scope.row.skuCode }}
+          </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
+
+        <el-table-column prop="groupName" label="款式" width="150">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" width="200" trigger="hover"
+                        v-if="scope.row.groupName && scope.row.groupName.length > 12">
+              <div v-html="scope.row.groupName"></div>
+              <span slot="reference">{{
+              scope.row.groupName ? scope.row.groupName.length > 12 ? scope.row.groupName.substr(0,10)+'..' : scope.row.groupName : ''
+              }}</span>
+            </el-popover>
+            <span v-else>
+            {{ scope.row.groupName }}
+            </span>
+          </template>
+
+        </el-table-column>
+
+        <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+        <el-table-column prop="safetyWeek" label="备货周数" width="80"></el-table-column>
+        <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="120"></el-table-column>
         <el-table-column prop="sevenAmendQty" sortable label="7日销量(件)" width="120"></el-table-column>
-        <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="200"></el-table-column>
-        <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="130"></el-table-column>
-        <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="130"></el-table-column>
-        <el-table-column prop="productName" label="名称" width="200"></el-table-column>
+        <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="180"></el-table-column>
+        <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="120"></el-table-column>
+        <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="120"></el-table-column>
+
+        <el-table-column prop="productName" label="名称" width="200">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" width="200" trigger="hover"
+                        v-if="scope.row.productName && scope.row.productName.length > 17">
+              <div v-html="scope.row.productName"></div>
+              <span slot="reference">{{
+              scope.row.productName ? scope.row.productName.length > 17 ? scope.row.productName.substr(0,15)+'..' : scope.row.productName : ''
+              }}</span>
+            </el-popover>
+            <span v-else>
+            {{ scope.row.productName }}
+            </span>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="fnSku" label="FNSKU" min-width="120"></el-table-column>
-        <el-table-column prop="vipLevel" label="Vip级别" width="120"></el-table-column>
-        <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+        <el-table-column prop="vipLevel" label="Vip级别" width="100"></el-table-column>
+        <el-table-column prop="cartonSpecCode" label="箱规" width="120" v-if="false"></el-table-column>
         <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
 
-        <el-table-column prop="saleWeek" sortable label="可售周数" width="120" fixed="right"></el-table-column>
-        <el-table-column prop="replenishmentCartonPlanQty" sortable label="采购箱数" width="120"
+        <el-table-column prop="saleWeek" sortable label="可售周数" width="100" fixed="right"></el-table-column>
+        <el-table-column prop="replenishmentCartonPlanQty" sortable label="采购箱数" width="100"
                          fixed="right"></el-table-column>
         <!--默认操作列-->
         <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
@@ -75,15 +122,15 @@
         </el-table-column>
       </el-table>
 
-      <el-col :md="24">
-        <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateObject">
-            生成采购计划
-          </el-button>
-        </el-row>
-      </el-col>
-
     </div>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" :loading="confirmLoading" @click="onCreateObject">
+        生成采购计划
+      </el-button>
+      <el-button @click="closeDialog">取 消</el-button>
+    </div>
+
 
   </el-dialog>
 
@@ -98,8 +145,13 @@
 
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower','rolePower'
       ])
+    },
+    watch: {
+      dialogVisible(val) {
+
+      }
     },
 
     data() {
@@ -159,7 +211,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 200; //减标题高度
+          tableHeight = tableHeight - 230; //减标题高度
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -172,10 +224,19 @@
         this.dialogVisible = true;
         this.object = object;
         this.url = `/amazonStocks/plans/${object.merchantId}?warehouse=${object.warehouseId.join(",")}&category=${object.categoryId.join(",")}&safetyStockWeek=${object.safetyStockWeek}&vip1SafetyStockWeek=${object.vip1SafetyStockWeek}&vip2SafetyStockWeek=${object.vip2SafetyStockWeek}&exclude=${object.handleMethod}`;
+        this.url += '&group=' + encodeURIComponent(object.groupName.join(","))
 
         this.getTableHeight();
         this.initData();
         this.getList();
+      },
+
+      closeDialog() {
+        this.object = null;
+        this.data = [];
+        this.search();
+        this.resetSearch();
+        this.dialogVisible = false;
       },
 
       /********************* 表格相关方法  ***************************/
@@ -258,14 +319,6 @@
           return
         }
 
-        // 构造查询url
-        if (url.indexOf('?') > -1) {
-          url += '&'
-        }
-        else {
-          url += '?'
-        }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -333,6 +386,7 @@
         //转义字段
         let _object = JSON.parse(JSON.stringify(this.object));
         _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
+        _object.groupName = _object.groupName ? _object.groupName.join(",") : "";
 
         let items = [];
         this.selected.forEach(obj => {
@@ -390,8 +444,8 @@
         this.$refs.searchForm.resetFields();
 
         //TODO:根据实际情况调整
-        this.searchParam.skuCode=null;
-        this.searchParam.category=null;
+        this.searchParam.skuCode = null;
+        this.searchParam.category = null;
 
         this.search();
       }
@@ -400,32 +454,4 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 230px !important;
-    }
-  }
 </style>
-

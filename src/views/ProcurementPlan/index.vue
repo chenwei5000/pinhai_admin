@@ -7,6 +7,16 @@
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
           <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="create" lazy>
+            <span slot="label">
+              <i class="el-icon-circle-plus-outline"></i> 创建计划
+            </span>
+            <keep-alive>
+              <phCreate @createCBEvent="createCBEvent"></phCreate>
+            </keep-alive>
+          </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="editing" class="fontColor" lazy>
             <span slot="label">
               <i class="el-icon-edit"></i> 编辑中
@@ -56,15 +66,6 @@
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="create" lazy>
-            <span slot="label">
-              <i class="el-ph-icon-plus-circle"></i> 创建计划
-            </span>
-            <keep-alive>
-              <phCreate @createCBEvent="createCBEvent"></phCreate>
-            </keep-alive>
-          </el-tab-pane>
 
         </el-tabs>
       </div>

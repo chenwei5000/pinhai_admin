@@ -32,6 +32,7 @@
           },
 
           //工具按钮
+          maxUploadCount: 20, //提交数量
           exportFileName: '操作列表',
           hasExportTpl: true,
           hasExport: true,

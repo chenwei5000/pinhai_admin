@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ph-form">
 
     <!-- 添加功能 form-表单, fieldset-字段租, legend-标题, tooltip-提示框 -->
     <el-form :rules="rules"
@@ -10,6 +10,7 @@
              label-position="right"
              label-width="120px"
              v-loading="loading"
+             inline-message
     >
 
       <fieldset class="panel-heading">
@@ -61,7 +62,9 @@
           <el-col :md="10">
             <el-form-item label="分类" prop="categoryId">
 
-              <el-select v-model="newObject.categoryId" style="width: 220px" filterable multiple
+              <el-select v-model="newObject.categoryId" style="width: 220px"
+                         filterable multiple
+                         @change="onCateChange"
                          placeholder="请选择分类,可多选">
                 <el-option
                   v-for="(item , idx)  in categorySelectOptions"
@@ -78,8 +81,31 @@
           </el-col>
 
           <el-col :md="14">
+            <el-form-item label="款式" prop="categoryId">
+
+              <el-select v-model="newObject.groupName" style="width: 220px" filterable multiple
+                         :disabled="hasCategory"
+                         placeholder="请选择产品款式。可多选">
+                <el-option
+                  v-for="(item , idx)  in groupSelectOptions"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="idx"
+                ></el-option>
+              </el-select>
+
+              <el-tooltip class="item" effect="light" content="请选择产品款式,请优先选择分类" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="10">
             <el-form-item label="国内库存" prop="warehouseId">
               <el-select v-model="newObject.warehouseId" style="width: 220px"
+                         :disabled="hasCategory"
                          filterable multiple placeholder="请选择库存,可多选">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -89,25 +115,7 @@
                 ></el-option>
               </el-select>
 
-              <el-tooltip class="item" effect="light" content="以选定的仓库库存情况为当前库存依据。" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :md="10">
-            <el-form-item label="下单截止日" prop="limitTime">
-              <el-date-picker
-                v-model="newObject.limitTime"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                type="date"
-                placeholder="下单截止日"></el-date-picker>
-
-              <el-tooltip class="item" effect="light" content="本次采购必须在这个日期之前完成交货" placement="right">
+              <el-tooltip class="item" effect="light" content="以选定的仓库库存情况为当前库存依据。请优先选择分类。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
 
@@ -115,17 +123,18 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="交货截止日" prop="executeTime">
+            <el-form-item label="期望交货日期" prop="limitTime">
               <el-date-picker
-                v-model="newObject.executeTime"
+                v-model="newObject.limitTime"
                 format="yyyy-MM-dd"
                 value-format="yyyy-MM-dd"
                 type="date"
-                placeholder="交货截止日"></el-date-picker>
+                placeholder="期望交货日期"></el-date-picker>
 
-              <el-tooltip class="item" effect="light" content="本次采购必须在这个日期之前向厂家签好采购合同" placement="right">
+              <el-tooltip class="item" effect="light" content="销售期望的交货日期" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
+
             </el-form-item>
           </el-col>
         </el-row>
@@ -248,7 +257,16 @@
   export default {
     components: {itemTable},
     props: {},
-    computed: {},
+    computed: {
+      hasCategory() {
+        if (this.newObject.categoryId == null || this.newObject.categoryId.length == 0) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+    },
 
     data() {
       return {
@@ -261,6 +279,7 @@
         categorySelectOptions: [],
         warehouseSelectOptions: [],
         merchantSelectOptions: [],
+        groupSelectOptions: [],
 
         // 新对象  TODO:
         newObject: {
@@ -272,6 +291,7 @@
           note: null,
           merchantId: null,
           warehouseId: null,
+          groupName: null,
           handleMethod: "3",
           safetyStockWeek: null,
           vip1SafetyStockWeek: null,
@@ -323,9 +343,9 @@
         this.loading = true;
         // 加载选择框数据
         this.categorySelectOptions = categoryModel.getMineSelectOptions();
-
         this.merchantSelectOptions = merchantModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.initGroupData();
+        this.initWarehouseData();
 
         // 设置默认安全库存
         systemModel.getConfigInfos().then(data => {
@@ -340,19 +360,61 @@
           }
         });
 
-        // 仓库追加供货商库存选项
-        let flg = true;
-        this.warehouseSelectOptions.forEach(obj => {
-          if (obj.value == "-99") {
-            flg = false;
-          }
-        });
+        // 获取参数中的id
+        this.newObject.merchantId = this.$route.query.merchantId !== null ? this.$route.query.merchantId : '';
 
-        if (flg) {
-          this.warehouseSelectOptions.unshift({label: '供货商库存', value: "-99"})
-        }
 
         this.loading = false;
+      },
+      // 初始化款式数据
+      initGroupData(val = null) {
+        if (!val) {
+          return;
+        }
+
+        this.loading = true;
+        let url = "/products/listProductGroups";
+        url += "?cateId=" + val.join(",");
+        this.global.axios.get(url)
+          .then(resp => {
+            let res = resp.data || [];
+            this.groupSelectOptions = [];
+            res.forEach(r => {
+              this.groupSelectOptions.push({
+                label: r,
+                value: r
+              });
+            });
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+          })
+      },
+
+      // 初始化仓库数据
+      initWarehouseData(val = null) {
+        if (!val) {
+          return;
+        }
+        this.loading = true;
+        let url = "/warehouses/category";
+        url += "?cateId=" + val.join(",");
+        this.global.axios.get(url)
+          .then(resp => {
+            let res = resp.data || [];
+            this.warehouseSelectOptions = [];
+            res.forEach(r => {
+              this.warehouseSelectOptions.push({
+                label: r.name,
+                value: r.id + ''
+              });
+            });
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       },
 
       /********************* 操作按钮相关方法  ***************************/
@@ -374,7 +436,15 @@
        * 创建成功之后，将子组件发送的数据继续向上传递给父组件
        */
       createCBEvent(newObjectId) {
-        this.$emit("smartCBEvent", newObjectId);
+        this.$emit("step1CBEvent", newObjectId);
+      },
+
+      /**
+       * 分类发生修改
+       */
+      onCateChange(val) {
+        this.initGroupData(val);
+        this.initWarehouseData(val);
       }
     }
   }

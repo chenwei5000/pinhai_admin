@@ -3,8 +3,8 @@
     <el-row style="background:#fff;padding:5px 5px 0;">
       <el-form :inline="true" ref="searchForm" id="filter-form"
                @submit.native.prevent>
-        <el-form-item label="商户">
-          <el-select filterable v-model="mine.merchantId" placeholder="请选择商户">
+        <el-form-item label="销售渠道">
+          <el-select filterable v-model="mine.merchantId" placeholder="请销售渠道">
             <el-option
               v-for="(item,idx) in merchantSelectOptions"
               :label="item.label" :value="item.value"
@@ -121,10 +121,16 @@
       LineChart,
       TodoList
     },
+    computed: {
+      //store 的状态必须变成计算方法，只有这样state值修改之后，才会重新计算
+      mine() {
+        return this.$store.state.user.user;
+      }
+    },
     data() {
       return {
         categorySelectOptions: [],
-        mine: {merchantId: '8a23287966dc9acb0166dca2574c0000', categoryId: '1', week: '20'},
+        //mine: {merchantId: '8a23287966dc9acb0166dca2574c0000', categoryId: '1', week: '20'},
         lineChartData: lineChartData.newVisitis
       }
     },
@@ -134,6 +140,9 @@
       this.weekSelectOptions = weekSelectOptions;
     },
     methods: {
+      initData(){
+
+      },
       handleSetLineChartData(type) {
         this.lineChartData = lineChartData[type]
       }

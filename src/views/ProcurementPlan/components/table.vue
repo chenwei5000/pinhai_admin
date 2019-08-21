@@ -3,20 +3,23 @@
   <div class="ph-table">
 
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+    <el-form :inline="true" :model="searchParam"
+             ref="searchForm"
+             id="filter-form"
+             inline-message
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+        <el-input size="mini" v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="下单截止日">
-
         <el-date-picker
+          size="mini"
           v-model="searchParam.limitTime.value"
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
@@ -29,7 +32,7 @@
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status.value" style="width: 120px"  placeholder="请选择状态">
+        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
@@ -40,8 +43,8 @@
 
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -53,8 +56,8 @@
       border
       highlight-current-row
       :row-class-name="dangerClassName"
-      :cell-style="{padding: '2px 0', 'font-size': '13px'}"
-      :header-cell-style="{padding: '2px 0'}"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       :data="data"
       :max-height="tableMaxHeight"
       v-loading="loading"
@@ -62,17 +65,17 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="150" fixed="left"></el-table-column>
+      <el-table-column prop="code" label="编号" width="130"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="80">
         <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 1
+          <el-tag size="small"
+                  :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 0
             ? 'danger' : scope.row.status === 2
             ? 'primary' : scope.row.status === 8
             ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
+                  disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
@@ -97,13 +100,39 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="categoryName" label="分类" min-width="120"></el-table-column>
-      <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
-      <el-table-column prop="formatLimitTime" label="下单截止日" width="120"></el-table-column>
-      <el-table-column prop="formatExecuteTime" label="交货截止日" width="120"></el-table-column>
+      <el-table-column prop="categoryName" label="分类" min-width="150">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
+            <div v-html="scope.row.categoryName"></div>
+            <span slot="reference">{{
+              scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.categoryName }}
+          </span>
+        </template>
+
+      </el-table-column>
+
+      <el-table-column prop="name" label="名称" min-width="250">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 27">
+            <div v-html="scope.row.name"></div>
+            <span slot="reference">{{
+              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.name }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100"></el-table-column>
       <el-table-column prop="tags" label="标签" width="120"></el-table-column>
 
-      <el-table-column prop="note" label="备注" width="120">
+      <el-table-column prop="note" label="备注" width="120" v-if="false">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover">
             <div v-html="scope.row.formatNote"></div>
@@ -113,9 +142,9 @@
       </el-table-column>
 
 
-      <el-table-column prop="creator.name" label="创建人" width="120"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
@@ -192,7 +221,7 @@
     },
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower','rolePower'
       ]),
 
       // 显示进度条
@@ -253,7 +282,7 @@
           name: {value: null, op: 'bw', id: 'name'},
           limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
           status: {value: null, op: 'eq', id: 'status'},
-          code:  {value: null, op: 'bw', id: 'name'},
+          code: {value: null, op: 'bw', id: 'name'},
         },
 
         //弹窗
@@ -348,11 +377,10 @@
           //表格高度
           let tableHeight = windowHeight;
           tableHeight = tableHeight - 84; //减框架头部高度
-          tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -409,30 +437,12 @@
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
-        // 代码示例
-        // if (row.exemple === 0) {
-        //   return "0-普通"
-        // }
-        // else if (row.exemple === 1) {
-        //   return "1-热销"
-        //
-        // }
-        // else if (row.exemple === 2) {
-        //   return "2-爆款"
-        // }
-        // else {
-        //   return row.exemple;
-        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
-        // 代码示例 return 为css定义的样式 -row 结尾
-        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
-        //   return 'warning-row';
-        // }
         return '';
       },
 
@@ -642,8 +652,6 @@
         }).catch(er => {
           /*取消*/
         })
-
-        console.log("行删除功能", row);
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
@@ -654,32 +662,11 @@
   }
 </script>
 
+
 <style type="text/less" lang="scss" scoped>
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
   .el-form-item__content {
     /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 230px !important;
+      width: 200px !important;
     }
   }
 </style>

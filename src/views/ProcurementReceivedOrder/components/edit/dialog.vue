@@ -5,7 +5,9 @@
 
     <el-row style="margin-bottom: 20px;">
 
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onConfirm">确认收货</el-button>
+
+      <el-button type="success" icon="el-icon-s-flag" v-if="primary.status == 4" @click="onConfirm">一键确认</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 4" @click="onComplete">收货完成</el-button>
 
 
     </el-row>
@@ -18,18 +20,15 @@
         <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
       </el-collapse-item>
 
-      <el-collapse-item name="confirm" style="margin-top: 10px">
+      <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 确认收货</div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-
         <attachment ref="attachment" :primary="primary"></attachment>
-
       </el-collapse-item>
-
 
     </el-collapse>
 
@@ -41,25 +40,19 @@
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
+  import person from './person'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment
+      attachment,
+      person
     },
     props: {},
     computed: {
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
       title() {
-        return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        return '采购入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -68,7 +61,8 @@
         primaryId: null,  //主ID
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
-        activeNames: [],   //折叠面板开启项
+        activeNames: [], //折叠面板开启项
+
       }
     },
 
@@ -84,7 +78,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/procurementReceivedOrders/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -108,9 +102,38 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
       },
+
+
       //确认收货
-      onConfirm() {
-      }
+      onConfirm(){
+        this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
+          .then(resp => {
+            this.loading = true;
+            this.confirmLoading = true;
+            this.dialogVisible = true;
+            this.$message.info("确认收货成功");
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
+
+      //收货完成
+      onComplete(){
+        this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
+          .then(resp => {
+            this.loading = true;
+            this.confirmLoading = true;
+            this.dialogVisible = true;
+            this.$message.info("收货完成");
+
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
     }
   }
 </script>

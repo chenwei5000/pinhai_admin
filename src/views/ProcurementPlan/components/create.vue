@@ -9,23 +9,45 @@
     </el-steps>
 
     <!-- 智能备货组件 -->
-    <smart
+    <step1
       v-if="stepsActive==0"
-      @smartCBEvent="smartCBEvent" >
-    </smart>
+      @step1CBEvent="step1CBEvent">
+    </step1>
 
     <!-- 采购计划组件 -->
+    <step2
+      v-if="stepsActive==1" :primaryId="object.id"
+      @step2CBEvent="step2CBEvent">
+    </step2>
+
+    <!--指派组件-->
+    <step3
+      v-if="stepsActive==2" :primaryId="object.id"
+      @step3CBEvent="step3CBEvent">
+    </step3>
+
+    <!--提交审核组件-->
+    <step4
+      v-if="stepsActive==3" :primaryId="object.id"
+      @step4CBEvent="step4CBEvent">
+    </step4>
 
   </div>
 
 </template>
 
 <script>
-  import smart from './smart/smart'
+  import step1 from './smart/smart'
+  import step2 from './create/step2'
+  import step3 from './create/step3'
+  import step4 from './create/step4'
 
   export default {
     components: {
-      smart
+      step1,
+      step2,
+      step3,
+      step4
     },
 
     props: {},
@@ -52,7 +74,7 @@
 
     methods: {
       // 智能备货成功之后回调
-      smartCBEvent(objectId) {
+      step1CBEvent(objectId) {
         // 继续向父组件抛出时间，创建成功后刷新列表
         this.$emit("createCBEvent", objectId);
 
@@ -61,7 +83,22 @@
           // 切换到第二步
           this.stepsActive = 1;
         }
-      }
+      },
+      // 采购计划确认成功之后回调
+      step2CBEvent(step) {
+        // 切换步骤
+        this.stepsActive = step;
+        // 继续向父组件抛出时间，刷新列表
+        this.$emit("createCBEvent", this.object.id);
+      },
+      step3CBEvent(step) {
+        // 切换步骤
+        this.stepsActive = step;
+      },
+      step4CBEvent(step) {
+        // 切换步骤
+        this.stepsActive = step;
+      },
     }
   }
 </script>

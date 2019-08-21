@@ -15,7 +15,7 @@
         auto-complete="on"
         label-position="left"
         v-loading="loading"
-      > 
+      >
         <hr class="hr15">
 
         <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
@@ -37,7 +37,7 @@
               <svg-icon :icon-class="passwordType === 'pass' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
-          
+
         </el-tooltip>
 
         <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
@@ -59,7 +59,7 @@
               <svg-icon :icon-class="passwordType === 'checkPass' ? 'eye' : 'eye-open'"/>
             </span>
           </el-form-item>
-          
+
         </el-tooltip>
 
         <hr class="hr15">
@@ -354,11 +354,10 @@
         this.$refs.user.validate((valid) => {
           if (valid) {
             if(this.$route.query.account == null || this.$route.query.validCode == null){
-              alert("参数异常")
                console.log("参数异常！")
                return false;
             }
-            var param = '?password=' + this.user.pass + '&account=' + this.$route.query.account + '&validCode=' + this.$route.query.validCode; 
+            var param = '?password=' + this.user.pass + '&account=' + this.$route.query.account + '&validCode=' + this.$route.query.validCode;
             global.axios.post('users/resetPassword' + param).then(resp => {
               this.$message({
                 message: '修改成功！',
