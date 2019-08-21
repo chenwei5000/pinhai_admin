@@ -221,7 +221,7 @@
     },
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower','rolePower'
       ]),
 
       // 显示进度条

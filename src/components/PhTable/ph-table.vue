@@ -828,7 +828,7 @@
 
     computed: {
       ...mapGetters([
-        'device'
+        'device','rolePower'
       ]),
 
       phTableAttrs() {

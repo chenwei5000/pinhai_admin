@@ -211,11 +211,11 @@ aside {
       font-size: 20px !important;
     }
     /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
+      background: rgb(250, 236, 216) !important;
     }
 
     /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
+      background: rgb(250, 236, 216) !important;
     }
 
     /deep/ tr.danger-row {
@@ -247,6 +247,12 @@ aside {
     }
     /deep/ .el-form-item {
       margin-bottom: 5px !important;
+    }
+    /deep/ .panel-title {
+      font-size: 13px !important;
+    }
+    /deep/ .el-input__inner{
+      font-size: 12px !important;
     }
   }
 }
@@ -282,6 +288,13 @@ aside {
     /deep/ .el-input__inner{
       font-size: 12px !important;
     }
+  }
+
+  /deep/ .el-upload-list__item-name{
+    font-size: 12px !important;
+  }
+  /deep/ .el-timeline{
+    font-size: 12px !important;
   }
 }
 
