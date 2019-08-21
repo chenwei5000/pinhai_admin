@@ -125,7 +125,7 @@
           return "添加采购入库明细";
         }
         else {
-          return "修改采购入库明细";
+          return "采购入库明细";
         }
       }
     },
@@ -196,8 +196,6 @@
               let data = res || {}
               this.detailItem = data
               // 转字段
-              this.detailItem.storageLocationId = this.detailItem.storageLocationId + '';
-              this.detailItem.productId = this.detailItem.productId + '';
 
               this.loading = false
             })

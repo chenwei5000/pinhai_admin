@@ -59,7 +59,8 @@
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            phSearchItems.skuCode
+            phSearchItems.skuCode,
+            phSearchItems.warehouseId()
           ]
         }
       }
