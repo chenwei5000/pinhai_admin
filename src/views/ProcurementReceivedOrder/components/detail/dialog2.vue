@@ -202,38 +202,6 @@
         this.initData();
       },
 
-      // 保存
-      onSave() {
-        this.$refs.detailItem.validate(valid => {
-          if (!valid) {
-            return false
-          }
-          this.loading = true;
-          this.confirmLoading = true;
-          let method = 'post'
-          let url = this.url + '';
-          if (this.detailItemId && this.detailItemId > 0) {
-            method = 'put';
-            url = `${this.url}/${this.detailItemId}`;
-          }
-
-          //转义字段
-          let _object = JSON.parse(JSON.stringify(this.detailItem));
-
-          this.global.axios[method](url, _object)
-            .then(resp => {
-              this.$message.info("修改成功");
-              this.loading = false;
-              this.confirmLoading = false;
-              this.dialogVisible = false;
-              this.$emit("modifyCBEvent", resp.data);
-            })
-            .catch(err => {
-              this.loading = false;
-              this.confirmLoading = false;
-            })
-        })
-      }
     }
   }
 </script>

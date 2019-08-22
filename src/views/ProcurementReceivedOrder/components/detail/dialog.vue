@@ -39,8 +39,8 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="产品名" prop="product.name">
-            <el-input v-model="detailItem.product.name" style="width: 320px" :disabled="true"></el-input>
+          <el-form-item label="产品名" prop="productId">
+            <el-input v-model="detailItem.productId" style="width: 320px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -55,8 +55,8 @@
 
       <el-row>
         <el-col :md="10">
-          <el-form-item label="存放货位" prop="storageLocation.code">
-            <el-input v-model="detailItem.storageLocation.code" style="width: 220px" :disabled="true"></el-input>
+          <el-form-item label="存放货位" prop="storageLocationId">
+            <el-input v-model="detailItem.storageLocationId" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -214,35 +214,18 @@
 
       // 保存
       onSave() {
-        this.$refs.detailItem.validate(valid => {
-          if (!valid) {
-            return false
-          }
-          this.loading = true;
-          this.confirmLoading = true;
-          let method = 'post'
-          let url = this.url + '';
-          if (this.detailItemId && this.detailItemId > 0) {
-            method = 'put';
-            url = `${this.url}/${this.detailItemId}`;
-          }
-
-          //转义字段
-
-          this.global.axios[method](url, _object)
-            .then(resp => {
-              this.$message.info("修改成功");
-              this.loading = false;
-              this.confirmLoading = false;
-              this.dialogVisible = false;
-              this.$emit("modifyCBEvent", resp.data);
-            })
-            .catch(err => {
-              this.loading = false;
-              this.confirmLoading = false;
-            })
-        })
-      }
+        this.global.axios.put(`/procurementReceivedOrderItems/${this.detailItemId}`)
+          .then(resp => {
+            this.loading = true;
+            this.confirmLoading = true;
+            this.dialogVisible = true;
+            this.$message.info("修改成功");
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
     }
   }
 </script>
