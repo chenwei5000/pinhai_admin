@@ -6,9 +6,9 @@
     <el-row style="margin-bottom: 20px;">
 
 
-      <el-button type="success" icon="el-icon-s-flag" v-if="primary.status == 4" @click="onConfirm">一键确认</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 4" @click="onComplete">收货完成</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status == 4" @click="onPrint" :disabled="true">打印收货单</el-button>
+      <el-button type="success" icon="el-icon-s-flag" v-if="primary.status === 4" @click="onConfirm">一键确认</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status === 4" @click="onComplete">收货完成</el-button>
+      <el-button type="success" icon="el-icon-printer" v-if="primary.status === 4" @click="onPrint" :disabled="true">打印收货单</el-button>
 
 
     </el-row>
@@ -32,6 +32,8 @@
       </el-collapse-item>
 
     </el-collapse>
+
+
 
   </el-dialog>
 
@@ -64,6 +66,7 @@
         dialogVisible: false, //Dialog 是否开启
         activeNames: [], //折叠面板开启项
 
+
       }
     },
 
@@ -94,8 +97,7 @@
       openDialog(primaryId) {
         this.primaryId = primaryId;
         this.initData();
-        // 默认展开所有折叠面板
-        //this.activeNames = ['infoFrom', 'itemTable'];
+        this.activeNames = ['infoFrom', 'itemTable'];
       },
 
       /* 子组件编辑完成后相应事件 */
