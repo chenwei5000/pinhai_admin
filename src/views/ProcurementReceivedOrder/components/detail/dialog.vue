@@ -72,7 +72,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="收货数量" prop="receivedQty">
-            <el-input v-model="detailItem.receivedQty" style="width: 220px" ></el-input>
+            <el-input v-model="detailItem.receivedQty" style="width: 220px" precision="2" ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -214,12 +214,14 @@
 
       // 保存
       onSave() {
-        this.global.axios.put(`/procurementReceivedOrderItems/${this.detailItemId}`)
+        this.global.axios.put(`/procurementReceivedOrderItems/${this.detailItemId}`,this.detailItem)
           .then(resp => {
-            this.loading = true;
-            this.confirmLoading = true;
-            this.dialogVisible = true;
             this.$message.info("修改成功");
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            this.$emit("modifyCBEvent", resp.data);
+
           })
           .catch(err => {
             this.loading = false;

@@ -111,10 +111,13 @@
       onConfirm(){
         this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
           .then(resp => {
-            this.loading = true;
-            this.confirmLoading = true;
-            this.dialogVisible = true;
             this.$message.info("确认收货成功");
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = true;
+            this.formVisible = false;
+            this.$emit("modifyCBEvent", resp.data);
+
           })
           .catch(err => {
             this.loading = false;
@@ -126,10 +129,11 @@
       onComplete(){
         this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
           .then(resp => {
-            this.loading = true;
-            this.confirmLoading = true;
-            this.dialogVisible = true;
             this.$message.info("收货完成");
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            this.$emit("modifyCBEvent", resp.data);
 
           })
           .catch(err => {
@@ -142,10 +146,11 @@
       onPrint(){
         this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
           .then(resp => {
-            this.loading = true;
-            this.confirmLoading = true;
-            this.dialogVisible = true;
             this.$message.info("打印收货单");
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            this.$emit("modifyCBEvent",  resp.data);
 
           })
           .catch(err => {
