@@ -30,6 +30,20 @@
     </el-row>
 
     <el-row>
+      <el-col :md="14">
+        <el-form-item label="收货日期" prop="receivedTime">
+          <el-date-picker
+            v-model="editObject.receivedTime"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            type="date"
+            placeholder="请选择收货日期！！！！">
+          </el-date-picker>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
       <el-col :md="10">
         <el-form-item label="供货商" prop="supplierId" >
           <el-select v-model="editObject.supplierId" style="width: 220px" :disabled="true">
@@ -117,6 +131,16 @@
       </el-col>
     </el-row>
 
+    <el-row>
+      <el-col :md="24">
+        <el-row type="flex" justify="center">
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
+            保存基本信息
+          </el-button>
+        </el-row>
+      </el-col>
+    </el-row>
+
   </el-form>
 
 </template>
@@ -135,7 +159,17 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      hasEdit() {
+        // 控制按钮
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      },
+    },
 
     data() {
       return {
@@ -159,7 +193,8 @@
           remark: null,
           trackNumber: null,
           expectTime: null,
-          linkman: null
+          linkman: null,
+          receivedTime: null,
         },
 
         // 字段验证规则 TODO:
@@ -189,6 +224,8 @@
           this.editObject = this.primary;
           //转化时间
           this.editObject.expectTime = this.primary.formatExpectTime;
+          this.editObject.receivedTime = this.primary.formatReceivedTime;
+
 
           //转化仓库
           this.editObject.warehouseId = this.editObject.warehouseId + '';
@@ -217,7 +254,21 @@
 
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
+      onSave() {
+        this.global.axios.put(`/procurementReceivedOrderItems/${this.primary}`,this.primary)
+          .then(resp => {
+            this.$message.info("保存成功");
+            this.loading = false;
+            this.confirmLoading = false;
+            this.dialogVisible = false;
+            this.$emit("modifyCBEvent", resp.data);
 
+          })
+          .catch(err => {
+            this.loading = false;
+            this.confirmLoading = false;
+          })
+      },
 
       // 创建计划
 

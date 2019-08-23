@@ -45,7 +45,7 @@
      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="sortNum" label="序号" sortable width="200" fixed="left"></el-table-column>
+      <el-table-column prop="sortNum" label="序号" sortable width="50"></el-table-column>
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
           <el-tag
@@ -58,15 +58,15 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="skuCode" label="SKU编码" width="120"></el-table-column>
-      <el-table-column prop="product.name" label="产品名" width="100"></el-table-column>
+      <el-table-column prop="skuCode" label="SKU编码" width="200" fixed="left"></el-table-column>
+      <el-table-column prop="product.name" label="产品名" width="200" fixed="left"></el-table-column>
       <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
       <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
       <el-table-column prop="storageLocation.code" label="存放货位" width="100"></el-table-column>
       <el-table-column prop="shippedQty" label="总发货件数" width="100"></el-table-column>
       <el-table-column prop="receivedQty" label="收货数量" width="90"></el-table-column>
       <el-table-column prop="receivedNote" sortable label="异常备注" width="130"></el-table-column>
-      <el-table-column prop="receivedCartonQty" sortable label="合计箱数" width="120"></el-table-column>
+      <el-table-column prop="receivedCartonQty" sortable label="合计箱数" width="120" fixed="right"></el-table-column>
 
 
       <!--默认操作列-->

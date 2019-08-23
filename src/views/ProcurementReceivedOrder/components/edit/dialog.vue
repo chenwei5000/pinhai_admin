@@ -111,7 +111,7 @@
       onConfirm(){
         this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("确认收货成功");
+            this.$message.info("确认收货成功,请");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = true;
