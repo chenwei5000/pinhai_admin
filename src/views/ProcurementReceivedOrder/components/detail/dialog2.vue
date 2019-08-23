@@ -19,9 +19,7 @@
             <el-input v-model="detailItem.sortNum" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
 
-      <el-row>
         <el-col :md="10">
           <el-form-item label="SKU编码" prop="skuCode">
             <el-input v-model="detailItem.skuCode" style="width: 220px" :disabled="true"></el-input>
@@ -29,21 +27,21 @@
         </el-col>
       </el-row>
 
+
       <el-row>
         <el-col :md="10">
           <el-form-item label="箱码" prop="boxCode">
             <el-input v-model="detailItem.boxCode" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
 
-      <el-row>
         <el-col :md="10">
           <el-form-item label="产品名" prop="productId">
-            <el-input v-model="detailItem.productId" style="width: 220px" :disabled="true"></el-input>
+            <el-input v-model="detailItem.productId" style="width: 320px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
+
 
       <el-row>
         <el-col :md="10">
@@ -51,15 +49,14 @@
             <el-input v-model="detailItem.shippedCartonQty" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
 
-      <el-row>
         <el-col :md="10">
-          <el-form-item label="存放货位" prop="storageLocationId">
-            <el-input v-model="detailItem.storageLocationId" style="width: 220px" :disabled="true"></el-input>
+          <el-form-item label="存放货位" prop="storageLocationId" type="hidden">
+            <el-input v-model="detailItem.storageLocationId" style="width: 220px" :disabled="true" ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
+
 
       <el-row>
         <el-col :md="10">
@@ -67,12 +64,10 @@
             <el-input v-model="detailItem.shippedQty" style="width: 220px" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
 
-      <el-row>
         <el-col :md="10">
           <el-form-item label="收货数量" prop="receivedQty">
-            <el-input v-model="detailItem.receivedQty" style="width: 220px" :disabled="true"></el-input>
+            <el-input v-model="detailItem.receivedQty" style="width: 220px" precision="2" ></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -80,7 +75,13 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="异常备注" prop="receivedNote">
-            <el-input v-model="detailItem.receivedNote" style="width: 220px" :disabled="true"></el-input>
+            <el-input type="textarea" v-model="detailItem.receivedNote"
+                      maxlength="500"
+                      show-word-limit
+                      rows="3"
+                      cols="80"
+                      style="width: 320px"
+                      show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -196,7 +197,7 @@
       },
 
       /* 开启弹出编辑框 需要传明细ID */
-      openDialog(detailItemId) {
+      openDialog2(detailItemId) {
         this.detailItemId = detailItemId;
         this.dialogVisible = true;
         this.initData();

@@ -14,10 +14,23 @@
         </el-form-item>
       </el-col>
 
+      <el-col :md="14">
+        <el-form-item label="预计到货时间" prop="expectTime">
+          <el-date-picker
+            v-model="editObject.expectTime"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            type="date"
+            :disabled="true"
+            placeholder="预计到货时间">
+          </el-date-picker>
+        </el-form-item>
+      </el-col>
+
     </el-row>
 
     <el-row>
-      <el-col :md="14">
+      <el-col :md="10">
         <el-form-item label="供货商" prop="supplierId" >
           <el-select v-model="editObject.supplierId" style="width: 220px" :disabled="true">
             <el-option
@@ -27,7 +40,6 @@
               :key="idx"
             ></el-option>
           </el-select>
-
         </el-form-item>
       </el-col>
 
@@ -41,28 +53,13 @@
               :key="idx"
             ></el-option>
           </el-select>
-
         </el-form-item>
       </el-col>
+
     </el-row>
 
     <el-row>
-      <el-col :md="14">
-      <el-form-item label="预计到货时间" prop="expectTime">
-        <el-date-picker
-          v-model="editObject.expectTime"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd"
-          type="date"
-          :disabled="true"
-          placeholder="预计到货时间">
-        </el-date-picker>
-      </el-form-item>
-    </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col>
+      <el-col :md="10">
       <el-form-item label="物流单号" prop="trackNumber">
         <el-input v-model="editObject.trackNumber"
                   show-word-limit
@@ -70,7 +67,7 @@
       </el-form-item>
         </el-col>
 
-      <el-col>
+      <el-col :md="14">
         <el-form-item label="物流公司" prop="channel">
           <el-input v-model="editObject.channel"
                     show-word-limit
@@ -78,7 +75,7 @@
         </el-form-item>
       </el-col>
 
-      <el-col>
+      <el-col :md="10">
         <el-form-item label="车牌" prop="plateNumber">
           <el-input v-model="editObject.plateNumber"
                     show-word-limit
@@ -86,7 +83,7 @@
         </el-form-item>
       </el-col>
 
-      <el-col>
+      <el-col :md="8">
         <el-form-item label="联系人" prop="linkman">
           <el-input v-model="editObject.linkman"
                     show-word-limit
@@ -94,14 +91,13 @@
         </el-form-item>
       </el-col>
 
-      <el-col>
+      <el-col :md="8">
         <el-form-item label="电话" prop="tel">
           <el-input v-model="editObject.tel"
                     show-word-limit
                     style="width: 220px" :disabled="true"></el-input>
         </el-form-item>
       </el-col>
-
 
     </el-row>
 
@@ -117,13 +113,6 @@
                       :disabled="true"
                       show-word-limit></el-input>
           </el-col>
-
-          <el-col :span="2">
-            <el-tooltip class="item" effect="light" content="备注信息。支持换行！" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-          </el-col>
-
         </el-form-item>
       </el-col>
     </el-row>
@@ -134,10 +123,9 @@
 
 <script>
 
-  import warehouseModel from '@/api/warehouse'
-  import systemModel from '@/api/system'
+  import warehouseModel from '../../../../api/warehouse'
   import {intArrToStrArr} from '@/utils'
-  import supplierModel from "../../../../api/supplier";
+  import supplierModel from "../../../../api/supplier"
 
   export default {
     components: {},
@@ -170,7 +158,8 @@
           supplierId: null,
           remark: null,
           trackNumber: null,
-          expectTime: null
+          expectTime: null,
+          linkman: null
         },
 
         // 字段验证规则 TODO:
@@ -199,8 +188,6 @@
           //获取计划数据
           this.editObject = this.primary;
           //转化时间
-          this.editObject.limitTime = this.primary.formatLimitTime;
-          this.editObject.executeTime = this.primary.formatExecuteTime;
           this.editObject.expectTime = this.primary.formatExpectTime;
 
           //转化仓库
@@ -209,19 +196,6 @@
 
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
-
-          //设置默认安全库存
-          systemModel.getConfigInfos().then(data => {
-            if (this.editObject.safetyStockWeek == null) {
-              this.editObject.safetyStockWeek = data.safetyStockWeek;
-            }
-            if (this.editObject.vip1SafetyStockWeek == null) {
-              this.editObject.vip1SafetyStockWeek = data.vip1SafetyStockWeek;
-            }
-            if (this.editObject.vip2SafetyStockWeek == null) {
-              this.editObject.vip2SafetyStockWeek = data.vip2SafetyStockWeek;
-            }
-          });
 
           let flg = true;
           this.warehouseSelectOptions.forEach(obj => {
@@ -236,7 +210,7 @@
           this.loading = false;
         }
         else {
-          this.$message.error("无效的采购计划!");
+          this.$message.error("无效!");
           this.loading = false;
         }
       },
@@ -246,26 +220,7 @@
 
 
       // 创建计划
-      modifyObject() {
-        let _object = JSON.parse(JSON.stringify(this.editObject));
-        this.loading = true;
-        this.confirmLoading = true;
 
-        this.global.axios.put(`/procurementReceivedOrders/${this.editObject.id}`, _object)
-          .then(resp => {
-            let _newObject = resp.data;
-            this.$message({type: 'success', message: '操作成功'});
-            this.loading = false;
-            this.confirmLoading = false;
-            // 回传消息
-            this.formVisible = false;
-            this.$emit("modifyCBEvent", _newObject);
-          })
-          .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
-          })
-      },
     }
   }
 </script>

@@ -75,10 +75,13 @@
                        width="120" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit " size="small" icon="el-icon-edit" circle
+          <el-button v-if="primary.status === 4" size="small" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="primary.status !== 4" size="small" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
 
         </template>
       </el-table-column>
@@ -87,6 +90,9 @@
     <!-- 编辑明细对话框 -->
     <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primary.id">
     </itemDialog>
+
+    <itemDialog2 @modifyCBEvent="modifyCBEvent2" ref="itemDialog2" :primaryId="primary.id">
+    </itemDialog2>
 
   </div>
 
@@ -99,11 +105,14 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
+  import itemDialog2 from './dialog2'
+
 
   export default {
     components: {
       tableToolBar,
       itemDialog,
+      itemDialog2,
 
     },
     props: {
@@ -137,6 +146,7 @@
         hasAdd: false,
         hasEdit: true,
         hasDelete: false,
+        hasView: true,
 
         // 多选记录对象
         selected: [],
@@ -171,6 +181,7 @@
           hasExportTpl: false,
           hasExport: false,
           hasImport: false,
+          hasView: true
         }
       }
     },
@@ -323,35 +334,10 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
-        if (this.searchParam.category != null && this.searchParam.category != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.product && item.product.category &&
-                item.product.category.name.indexOf(this.searchParam.category) !== -1) {
-                return true;
-              }
-            });
-        }
         if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
           this.tableData = this.tableData.filter(
             item => {
               if (item.product && item.product.skuCode.indexOf(this.searchParam.skuCode) !== -1) {
-                return true;
-              }
-            });
-        }
-        if (this.searchParam.status != null && this.searchParam.status != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.status == this.searchParam.status) {
-                return true;
-              }
-            });
-        }
-        if (this.searchParam.priority != null && this.searchParam.priority != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.priority == this.searchParam.priority) {
                 return true;
               }
             });
@@ -377,7 +363,9 @@
       },
 
       /* 行查看功能 */
-
+      onDefaultView(row) {
+        this.$refs.itemDialog2.openDialog2(row.id);
+      },
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
