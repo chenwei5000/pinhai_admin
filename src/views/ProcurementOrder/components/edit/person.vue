@@ -13,7 +13,7 @@
       <el-button class="button-new-tag" size="small" @click="openPersonDialog">+ 添加负责人</el-button>
     </div>
 
-    <phMembers ref="members" @saveCBEvent="saveCBEvent" title="选择采购负责人"></phMembers>
+    <phMembers ref="members" @saveCBEvent="saveCBEvent" title="选择负责人"></phMembers>
   </div>
 </template>
 
@@ -36,7 +36,7 @@
     data() {
       return {
         loading: false,
-        url: "/procurementPlans",
+        url: "/procurementOrders",
         relations: ["creator"],
         filters: [
           {"field": "relevanceId", "op": "eq", "data": this.primary.id}

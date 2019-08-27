@@ -2,18 +2,7 @@
 
   <div class="page-container">
 
-    <aside v-if="completed">
-      采购计划已经创建完毕，你可以提交上级审核了。如果不想马上提交审核，可放弃提交操作。
-      之后你可以在编辑中的采购计划中，找到本次计划，可再次进行提交。
-      您可以在计划说明中，添加本次计划的一些说明，可帮助上级更快的审核您的计划。<hr/>
-      计划编号：{{this.primary.code}}<BR/>
-      计划名称：{{this.primary.name}}<BR/>
-        负责人：
-      <template v-for="item in this.primary.dataAuthories">{{ item.user.name }} </template>
-      <BR/>
-      采购总件数：{{this.primary.qty.qty}} 件
-
-    </aside>
+    <payment ref="payment" :primary="primary" v-if="completed" @paymentCBEvent="paymentCBEvent"></payment>
 
     <el-row>
       <el-col :md="12">
@@ -26,26 +15,23 @@
       <el-col :md="12">
         <el-row type="flex" justify="center">
           <el-button type="primary" style="margin-top: 40px" @click="onNext">
-            提交审核 >
+            完成
           </el-button>
         </el-row>
       </el-col>
     </el-row>
 
-    <auditing ref="auditing" @saveAuditCBEvent="saveAuditCBEvent"></auditing>
 
   </div>
 
 </template>
 
 <script>
-  import person from '../edit/person'
-  import auditing from '@/components/PhAuditing'
+  import payment from '../edit/payment'
 
   export default {
     components: {
-      person,
-      auditing
+      payment
     },
     props: {
       primaryId: {
@@ -73,9 +59,11 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          //获取计划数据
+          let url = `/procurementOrders/${this.primaryId}`;
+          url += "?relations=" + JSON.stringify(["supplier","currency"]);
+          //获取采购单数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(url)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -87,7 +75,7 @@
         }
       },
       // 提交审核
-      saveAuditCBEvent(note){
+      saveAuditCBEvent(note) {
 
         this.$confirm("确认将该计划提交给上级审核吗?", '提示', {
           type: 'warning',
@@ -121,22 +109,25 @@
         })
       },
       onNext() {
-        this.$refs.auditing.openDialog('commit');
+        this.$emit("step4CBEvent", 'close');
       },
       onBack() {
         this.$emit("step4CBEvent", 2);
       },
-      reloadCBEvent(){
+      reloadCBEvent() {
         this.initData();
+      },
+      paymentCBEvent(obj){
+
       }
     }
   }
 </script>
 
 <style type="text/less" lang="scss" scoped>
-   .page-container {
-     padding: 20px 0;
-   }
+  .page-container {
+    padding: 20px 0;
+  }
 
 </style>
 

@@ -2,14 +2,13 @@
 
   <div class="page-container">
 
-    <aside>
-      为了保证本采购计划的执行，需要指派对应的采购负责人，可多选。指派的采购负责人将会收到对应的邮件和系统消息提醒。
-      默认会自动把对应品类的采购负责人自动选中。
+    <aside style="font-size: 12px">
+      您可以在这里上传一些跟本次采购相关的文件。方便以后查询。
     </aside>
 
-    <h5>采购负责人：</h5>
+    <h5>附件: </h5>
 
-    <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary" v-if="completed"></person>
+    <attachment ref="attachment" :primary="primary" v-if="completed"></attachment>
 
     <el-row>
       <el-col :md="12">
@@ -33,11 +32,11 @@
 </template>
 
 <script>
-  import person from '../edit/person'
+  import attachment from '../edit/attachment'
 
   export default {
     components: {
-      person
+      attachment
     },
     props: {
       primaryId: {
@@ -65,9 +64,9 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          //获取计划数据
+          //获取采购单数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/procurementOrders/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -79,17 +78,12 @@
         }
       },
       onNext() {
-        if(this.primary && this.primary.dataAuthories && this.primary.dataAuthories.length > 0){
-          this.$emit("step3CBEvent", 3);
-        }
-        else{
-          this.$message.error("必须选择采购负责人");
-        }
+        this.$emit("step3CBEvent", 3);
       },
       onBack() {
         this.$emit("step3CBEvent", 1);
       },
-      reloadCBEvent(){
+      reloadCBEvent() {
         this.initData();
       }
     }
@@ -97,9 +91,9 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
-   .page-container {
-     padding: 30px;
-   }
+  .page-container {
+    padding: 30px;
+  }
 
 </style>
 

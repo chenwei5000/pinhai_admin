@@ -2,11 +2,11 @@
   <div>
     <div class="tag-group">
       <el-tag type="success"
-        :key="item.userId"
-        v-for="item in primary.dataAuthories"
-        closable
-        :disable-transitions="false"
-        @close="handleRemove(item)">
+              :key="item.userId"
+              v-for="item in primary.dataAuthories"
+              closable
+              :disable-transitions="false"
+              @close="handleRemove(item)">
         {{item.user.name}}
       </el-tag>
 
@@ -38,9 +38,7 @@
         loading: false,
         url: "/procurementPlans",
         relations: ["creator"],
-        filters: [
-          {"field": "relevanceId", "op": "eq", "data": this.primary.id}
-        ],
+        filters: [],
         attachments: []
       }
     },

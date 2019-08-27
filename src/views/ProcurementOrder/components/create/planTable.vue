@@ -223,23 +223,7 @@
 
       // 显示进度条
       hasCompleteness() {
-        if (this.type === 'editing') {
-          return false;
-        }
-        //待审核
-        else if (this.type === 'auditing') {
-          return false;
-        }
-        //执行中
-        else if (this.type === 'executing') {
           return true;
-        }
-        else if (this.type === 'complete') {
-          return true;
-        }
-        else if (this.type === 'all') {
-          return true;
-        }
       }
     },
 

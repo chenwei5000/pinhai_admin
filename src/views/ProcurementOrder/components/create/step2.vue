@@ -1,29 +1,19 @@
 <template>
-  <div>
-    <!-- 折叠面板 -->
-    <el-collapse v-model="activeNames">
 
-      <el-collapse-item name="infoFrom">
-        <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary" v-if="completed"></infoFrom>
-      </el-collapse-item>
+  <div class="page-container">
 
-      <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购计划内容</div>
-        <itemTable ref="itemTable" :primary="primary" v-if="completed"></itemTable>
-      </el-collapse-item>
+    <aside style="font-size:12px;">
+      为了保证本采购单的顺利执行，需要指派对应的跟单、仓管负责人，可多选。指派的负责人将会收到对应的邮件和系统消息提醒。
+    </aside>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary" v-if="completed"></attachment>
-      </el-collapse-item>
+    <h5>负责人：</h5>
 
-    </el-collapse>
+    <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary" v-if="completed"></person>
 
     <el-row>
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" @click="onNext">
+          <el-button type="primary" style="margin-top: 40px" @click="onNext">
             下一步 >
           </el-button>
         </el-row>
@@ -35,15 +25,11 @@
 </template>
 
 <script>
-  import infoFrom from '../edit/form'
-  import itemTable from '../detail/table'
-  import attachment from '../edit/attachment'
+  import person from '../edit/person'
 
   export default {
     components: {
-      infoFrom,
-      itemTable,
-      attachment,
+      person
     },
     props: {
       primaryId: {
@@ -57,7 +43,6 @@
       return {
         completed: false,
         primary: {}, //主对象
-        activeNames: ["infoFrom", "itemTable", "attachment"],   //折叠面板开启项
       }
     },
 
@@ -72,9 +57,9 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          //获取计划数据
+          //获取采购单数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/procurementOrders/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -86,28 +71,23 @@
         }
       },
       onNext() {
-        this.$emit("step2CBEvent", 2);
+        if(this.primary && this.primary.dataAuthories && this.primary.dataAuthories.length > 0){
+          this.$emit("step2CBEvent", 3);
+        }
+        else{
+          this.$message.error("必须选择至少一位负责人");
+        }
       },
-      onBack() {
-        this.$emit("step2CBEvent", 0);
-      },
-
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-      },
-      /* 重新加载 */
-      reloadCBEvent() {
+      reloadCBEvent(){
         this.initData();
       }
-
     }
   }
 </script>
 
 <style type="text/less" lang="scss" scoped>
-  .title {
-    font-size: 14px;
-    font-weight: bold;
+  .page-container {
+    padding: 30px;
   }
-</style>
 
+</style>
