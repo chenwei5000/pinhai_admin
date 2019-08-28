@@ -473,7 +473,7 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row.id);
+        this.$refs.itemDialog.openDialog(row.id, this.primary);
       },
 
       /* 行删除功能 */

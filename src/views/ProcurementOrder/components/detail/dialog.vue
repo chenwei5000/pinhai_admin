@@ -4,7 +4,7 @@
              append-to-body
              v-if="dialogVisible"
              width="80%"
-             top="20px"
+             top="10vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
 
@@ -34,10 +34,13 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="SKU" prop="skuCode">
-              <el-input v-model.trim="detailItem.skuCode"
+
+              <span v-if="this.detailItemId" style="font-size: 12px">{{ detailItem.skuCode }}</span>
+              <el-input v-else="" v-model.trim="detailItem.skuCode"
                         maxlength="50"
                         show-word-limit
                         style="width: 200px" placeholder="请填写SKU" clearable></el-input>
+
 
               <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -96,7 +99,6 @@
           <el-col :md="10">
             <el-form-item label="采购箱数" prop="purchaseOrderCartonQty">
               <el-input-number v-model="detailItem.cartonQty"
-                               @change="onCartonQtyChange"
                                size="small"
                                style="width: 200px;"
                                :precision="3"
@@ -113,7 +115,7 @@
 
           <el-col :md="10">
             <el-form-item label="采购件数">
-              <span style="font-size: 12px">{{detailItem.qty}}</span>
+              <span style="font-size: 12px">{{orderQty}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -121,10 +123,16 @@
         <hr/>
 
         <el-row style="text-align: right;font-size: 13px; font-weight: bold;">
-          总额: {{detailItem.amount, order.currency.symbolLeft | currency}}
+          总额: {{amount, order.currency.symbolLeft | currency}}
         </el-row>
 
       </el-form>
+    </div>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button type="warning" @click="onLoadProduct" :loading="confirmLoading">获取产品默认信息</el-button>
+      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog">取 消</el-button>
     </div>
 
   </el-dialog>
@@ -134,6 +142,7 @@
 <script>
   import cartonspecModel from '@/api/cartonspec'
   import validRules from '@/components/validRules'
+  import {currency, intArrToStrArr} from '@/utils'
 
   export default {
     components: {},
@@ -143,7 +152,16 @@
         default: null
       }
     },
+    filters: {
+      currency: currency
+    },
     computed: {
+      orderQty() {
+        return this.calOrderQty();
+      },
+      amount() {
+        return this.calAmount();
+      },
       dialogTitle() {
         if (this.detailItemId == null) {
           return "添加采购单明细";
@@ -181,7 +199,6 @@
         detailItem: {},
         // 采购单对象
         order: {},
-
         cartonspecSelectOptions: [],
 
         // 字段验证规则 TODO:
@@ -192,22 +209,15 @@
           cartonQty: [
             validRules.required
           ],
-          priority: [
+          cartonSpecId: [
             validRules.required
           ],
           numberOfCarton: [
+            validRules.required,
             validRules.integer
           ],
-          sevenSalesCount: [
-            validRules.number
-          ],
-          amazonTotalStock: [
-            validRules.number
-          ],
-          domesticStockQty: [
-            validRules.number
-          ],
-          unfinishedPlanQty: [
+          price: [
+            validRules.required,
             validRules.number
           ]
         },
@@ -245,14 +255,14 @@
               this.detailItem = data
               // 转字段
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
-
+              this.skuCode = data.product.skuCode;
               this.loading = false
             })
         }
         else {
           // 设置添加默认值
           this.detailItem = {
-            skuCode: null,
+            skuCode: '',
             price: null,
             cartonSpecId: null,
             cartonQty: 0,
@@ -271,30 +281,49 @@
         this.dialogVisible = true;
         this.initData();
       },
+
       closeDialog() {
         this.dialogVisible = false;
         this.loading = false;
         this.confirmLoading = false;
         this.detailItemId = null;
         this.detailItem = null;
+        this.order = null;
         this.cartonspecSelectOptions = [];
       },
-
-      onQtyChange(val) {
-        if (this.detailItem) {
-          //可售周数 = （亚马逊总库存 + 国内库存 + 未完成采购计划数 + 应备货件数） /（7日销量修正）
-          let amazonTotalStock = this.detailItem.amazonTotalStock || 0;
-          let domesticStockCartonQty = this.detailItem.domesticStockCartonQty || 0;
-          let unfinishedPlanQty = this.detailItem.unfinishedPlanQty || 0;
-          let numberOfCarton = this.detailItem.numberOfCarton || 1;
-          let total = amazonTotalStock + domesticStockCartonQty + unfinishedPlanQty + (val * numberOfCarton);
-
-          if (this.detailItem.sevenSalesCount) {
-            this.detailItem.saleWeek = (total / this.detailItem.sevenSalesCount).toFixed(1);
-          }
+      // 计算下单件数
+      calOrderQty() {
+        return (this.detailItem.cartonQty * this.detailItem.numberOfCarton).toFixed(0);
+      },
+      // 计算总额
+      calAmount() {
+        return (this.detailItem.price * this.calOrderQty()).toFixed(2);
+      },
+      onLoadProduct(){
+        if(!this.detailItem.skuCode){
+          this.$message.error("请输入产品SKU");
+        }
+        else{
+          this.loading = true;
+          this.confirmLoading = true;
+          let url = `/products/sku/${this.detailItem.skuCode}`;
+          this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data
+              let data = res || {}
+              this.detailItem.price = data.price;
+              this.detailItem.cartonSpecId = data.cartonSpecId + '';
+              this.detailItem.numberOfCarton = data.numberOfCarton;
+              this.confirmLoading = false;
+              this.loading = false
+            })
+            .catch(err => {
+              this.loading = false;
+              this.confirmLoading = false;
+            })
         }
       },
-
       // 保存
       onSave() {
         this.$refs.detailItem.validate(valid => {
@@ -312,6 +341,9 @@
 
           //转义字段
           let _object = JSON.parse(JSON.stringify(this.detailItem));
+          if(!_object.procurementOrderId){
+            _object.procurementOrderId = this.order.id;
+          }
 
           this.global.axios[method](url, _object)
             .then(resp => {

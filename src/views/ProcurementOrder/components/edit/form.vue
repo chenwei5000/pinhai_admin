@@ -316,22 +316,24 @@
       // 修改采购单
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
-        this.loading = true;
-        this.confirmLoading = true;
+
+        const loading = this.$loading({
+          lock: true,
+          text: '保存中..',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
 
         this.global.axios.put(`/procurementOrders/${this.editObject.id}`, _object)
           .then(resp => {
             let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});
-            this.loading = false;
-            this.confirmLoading = false;
+            loading.close();
             // 回传消息
-            this.formVisible = false;
             this.$emit("modifyCBEvent", _newObject);
           })
           .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
+            loading.close();
           })
       },
 
