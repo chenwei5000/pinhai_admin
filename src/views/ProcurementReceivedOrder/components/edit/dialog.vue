@@ -116,6 +116,7 @@
             this.confirmLoading = false;
             this.dialogVisible = true;
             this.formVisible = false;
+            this.$refs.itemTable.getList();
             this.$emit("modifyCBEvent", resp.data);
 
           })

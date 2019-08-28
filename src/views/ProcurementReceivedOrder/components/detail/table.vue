@@ -214,6 +214,7 @@
         if (this.relations && this.relations.length > 0) {
           this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
+        this.loading = false
       },
 
 

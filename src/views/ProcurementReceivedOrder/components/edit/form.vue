@@ -13,8 +13,11 @@
           <el-input v-model="editObject.code" style="width: 220px" :disabled="true"></el-input>
         </el-form-item>
       </el-col>
+    </el-row>
 
-      <el-col :md="14">
+    <el-row>
+
+      <el-col :md="10">
         <el-form-item label="预计到货时间" prop="expectTime">
           <el-date-picker
             v-model="editObject.expectTime"
@@ -27,9 +30,6 @@
         </el-form-item>
       </el-col>
 
-    </el-row>
-
-    <el-row>
       <el-col :md="14">
         <el-form-item label="收货日期" prop="receivedTime">
           <el-date-picker
@@ -37,7 +37,8 @@
             format="yyyy-MM-dd"
             value-format="yyyy-MM-dd"
             type="date"
-            placeholder="请选择收货日期！！！！">
+            placeholder="请选择收货日期！！！！"
+            :disabled="disable">
           </el-date-picker>
         </el-form-item>
       </el-col>
@@ -162,17 +163,19 @@
     computed: {
       hasEdit() {
         // 控制按钮
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([6].indexOf(this.primary.status) > -1) {
           return false;
         }
         else {
           return true;
         }
+
       },
     },
 
     data() {
       return {
+        disable: false,
         // 表单加载状态
         loading: false,
         // 点击按钮之后，按钮锁定不可在点
@@ -210,6 +213,7 @@
     mounted() {
       this.$nextTick(() => {
         this.initData();
+
       });
     },
     methods: {
@@ -250,12 +254,17 @@
           this.$message.error("无效!");
           this.loading = false;
         }
+        if(this.primary.status === 6){
+          this.disable = true;
+          this.loading = false;
+        }
+
       },
 
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
       onSave() {
-        this.global.axios.put(`/procurementReceivedOrderItems/${this.primary}`,this.primary)
+        this.global.axios.put(`/procurementReceivedOrders/receivedTime/${this.primary.id}`,this.primary)
           .then(resp => {
             this.$message.info("保存成功");
             this.loading = false;

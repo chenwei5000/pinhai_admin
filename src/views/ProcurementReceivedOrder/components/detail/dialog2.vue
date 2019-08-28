@@ -67,7 +67,7 @@
 
         <el-col :md="10">
           <el-form-item label="收货数量" prop="receivedQty">
-            <el-input v-model="detailItem.receivedQty" style="width: 220px" precision="2" ></el-input>
+            <el-input v-model="detailItem.receivedQty" style="width: 220px" precision="2" :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -81,7 +81,8 @@
                       rows="3"
                       cols="80"
                       style="width: 320px"
-                      show-word-limit></el-input>
+                      show-word-limit
+                      :disabled="true"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
