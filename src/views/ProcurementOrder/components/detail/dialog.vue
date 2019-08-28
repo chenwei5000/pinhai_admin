@@ -7,13 +7,30 @@
              top="20px"
              @close='closeDialog'
              :visible.sync="dialogVisible">
-    <div class="ph-form">
+
+
+    <div class="ph-form" style="margin-top: 15px">
       <!-- 编辑表单 TODO:-->
       <el-form :rules="rules" :model="detailItem" status-icon inline
                ref="detailItem" label-position="right"
                label-width="120px"
                v-loading="loading"
       >
+
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="供货商">
+              <span style="font-size: 12px">{{order.supplier.name}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
+            <el-form-item label="结算货币">
+              <span style="font-size: 12px">{{ order.currency.name }}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-row>
           <el-col :md="10">
             <el-form-item label="SKU" prop="skuCode">
@@ -29,18 +46,12 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="采购箱数" prop="cartonQty">
+            <el-form-item label="采购单价" prop="price">
 
-              <el-input-number v-model="detailItem.cartonQty"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               @change="onQtyChange"
-                               :max="100000" label="采购箱数">
+              <el-input v-model.trim="detailItem.price"
+                        style="width: 200px" placeholder="请填写采购单价" clearable></el-input>
 
-              </el-input-number>
-
-              <el-tooltip class="item" effect="light" content="按箱采购，请输入箱数，支持3位小数！" placement="right">
+              <el-tooltip class="item" effect="light" content="产品的采购价格。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
@@ -83,164 +94,45 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="备货周数" prop="safetyStockWeek">
-
-              <el-input-number v-model="detailItem.safetyStockWeek"
-                               style="width: 200px"
-                               :precision="0"
+            <el-form-item label="采购箱数" prop="purchaseOrderCartonQty">
+              <el-input-number v-model="detailItem.cartonQty"
+                               @change="onCartonQtyChange"
+                               size="small"
+                               style="width: 200px;"
+                               :precision="3"
                                :min="1"
                                :step="1"
-                               :max="52" label="备货周数">
+                               :max="1000000" label="采购箱数">
               </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="产品希望支持销售的周数。" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-
-          <el-col :md="14" v-if="this.detailItemId">
-            <el-form-item label="可售周数" prop="saleWeek">
-              <el-input v-model.trim="detailItem.saleWeek" readonly
-                        style="width: 200px" placeholder="可售周数，自动计算" clearable></el-input>
-              <el-tooltip class="item" effect="light" content="采购的产品可以销售的周数" placement="right">
+              <el-tooltip class="item" effect="light" content="采购箱数,支持3位小树。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
           </el-col>
 
-        </el-row>
-
-        <el-row v-if="this.detailItemId">
           <el-col :md="10">
-            <el-form-item label="7日销量(件)" prop="sevenSalesCount">
-              <el-input v-model.trim="detailItem.sevenSalesCount" readonly
-                        style="width: 200px" placeholder="请填写7日销量，件数" clearable></el-input>
-
-              <el-tooltip class="item" effect="light" content="7日销售件数, 不能修改。可以去销售设置中调整。" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-
-          <el-col :md="14">
-            <el-form-item label="亚马逊含在途(箱)" prop="amazonTotalStock">
-
-              <el-input v-model.trim="detailItem.amazonTotalStock"
-                        style="width: 200px" readonly clearable></el-input>
-
-              <el-tooltip class="item" effect="light" content="亚马逊含在途库存箱数，不能修改" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-
-        </el-row>
-
-        <el-row v-if="this.detailItemId">
-          <el-col :md="10">
-            <el-form-item label="国内库存(箱)" prop="domesticStockQty">
-              <el-input v-model.trim="detailItem.domesticStockQty" readonly
-                        style="width: 200px" placeholder="国内库存，箱数" clearable></el-input>
-
-              <el-tooltip class="item" effect="light" content="国内仓库库存箱数，不能修改" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-
-          <el-col :md="14">
-            <el-form-item label="国内在途(箱)" prop="unfinishedPlanQty">
-              <el-input v-model.trim="detailItem.unfinishedPlanQty" readonly
-                        style="width: 200px" placeholder="国内在途，箱数" clearable></el-input>
-              <el-tooltip class="item" effect="light" content="未完成采购计划箱数" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-
-        </el-row>
-
-        <el-row v-if="false">
-          <el-col :md="14" v-if="false">
-            <el-form-item label="优先级" prop="priority">
-
-              <el-select v-model="detailItem.priority"
-                         filterable
-                         style="width: 200px"
-                         placeholder="请选择优先级,可筛选">
-
-                <el-option
-                  v-for="(item,idx) in prioritySelectOptions"
-                  :label="item.label" :value="item.value"
-                  :key="idx"
-                ></el-option>
-              </el-select>
-
-              <el-tooltip class="item" effect="light" content="本产品在该采购计划中的优先等级" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-          <el-col :md="24" v-if="false">
-            <el-form-item label="优先要求" prop="priorityNote">
-              <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.priorityNote"
-                          maxlength="500"
-                          show-word-limit
-                          rows="3"
-                          cols="80"
-                          placeholder="示例:
-2018-08-16 : 5箱
-2018-08-26 : 45件
-2018-09-16 : 2箱"
-                          show-word-limit></el-input>
-              </el-col>
-
-              <el-col :span="2">
-
-                <el-tooltip class="item" effect="light" placement="right">
-                  <div slot="content">按时间维度定义优先要求。格式如下：
-                    <HR/>
-                    2018-08-16 : 5箱<BR/>
-                    2018-08-26 : 45件<BR/>
-                    2018-09-16 : 2箱<BR/>
-                  </div>
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-
-              </el-col>
-
+            <el-form-item label="采购件数">
+              <span style="font-size: 12px">{{detailItem.qty}}</span>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row>
-          <el-col :md="24">
-            <el-row type="flex" justify="center">
-              <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave"
-                         v-if="hasEdit">
-                保存
-              </el-button>
-            </el-row>
-          </el-col>
+        <hr/>
+
+        <el-row style="text-align: right;font-size: 13px; font-weight: bold;">
+          总额: {{detailItem.amount, order.currency.symbolLeft | currency}}
         </el-row>
 
       </el-form>
     </div>
+
   </el-dialog>
 
 </template>
 
 <script>
   import cartonspecModel from '@/api/cartonspec'
-  import phEnumModel from '@/api/phEnum'
   import validRules from '@/components/validRules'
 
   export default {
@@ -254,10 +146,10 @@
     computed: {
       dialogTitle() {
         if (this.detailItemId == null) {
-          return "添加采购计划明细";
+          return "添加采购单明细";
         }
         else {
-          return "修改采购计划明细";
+          return "修改采购单明细";
         }
       },
       hasEdit() {
@@ -281,15 +173,16 @@
         confirmLoading: false,
 
         // 资源URL
-        url: "/procurementPlanItems",
+        url: "/procurementOrderItems",
         relations: ["product"],  // 关联对象
         //明细对象ID
         detailItemId: null,
         //明细对象
         detailItem: {},
+        // 采购单对象
+        order: {},
 
         cartonspecSelectOptions: [],
-        prioritySelectOptions: [],
 
         // 字段验证规则 TODO:
         rules: {
@@ -337,9 +230,6 @@
         // 箱规
         this.cartonspecSelectOptions = cartonspecModel.getSelectOptions();
 
-        // 优先级
-        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
-
         // 明细数据
         if (this.detailItemId) {
           this.loading = true
@@ -355,7 +245,6 @@
               this.detailItem = data
               // 转字段
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.priority = data.priority + '';
 
               this.loading = false
             })
@@ -363,22 +252,22 @@
         else {
           // 设置添加默认值
           this.detailItem = {
-            skuCode: '',
-            priorityNote: '',
+            skuCode: null,
+            price: null,
             cartonSpecId: null,
-            priority: '2',
-            safetyStockWeek: 10,
+            cartonQty: 0,
+            qty: 0,
             numberOfCarton: null,
-            cartonQty: 1,
-            procurementPlanId: this.primary.id
+            amount: null,
           }
 
         }
       },
 
       /* 开启弹出编辑框 需要传明细ID */
-      openDialog(detailItemId) {
+      openDialog(detailItemId, order) {
         this.detailItemId = detailItemId;
+        this.order = order;
         this.dialogVisible = true;
         this.initData();
       },
@@ -389,7 +278,6 @@
         this.detailItemId = null;
         this.detailItem = null;
         this.cartonspecSelectOptions = [];
-        this.prioritySelectOptions = [];
       },
 
       onQtyChange(val) {

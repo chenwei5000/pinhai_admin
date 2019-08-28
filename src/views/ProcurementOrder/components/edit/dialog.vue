@@ -30,11 +30,11 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购计划内容</div>
+        <div slot="title" class="title">2. 采购产品详情</div>
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
+      <!--el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
         <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
@@ -47,7 +47,7 @@
       <el-collapse-item name="logs" style="margin-top: 10px">
         <div slot="title" class="title">5. 日志</div>
         <logs @reloadCBEvent="reloadCBEvent" ref="logs" :logs="logs" v-if="logComplete"></logs>
-      </el-collapse-item>
+      </el-collapse-item-->
     </el-collapse>
 
     <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
@@ -68,6 +68,7 @@
   import person from './person'
   import phStatus from '@/components/PhStatus'
   import auditing from '@/components/PhAuditing'
+  import {currency, intArrToStrArr} from '@/utils'
 
   export default {
     components: {
@@ -80,6 +81,9 @@
       logs
     },
     props: {},
+    filters: {
+      currency: currency
+    },
     computed: {
       ...mapGetters([
         'device',
@@ -98,7 +102,7 @@
         return true;
       },
       title() {
-        return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        return '编辑采购单 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -111,6 +115,8 @@
         logComplete: false,
         dialogVisible: false, //Dialog 是否开启
         activeNames: [],   //折叠面板开启项
+        url: '/procurementOrders',
+        relations: ["procurementPlan", "currency", "supplier"],  // 关联对象
       }
     },
 
@@ -124,9 +130,12 @@
     methods: {
       initData() {
         if (this.primaryId) {
+          let url = `${this.url}/${this.primaryId}`;
+          url += "?relations=" + JSON.stringify(this.relations);
+
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(url)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -138,12 +147,12 @@
 
           // 获取日志数据
           let filters = [];
-          let logUrl = '/procurementPlanLogs';
+          let logUrl = '/procurementOrderLogs';
           let relations = ["creator"]
 
           filters.push(
             {
-              field: "procurementPlanId",
+              field: "procurementOrderId",
               op: 'eq',
               data: this.primaryId
             })

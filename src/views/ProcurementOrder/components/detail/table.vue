@@ -11,14 +11,6 @@
         <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
 
-      <el-form-item label="分类">
-        <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
-      </el-form-item>
-
-      <el-form-item label="款式">
-        <el-input v-model="searchParam.groupName" placeholder="请输入产品款式" clearable></el-input>
-      </el-form-item>
-
       <el-form-item label="状态">
         <el-select filterable v-model="searchParam.status" placeholder="请选择状态">
           <el-option
@@ -80,6 +72,7 @@
           </span>
         </template>
       </el-table-column>
+      <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="90">
         <template slot-scope="scope">
@@ -87,42 +80,12 @@
             :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 0
             ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
+            ? 'primary' : scope.row.status === 10
             ? 'info' : 'success'"
             disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
-
-      <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
-      <el-table-column prop="product.groupName" label="款式" width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
-            <div v-html="scope.row.product.groupName"></div>
-            <span slot="reference">{{
-              scope.row.product.groupName ? scope.row.product.groupName.length > 12 ? scope.row.product.groupName.substr(0,10)+'..' : scope.row.product.groupName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.groupName }}
-            </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-      <el-table-column prop="safetyStockWeek" label="备货周数" width="80"></el-table-column>
-      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
-      <el-table-column prop="sevenSalesCount" label="7日销量(件)" width="100"></el-table-column>
-      <el-table-column prop="amazonTotalStock" label="亚马逊含在途库存(件)" width="140"></el-table-column>
-      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100"></el-table-column>
-      <el-table-column prop="unfinishedPlanQty" label="国内在途(箱)" width="100"></el-table-column>
-
-
-      <el-table-column prop="qty" label="采购件数" width="80"></el-table-column>
-
-      <el-table-column prop="orderQty" label="下单件数" width="80" v-if="hasExecute"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货件数" width="80" v-if="hasExecute"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货件数" width="80" v-if="hasExecute"></el-table-column>
 
       <el-table-column prop="productName" label="名称" width="200">
         <template slot-scope="scope">
@@ -139,47 +102,39 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.fnSku" label="FNSKU" min-width="120"></el-table-column>
-      <el-table-column prop="product.vipLevel" label="Vip级别" width="100"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
-      <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
-      <el-table-column prop="saleWeek" sortable label="可售周数" width="110"
+      <el-table-column prop="procurementPlanItem.cartonQty" label="计划箱数" width="110"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货箱数" width="110"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货箱数" width="110"></el-table-column>
+
+      <el-table-column prop="cartonQty" label="采购箱数" width="80"
                        fixed="right"></el-table-column>
 
-      <el-table-column prop="cartonQty" sortable label="采购箱数" width="110"
+      <el-table-column prop="qty" label="采购件数" width="80"
                        fixed="right"></el-table-column>
 
-      <el-table-column prop="amount" sortable label="金额" width="100"
+      <el-table-column prop="price" label="单价" width="80"
                        fixed="right">
         <template slot-scope="scope">
-          {{scope.row.amount, scope.row.product.currency ? scope.row.product.currency.symbolLeft : '' | currency}}
+          {{scope.row.price ? scope.row.price : 0, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="priority" label="优先级" sortable width="100" v-if="false">
+      <el-table-column prop="amount" label="总额" width="100"
+                       fixed="right">
         <template slot-scope="scope">
-          {{ scope.row.priorityName }}
+          {{scope.row.amount ? scope.row.amount : 0, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
-      </el-table-column>
-
-      <el-table-column prop="priorityNote" label="优先要求" width="130" v-if="false">
-
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="优先要求" width="250" trigger="hover">
-            <div v-html="scope.row.priorityNote"></div>
-            <span slot="reference">{{ scope.row.priorityNote ? scope.row.priorityNote.substr(0,15) : '' }}</span>
-          </el-popover>
-        </template>
-
       </el-table-column>
 
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation"
+      <el-table-column label="操作"
                        no-export="true"
                        width="120" fixed="right">
+
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
@@ -192,6 +147,7 @@
 
           </el-button>
         </template>
+
       </el-table-column>
     </el-table>
 
@@ -261,22 +217,20 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementPlanItems", // 资源URL
+        url: "/procurementOrderItems", // 资源URL
         downloadUrl: "", //下载Url
         searchParam: {
           skuCode: null,
-          category: null,
           status: null,
-          groupName: null,
         },
         filters: [
           {
-            field: "procurementPlanId",
+            field: "procurementOrderId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["cartonSpec", "product", "product.currency", "product.category"],  // 关联对象
+        relations: ["cartonSpec", "product", "procurementPlanItem"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -290,8 +244,8 @@
           hasEdit: true,
           hasDelete: false,
           hasAdd: true,
-          hasExportTpl: true,
-          hasExport: true,
+          hasExportTpl: false,
+          hasExport: false,
           hasImport: false,
         }
       }
@@ -312,8 +266,8 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
+
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementOrderStatus');
 
         // 设置下载链接
         this.downloadUrl = this.url;
@@ -327,7 +281,7 @@
         }
 
         // 控制按钮
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 10, 100].indexOf(this.primary.status) > -1) {
           this.hasDelete = false;
           this.toolbarConfig.hasAdd = false;
           this.toolbarConfig.hasImport = false;
@@ -337,13 +291,17 @@
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row, rowIndex}) {
-        if (row.saleWeek > 0) {
-          if (row.safetyStockWeek - row.saleWeek >= 2) { //可售周数不足2周
-            return 'warning-row';
-          }
-          else if (row.saleWeek - row.safetyStockWeek >= 2) { //可售周数超2周
-            return 'danger-row';
-          }
+        // 无价格
+        if (!row.price) {
+          return 'danger-row';
+        }
+        // 产品无装箱数
+        if (!row.numberOfCarton) {
+          return 'danger-row';
+        }
+        // 产品无箱规
+        if (!row.cartonSpecId || row.cartonSpecId == -1) {
+          return 'danger-row';
         }
         return '';
       },
@@ -354,15 +312,19 @@
         const sums = [];
 
         columns.forEach((column, index) => {
+
           if (column.property == 'product.skuCode') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
             }, 0);
+
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty') {
+          if (column.property == 'cartonQty'
+            || column.property == 'noPurchaseOrderCartonQty'
+            || column.property == 'purchaseOrderCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -379,6 +341,23 @@
             }
           }
 
+          if (column.property == 'qty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
           if (column.property == 'amount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
@@ -390,7 +369,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index]);
+              sums[index] = currency(sums[index], this.primary.currency ? this.primary.currency.symbolLeft : null);
             } else {
               sums[index] = 'N/A';
             }
@@ -460,16 +439,8 @@
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {
-        this.tableData = this.data;
-        if (this.searchParam.category != null && this.searchParam.category != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.product && item.product.category &&
-                item.product.category.name.indexOf(this.searchParam.category) !== -1) {
-                return true;
-              }
-            });
-        }
+        this.tableData = JSON.parse(JSON.stringify(this.data));
+
         if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
           this.tableData = this.tableData.filter(
             item => {
@@ -486,14 +457,6 @@
               }
             });
         }
-        if (this.searchParam.groupName != null && this.searchParam.groupName != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.product && item.product.groupName.indexOf(this.searchParam.groupName) !== -1) {
-                return true;
-              }
-            });
-        }
       },
 
       /*本地重置搜索*/
@@ -502,13 +465,10 @@
 
         //TODO:根据实际情况调整
         this.searchParam.skuCode = null;
-        this.searchParam.category = null;
-        this.searchParam.groupName = null;
         this.searchParam.status = null;
 
         this.search();
       },
-
 
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
@@ -522,9 +482,14 @@
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-
-              this.getList();
-
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+              })
+                .catch(err => {
+                })
               done();
             } else done()
           }
@@ -541,7 +506,7 @@
 
       /********************* 工具条按钮  ***************************/
       onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
+        this.$refs.itemDialog.openDialog(null, this.primary);
       },
       onToolBarEdit() {
 
