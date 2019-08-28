@@ -122,7 +122,7 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("createCBEvent", object);
         this.orderId = object.id;
-        this.stepsActive = 0;
+        this.stepsActive = 1;
       },
       step2CBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
