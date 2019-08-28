@@ -17,18 +17,15 @@
         <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
-      <el-form-item label="下单截止日">
-        <el-date-picker
-          size="mini"
-          v-model="searchParam.limitTime.value"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-
+      <el-form-item label="供货商">
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+                   placeholder="请选择供货商">
+          <el-option
+            v-for="(item,idx) in supplierSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item label="状态">
@@ -64,7 +61,7 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"> </el-table-column>
+      <el-table-column prop="code" label="编号" width="140"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
@@ -81,7 +78,8 @@
 
       <el-table-column prop="name" label="计划名称" min-width="200">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.procurementPlan.name && scope.row.procurementPlan.name.length > 27">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.procurementPlan.name && scope.row.procurementPlan.name.length > 27">
             <div v-html="scope.row.procurementPlan.name"></div>
             <span slot="reference">{{
               scope.row.procurementPlan.name ? scope.row.procurementPlan.name.length > 27 ? scope.row.procurementPlan.name.substr(0,25)+'..' : scope.row.procurementPlan.name : ''
@@ -95,14 +93,26 @@
 
       <el-table-column prop="supplier.name" label="供货商" width="120"></el-table-column>
 
+      <el-table-column prop="warehouse.name" label="收货仓库" width="120"></el-table-column>
+
+      <el-table-column prop="settlementMethodName" label="结算方式" width="100"></el-table-column>
+
+      <el-table-column prop="currency.name" label="结算货币" width="90"></el-table-column>
+
+      <el-table-column prop="accountPeriod" label="帐期(天)" width="90"></el-table-column>
+
       <el-table-column prop="formatOtdTime" label="预计完成日期" width="100"></el-table-column>
 
-      <el-table-column prop="note" label="备注" width="120" v-if="false">
+      <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover">
-            <div v-html="scope.row.formatNote"></div>
-            <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,8)+'..' : '' }}</span>
+          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
+                      v-if="scope.row.procurementPlan.note && scope.row.procurementPlan.note.length > 10">
+            <div v-html="scope.row.procurementPlan.formatNote"></div>
+            <span slot="reference">{{ scope.row.procurementPlan.note ? scope.row.procurementPlan.note.substr(0,8)+'..' : '' }}</span>
           </el-popover>
+          <span v-else>
+            {{ scope.row.procurementPlan.formatNote }}
+          </span>
         </template>
       </el-table-column>
 
@@ -159,6 +169,7 @@
   import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
+  import supplierModel from '@/api/supplier'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -186,7 +197,7 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower','rolePower'
+        'device', 'rolePower', 'rolePower'
       ]),
 
       // 显示进度条
@@ -233,7 +244,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementOrders', // 资源URL
         countUrl: '/procurementOrders/count', // 资源URL
-        relations: ["procurementPlan", "creator", "currency","supplier","warehouse"],  // 关联对象
+        relations: ["procurementPlan", "creator", "currency", "supplier", "warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -241,11 +252,11 @@
 
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
-        categorySelectOptions: [],
+        supplierSelectOptions: [],
+
         searchParam: {
-          categoryId: {value: null, op: 'in', id: 'categoryId'},
+          supplierId: {value: null, op: 'in', id: 'supplierId'},
           name: {value: null, op: 'bw', id: 'name'},
-          limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
           status: {value: null, op: 'eq', id: 'status'},
           code: {value: null, op: 'bw', id: 'name'},
         },
@@ -266,7 +277,6 @@
     },
 
     mounted() {
-
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
@@ -286,11 +296,8 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
+          if (params.supplierId) {
+            this.searchParam.supplierId.value = params.supplierId;
           }
           if (params.name) {
             this.searchParam.name.value = params.name;
@@ -316,6 +323,7 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementOrderStatus');
+        this.supplierSelectOptions = supplierModel.getSelectOptions();
 
         if (this.type === 'editing') {
         }
@@ -372,8 +380,7 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.categoryId.value = null;
-        this.searchParam.limitTime.value = null;
+        this.searchParam.supplierId.value = null;
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
         this.searchParam.code.value = null;
