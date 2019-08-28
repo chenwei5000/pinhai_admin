@@ -522,9 +522,14 @@
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-
-              this.getList();
-
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+              })
+                .catch(err => {
+                })
               done();
             } else done()
           }

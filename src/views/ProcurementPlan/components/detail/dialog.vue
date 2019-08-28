@@ -40,7 +40,7 @@
 
               </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="按箱采购，请输入箱数，支持3位小数！" placement="right">
+              <el-tooltip class="item" effect="light" content="按箱采购，请输入箱数！" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
