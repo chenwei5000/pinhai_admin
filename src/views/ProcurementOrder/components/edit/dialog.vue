@@ -1,7 +1,7 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog' fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px" class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
       <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
       <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
@@ -34,7 +34,7 @@
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
-      <!--el-collapse-item name="attachment" style="margin-top: 10px">
+      <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
         <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
@@ -47,7 +47,7 @@
       <el-collapse-item name="logs" style="margin-top: 10px">
         <div slot="title" class="title">5. 日志</div>
         <logs @reloadCBEvent="reloadCBEvent" ref="logs" :logs="logs" v-if="logComplete"></logs>
-      </el-collapse-item-->
+      </el-collapse-item>
     </el-collapse>
 
     <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
@@ -212,7 +212,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        let url = `/procurementPlans/status/${this.primaryId}/${status}`;
+        let url = `/procurementOrders/status/${this.primaryId}/${status}`;
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
@@ -240,7 +240,7 @@
                 background: 'rgba(0, 0, 0, 0.7)'
               });
 
-              let url = `/procurementPlans/${bAction}/${this.primaryId}`;
+              let url = `/procurementOrders/${bAction}/${this.primaryId}`;
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
@@ -267,7 +267,7 @@
       saveAuditCBEvent(note, type) {
         //提交审核
         if (type == 'commit') {
-          this.business('确认将该计划提交给上级审核吗?', 'commit', "提交成功,请耐心等待上级处理!", note);
+          this.business('确认将该采购单发布。如果采购单中有计划外的产品，将会需要销售进行审核?', 'commit', "操作成功!", note);
         }
         //同意审核
         else if (type == 'agree') {
@@ -292,7 +292,7 @@
       },
       //撤回
       onWithdraw() {
-        this.business('确认撤回该计划吗?', 'withdraw', "操作成功!");
+        this.business('确认撤回该采购单吗?', 'withdraw', "操作成功!");
       },
       //交接
       onHandover() {

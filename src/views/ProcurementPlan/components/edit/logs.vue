@@ -96,6 +96,69 @@
               _log.content = '结束计划';
               _log.icon = 'el-icon-star-on';
             }
+            if (obj.type == 'createOrder') {
+              _log.type = 'success';
+              _log.content = '创建采购单';
+              _log.icon = 'el-icon-circle-plus';
+            }
+            else if (obj.type == 'updateOrder') {
+              _log.type = 'primary';
+              _log.content = '更新采购单基本信息';
+              _log.icon = 'el-icon-edit';
+            }
+            else if (obj.type == 'updateOrderDetail') {
+              _log.type = 'primary';
+              _log.content = '更新采购单信息';
+              _log.icon = 'el-icon-edit-outline';
+            }
+            else if (obj.type == 'commitOrder') {
+              _log.type = 'primary';
+              _log.content = '采购单提交审核';
+              _log.icon = 'el-icon-s-check';
+            }
+            else if (obj.type == 'agreeOrder') {
+              _log.type = 'success';
+              _log.content = '采购单审核通过';
+              _log.icon = 'el-icon-success';
+            }
+            else if (obj.type == 'refuseOrder') {
+              _log.type = 'danger';
+              _log.content = '采购单审核拒绝';
+              _log.icon = 'el-icon-error';
+            }
+            else if (obj.type == 'withdrawOrder') {
+              _log.type = 'danger';
+              _log.content = '采购单撤回';
+              _log.icon = 'el-icon-error';
+            }
+            else if (obj.type == 'assignOrder') {
+              _log.type = 'danger';
+              _log.content = '采购单指派负责人';
+              _log.icon = 'el-icon-error';
+            }
+            else if (obj.type == 'cancelAssignOrder') {
+              _log.type = 'danger';
+              _log.content = '采购单取消指派负责人';
+              _log.icon = 'el-icon-error';
+            }
+            else if (obj.type == 'removeOrder') {
+              _log.type = 'danger';
+              _log.content = '删除采购单';
+              _log.icon = 'el-icon-error';
+            }
+            else if (obj.type == 'handoverOrder') {
+              _log.type = 'warning';
+              _log.content = '交接采购单';
+            }
+            else if (obj.type == 'share') {
+              _log.type = 'warning';
+              _log.content = '分享采购单';
+            }
+            else if (obj.type == 'complete') {
+              _log.type = 'success';
+              _log.content = '采购单结束';
+              _log.icon = 'el-icon-star-on';
+            }
             _logs.push(_log);
           });
         }
