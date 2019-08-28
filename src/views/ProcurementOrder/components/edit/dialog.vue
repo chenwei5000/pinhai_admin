@@ -1,14 +1,20 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px" class="ph-dialog" @close='closeDialog' fullscreen>
-    <el-row style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px"
+             class="ph-dialog" @close='closeDialog' fullscreen>
+    <el-row
+      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
+      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">发布</el-button>
       <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
 
-      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
-      </el-button>
+      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
+
+      <el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认完成日期</el-button>
+      <el-button type="primary" icon="el-icon-money" v-if="hasExecute" @click="onWithdraw">申请付款</el-button>
+      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onWithdraw">打印合同</el-button>
+
       <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
       <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
@@ -89,9 +95,16 @@
         'device',
         'rolePower'
       ]),
-
+      hasWithdraw() {
+        if ([2, 3, 4, 5].indexOf(this.primary.status) > -1) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
       hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
+        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1) {
           return true;
         }
         else {
@@ -180,8 +193,8 @@
         // 默认展开所有折叠面板
         this.activeNames = ['infoFrom', 'itemTable', 'attachment', 'person', 'logs'];
       },
-      closeDialog(){
-        this.primary={};
+      closeDialog() {
+        this.primary = {};
         this.primaryId = null;
         this.logs = [];
         this.dialogVisible = false;
@@ -280,7 +293,7 @@
       },
 
       onCommit() {
-        this.$refs.auditing.openDialog('commit');
+        this.business('确认将该采购单发布。如果采购单中有计划外的产品，将会需要销售进行审核?', 'commit', "操作成功!", "");
       },
 
       onAgree() {
