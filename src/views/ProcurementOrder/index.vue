@@ -27,14 +27,14 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="auditing" lazy>
+          <!--el-tab-pane name="auditing" lazy>
             <span slot="label">
               <i class="el-icon-s-check"></i> 待审核
             </span>
             <keep-alive>
               <phTab type="auditing"/>
             </keep-alive>
-          </el-tab-pane>
+          </el-tab-pane-->
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executing" lazy>

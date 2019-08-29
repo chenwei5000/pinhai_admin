@@ -252,8 +252,7 @@
   import {mapGetters} from 'vuex'
 
   export default {
-    components: {
-    },
+    components: {},
     props: {},
     computed: {
       ...mapGetters([
@@ -270,6 +269,8 @@
         primary: {}, //主对象
         printObject: {},
         dialogVisible: false, //Dialog 是否开启
+        loading: false,
+        rules: {},
       }
     },
 
@@ -282,12 +283,62 @@
     },
     methods: {
       initData() {
-
+        this.printObject.demanderName = '深圳市品海电⼦商务有限公司';
+        this.printObject.demanderAddress = '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
+        this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
+        this.printObject.supplierName = this.primary.supplier.companyName;
+        this.printObject.supplierAddress = this.primary.supplier.address;
+        this.printObject.supplierLinkMan = this.primary.supplier.linkman;
+        this.printObject.supplierLinkMethod = this.primary.supplier.tel;
+        this.printObject.currency = this.primary.currency.name;
+        this.initCategoryName();
       },
+
+      /*获取明细列表*/
+      initCategoryName() {
+        let url = "/procurementOrderItems";
+        let filters = [
+          {
+            field: "procurementOrderId",
+            op: 'eq',
+            data: this.primary ? this.primary.id : -1
+          }
+        ]
+        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        let relations = ["product", "product.category"]
+        url += "&relations=" + JSON.stringify(relations);
+
+        // 请求开始
+        this.loading = true
+
+        console.log(url);
+        //获取数据
+        this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data
+            let data = res || []
+            let cates = [];
+
+            data.forEach(r => {
+              if (cates.indexOf(r.product.category.name) === -1) {
+                cates.push(r.product.category.name);
+              }
+            });
+            this.printObject.categoryName = cates.join(",");
+
+            this.loading = false
+          })
+          .catch(err => {
+            this.loading = false
+          })
+      },
+
 
       /* 开启弹出编辑框 需要传主键ID */
       openDialog(primary) {
         this.primary = primary;
+        console.log(this.primary);
         this.initData();
         this.dialogVisible = true;
       },
@@ -310,5 +361,17 @@
     font-size: 14px;
     font-weight: bold;
   }
+
+  .panel-heading {
+    color: #444;
+    border: 1px #cfd9db solid;
+  }
+
+  .panel-title {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+  }
+
 </style>
 

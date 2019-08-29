@@ -141,7 +141,7 @@
         dialogVisible: false, //Dialog 是否开启
         activeNames: [],   //折叠面板开启项
         url: '/procurementOrders',
-        relations: ["procurementPlan", "currency", "supplier"],  // 关联对象
+        relations: ["procurementPlan", "currency", "warehouse", "supplier"],  // 关联对象
       }
     },
 
