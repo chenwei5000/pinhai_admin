@@ -88,7 +88,6 @@
              label-position="right"
              label-width="120px"
              v-loading="loading"
-             inline-message
     >
       <fieldset class="panel-heading" style="margin-top: 15px">
         <legend class="panel-title">申请付款
@@ -302,24 +301,23 @@
       },
       paymentObject() {
         let _object = JSON.parse(JSON.stringify(this.paymentObjet));
-        _object.currencyId = this.primary.currencyId;
-        _object.relevanceCode = this.primary.code;
-        _object.supplierId = this.primary.supplierId;
-        _object.type = "payment";
-        _object.paymentCate = "1";
 
-        this.global.axios.post('/financeBills', _object)
+        this.global.axios.post(`/procurementOrders/applyPayment/${this.primary.id}`, _object)
           .then(resp => {
-            let _newObject = resp.data;
-            this.$message({type: 'success', message: '操作成功'});
-            this.loading = false;
-            this.confirmLoading = false;
-            // 回传消息
-            this.formVisible = false;
-            this.$emit("modifyCBEvent", _newObject);
-            this.initData();
-          })
+              let _newObject = resp.data;
+              this.loading = false;
+              this.confirmLoading = false;
+              this.paymentObjet.payableAmount = null;
+              this.paymentObjet.prepayTime = null;
+              this.paymentObjet.ratio = null;
+              this.$refs.paymentFrom.resetFields();
+              this.$message.success('操作成功');
+              this.initData();
+              this.$emit("modifyCBEvent", _newObject);
+            }
+          )
           .catch(err => {
+            console.log(err);
             this.loading = false;
             this.confirmLoading = false;
           })

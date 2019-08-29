@@ -150,14 +150,29 @@
               _log.type = 'warning';
               _log.content = '交接采购单';
             }
-            else if (obj.type == 'share') {
+            else if (obj.type == 'shareOrder') {
               _log.type = 'warning';
               _log.content = '分享采购单';
             }
-            else if (obj.type == 'complete') {
+            else if (obj.type == 'completeOrder') {
               _log.type = 'success';
               _log.content = '采购单结束';
               _log.icon = 'el-icon-star-on';
+            }
+            else if (obj.type == 'applyPaymentOrder') {
+              _log.type = 'warning';
+              _log.content = '采购单申请预付款';
+              _log.icon = 'el-icon-money';
+            }
+            else if (obj.type == 'paymentedOrder') {
+              _log.type = 'success';
+              _log.content = '采购单预付款支付';
+              _log.icon = 'el-icon-money';
+            }
+            else if (obj.type == 'refusePaymentOrder') {
+              _log.type = 'danger';
+              _log.content = '采购单预付款被拒绝';
+              _log.icon = 'el-icon-money';
             }
             _logs.push(_log);
           });
