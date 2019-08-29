@@ -6,14 +6,15 @@
     <el-row
       style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
       <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">发布</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 2" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 2" @click="onRefuse">不同意</el-button>
+      <!--el-button type="success" icon="el-icon-success" v-if="primary.status == 2" @click="onAgree">同意</el-button>
+      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 2" @click="onRefuse">不同意</el-button-->
 
       <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
 
-      <el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认完成日期</el-button>
+      <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认完成日期</el-button -->
+
       <el-button type="primary" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
-      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onWithdraw">打印合同</el-button>
+      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印合同</el-button>
 
       <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
@@ -64,6 +65,8 @@
 
     <paymentDialog ref="paymentDialog" @paymentCBEvent="onPaymentCBEvent"></paymentDialog>
 
+    <printDialog ref="printDialog"></printDialog>
+
   </el-dialog>
 
 </template>
@@ -79,6 +82,7 @@
   import phStatus from '@/components/PhStatus'
   import auditing from '@/components/PhAuditing'
   import paymentDialog from './paymentDialog'
+  import printDialog from './printDialog'
 
   import {currency, intArrToStrArr} from '@/utils'
 
@@ -91,7 +95,8 @@
       phStatus,
       auditing,
       logs,
-      paymentDialog
+      paymentDialog,
+      printDialog
     },
     props: {},
     filters: {
@@ -227,6 +232,11 @@
       onPaymentCBEvent(obj){
         console.log(obj);
         this.initData();
+      },
+
+      // 打印
+      onPrint(){
+        this.$refs.printDialog.openDialog(this.primary);
       },
 
       // 管理员修改状态
