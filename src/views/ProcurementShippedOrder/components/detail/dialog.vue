@@ -16,7 +16,7 @@
         <el-col :md="10">
           <el-form-item label="SKU" prop="skuCode">
             <el-input v-model.trim="detailItem.skuCode"
-                      style="width: 220px" placeholder="请填写SKU" clearable></el-input>
+                      style="width: 220px" placeholder="请填写SKU" clearable :disabled="true"></el-input>
 
             <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
               <i class="el-icon-question">&nbsp;</i>
@@ -26,9 +26,9 @@
 
         <el-col :md="14">
           <el-form-item label="产品名" prop="cartonQty">
-
-            <el-input v-model="detailItem.product.name"
-                             :max="100000" label="产品名">
+            <el-input v-model="detailItem.productName"
+                             :max="100000" label="产品名" :disabled="true">
+             
             </el-input>
           </el-form-item>
         </el-col>
@@ -156,10 +156,10 @@
     computed: {
       dialogTitle() {
         if (this.detailItemId == null) {
-          return "添加采购计划明细";
+          return "添加发货计划明细";
         }
         else {
-          return "修改采购计划明细";
+          return "修改发货计划明细";
         }
       }
     },
@@ -175,7 +175,7 @@
 
         // 资源URL
         url: "/procurementShippedOrderItems",
-        relations: ["product", "cartonSpec"],  // 关联对象
+        relations: ["product", "cartonSpec", "procurementOrderItem"],  // 关联对象
         //明细对象ID
         detailItemId: null,
         //明细对象
@@ -226,9 +226,10 @@
               let data = res || {}
               this.detailItem = data
               // 转字段
+              this.detailItem.productName = data.product.name;
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.priority = data.priority + '';
-
+              console.log("dflkjsdklfjdslk", this.detailItem)
               this.loading = false
             })
         }

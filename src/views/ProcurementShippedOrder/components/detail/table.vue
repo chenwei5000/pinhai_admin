@@ -147,7 +147,7 @@
           }
         ],   //搜索对象
         // sort: "product.groupName asc, procurementShippedOrderItem.sortNum",
-        relations: ["cartonSpec", "product", "product.currency", "product.category"],  // 关联对象
+        relations: ["cartonSpec", "product", "product.currency", "product.category", "procurementOrderItem"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -428,7 +428,7 @@
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
+            filename: "fa计划内容-模版",
             noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
             tpl: true,
           })

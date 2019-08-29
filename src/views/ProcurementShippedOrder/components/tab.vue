@@ -8,6 +8,7 @@
 <script>
   import infoTable from './table'
   import infoTable2 from './table2'
+import { get } from 'http';
 
   export default {
     components: {
@@ -67,6 +68,15 @@
             field: 'status',
             op: 'in',
             data: 6
+          }
+        }
+
+        //全部
+        else if (this.type === 'all'){
+            return {
+              field: 'status',
+              op: 'in',
+              data: ''
           }
         }
       }

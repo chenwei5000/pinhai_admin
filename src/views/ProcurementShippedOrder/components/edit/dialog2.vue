@@ -58,7 +58,7 @@
         }
       },
       title() {
-        return '编辑发货计划 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
+        return this.action + '发货计划 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -67,9 +67,10 @@
         primaryId: null,  //主ID
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
-        activeNames: [],   //折叠面板开启项
+        activeNames: ['infoFrom', 'itemTable', 'attachment'],   //折叠面板开启项
         relations: ["supplier", "warehouse"],
         url: "/procurementShippedOrders",
+        action: "", //不同状态的动作显示 像 编辑 查看 ...
       }
     },
 
@@ -79,6 +80,9 @@
     mounted() {
       this.$nextTick(() => {
       });
+    },
+    updated(){
+     this.primary.status === 3 ||  this.primary.status === 1?this.action = "编辑": this.action = "查看";
     },
     methods: {
       initData() {
@@ -113,27 +117,20 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
       },
-      //提交审核
-      onCommit() {
-      },
-      //同意审核
-      onAgree() {
-      },
-      //拒绝审核
-      onRefuse() {
+      //打印发货单
+      onPrint() {
+        console.log("打印了发货单")
       },
       //撤回
       onWithdraw() {
           this.global.axios.put(`/procurementShippedOrders/withdraw/${this.primary.id}`)
           .then(resp => {
-            let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});
+            this.initData();
             this.loading = false;
             this.confirmLoading = false;
-            this.dialogVisible = false;
             // 回传消息
-            this.formVisible = false;
-            this.$emit("modifyCBEvent", _newObject);
+              this.$emit("modifyCBEvent", 3);
           })
           .catch(err => {
             this.loading = false;
@@ -144,14 +141,13 @@
       onComplete() {
           this.global.axios.put(`/procurementShippedOrders/shippedOrderConfirm/${this.primary.id}`)
           .then(resp => {
-            let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});
+            this.initData();
             this.loading = false;
             this.confirmLoading = false;
-            this.dialogVisible = false;
             // 回传消息
             this.formVisible = false;
-            this.$emit("modifyCBEvent", _newObject);
+              this.$emit("modifyCBEvent",4);
           })
           .catch(err => {
             this.loading = false;

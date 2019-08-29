@@ -486,7 +486,6 @@ import warehouseModel from '../../../api/warehouse';
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -504,7 +503,6 @@ import warehouseModel from '../../../api/warehouse';
           })
           .catch(err => {
           })
-
         //获取数据
         this.global.axios
           .get(url + params)
@@ -629,8 +627,8 @@ import warehouseModel from '../../../api/warehouse';
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(object) {
-        this.getList();
+      modifyCBEvent(status) {
+          this.getList();
       },
     }
   }

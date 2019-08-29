@@ -66,7 +66,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="procurementPlan.name" label="采购计划" min-width="200" >
+      <el-table-column prop="procurementPlan.name" label="发货计划" min-width="200" >
         <!-- <template slot-scope="scope">
           <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
             <div>

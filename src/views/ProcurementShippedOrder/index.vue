@@ -55,7 +55,19 @@
               <phTab type="complete"/>
             </keep-alive>
           </el-tab-pane>
+
+           <el-tab-pane name="all" lazy>
+            <span slot="label">
+              <i class="el-icon-s-order"></i> 全部
+            </span>
+            <keep-alive>
+              <phTab type="all"/>
+            </keep-alive>
+          </el-tab-pane>
+          
         </el-tabs>
+
+         
       </div>
     </div>
 
