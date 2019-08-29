@@ -25,7 +25,7 @@
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
 
-        <attachment ref="attachment" :primary="primary"></attachment>
+        <attachment ref="attachment" :primary="primary" ></attachment>
 
       </el-collapse-item>
 
@@ -130,7 +130,7 @@
             this.loading = false;
             this.confirmLoading = false;
             // 回传消息
-              this.$emit("modifyCBEvent", 3);
+              this.$emit("modifyCBEvent");
           })
           .catch(err => {
             this.loading = false;
@@ -147,7 +147,7 @@
             this.confirmLoading = false;
             // 回传消息
             this.formVisible = false;
-              this.$emit("modifyCBEvent",4);
+              this.$emit("modifyCBEvent");
           })
           .catch(err => {
             this.loading = false;
