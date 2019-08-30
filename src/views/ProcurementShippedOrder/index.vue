@@ -7,39 +7,40 @@
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="orderExecuting" class="fontColor" lazy>
+
+          <!--el-tab-pane name="completionDate" lazy>
+            <span slot="label">
+              <i class="el-icon-date"></i> 确认完成日期
+            </span>
+            <keep-alive>
+              <phTab type="completionDate" ref="completionDate"/>
+            </keep-alive>
+          </el-tab-pane>
+
+
+          <el-tab-pane name="orderExecuting" lazy>
             <span slot="label">
               <i class="el-icon-edit"></i> 采购单待发货
             </span>
             <keep-alive>
-              <phTab type="orderExecuting" ref="editTable"/>
+              <phTab type="orderExecuting" ref="orderExecuting"/>
             </keep-alive>
-          </el-tab-pane>
-
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="orderPartShipped" lazy>
-            <span slot="label">
-              <i class="el-icon-s-check"></i> 部分发货
-            </span>
-            <keep-alive>
-              <phTab type="orderPartShipped"/>
-            </keep-alive>
-          </el-tab-pane>
+          </el-tab-pane-->
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executing" lazy>
             <span slot="label">
-              <i class="el-icon-s-flag"></i> 发货任务待确认
+              <i class="el-icon-s-flag"></i> 发货中
             </span>
             <keep-alive>
-              <phTab type="executing"/>
+              <phTab type="executing" ref="executing"/>
             </keep-alive>
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="shipped" lazy>
             <span slot="label">
-              <i class="el-icon-s-claim"></i> 待收货
+              <i class="el-icon-s-home"></i> 待收货
             </span>
             <keep-alive>
               <phTab type="shipped"/>
@@ -64,10 +65,10 @@
               <phTab type="all"/>
             </keep-alive>
           </el-tab-pane>
-          
+
         </el-tabs>
 
-         
+
       </div>
     </div>
 
@@ -87,13 +88,11 @@
 
     data() {
       return {
-        // TODO 页面标题
-        title: '发货计划',
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'orderExecuting')
-          : 'orderExecuting',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'executing')
+          : 'executing',
       }
     },
 
@@ -113,7 +112,8 @@
       createCBEvent(objectId) {
         if (objectId) {
           if (this.$refs.editTable) {
-            this.$refs.editTable.onRefreshTable();
+            this.$refs.orderExecuting.onRefreshTable();
+            this.$refs.executing.onRefreshTable();
           }
         }
       }

@@ -1,19 +1,18 @@
 <template>
 
-  <infoTable v-if="isProperty" ref="infoTable" :type="type" :defaultFilters="filters"></infoTable>
-  <infoTable2 v-else ref="infoTable2" :type="type" :defaultFilters="filters"></infoTable2>
+  <orderTable v-if="isOrder" ref="infoTable" :type="type" :defaultFilters="filters"></orderTable>
+  <infoTable v-else ref="infoTable" :type="type" :defaultFilters="filters"></infoTable>
 
 </template>
 
 <script>
   import infoTable from './table'
-  import infoTable2 from './table2'
-import { get } from 'http';
+  import orderTable from './order/table'
 
   export default {
     components: {
       infoTable,
-      infoTable2
+      orderTable
     },
     props: {
       type: {
@@ -22,28 +21,29 @@ import { get } from 'http';
       }
     },
     computed: {
-      isProperty(){
-       if (this.type === 'orderExecuting' || this.type === 'orderPartShipped'){
-         return true;
-       }else{
-         return false;
-       }
+      isOrder() {
+        if (this.type === 'completionDate' || this.type === 'orderExecuting') {
+          return true;
+        } else {
+          return false;
+        }
       },
-      //待发货采购单
+
       filters() {
+        //待确认完成日期
+        if (this.type === 'completionDate') {
+          return {
+            'field': 'status',
+            op: 'in',
+            data: "3, 4, 5"
+          }
+        }
+        //待发货采购单
         if (this.type === 'orderExecuting') {
           return {
             'field': 'status',
             op: 'in',
-            data: 6
-          }
-        }
-        //部分发货
-        else if (this.type === 'orderPartShipped') {
-          return {
-            field: 'status',
-            op: 'in',
-            data: 7
+            data: "6, 7"
           }
         }
         //待确认发货任务
@@ -51,7 +51,7 @@ import { get } from 'http';
           return {
             field: 'status',
             op: 'in',
-            data: 3
+            data: "1,3"
           }
         }
         //待收货
@@ -67,17 +67,12 @@ import { get } from 'http';
           return {
             field: 'status',
             op: 'in',
-            data: 6
+            data: "5,6"
           }
         }
-
         //全部
-        else if (this.type === 'all'){
-            return {
-              field: 'status',
-              op: 'in',
-              data: ''
-          }
+        else if (this.type === 'all') {
+          return {}
         }
       }
     },

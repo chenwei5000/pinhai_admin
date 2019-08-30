@@ -3,15 +3,24 @@
   <div class="ph-table">
 
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+    <el-form :inline="true"
+             :model="searchParam"
+             ref="searchForm"
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+        <el-input v-model="searchParam.code.value" size="mini" style="width: 120px" placeholder="请输入"></el-input>
       </el-form-item>
 
+      <el-form-item label="物流单号">
+        <el-input v-model="searchParam.trackNumber.value" size="mini" style="width: 120px"
+                  placeholder="请输入物流单号"></el-input>
+      </el-form-item>
+
+
       <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" style="width: 120px"  placeholder="请选择">
+        <el-select filterable v-model="searchParam.supplierId.value" size="mini"
+                   style="width: 100px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -21,7 +30,9 @@
       </el-form-item>
 
       <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value" style="width: 120px"  placeholder="请选择">
+        <el-select filterable v-model="searchParam.warehouseId.value"
+                   size="mini"
+                   style="width: 100px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -29,6 +40,17 @@
           ></el-option>
         </el-select>
       </el-form-item>
+
+      <el-form-item label="状态">
+        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 100px" placeholder="请选择状态">
+          <el-option
+            v-for="(item,idx) in statusSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
@@ -54,60 +76,74 @@
       id="table"
     >
       <el-table-column prop="code" label="编码" min-width="150" fixed="left"></el-table-column>
+
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
+            ? 'warning' : scope.row.status === 2
+            ? 'danger' : scope.row.status === 6
             ? 'info' : 'success'"
             disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="procurementPlan.name" label="发货计划" min-width="200" >
-        <!-- <template slot-scope="scope">
-          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
+
+      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
+      <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
+
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
+
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.trackNumber">
+
             <div>
-              完成度：{{ scope.row.qty.completeness }}%<BR/>
-              总件数：{{ scope.row.qty.qty }} 件<BR/>
-              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
-              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
-              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
+              物流单号: {{ scope.row.trackNumber}}<br>
+              物流公司: {{ scope.row.channel}}<br>
+              车牌: {{ scope.row.plateNumber }}<br>
+              联系人: {{ scope.row.linkman }}<br>
+              电话: {{ scope.row.tel }}<br>
             </div>
             <span slot="reference">
-              <el-progress :text-inside="true" :stroke-width="16"
-                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
-                           status="success"
-              ></el-progress>
+              物流单号: {{ scope.row.trackNumber}}
             </span>
+
           </el-popover>
-
-        </template> -->
+          <span v-else>
+            无
+          </span>
+        </template>
       </el-table-column>
-      <el-table-column prop="team.name" label="跟单团队" min-width="100"></el-table-column>
-      <el-table-column prop="merchandiser" label="跟单员" min-width="100"></el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" min-width="120"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="120"></el-table-column>
-      <el-table-column prop="currency.name" label="结算货币" min-width="120"></el-table-column>
-      <el-table-column prop="settlementMethodName" label="结算方式" min-width="120"></el-table-column>
-      <el-table-column prop="accountPeriod" label="账期" min-width="120"></el-table-column>
-      <el-table-column prop="formatOtdTime" label="预计完成日期" min-width="120"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" min-width="120"></el-table-column>
 
-      <!-- <el-table-column prop="id" label="ID" width="90"></el-table-column> -->
+      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
+
+      <el-table-column prop="remark" label="备注" width="130">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
+                      v-if="scope.row.remark && scope.row.remark.length > 10">
+            <div v-html="scope.row.formatRemark"></div>
+            <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.remark }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="id" label="ID" width="90"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+                     @click="onDefaultEdit(scope.row)" type="primary">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
+                     icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
         </template>
@@ -136,8 +172,6 @@
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
-
-
   </div>
 
 </template>
@@ -145,11 +179,11 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
+  import editDialog from './edit/dialog2'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
-import warehouseModel from '../../../api/warehouse';
+  import warehouseModel from '../../../api/warehouse';
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -177,28 +211,19 @@ import warehouseModel from '../../../api/warehouse';
     },
     computed: {
       ...mapGetters([
-        'device','rolePower'
+        'device', 'rolePower'
       ]),
 
-      // 显示进度条
-      hasCompleteness() {
-        if (this.type === 'editing') {
-          return false;
-        }
-        //待审核
-        else if (this.type === 'auditing') {
-          return false;
-        }
-        //执行中
-        else if (this.type === 'executing') {
-          return true;
-        }
-        else if (this.type === 'complete') {
-          return true;
-        }
-        else if (this.type === 'all') {
-          return true;
-        }
+      hasDelete() {
+        return true;
+      },
+
+      hasEdit() {
+        return true;
+      },
+
+      hasOperation() {
+        return this.hasDelete || this.hasEdit;
       }
     },
 
@@ -207,24 +232,19 @@ import warehouseModel from '../../../api/warehouse';
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: false,
         // 多选记录对象
         selected: [],
-
         //分页
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [1, 20, 50, 100],
+        paginationSizes: [20, 50, 100],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementOrders', // 资源URL
-        countUrl: '/procurementOrders/count', // 资源URL
-        relations: ["creator", "procurementPlan", "supplier", "team", "warehouse", "currency"],  // 关联对象
+        url: '/procurementShippedOrders', // 资源URL
+        countUrl: '/procurementShippedOrders/count', // 资源URL
+        relations: ["creator", "supplier", "warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -232,17 +252,14 @@ import warehouseModel from '../../../api/warehouse';
 
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
-        categorySelectOptions: [],
         supplierSelectOptions: [],
         warehouseSelectOptions: [],
         searchParam: {
-          categoryId: {value: null, op: 'in', id: 'categoryId'},
-          name: {value: null, op: 'bw', id: 'name'},
-          limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
+          trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
           supplierId: {value: null, op: 'eq', id: 'supplierId'},
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
           status: {value: null, op: 'eq', id: 'status'},
-          code:  {value: null, op: 'bw', id: 'name'},
+          code: {value: null, op: 'bw', id: 'code'},
         },
 
         //弹窗
@@ -318,22 +335,7 @@ import warehouseModel from '../../../api/warehouse';
       initData() {
         this.supplierSelectOptions = supplierModel.getSelectOptions();
         this.warehouseSelectOptions = warehouseModel.getSelectOptions();
-
-        // if (this.type === 'editing') {
-        // }
-        // //待审核 无删除
-        // else if (this.type === 'auditing') {
-        //   this.hasDelete = false;
-        // }
-        // //执行中 无删除
-        // else if (this.type === 'executing') {
-        //   this.hasDelete = false;
-        // }//完成 无删除
-        // else if (this.type === 'complete') {
-        //   this.hasDelete = false;
-        // }
-        // else if (this.type === 'all') {
-        // }
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
       },
 
       // 获取表格的高度
@@ -373,15 +375,11 @@ import warehouseModel from '../../../api/warehouse';
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
         this.page = 1
-        //TODO:根据实际情况调整
-        this.searchParam.categoryId.value = null;
-        this.searchParam.limitTime.value = null;
-        this.searchParam.name.value = null;
+        this.searchParam.trackNumber.value = null;
         this.searchParam.status.value = null;
         this.searchParam.code.value = null;
         this.searchParam.supplierId.value = null;
         this.searchParam.warehouseId.value = null;
-
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
 
@@ -395,42 +393,18 @@ import warehouseModel from '../../../api/warehouse';
          * @event reset
          */
         this.$emit('reset')
-
-        //TODO：此处报错未处理
-        // this.$emit(
-        //   'update:customQuery',
-        //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-        // )
       },
 
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
-        // 代码示例
-        // if (row.exemple === 0) {
-        //   return "0-普通"
-        // }
-        // else if (row.exemple === 1) {
-        //   return "1-热销"
-        //
-        // }
-        // else if (row.exemple === 2) {
-        //   return "2-爆款"
-        // }
-        // else {
-        //   return row.exemple;
-        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
-        // 代码示例 return 为css定义的样式 -row 结尾
-        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
-        //   return 'warning-row';
-        // }
         return '';
       },
 
@@ -501,7 +475,6 @@ import warehouseModel from '../../../api/warehouse';
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -519,7 +492,6 @@ import warehouseModel from '../../../api/warehouse';
           })
           .catch(err => {
           })
-
         //获取数据
         this.global.axios
           .get(url + params)
@@ -640,10 +612,11 @@ import warehouseModel from '../../../api/warehouse';
         }).catch(er => {
           /*取消*/
         })
+
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(object) {
+      modifyCBEvent(status) {
         this.getList();
       },
     }
@@ -651,32 +624,6 @@ import warehouseModel from '../../../api/warehouse';
 </script>
 
 <style type="text/less" lang="scss" scoped>
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 230px !important;
-    }
-  }
+  
 </style>
 

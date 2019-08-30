@@ -7,11 +7,11 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入"></el-input>
+        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" style="width: 120px"  placeholder="请选择">
+        <el-select filterable v-model="searchParam.supplierId.value" style="width: 120px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -21,7 +21,7 @@
       </el-form-item>
 
       <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value" style="width: 120px"  placeholder="请选择">
+        <el-select filterable v-model="searchParam.warehouseId.value" style="width: 120px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -66,23 +66,36 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="120">
-        <template slot-scope="scope">
-        物流单号: {{ scope.row.trackNumber}}<br>
-        物流公司:  {{ scope.row.channel}}<br>
-        车牌:  {{ scope.row.plateNumber }}<br>
-        联系人: {{ scope.row.linkman }}<br>
-        电话: {{ scope.row.tel }}<br>
-        </template>
+      <el-table-column prop="procurementPlan.name" label="发货计划" min-width="200">
+        <!-- <template slot-scope="scope">
+          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
+            <div>
+              完成度：{{ scope.row.qty.completeness }}%<BR/>
+              总件数：{{ scope.row.qty.qty }} 件<BR/>
+              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
+              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
+              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
+            </div>
+            <span slot="reference">
+              <el-progress :text-inside="true" :stroke-width="16"
+                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
+                           status="success"
+              ></el-progress>
+            </span>
+          </el-popover>
 
-
+        </template> -->
       </el-table-column>
-      <el-table-column prop="shippingPrice" label="运费" min-width="120"></el-table-column>
-      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
-      <el-table-column prop="remark" label="备注" min-width="120"></el-table-column>
+      <el-table-column prop="team.name" label="跟单团队" min-width="100"></el-table-column>
+      <el-table-column prop="merchandiser" label="跟单员" min-width="100"></el-table-column>
+      <el-table-column prop="supplier.name" label="供货商" min-width="120"></el-table-column>
+      <el-table-column prop="warehouse.name" label="收货仓库" min-width="120"></el-table-column>
+      <el-table-column prop="currency.name" label="结算货币" min-width="120"></el-table-column>
+      <el-table-column prop="settlementMethodName" label="结算方式" min-width="120"></el-table-column>
+      <el-table-column prop="accountPeriod" label="账期" min-width="120"></el-table-column>
+      <el-table-column prop="formatOtdTime" label="预计完成日期" min-width="120"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" min-width="120"></el-table-column>
+
       <!-- <el-table-column prop="id" label="ID" width="90"></el-table-column> -->
 
       <!--默认操作列-->
@@ -123,6 +136,7 @@
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
+
   </div>
 
 </template>
@@ -130,11 +144,10 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog2'
-  import phEnumModel from '@/api/phEnum'
+  import editDialog from '../edit/dialog'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
-import warehouseModel from '../../../api/warehouse';
+  import warehouseModel from '@/api/warehouse';
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -162,7 +175,7 @@ import warehouseModel from '../../../api/warehouse';
     },
     computed: {
       ...mapGetters([
-        'device','rolePower'
+        'device', 'rolePower'
       ]),
 
       // 显示进度条
@@ -207,9 +220,9 @@ import warehouseModel from '../../../api/warehouse';
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementShippedOrders', // 资源URL
-        countUrl: '/procurementShippedOrders/count', // 资源URL
-        relations: ["creator", "supplier", "warehouse"],  // 关联对象
+        url: '/procurementOrders', // 资源URL
+        countUrl: '/procurementOrders/count', // 资源URL
+        relations: ["creator", "procurementPlan", "supplier", "team", "warehouse", "currency"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -227,7 +240,7 @@ import warehouseModel from '../../../api/warehouse';
           supplierId: {value: null, op: 'eq', id: 'supplierId'},
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
           status: {value: null, op: 'eq', id: 'status'},
-          code:  {value: null, op: 'bw', id: 'name'},
+          code: {value: null, op: 'bw', id: 'name'},
         },
 
         //弹窗
@@ -486,6 +499,7 @@ import warehouseModel from '../../../api/warehouse';
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
+
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -503,6 +517,7 @@ import warehouseModel from '../../../api/warehouse';
           })
           .catch(err => {
           })
+
         //获取数据
         this.global.axios
           .get(url + params)
@@ -623,12 +638,11 @@ import warehouseModel from '../../../api/warehouse';
         }).catch(er => {
           /*取消*/
         })
-
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(status) {
-          this.getList();
+      modifyCBEvent(object) {
+        this.getList();
       },
     }
   }

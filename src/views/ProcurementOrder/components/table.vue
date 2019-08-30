@@ -5,7 +5,6 @@
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
     <el-form :inline="true" :model="searchParam"
              ref="searchForm"
-             id="filter-form"
              inline-message
              @submit.native.prevent>
 
@@ -111,7 +110,7 @@
             <span slot="reference">{{ scope.row.procurementPlan.note ? scope.row.procurementPlan.note.substr(0,8)+'..' : '' }}</span>
           </el-popover>
           <span v-else>
-            {{ scope.row.procurementPlan.formatNote }}
+            {{ scope.row.procurementPlan.note }}
           </span>
         </template>
       </el-table-column>
@@ -636,10 +635,5 @@
 
 
 <style type="text/less" lang="scss" scoped>
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 200px !important;
-    }
-  }
 </style>
 
