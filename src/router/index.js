@@ -136,7 +136,12 @@ export const constantRoutes = [
       }
     ]
   },
-  
+  {
+    path: '/procurementShippedOrder/print',
+    component: () => import('@/views/ProcurementShippedOrder/print'),
+    hidden: true
+  },
+
 ]
 
 /**

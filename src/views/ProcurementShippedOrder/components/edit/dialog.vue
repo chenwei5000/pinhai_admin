@@ -9,7 +9,11 @@
 
       <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
       <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" @click="onShipped">执行发货</el-button>
+
+      <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute" >
       <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
+      </router-link>
+
       <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
 
     </el-row>
@@ -159,7 +163,6 @@
       },
       //打印发货单
       onPrint() {
-        console.log("打印了发货单")
       },
 
       // 业务
