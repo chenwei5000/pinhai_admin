@@ -85,10 +85,16 @@
           <el-col :md="14">
             <el-form-item label="装箱数" prop="numberOfCarton">
 
-              <el-input v-model.trim="detailItem.numberOfCarton"
-                        style="width: 200px" placeholder="请填写装箱数" clearable></el-input>
+              <el-input-number v-model="detailItem.numberOfCarton"
+                               size="small"
+                               style="width: 200px;"
+                               :precision="0"
+                               :min="1"
+                               :step="1"
+                               :max="1000" label="请填写装箱数">
+              </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="一箱有多少个产品.不输入使用产品上默认的装箱数" placement="right">
+              <el-tooltip class="item" effect="light" content="一箱有多少个产品." placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>

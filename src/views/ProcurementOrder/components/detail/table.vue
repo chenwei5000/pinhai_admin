@@ -87,7 +87,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="productName" label="名称" width="200">
+      <el-table-column prop="product.name" label="名称" width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
                       v-if="scope.row.product.name && scope.row.product.name.length > 17">

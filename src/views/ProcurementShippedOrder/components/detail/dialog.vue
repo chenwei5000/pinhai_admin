@@ -2,165 +2,178 @@
   <el-dialog :title="dialogTitle"
              append-to-body
              v-if="dialogVisible"
-             width="80%"
-             top="20px"
+             class="ph-dialog"
+             width="70%"
+             top="10vh"
+             @close='closeDialog'
              :visible.sync="dialogVisible">
 
-    <!-- 编辑表单 TODO:-->
-    <el-form :rules="rules" :model="detailItem" status-icon inline
-             ref="detailItem" label-position="right"
-             label-width="120px"
-             v-loading="loading"
-    >
-      <el-row>
-        <el-col :md="10">
-          <el-form-item label="SKU" prop="skuCode">
-            <el-input v-model.trim="detailItem.skuCode"
-                      style="width: 220px" placeholder="请填写SKU" clearable :disabled="true"></el-input>
+    <div class="ph-form">
+      <!-- 编辑表单 TODO:-->
+      <el-form :rules="rules" :model="detailItem" status-icon inline
+               ref="detailItem" label-position="right"
+               label-width="120px"
+               v-loading="loading"
+      >
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="SKU" prop="skuCode">
+              <span v-if="!hasAdd" style="font-size: 12px">{{detailItem.skuCode}}</span>
 
-            <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-          </el-form-item>
-        </el-col>
+              <el-input v-else v-model.trim="detailItem.skuCode"
+                        style="width: 200px" placeholder="请填写SKU" clearable>
 
-        <el-col :md="14">
-          <el-form-item label="产品名" prop="cartonQty">
-            <el-input v-model="detailItem.productName"
-                             :max="100000" label="产品名" :disabled="true">
-             
-            </el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
+              </el-input>
 
-      <el-row>
-        <el-col :md="10">
-          <el-form-item label="箱规" prop="cartonSpecId">
+              <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
 
-            <el-select filterable v-model="detailItem.cartonSpecCode" placeholder="外箱包装材料规格,可筛选"
-                       style="width: 220px">
-              <el-option
-                v-for="(item,idx) in cartonspecSelectOptions"
-                :label="item.label" :value="item.value"
-                :key="idx"
-              ></el-option>
-            </el-select>
+          <el-col :md="14">
+            <el-form-item label="产品名" prop="productName">
+              <span style="font-size: 12px">{{detailItem.productName}}</span>
+            </el-form-item>
+          </el-col>
 
-            <el-tooltip class="item" effect="light" content="产品外箱包装材料规格。不输入使用产品上默认的箱规" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-          </el-form-item>
-        </el-col>
+        </el-row>
 
-        <el-col :md="14">
-          <el-form-item label="装箱数" prop="numberOfCarton">
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="箱规" prop="cartonSpecId">
 
-            <el-input v-model.trim="detailItem.numberOfCarton"
-                      style="width: 200px" placeholder="请填写装箱数" clearable></el-input>
+              <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
+                         style="width: 200px">
+                <el-option
+                  v-for="(item,idx) in cartonspecSelectOptions"
+                  :label="item.label" :value="item.value"
+                  :key="idx"
+                ></el-option>
+              </el-select>
 
-            <el-tooltip class="item" effect="light" content="一箱有多少个产品.不输入使用产品上默认的装箱数" placement="right">
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-          </el-form-item>
-        </el-col>
-      </el-row>
+              <el-tooltip class="item" effect="light" content="产品外箱包装材料规格。" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
 
-      <el-row>
-        <el-col :md="10">
-          <el-form-item label="采购数量(箱)" prop="procurementBoxQty">
-            <el-input v-model="detailItem.procurementBoxQty"
-                             :max="100000" label="采购数量(箱)">
-            </el-input>
-          </el-form-item>
-        </el-col>
+          <el-col :md="14">
+            <el-form-item label="装箱数" prop="numberOfCarton">
 
-        <el-col :md="14">
-          <el-form-item label="应发箱数" prop="shippedCartonQty">
-            <el-input v-model="detailItem.shippedCartonQty"
-                             :max="100000" label="应发箱数">
-            </el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
+              <el-input-number v-model="detailItem.numberOfCarton"
+                               size="small"
+                               style="width: 200px;"
+                               :precision="0"
+                               :min="1"
+                               :step="1"
+                               :max="1000" label="请填写装箱数">
+              </el-input-number>
 
-      <el-row>
-        <el-col :md="10">
-          <el-form-item label="出货件数" prop="sevenSalesCount">
+              <el-tooltip class="item" effect="light" content="一箱有多少个产品." placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
 
-            <el-input v-model.trim="detailItem.shippedQty"
-                      style="width: 220px" placeholder="出货件数" clearable></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
+        </el-row>
 
-      <el-row>
-        <el-col :md="24">
-          <el-form-item label="备注" prop="priorityNote">
-            <el-col :span="22">
-              <el-input type="textarea" v-model="detailItem.shippedNote"
-                        maxlength="500"
-                        show-word-limit
-                        rows="3"
-                        cols="80"
-                        ></el-input>
-            </el-col>
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="应发箱数" prop="shippedCartonQty">
+              <el-input-number v-model="detailItem.shippedCartonQty"
+                               size="small"
+                               style="width: 200px;"
+                               :precision="3"
+                               :min="1"
+                               :step="1"
+                               :max="1000000" label="请填写应发箱数">
+              </el-input-number>
 
-            <el-col :span="2">
 
-              <el-tooltip class="item" effect="light" placement="right">
-                <div slot="content">按时间维度定义优先要求。格式如下：
-                  <HR/>
-                  2018-08-16 : 5箱<BR/>
-                  2018-08-26 : 45件<BR/>
-                  2018-09-16 : 2箱<BR/>
-                </div>
-                </div>
+              <el-tooltip class="item" effect="light" content="应发箱数,支持3位小树。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
 
-            </el-col>
+            </el-form-item>
+          </el-col>
 
-          </el-form-item>
-        </el-col>
-      </el-row>
+          <el-col :md="14">
+            <el-form-item :label="shippedQtyTitle" prop="shippedQty">
+              <span style="font-size: 12px">{{shippedQty}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-      <el-row>
-        <el-col :md="24">
-          <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
-              保存
-            </el-button>
-          </el-row>
-        </el-col>
-      </el-row>
+        <el-row>
+          <el-col :md="24">
+            <el-form-item label="备注" prop="priorityNote">
+              <el-col :span="22">
+                <el-input type="textarea" v-model="detailItem.shippedNote"
+                          maxlength="500"
+                          show-word-limit
+                          rows="3"
+                          cols="80"
+                ></el-input>
+              </el-col>
 
-    </el-form>
+              <el-col :span="2">
+
+                <el-tooltip class="item" effect="light" placement="right">
+                  <div slot="content">发货备注</div>
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+
+              </el-col>
+
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button type="warning" @click="onLoadProduct" v-if="hasAdd" :loading="confirmLoading">获取产品默认信息</el-button>
+      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog">取 消</el-button>
+    </div>
+
   </el-dialog>
 
 </template>
 
 <script>
   import cartonspecModel from '@/api/cartonspec'
-  import phEnumModel from '@/api/phEnum'
   import validRules from '@/components/validRules'
 
   export default {
     components: {},
     props: {
-      primaryId: {
-        type: Number,
+      primary: {
+        type: [Object],
         default: null
       }
     },
     computed: {
       dialogTitle() {
-        if (this.detailItemId == null) {
+        if (this.hasAdd) {
           return "添加发货计划明细";
         }
         else {
           return "修改发货计划明细";
         }
+      },
+      hasAdd() {
+        return (this.detailItemId == null);
+      },
+      procurementBoxQtyTitle() {
+        return `采购数量(${this.unit})`;
+      },
+      shippedQtyTitle() {
+        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
+      },
+      shippedQty() {
+        return this.calShippedQty();
       }
     },
 
@@ -180,13 +193,22 @@
         detailItemId: null,
         //明细对象
         detailItem: {},
-
         cartonspecSelectOptions: [],
-        prioritySelectOptions: [],
+
+        unit: "箱",
 
         // 字段验证规则 TODO:
         rules: {
           skuCode: [
+            validRules.required
+          ],
+          cartonSpecId: [
+            validRules.required
+          ],
+          numberOfCarton: [
+            validRules.required
+          ],
+          shippedCartonQty: [
             validRules.required
           ]
         },
@@ -209,9 +231,6 @@
         // 箱规
         this.cartonspecSelectOptions = cartonspecModel.getSelectOptions();
 
-        // 优先级
-        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
-
         // 明细数据
         if (this.detailItemId) {
           this.loading = true
@@ -228,8 +247,13 @@
               // 转字段
               this.detailItem.productName = data.product.name;
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.priority = data.priority + '';
-              console.log("dflkjsdklfjdslk", this.detailItem)
+              if (data.cartonSpecId == -3) { //原料采购
+                this.unit = data.product.unit;
+              }
+              this.$forceUpdate();
+              this.loading = false
+            })
+            .catch(err => {
               this.loading = false
             })
         }
@@ -237,15 +261,22 @@
           // 设置添加默认值
           this.detailItem = {
             skuCode: '',
-            priorityNote: '',
             cartonSpecId: null,
-            priority: '2',
-            safetyStockWeek: 10,
             numberOfCarton: null,
-            cartonQty: 1,
-            procurementPlanId: this.primaryId
+            shippedCartonQty: 1,
+            procurementShippedOrderId: this.primary.id
           }
 
+        }
+      },
+
+      // 计算发货件数
+      calShippedQty() {
+        if (this.detailItem.shippedCartonQty && this.detailItem.numberOfCarton) {
+          return (this.detailItem.shippedCartonQty * this.detailItem.numberOfCarton).toFixed(0);
+        }
+        else {
+          return 0;
         }
       },
 
@@ -256,6 +287,47 @@
         this.initData();
       },
 
+      closeDialog() {
+        this.dialogVisible = false;
+        this.loading = false;
+        this.confirmLoading = false;
+        this.detailItemId = null;
+        this.detailItem = {};
+        this.order = null;
+        this.unit = "箱";
+      },
+
+      onLoadProduct() {
+        if (!this.detailItem.skuCode) {
+          this.$message.error("请输入产品SKU");
+        }
+        else {
+          this.loading = true;
+          this.confirmLoading = true;
+          let url = `/products/sku/${this.detailItem.skuCode}`;
+          this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data
+              let data = res || {}
+
+              this.detailItem.cartonSpecId = data.cartonSpecId + '';
+              this.detailItem.numberOfCarton = data.numberOfCarton;
+              console.log(data);
+              // 转字段
+              this.detailItem.productName = data.name;
+              if (data.cartonSpecId == -3) { //原料采购
+                this.unit = data.unit;
+              }
+              this.confirmLoading = false;
+              this.loading = false;
+            })
+            .catch(err => {
+              this.loading = false;
+              this.confirmLoading = false;
+            })
+        }
+      },
       // 保存
       onSave() {
         this.$refs.detailItem.validate(valid => {

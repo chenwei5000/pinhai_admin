@@ -1,7 +1,5 @@
 <template>
   <div>
-
-
     <el-upload
       class="upload-demo"
       :action="uploadUrl"
@@ -10,7 +8,7 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" v-if="this.primary.status === 3">+ 添加附件</el-button>
+      <el-button class="button-new-tag">+ 添加附件</el-button>
     </el-upload>
 
   </div>
@@ -90,7 +88,7 @@
       remove(file){
         if (this.primary) {
           ///attachments/procurementPlan/ff8080816c2e2a89016c855d7be40001?accessToken=MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg==
-          let url = `${this.global.generateUrl(this.url)}/${file.id}?accessToken=${this.$store.state.user.token}`;
+          let url = `${this.global.generateUrl(this.url)}/${file.id}`;
           this.global.axios
             .delete(url)
             .then(resp => {
