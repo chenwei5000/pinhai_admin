@@ -58,7 +58,7 @@
     </el-collapse>
 
     <!-- 弹窗框 -->
-    <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
+    <phStatus statusName="ProcurementOrderStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
               :objStatus="primary.status"></phStatus>
 
     <auditing ref="auditing" @saveAuditCBEvent="saveAuditCBEvent"></auditing>

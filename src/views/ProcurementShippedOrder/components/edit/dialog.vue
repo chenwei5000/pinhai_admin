@@ -9,7 +9,8 @@
 
       <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
       <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" @click="onShipped">执行发货</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
+      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
+      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
 
     </el-row>
 
@@ -39,6 +40,9 @@
 
     <!-- 弹窗框 -->
     <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"> </shippedDialog>
+    <phStatus statusName="ProcurementShippedOrderStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
+              :objStatus="primary.status"></phStatus>
+
 
   </el-dialog>
 </template>
@@ -49,6 +53,7 @@
   import attachment from './attachment'
   import person from './person'
   import shippedDialog from './shippedDialog'
+  import phStatus from '@/components/PhStatus'
 
   export default {
     components: {
@@ -56,7 +61,8 @@
       itemTable,
       attachment,
       person,
-      shippedDialog
+      shippedDialog,
+      phStatus
     },
     props: {},
     computed: {
@@ -68,6 +74,10 @@
           return false;
         }
       },
+      hasAdmin(){
+        return true;
+      },
+
       hasWithdraw(){
         if ([4].indexOf(this.primary.status) > -1) {
           return true;
@@ -195,9 +205,35 @@
       onShipped() {
         this.$refs.shippedDialog.openDialog(this.primary);
       },
-
       onShippedCBEvent(object){
         this.initData();
+      },
+
+      // 管理员修改状态
+      onStatus() {
+        this.$refs.phStatus.openDialog();
+      },
+      saveStatusCBEvent(status) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let url = `/procurementShippedOrders/status/${this.primaryId}/${status}`;
+        this.global.axios.put(url)
+          .then(resp => {
+            this.$refs.phStatus.closeDialog();
+            this.$message.info('操作成功!');
+            loading.close();
+            this.initData();
+            // 继续向父组件抛出事件 修改成功刷新列表
+            this.$emit("modifyCBEvent");
+          })
+          .catch(err => {
+            loading.close();
+          });
       },
 
       closeDialog() {
