@@ -46,15 +46,60 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="sortNum" label="序号" min-width="50" ></el-table-column>
-      <el-table-column prop="product.skuCode" label="SKU编码" sortable min-width="200"></el-table-column>
-      <el-table-column prop="product.name" label="产品名" min-width="100"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" min-width="100"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" min-width="100"></el-table-column>
-      <el-table-column prop="procurementBoxQty" sortable label="采购数量(箱)" min-width="130"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="100"></el-table-column>
-      <el-table-column prop="shippedQty" sortable label="出货件数" min-width="120"></el-table-column>
-      <el-table-column prop="shippedNote" sortable label= "备注" min-width="200"></el-table-column>
+      <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
+
+      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
+            <div v-html="scope.row.product.skuCode"></div>
+            <span slot="reference">{{
+              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.skuCode }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="product.name" label="名称" width="200">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.name && scope.row.product.name.length > 17">
+            <div v-html="scope.row.product.name"></div>
+            <span slot="reference">{{
+              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.product.name }}
+            </span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+
+      <el-table-column prop="procurementBoxQty" sortable :label="procurementBoxQtyTitle"
+                       min-width="110"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110"></el-table-column>
+      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110"></el-table-column>
+
+      <el-table-column prop="remark" label="备注" width="130">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+                      v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
+            <div v-html="scope.row.formatShippedNote"></div>
+            <span slot="reference">{{ scope.row.shippedNote ? scope.row.shippedNote.substr(0,8)+'..' : '' }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.shippedNote }}
+          </span>
+        </template>
+      </el-table-column>
+
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
@@ -75,7 +120,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primaryId="primary.id">
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
     </itemDialog>
   </div>
 
@@ -86,7 +131,6 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
 
   export default {
@@ -102,8 +146,14 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower'
-      ])
+        'device', 'rolePower'
+      ]),
+      procurementBoxQtyTitle() {
+        return `采购数量(${this.unit})`;
+      },
+      shippedQtyTitle() {
+        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
+      }
     },
     filters: {
       currency: currency
@@ -127,17 +177,15 @@
         hasEdit: true,
         hasDelete: true,
 
+        unit: "箱",
+
         // 多选记录对象
         selected: [],
 
         //数据 TODO: 根据实际情况调整
         url: "/procurementShippedOrderItems", // 资源URL
-        downloadUrl: "", //下载Url
         searchParam: {
-          skuCode: null,
-          category: null,
-          status: null,
-          priority: null,
+          skuCode: null
         },
         filters: [
           {
@@ -146,8 +194,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        // sort: "product.groupName asc, procurementShippedOrderItem.sortNum",
-        relations: ["cartonSpec", "product", "product.currency", "product.category", "procurementOrderItem"],  // 关联对象
+        relations: ["cartonSpec", "product", "procurementOrderItem"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -158,9 +205,9 @@
 
         // 表格工具条配置
         toolbarConfig: {
-          hasEdit: true,
+          hasEdit: false,
           hasDelete: false,
-          hasAdd: false,
+          hasAdd: [1, 3].indexOf(this.primary.status) != -1,
           hasExportTpl: false,
           hasExport: false,
           hasImport: false,
@@ -183,21 +230,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-
-        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
-
-        // 设置下载链接
-        this.downloadUrl = this.url;
-        if (this.filters && this.filters.length > 0) {
-          this.downloadUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
-        }
-
       },
 
       /********************* 表格相关方法  ***************************/
@@ -285,12 +317,6 @@
           params += "&relations=" + JSON.stringify(this.relations);
         }
 
-        // // 处理排序相关
-        // if (this.sort && this.sort.length > 0){
-        //   params += "&sort=" + this.sort;
-        // }
-
-
         // 请求开始
         this.loading = true
 
@@ -301,6 +327,11 @@
             let res = resp.data
             let data = res || []
 
+            data.forEach(r => {
+              if (r.cartonSpecId == -3) { //原料采购
+                this.unit = r.product.unit;
+              }
+            });
             this.data = data
             this.search()
 
@@ -331,35 +362,10 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
-        if (this.searchParam.category != null && this.searchParam.category != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.product && item.product.category &&
-                item.product.category.name.indexOf(this.searchParam.category) !== -1) {
-                return true;
-              }
-            });
-        }
         if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
           this.tableData = this.tableData.filter(
             item => {
               if (item.product && item.product.skuCode.indexOf(this.searchParam.skuCode) !== -1) {
-                return true;
-              }
-            });
-        }
-        if (this.searchParam.status != null && this.searchParam.status != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.status == this.searchParam.status) {
-                return true;
-              }
-            });
-        }
-        if (this.searchParam.priority != null && this.searchParam.priority != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.priority == this.searchParam.priority) {
                 return true;
               }
             });
@@ -372,9 +378,6 @@
 
         //TODO:根据实际情况调整
         this.searchParam.skuCode = null;
-        this.searchParam.category = null;
-        this.searchParam.priority = null;
-        this.searchParam.status = null;
 
         this.search();
       },
@@ -392,9 +395,19 @@
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
+              this.loading = true;
 
-              this.getList();
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
 
+                this.loading = false;
+              })
+                .catch(err => {
+                  this.loading = false;
+                })
               done();
             } else done()
           }
@@ -435,20 +448,6 @@
         })
       },
       onToolBarDownloadData() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
-          this.loading = false;
-        })
       },
       onToolBarImportData() {
 
@@ -469,41 +468,6 @@
     display: table-cell;
     vertical-align: middle;
     padding: 0 10px;
-  }
-
-  .el-form-item {
-    //margin-bottom: 7px;
-  }
-
-  .ph-table {
-    width: 100%;
-  }
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(250, 236, 216) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(250, 236, 216) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 230px !important;
-    }
   }
 </style>
 

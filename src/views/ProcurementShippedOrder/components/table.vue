@@ -121,7 +121,7 @@
 
       <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
+          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                       v-if="scope.row.remark && scope.row.remark.length > 10">
             <div v-html="scope.row.formatRemark"></div>
             <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>
@@ -179,7 +179,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog2'
+  import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
@@ -624,6 +624,6 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
-  
+
 </style>
 

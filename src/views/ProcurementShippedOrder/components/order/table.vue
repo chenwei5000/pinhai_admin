@@ -144,7 +144,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from '../edit/dialog'
+  import editDialog from './dialog'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
   import warehouseModel from '@/api/warehouse';

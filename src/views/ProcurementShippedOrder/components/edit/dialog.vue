@@ -1,21 +1,15 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px"
+             class="ph-dialog" @close='closeDialog' fullscreen>
 
-    <el-row style="margin-bottom: 20px;">
+    <el-row
+      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
 
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
-
-      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
-      </el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
-
-      <el-button type="primary" icon="el-icon-user-solid" v-if="hasExecute" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="hasExecute" @click="onShare">分享</el-button>
+      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" @click="onShipped">执行发货</el-button>
+      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
 
     </el-row>
 
@@ -24,62 +18,88 @@
 
       <el-collapse-item name="infoFrom">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent"  v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购单内容</div>
-        <itemTable ref="itemTable" :primary="primary"></itemTable>
+        <div slot="title" class="title">2. 发货计划内容</div>
+        <itemTable ref="itemTable"  v-if="primaryComplete" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-
-        <attachment ref="attachment" :primary="primary"></attachment>
-
+        <attachment ref="attachment"  v-if="primaryComplete" :primary="primary"></attachment>
       </el-collapse-item>
 
-
+      <el-collapse-item name="person" style="margin-top: 10px">
+        <div slot="title" class="title">4. 指派仓库负责人</div>
+        <person @reloadCBEvent="reloadCBEvent" ref="person" v-if="primaryComplete" :primary="primary"></person>
+      </el-collapse-item>
     </el-collapse>
 
-  </el-dialog>
+    <!-- 弹窗框 -->
+    <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"> </shippedDialog>
 
+  </el-dialog>
 </template>
 
 <script>
   import infoFrom from './form'
   import itemTable from '../detail/table'
   import attachment from './attachment'
+  import person from './person'
+  import shippedDialog from './shippedDialog'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment
+      attachment,
+      person,
+      shippedDialog
     },
     props: {},
     computed: {
       hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
+        if ([3, 4].indexOf(this.primary.status) > -1) {
           return true;
         }
         else {
           return false;
         }
       },
+      hasWithdraw(){
+        if ([4].indexOf(this.primary.status) > -1) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
+      hasShipped(){
+        return this.primary.status == 3;
+      },
       title() {
-        return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        let action = "";
+        if ([1, 3].indexOf(this.primary.status) != -1) {
+          action = "编辑";
+        }
+        else {
+          action = "查看"
+        }
+        return action + '发货计划 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }
     },
 
     data() {
       return {
         primaryId: null,  //主ID
+        primaryComplete: false,
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
-        activeNames: [],   //折叠面板开启项
+        activeNames: ['infoFrom', 'itemTable', 'attachment', 'person'],   //折叠面板开启项
         relations: ["supplier", "warehouse"],
-        url: "/procurementOrders",
+        url: "/procurementShippedOrders"
       }
     },
 
@@ -90,11 +110,13 @@
       this.$nextTick(() => {
       });
     },
+    updated() {
+    },
     methods: {
       initData() {
         if (this.primaryId) {
           //获取计划数据
-        let url = `${this.url}/${this.primaryId}`;
+          let url = `${this.url}/${this.primaryId}`;
           if (this.relations && this.relations.length > 0) {
             url += "?relations=" + JSON.stringify(this.relations);
           }
@@ -104,6 +126,7 @@
               let res = resp.data;
               this.primary = res || {};
               this.dialogVisible = true;
+              this.primaryComplete = true;
             })
             .catch(err => {
             });
@@ -122,31 +145,73 @@
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
+        this.initData();
       },
-      //提交审核
-      onCommit() {
+      //打印发货单
+      onPrint() {
+        console.log("打印了发货单")
       },
-      //同意审核
-      onAgree() {
+
+      // 业务
+      business(title, bAction, message, note) {
+        this.$confirm(title, '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+              });
+
+              let url = `/procurementShippedOrders/${bAction}/${this.primaryId}`;
+              this.global.axios.put(url, note ? note : ' ')
+                .then(resp => {
+                  done();
+                  this.$message.info(message);
+                  this.initData();
+                  loading.close();
+                  // 继续向父组件抛出事件 修改成功刷新列表
+                  this.$emit("modifyCBEvent");
+                })
+                .catch(err => {
+                  loading.close();
+                });
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
-      //拒绝审核
-      onRefuse() {
-      },
+
       //撤回
       onWithdraw() {
+        this.business('确认撤回该采购发货单吗?', 'withdraw', "操作成功!");
       },
-      //指派
-      onAssign() {
+
+      //确认发货
+      onShipped() {
+        this.$refs.shippedDialog.openDialog(this.primary);
       },
-      //交接
-      onHandover() {
+
+      onShippedCBEvent(object){
+        this.initData();
       },
-      //分享
-      onShare() {
+
+      closeDialog() {
+        this.primaryId = null;
+        this.primary = null;
+        this.dialogVisible = false;
+        this.primaryComplete = false;
       },
-      //完成
-      onComplete() {
-      }
+
+      /* 重新加载 */
+      reloadCBEvent() {
+        this.initData();
+      },
+
     }
   }
 </script>

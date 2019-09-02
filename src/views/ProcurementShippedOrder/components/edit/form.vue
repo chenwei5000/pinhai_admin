@@ -4,80 +4,87 @@
   <el-form :rules="rules" :model="editObject" status-icon inline
            ref="editObject" label-position="right"
            label-width="120px"
+           v-if="initComplete"
            v-loading="loading"
   >
     <el-row>
       <el-col :md="10">
         <el-form-item label="发货计划编码" prop="code">
-          <el-input v-model="editObject.code"
-                    show-word-limit
-                    style="width: 220px" placeholder="请填写编码" clearable></el-input>
+          <span style="font-size: 12px">{{editObject.code}}</span>
         </el-form-item>
       </el-col>
 
-        <el-col :md="10">
+      <el-col :md="14">
         <el-form-item label="发货厂商" prop="supplierId">
-          <el-select v-model="editObject.supplierId" style="width: 220px"
-                      filterable placeholder="请选择" >
-              <el-option
-                v-for="(item , idx)  in supplierSelectOptions"
-                :label="item.label"
-                :value="item.value"
-                :key="idx"
-              ></el-option>
-            </el-select>
-       </el-form-item>
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.supplier.name}}</span>
+          <el-select v-else v-model="editObject.supplierId"
+                     style="width: 220px"
+                     filterable placeholder="请选择">
+            <el-option
+              v-for="(item , idx)  in supplierSelectOptions"
+              :label="item.label"
+              :value="item.value"
+              :key="idx"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-col>
     </el-row>
 
-        <el-row>
+    <el-row>
       <el-col :md="10">
         <el-form-item label="收货仓库" prop="warehouseId">
-          <el-select v-model="editObject.warehouseId" style="width: 220px"
-                      filterable placeholder="请选择" :change="warehouseChange()">
-              <el-option
-                v-for="(item , idx)  in warehouseSelectOptions"
-                :label="item.label"
-                :value="item.value"
-                :key="idx"
-              ></el-option>
-            </el-select>
-       </el-form-item>
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.warehouse.name}}</span>
+          <el-select v-else v-model="editObject.warehouseId" style="width: 220px"
+                     filterable placeholder="请选择收货仓库">
+            <el-option
+              v-for="(item , idx)  in warehouseSelectOptions"
+              :label="item.label"
+              :value="item.value"
+              :key="idx"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-col>
 
       <el-col :md="14">
         <el-form-item label="预计发货时间" prop="expectTime">
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.expectTime}}</span>
           <el-date-picker
+            v-else
             v-model="editObject.expectTime"
             format="yyyy-MM-dd"
             type="date"
-            placeholder="交货截止日"></el-date-picker>
+            placeholder="预计发货时间"></el-date-picker>
         </el-form-item>
       </el-col>
     </el-row>
 
-
-     <el-row>
+    <el-row>
       <el-col :md="10">
-        <el-form-item label="单号" prop="trackNumber">
-          <el-input v-model="editObject.trackNumber"
+        <el-form-item label="物流单号" prop="trackNumber">
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
+          <el-input v-else v-model="editObject.trackNumber"
                     show-word-limit
                     style="width: 220px" placeholder="请填写单号" clearable></el-input>
         </el-form-item>
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="公司" prop="channel">
-          <el-input v-model="editObject.channel"
+        <el-form-item label="物流公司" prop="channel">
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
+          <el-input v-else v-model="editObject.channel"
                     style="width: 220px" placeholder="请填写公司" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
 
-     <el-row>
+    <el-row>
       <el-col :md="10">
         <el-form-item label="车牌" prop="plateNumber">
-          <el-input v-model="editObject.plateNumber"
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.plateNumber}}</span>
+
+          <el-input v-else v-model="editObject.plateNumber"
                     show-word-limit
                     style="width: 220px" placeholder="请填写车牌" clearable></el-input>
         </el-form-item>
@@ -85,22 +92,22 @@
 
       <el-col :md="14">
         <el-form-item label="联系人" prop="linkman">
-          <el-input v-model="editObject.linkman"
+
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
+
+          <el-input v-else v-model="editObject.linkman"
                     style="width: 220px" placeholder="请填写联系人" clearable></el-input>
         </el-form-item>
       </el-col>
+    </el-row>
 
-      <el-col :md="18">
+    <el-row>
+      <el-col :md="24">
         <el-form-item label="电话" prop="tel">
-          <el-input v-model="editObject.tel"
-                    style="width: 220px" placeholder="请填写电话" clearable></el-input>
-        </el-form-item>
-      </el-col>
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
 
-      <el-col :md="22">
-        <el-form-item label="运费" prop="shippingPrice">
-          <el-input v-model="editObject.shippingPrice"
-                    style="width: 220px" placeholder="请填写编运费" clearable></el-input>
+          <el-input v-else v-model="editObject.tel"
+                    style="width: 220px" placeholder="请填写电话" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -108,7 +115,10 @@
     <el-row>
       <el-col :md="24">
         <el-form-item label="备注" prop="note">
-          <el-col :span="22">
+
+          <div v-if="!hasEdit" style="font-size: 12px">{{editObject.formatRemark}}</div>
+
+          <el-col v-else :span="22">
             <el-input type="textarea" v-model="editObject.remark"
                       maxlength="500"
                       show-word-limit
@@ -117,7 +127,7 @@
                       show-word-limit></el-input>
           </el-col>
 
-          <el-col :span="2">
+          <el-col :span="2" v-if="hasEdit">
             <el-tooltip class="item" effect="light" content="备注信息。支持换行！" placement="right">
               <i class="el-icon-question">&nbsp;</i>
             </el-tooltip>
@@ -127,7 +137,7 @@
       </el-col>
     </el-row>
 
-    <el-row>
+    <el-row v-if="hasEdit">
       <el-col :md="24">
         <el-row type="flex" justify="center">
           <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
@@ -143,11 +153,8 @@
 
 <script>
 
-  import categoryModel from '@/api/category'
   import warehouseModel from '@/api/warehouse'
-  import merchantModel from '@/api/merchant'
   import supplierModel from '@/api/supplier'
-  import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
 
   export default {
@@ -158,7 +165,16 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      hasEdit() {
+        if ([1, 3].indexOf(this.primary.status) != -1) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+    },
 
     data() {
       return {
@@ -166,6 +182,7 @@
         loading: false,
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
+        initComplete: false,
 
         // 选择框 TODO:
         warehouseSelectOptions: [],
@@ -206,46 +223,18 @@
         this.loading = true;
         if (this.primary) {
           //获取计划数据
-          this.editObject = this.primary;
+          this.editObject = JSON.parse(JSON.stringify(this.primary));
           //转化时间
-          this.editObject.limitTime = this.primary.formatLimitTime;
-          this.editObject.executeTime = this.primary.formatExecuteTime;
+          this.editObject.expectTime = this.editObject.formatExpectTime;
 
           //转化仓库
-          this.categorySelectOptions = categoryModel.getMineSelectOptions();
-          this.merchantSelectOptions = merchantModel.getSelectOptions();
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
-
           this.editObject.warehouseId = this.editObject.warehouseId + '';
           this.editObject.supplierId = this.editObject.supplierId + '';
 
-
-
-          //设置默认安全库存
-          systemModel.getConfigInfos().then(data => {
-            if (this.editObject.safetyStockWeek == null) {
-              this.editObject.safetyStockWeek = data.safetyStockWeek;
-            }
-            if (this.editObject.vip1SafetyStockWeek == null) {
-              this.editObject.vip1SafetyStockWeek = data.vip1SafetyStockWeek;
-            }
-            if (this.editObject.vip2SafetyStockWeek == null) {
-              this.editObject.vip2SafetyStockWeek = data.vip2SafetyStockWeek;
-            }
-          });
-
-          let flg = true;
-          this.warehouseSelectOptions.forEach(obj => {
-            if (obj.value == "-99") {
-              flg = false;
-            }
-          });
-
-          if (flg) {
-            this.warehouseSelectOptions.unshift({label: '供货商库存', value: "-99"})
-          }
           this.loading = false;
+          this.initComplete = true;
         }
         else {
           this.$message.error("无效的采购计划!");
@@ -256,23 +245,12 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
       onSave() {
-        this.$confirm('注意保存基本信息只会修改对应的参数，不会重新计算明细数据，您是否继续？', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              done();
-              this.modifyObject();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
+        this.modifyObject();
       },
 
       // 创建或修改发货计划
       modifyObject() {
         let _object = JSON.parse(JSON.stringify(this.editObject));
-        console.log("fdfdlfjd", _object)
         this.loading = true;
         this.confirmLoading = true;
 
@@ -282,8 +260,15 @@
             this.$message({type: 'success', message: '操作成功'});
             this.loading = false;
             this.confirmLoading = false;
+
+            //转化时间
+            this.editObject = _newObject;
+            this.editObject.expectTime = this.editObject.formatExpectTime;
+            //转化仓库
+            this.editObject.warehouseId = this.editObject.warehouseId + '';
+            this.editObject.supplierId = this.editObject.supplierId + '';
+
             // 回传消息
-            this.formVisible = false;
             this.$emit("modifyCBEvent", _newObject);
           })
           .catch(err => {
@@ -291,12 +276,6 @@
             this.confirmLoading = false;
           })
       },
-
-      //监听仓库el-select变化
-      warehouseChange(){
-        // this.editObject.warehouseId = this.editObject.warehouse.name;
-
-      }
     }
   }
 </script>
