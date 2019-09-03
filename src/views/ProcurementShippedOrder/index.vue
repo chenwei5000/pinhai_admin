@@ -8,7 +8,7 @@
 
           <!-- TODO: name 根据实际情况修改  -->
 
-          <!--el-tab-pane name="completionDate" lazy>
+          <el-tab-pane name="completionDate" lazy>
             <span slot="label">
               <i class="el-icon-date"></i> 确认完成日期
             </span>
@@ -17,7 +17,6 @@
             </keep-alive>
           </el-tab-pane>
 
-
           <el-tab-pane name="orderExecuting" lazy>
             <span slot="label">
               <i class="el-icon-edit"></i> 采购单待发货
@@ -25,7 +24,7 @@
             <keep-alive>
               <phTab type="orderExecuting" ref="orderExecuting"/>
             </keep-alive>
-          </el-tab-pane-->
+          </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executing" lazy>
@@ -57,7 +56,7 @@
             </keep-alive>
           </el-tab-pane>
 
-           <el-tab-pane name="all" lazy>
+          <el-tab-pane name="all" lazy>
             <span slot="label">
               <i class="el-icon-s-order"></i> 全部
             </span>

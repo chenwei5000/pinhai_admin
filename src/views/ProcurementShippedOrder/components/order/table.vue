@@ -3,15 +3,22 @@
   <div class="ph-table">
 
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
+    <el-form :inline="true" :model="searchParam"
+             ref="searchForm"
+             inline-message
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+        <el-input size="mini" v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+      </el-form-item>
+
+      <el-form-item label="名称">
+        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" style="width: 120px" placeholder="请选择">
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+                   placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -20,19 +27,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value" style="width: 120px" placeholder="请选择">
-          <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -53,50 +50,45 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编码" min-width="150" fixed="left"></el-table-column>
-      <el-table-column prop="statusName" label="状态" min-width="100">
+      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+
+      <el-table-column prop="name" label="名称" min-width="200">
         <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
-            ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.name && scope.row.name.length > 27">
+            <div v-html="scope.row.name"></div>
+            <span slot="reference">{{
+              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.name }}
+          </span>
         </template>
       </el-table-column>
-      <el-table-column prop="procurementPlan.name" label="发货计划" min-width="200">
-        <!-- <template slot-scope="scope">
-          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
-            <div>
-              完成度：{{ scope.row.qty.completeness }}%<BR/>
-              总件数：{{ scope.row.qty.qty }} 件<BR/>
-              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
-              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
-              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
-            </div>
-            <span slot="reference">
-              <el-progress :text-inside="true" :stroke-width="16"
-                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
-                           status="success"
-              ></el-progress>
-            </span>
+
+      <el-table-column prop="supplier.name" label="供货商" width="120"></el-table-column>
+
+      <el-table-column prop="warehouse.name" label="收货仓库" width="120"></el-table-column>
+
+      <el-table-column prop="formatOtdTime" label="预计完成日期" width="100"></el-table-column>
+
+      <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
+                      v-if="scope.row.procurementPlan.note && scope.row.procurementPlan.note.length > 10">
+            <div v-html="scope.row.procurementPlan.formatNote"></div>
+            <span slot="reference">{{ scope.row.procurementPlan.note ? scope.row.procurementPlan.note.substr(0,8)+'..' : '' }}</span>
           </el-popover>
-
-        </template> -->
+          <span v-else>
+            {{ scope.row.procurementPlan.note }}
+          </span>
+        </template>
       </el-table-column>
-      <el-table-column prop="team.name" label="跟单团队" min-width="100"></el-table-column>
-      <el-table-column prop="merchandiser" label="跟单员" min-width="100"></el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" min-width="120"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="120"></el-table-column>
-      <el-table-column prop="currency.name" label="结算货币" min-width="120"></el-table-column>
-      <el-table-column prop="settlementMethodName" label="结算方式" min-width="120"></el-table-column>
-      <el-table-column prop="accountPeriod" label="账期" min-width="120"></el-table-column>
-      <el-table-column prop="formatOtdTime" label="预计完成日期" min-width="120"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" min-width="120"></el-table-column>
 
-      <!-- <el-table-column prop="id" label="ID" width="90"></el-table-column> -->
+      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+
+      <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
@@ -106,10 +98,6 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -136,7 +124,6 @@
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
-
   </div>
 
 </template>
@@ -145,9 +132,9 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import editDialog from './dialog'
+  import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
-  import warehouseModel from '@/api/warehouse';
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -180,23 +167,7 @@
 
       // 显示进度条
       hasCompleteness() {
-        if (this.type === 'editing') {
-          return false;
-        }
-        //待审核
-        else if (this.type === 'auditing') {
-          return false;
-        }
-        //执行中
-        else if (this.type === 'executing') {
-          return true;
-        }
-        else if (this.type === 'complete') {
-          return true;
-        }
-        else if (this.type === 'all') {
-          return true;
-        }
+        return false;
       }
     },
 
@@ -222,7 +193,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementOrders', // 资源URL
         countUrl: '/procurementOrders/count', // 资源URL
-        relations: ["creator", "procurementPlan", "supplier", "team", "warehouse", "currency"],  // 关联对象
+        relations: ["procurementPlan", "creator", "currency", "supplier", "warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -230,15 +201,11 @@
 
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
-        categorySelectOptions: [],
         supplierSelectOptions: [],
-        warehouseSelectOptions: [],
+
         searchParam: {
-          categoryId: {value: null, op: 'in', id: 'categoryId'},
+          supplierId: {value: null, op: 'in', id: 'supplierId'},
           name: {value: null, op: 'bw', id: 'name'},
-          limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
-          supplierId: {value: null, op: 'eq', id: 'supplierId'},
-          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
           status: {value: null, op: 'eq', id: 'status'},
           code: {value: null, op: 'bw', id: 'name'},
         },
@@ -259,7 +226,6 @@
     },
 
     mounted() {
-
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
@@ -279,11 +245,8 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
+          if (params.supplierId) {
+            this.searchParam.supplierId.value = params.supplierId;
           }
           if (params.name) {
             this.searchParam.name.value = params.name;
@@ -293,12 +256,6 @@
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
-          }
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
-          }
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
           }
         }
       }
@@ -314,24 +271,24 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementOrderStatus');
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
 
-        // if (this.type === 'editing') {
-        // }
-        // //待审核 无删除
-        // else if (this.type === 'auditing') {
-        //   this.hasDelete = false;
-        // }
-        // //执行中 无删除
-        // else if (this.type === 'executing') {
-        //   this.hasDelete = false;
-        // }//完成 无删除
-        // else if (this.type === 'complete') {
-        //   this.hasDelete = false;
-        // }
-        // else if (this.type === 'all') {
-        // }
+        if (this.type === 'editing') {
+        }
+        //待审核 无删除
+        else if (this.type === 'auditing') {
+          this.hasDelete = false;
+        }
+        //执行中 无删除
+        else if (this.type === 'executing') {
+          this.hasDelete = false;
+        }//完成 无删除
+        else if (this.type === 'complete') {
+          this.hasDelete = false;
+        }
+        else if (this.type === 'all') {
+        }
       },
 
       // 获取表格的高度
@@ -342,11 +299,10 @@
           //表格高度
           let tableHeight = windowHeight;
           tableHeight = tableHeight - 84; //减框架头部高度
-          tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -371,14 +327,12 @@
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
         this.page = 1
+
         //TODO:根据实际情况调整
-        this.searchParam.categoryId.value = null;
-        this.searchParam.limitTime.value = null;
+        this.searchParam.supplierId.value = null;
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
         this.searchParam.code.value = null;
-        this.searchParam.supplierId.value = null;
-        this.searchParam.warehouseId.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -392,43 +346,19 @@
          * 另外, 当customQuery.sync时, 会重置customQuery
          * @event reset
          */
-        this.$emit('reset')
-
-        //TODO：此处报错未处理
-        // this.$emit(
-        //   'update:customQuery',
-        //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-        // )
+        this.$emit('reset');
       },
 
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
-        // 代码示例
-        // if (row.exemple === 0) {
-        //   return "0-普通"
-        // }
-        // else if (row.exemple === 1) {
-        //   return "1-热销"
-        //
-        // }
-        // else if (row.exemple === 2) {
-        //   return "2-爆款"
-        // }
-        // else {
-        //   return row.exemple;
-        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
-        // 代码示例 return 为css定义的样式 -row 结尾
-        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
-        //   return 'warning-row';
-        // }
         return '';
       },
 
@@ -648,33 +578,7 @@
   }
 </script>
 
+
 <style type="text/less" lang="scss" scoped>
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 230px !important;
-    }
-  }
 </style>
 

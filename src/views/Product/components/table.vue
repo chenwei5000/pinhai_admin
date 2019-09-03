@@ -429,10 +429,10 @@
          */
         this.$emit('reset')
 
-        this.$emit(
-          'update:customQuery',
-          Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-        )
+        // this.$emit(
+        //   'update:customQuery',
+        //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
+        // )
       },
 
       // Formatter
