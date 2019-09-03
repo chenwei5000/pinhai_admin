@@ -17,6 +17,9 @@
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
+      <el-form-item label="名称">
+        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+      </el-form-item>
 
       <el-form-item label="供货商">
         <el-select filterable v-model="searchParam.supplierId.value" size="mini"
@@ -40,17 +43,6 @@
           ></el-option>
         </el-select>
       </el-form-item>
-
-      <el-form-item label="状态">
-        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 100px" placeholder="请选择状态">
-          <el-option
-            v-for="(item,idx) in statusSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
@@ -86,6 +78,21 @@
             ? 'info' : 'success'"
             disable-transitions>{{ scope.row.statusName }}
           </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="name" label="名称" min-width="200">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.name && scope.row.name.length > 22">
+            <div v-html="scope.row.name"></div>
+            <span slot="reference">{{
+              scope.row.name ? scope.row.name.length > 22 ? scope.row.name.substr(0,20)+'..' : scope.row.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.name }}
+          </span>
         </template>
       </el-table-column>
 
@@ -259,6 +266,7 @@
           supplierId: {value: null, op: 'eq', id: 'supplierId'},
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
           status: {value: null, op: 'eq', id: 'status'},
+          name: {value: null, op: 'bw', id: 'status'},
           code: {value: null, op: 'bw', id: 'code'},
         },
 
@@ -318,6 +326,9 @@
           }
           if (params.warehouseId) {
             this.searchParam.warehouseId.value = params.warehouseId;
+          }
+          if (params.name) {
+            this.searchParam.name.value = params.name;
           }
         }
       }
@@ -380,6 +391,7 @@
         this.searchParam.code.value = null;
         this.searchParam.supplierId.value = null;
         this.searchParam.warehouseId.value = null;
+        this.searchParam.name.value = null;
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
 

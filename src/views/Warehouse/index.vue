@@ -27,7 +27,7 @@
         title: '仓库管理',
         tableConfig: {
           url: '/warehouses',
-          relations: ["dataDicItem.type", "supplier", "leader"],
+          relations: ["supplier", "creator", "leader"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
           },
@@ -50,8 +50,30 @@
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.name,
-            phSearchItems.code,
+            {
+              $type: 'input',
+              $id: 'name',
+              label: '名称',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入名称',
+                clearable: true,
+                maxlength: "40",
+                style: "width:120px;",
+                "show-word-limit": true,
+              }
+            },
+            {
+              $type: 'input',
+              $id: 'code',
+              label: '编码',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入编码',
+                style: "width:120px;",
+                clearable: true
+              }
+            },
             phSearchItems.datadic('warehouse', '类型', 'type'),
             {
             $type: 'select',
@@ -60,6 +82,7 @@
             $el: {
               op: 'eq',
               placeholder: '请输入负责人',
+              style: "width:120px;",
               clearable: true,
               maxlength: "40",
               "show-word-limit": true,

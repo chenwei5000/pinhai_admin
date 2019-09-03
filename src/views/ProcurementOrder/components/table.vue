@@ -75,17 +75,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="计划名称" min-width="200">
+      <el-table-column prop="name" label="名称" min-width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.procurementPlan.name && scope.row.procurementPlan.name.length > 27">
-            <div v-html="scope.row.procurementPlan.name"></div>
+                      v-if="scope.row.name && scope.row.name.length > 27">
+            <div v-html="scope.row.name"></div>
             <span slot="reference">{{
-              scope.row.procurementPlan.name ? scope.row.procurementPlan.name.length > 27 ? scope.row.procurementPlan.name.substr(0,25)+'..' : scope.row.procurementPlan.name : ''
+              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
               }}</span>
           </el-popover>
           <span v-else>
-            {{ scope.row.procurementPlan.name }}
+            {{ scope.row.name }}
           </span>
         </template>
       </el-table-column>

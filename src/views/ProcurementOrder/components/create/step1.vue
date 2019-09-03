@@ -75,6 +75,19 @@
               </el-form-item>
             </el-col>
 
+            <el-col :md="8">
+              <el-form-item label="名称" prop="name">
+                <el-input v-model.trim="editObject.name"
+                          maxlength="100"
+                          show-word-limit
+                          style="width: 200px" placeholder="请填写名称" clearable></el-input>
+
+                <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+
           </el-row>
 
           <el-row>
@@ -332,6 +345,9 @@
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
           accountPeriod: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          name: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },
@@ -690,9 +706,9 @@
               msg += `产品${r.product.skuCode}必须选择供货商。\n`;
             }
             // 无采购箱数
-            if (!r.purchaseOrderQty) {
-              msg += `产品${r.product.skuCode}必须选择设置采购箱数。\n`;
-            }
+            // if (!r.purchaseOrderQty) {
+            //   msg += `产品${r.product.skuCode}必须选择设置采购箱数。\n`;
+            // }
           });
 
           if (msg != '') {
@@ -763,17 +779,20 @@
         _order.settlementMethod = this.editObject.settlementMethod;
         _order.currencyId = this.editObject.currencyId;
         _order.accountPeriod = this.editObject.accountPeriod;
+        _order.name = this.editObject.name;
 
         let _details = [];
         this.tableData.forEach(r => {
-          let _detail = {};
-          _detail.productId = r.productId;
-          _detail.cartonSpecId = r.supplierId;
-          _detail.numberOfCarton = r.numberOfCarton;
-          _detail.cartonQty = r.purchaseOrderCartonQty;
-          _detail.skuCode = r.product.skuCode;
-          _detail.price = r.product.price;
-          _details.push(_detail);
+          if (r.purchaseOrderCartonQty > 0) {
+            let _detail = {};
+            _detail.productId = r.productId;
+            _detail.cartonSpecId = r.supplierId;
+            _detail.numberOfCarton = r.numberOfCarton;
+            _detail.cartonQty = r.purchaseOrderCartonQty;
+            _detail.skuCode = r.product.skuCode;
+            _detail.price = r.product.price;
+            _details.push(_detail);
+          }
         });
         _order.orderItems = _details;
 

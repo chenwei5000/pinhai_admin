@@ -26,7 +26,21 @@
         <el-row v-else>
           无
         </el-row>
+      </fieldset>
 
+      <fieldset class="panel-heading">
+        <legend class="panel-title">预计完成日期
+          <el-tooltip class="item" effect="light" placement="right">
+            <div slot="content">
+              采购单预计的完成日期，由跟单确认
+            </div>
+            <i class="el-icon-question">&nbsp;</i>
+          </el-tooltip>
+        </legend>
+
+        <el-row>
+            <span style="font-size: 12px">{{ editObject.formatOtdTime ? editObject.formatOtdTime : '无'}}</span>
+        </el-row>
       </fieldset>
 
       <fieldset class="panel-heading" style="margin-top: 15px">
@@ -65,10 +79,18 @@
           </el-col>
 
           <el-col :md="8">
-            <el-form-item label="预计完成日期" prop="supplierId">
-              <span style="font-size: 12px">{{ editObject.formatOtdTime ? editObject.formatOtdTime : '无'}}</span>
+            <el-form-item label="名称" prop="name">
+              <el-input v-model.trim="editObject.name"
+                        maxlength="100"
+                        show-word-limit
+                        style="width: 200px" placeholder="请填写名称" clearable></el-input>
+
+              <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
             </el-form-item>
           </el-col>
+
 
         </el-row>
 

@@ -14,7 +14,20 @@
         </el-form-item>
       </el-col>
 
+
       <el-col :md="14">
+        <el-form-item label="名称" prop="name">
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.name}}</span>
+          <el-input v-else v-model.trim="editObject.name"
+                    maxlength="100"
+                    show-word-limit
+                    style="width: 220px" placeholder="请填写名称" clearable></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col :md="10">
         <el-form-item label="发货厂商" prop="supplierId">
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.supplier.name}}</span>
           <el-select v-else v-model="editObject.supplierId"
@@ -29,10 +42,8 @@
           </el-select>
         </el-form-item>
       </el-col>
-    </el-row>
 
-    <el-row>
-      <el-col :md="10">
+      <el-col :md="14">
         <el-form-item label="收货仓库" prop="warehouseId">
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.warehouse.name}}</span>
           <el-select v-else v-model="editObject.warehouseId" style="width: 220px"
@@ -44,18 +55,6 @@
               :key="idx"
             ></el-option>
           </el-select>
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="14">
-        <el-form-item label="预计发货时间" prop="expectTime">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.expectTime}}</span>
-          <el-date-picker
-            v-else
-            v-model="editObject.expectTime"
-            format="yyyy-MM-dd"
-            type="date"
-            placeholder="预计发货时间"></el-date-picker>
         </el-form-item>
       </el-col>
     </el-row>
@@ -102,7 +101,8 @@
     </el-row>
 
     <el-row>
-      <el-col :md="24">
+
+      <el-col :md="10">
         <el-form-item label="电话" prop="tel">
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
 
@@ -110,6 +110,20 @@
                     style="width: 220px" placeholder="请填写电话" clearable></el-input>
         </el-form-item>
       </el-col>
+
+
+      <el-col :md="14">
+        <el-form-item label="预计发货时间" prop="expectTime">
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.expectTime}}</span>
+          <el-date-picker
+            v-else
+            v-model="editObject.expectTime"
+            format="yyyy-MM-dd"
+            type="date"
+            placeholder="预计发货时间"></el-date-picker>
+        </el-form-item>
+      </el-col>
+
     </el-row>
 
     <el-row>
@@ -200,6 +214,9 @@
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
           warehouseId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          name: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ]
         },
