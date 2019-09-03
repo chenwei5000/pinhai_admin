@@ -19,6 +19,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import userModel from '../../api/user'
 
   export default {
     data() {
@@ -26,7 +27,7 @@
         title: '仓库管理',
         tableConfig: {
           url: '/warehouses',
-          relations: ["dataDicItem.type", "supplier"],
+          relations: ["dataDicItem.type", "supplier", "leader"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
           },
@@ -41,6 +42,7 @@
             {prop: 'type', label: '类型'},
             {prop: 'supplierId', label: '供货商编号', hidden: true},
             {prop: 'supplier.name', label: '供货商名称', 'min-width': 150},
+            {prop: 'leader.name', label: '负责人', 'min-width': 150},
             phColumns.creator,
             phColumns.status,
             phColumns.lastModified
@@ -50,12 +52,25 @@
           searchForm: [
             phSearchItems.name,
             phSearchItems.code,
-            phSearchItems.datadic('warehouse', '类型', 'type')
+            phSearchItems.datadic('warehouse', '类型', 'type'),
+            {
+            $type: 'select',
+            $id: 'leaderId',
+            label: '负责人',
+            $el: {
+              op: 'eq',
+              placeholder: '请输入负责人',
+              clearable: true,
+              maxlength: "40",
+              "show-word-limit": true,
+            },
+          $options: userModel.getSelectOptions
+          },
           ],
           //  弹窗表单, 用于新增与修改
           form: [
             phFromItems.code,
-            phFromItems.name,
+            phFromItems.name(),
             {
               $type: 'input',
               $id: 'address',
@@ -89,6 +104,15 @@
                 placeholder: '请选择供货商'
               },
               $options: supplierModel.getSelectOptions(),
+            },
+             {
+              $type: 'select',
+              $id: 'leaderId',
+              label: '负责人',
+              $el: {
+                placeholder: '请选择负责人'
+              },
+              $options: userModel.getSelectOptions(),
             },
             phFromItems.status()
           ]
