@@ -75,6 +75,27 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="note" label="完成度" width="120" v-if="hasCompleteness">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
+            <div>
+              完成度：{{ scope.row.qty.completeness }}%<BR/>
+              总件数：{{ scope.row.qty.qty }} 件<BR/>
+              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
+              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
+              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
+            </div>
+            <span slot="reference">
+              <el-progress :text-inside="true" :stroke-width="16"
+                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
+                           status="success"
+              ></el-progress>
+            </span>
+          </el-popover>
+
+        </template>
+      </el-table-column>
+
       <el-table-column prop="name" label="名称" min-width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"

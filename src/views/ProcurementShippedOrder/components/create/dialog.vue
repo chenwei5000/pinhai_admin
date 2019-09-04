@@ -6,9 +6,8 @@
     <!-- 步骤条 TODO: -->
     <el-steps :active="stepsActive" finish-status="success" align-center simple>
       <el-step title="1.下单" icon="el-icon-shopping-cart-full"></el-step>
-      <el-step title="2.指派工作" icon="el-icon-s-custom"></el-step>
-      <el-step title="3.附件" icon="el-icon-document"></el-step>
-      <el-step title="4.申请预付款" icon="el-icon-money"></el-step>
+      <el-step title="2.附件" icon="el-icon-document"></el-step>
+      <el-step title="3.指派工作" icon="el-icon-s-custom"></el-step>>
     </el-steps>
 
     <!-- 智能备货组件 -->
@@ -30,12 +29,6 @@
       @step3CBEvent="step3CBEvent">
     </step3>
 
-    <!--提交审核组件-->
-    <step4
-      v-if="stepsActive==3" :primaryId="orderId"
-      @step4CBEvent="step4CBEvent">
-    </step4>
-
   </el-dialog>
 
 </template>
@@ -46,14 +39,12 @@
   import step1 from './step1'
   import step2 from './step2'
   import step3 from './step3'
-  import step4 from './step4'
 
   export default {
     components: {
       step1,
       step2,
-      step3,
-      step4
+      step3
     },
     props: {},
     computed: {
@@ -63,7 +54,7 @@
       ]),
 
       title() {
-        return '采购计划下单 [' + this.primary.name + ']';
+        return '创建发货计划 [' + this.primary.name + ']';
       }
     },
 
@@ -91,7 +82,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/procurementOrders/${this.primaryId}?relations=${JSON.stringify(["supplier"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -130,18 +121,12 @@
       },
       step3CBEvent(step) {
         // 切换步骤
-        this.stepsActive = step;
-      },
-      step4CBEvent(step) {
-        // 切换步骤
         if (step == 'close') {
           this.closeDialog();
-
         } else {
           this.stepsActive = step;
         }
-      },
-
+      }
     }
   }
 </script>

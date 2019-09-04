@@ -83,7 +83,7 @@
               op: 'eq',
               placeholder: '请输入负责人',
               style: "width:120px;",
-              clearable: true,
+              filterable: true,
               maxlength: "40",
               "show-word-limit": true,
             },
@@ -124,6 +124,7 @@
               $id: 'supplierId',
               label: '供货商',
               $el: {
+                filterable: true,
                 placeholder: '请选择供货商'
               },
               $options: supplierModel.getSelectOptions(),
@@ -133,6 +134,7 @@
               $id: 'leaderId',
               label: '负责人',
               $el: {
+                filterable: true,
                 placeholder: '请选择负责人'
               },
               $options: userModel.getSelectOptions(),

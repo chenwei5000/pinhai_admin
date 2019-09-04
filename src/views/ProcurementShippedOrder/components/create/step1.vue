@@ -10,140 +10,89 @@
                v-loading="loading"
                inline-message
       >
-        <fieldset class="panel-heading">
-          <legend class="panel-title">交货要求
-            <el-tooltip class="item" effect="light" placement="right">
-              <div slot="content">
-                销售对采购计划的要求
-              </div>
-              <i class="el-icon-question">&nbsp;</i>
-            </el-tooltip>
-          </legend>
-
-          <el-row v-html="editObject.formatNote" v-if="editObject.note">
-          </el-row>
-          <el-row v-else>
-            无
-          </el-row>
-
-        </fieldset>
-
         <fieldset class="panel-heading" style="margin-top: 15px">
-          <legend class="panel-title">采购单信息
+          <legend class="panel-title">发货计划信息
             <el-tooltip class="item" effect="light" placement="right">
               <div slot="content">
-                采购单相关信息
+                发货单相关信息
               </div>
               <i class="el-icon-question">&nbsp;</i>
             </el-tooltip>
           </legend>
 
           <el-row>
-            <el-col :md="8">
-              <el-form-item label="供货商" prop="supplierId">
-                <el-select v-model="editObject.supplierId" @change="onSupplierChange"
-                           filterable placeholder="请选择供货商">
-                  <el-option
-                    v-for="(item , idx) in supplierSelectOptions"
-                    :label="item.name"
-                    :value="item.id"
-                    :key="idx"
-                  ></el-option>
-                </el-select>
-
-                <el-tooltip class="item" effect="light" content="产品供货商，从哪个厂商采购。" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-
-            <el-col :md="8">
-              <el-form-item label="收货仓库" prop="warehouseId">
-                <el-select v-model="editObject.warehouseId"
-                           filterable placeholder="请选择收货仓库">
-                  <el-option
-                    v-for="(item , idx)  in warehouseSelectOptions"
-                    :label="item.name"
-                    :value="item.id"
-                    :key="idx"
-                  ></el-option>
-                </el-select>
-
-                <el-tooltip class="item" effect="light" content="采购的商品接收的仓库" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-
-            <el-col :md="8">
+            <el-col :md="10">
               <el-form-item label="名称" prop="name">
                 <el-input v-model.trim="editObject.name"
                           maxlength="100"
                           show-word-limit
-                          style="width: 200px" placeholder="请填写名称" clearable></el-input>
-
-                <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
+                          style="width: 220px" placeholder="请填写名称" clearable></el-input>
               </el-form-item>
             </el-col>
 
+            <el-col :md="14">
+              <el-form-item label="预计发货时间" prop="expectTime">
+                <el-date-picker
+                  v-model="editObject.expectTime"
+                  format="yyyy-MM-dd"
+                  type="date"
+                  placeholder="预计发货时间"></el-date-picker>
+              </el-form-item>
+            </el-col>
           </el-row>
 
           <el-row>
-            <el-col :md="8">
-              <el-form-item label="结算方式" prop="settlementMethod">
-                <el-select v-model="editObject.settlementMethod" @change="onSettlementMethodChange"
-                           filterable placeholder="请选择结算方式">
+            <el-col :md="10">
+              <el-form-item label="发货厂商" prop="supplierId">
+                <el-select v-model="editObject.supplierId"
+                           style="width: 220px"
+                           filterable placeholder="请选择">
                   <el-option
-                    v-for="(item , idx)  in settlementMethodSelectOptions"
+                    v-for="(item , idx)  in supplierSelectOptions"
                     :label="item.label"
                     :value="item.value"
                     :key="idx"
                   ></el-option>
                 </el-select>
-
-                <el-tooltip class="item" effect="light" content="采购单的结算方式。货到付款方式不用走预付款流程。" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
               </el-form-item>
             </el-col>
 
-            <el-col :md="8">
-              <el-form-item label="结算货币" prop="currencyId">
-                <el-select v-model="editObject.currencyId" @change="onCurrencyChange"
-                           filterable placeholder="请选择结算货币">
+            <el-col :md="14">
+              <el-form-item label="收货仓库" prop="warehouseId">
+                <el-select v-model="editObject.warehouseId" style="width: 220px"
+                           filterable placeholder="请选择收货仓库">
                   <el-option
-                    v-for="(item , idx)  in currencySelectOptions"
-                    :label="item.name"
-                    :value="item.id"
+                    v-for="(item , idx)  in warehouseSelectOptions"
+                    :label="item.label"
+                    :value="item.value"
                     :key="idx"
                   ></el-option>
                 </el-select>
-
-                <el-tooltip class="item" effect="light" content="使用什么货币跟供货商进行结算。" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-
-            <el-col :md="8">
-              <el-form-item label="帐期" prop="accountPeriod">
-                <el-input-number v-model="editObject.accountPeriod"
-                                 @change="onAccountPeriodChange"
-                                 style="width: 155px"
-                                 :min="1"
-                                 :step="1"
-                                 :max="365" label="帐期">
-                </el-input-number>
-                天
-                <el-tooltip class="item" effect="light" content="生产商、批发商向零售商供货后，直至零售商付款的这段时间周期" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
 
+          <el-row>
+            <el-col :md="24">
+              <el-form-item label="备注" prop="note">
+                <el-col :span="22">
+                  <el-input type="textarea" v-model="editObject.remark"
+                            maxlength="500"
+                            show-word-limit
+                            rows="3"
+                            cols="80"
+                            show-word-limit></el-input>
+                </el-col>
+
+                <el-col :span="2" v-if="hasEdit">
+                  <el-tooltip class="item" effect="light" content="备注信息。支持换行！" placement="right">
+                    <i class="el-icon-question">&nbsp;</i>
+                  </el-tooltip>
+                </el-col>
+
+              </el-form-item>
+            </el-col>
+          </el-row>
         </fieldset>
       </el-form>
     </div>
@@ -183,8 +132,6 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="product.supplier.name" label="供货商" width="100"></el-table-column>
-
         <el-table-column prop="productName" label="名称" width="200">
           <template slot-scope="scope">
             <el-popover placement="top-start" width="200" trigger="hover"
@@ -203,33 +150,29 @@
         <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
         <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
 
-        <el-table-column prop="cartonQty" label="计划箱数" width="110"></el-table-column>
-        <el-table-column prop="orderCartonQty" label="已下箱数" width="80"></el-table-column>
-        <el-table-column prop="noPurchaseOrderCartonQty" label="未下箱数" width="80"></el-table-column>
+        <el-table-column prop="cartonQty" label="采购箱数" width="110"></el-table-column>
+        <el-table-column prop="orderCartonQty" label="已下单箱数" width="100"></el-table-column>
+        <el-table-column prop="noOrderCartonQty" label="未下单箱数" width="100"></el-table-column>
+        <el-table-column prop="remark" label="备注" width="130">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+                        v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
+              <div v-html="scope.row.shippedNote"></div>
+              <span slot="reference">{{ scope.row.shippedNote ? scope.row.shippedNote.substr(0,8)+'..' : '' }}</span>
+            </el-popover>
+            <span v-else>
+            {{ scope.row.shippedNote }}
+          </span>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
-        <el-table-column prop="purchaseOrderCartonQty" label="采购箱数" width="80"
+        <el-table-column prop="planCartonQty" label="本次发货箱数" width="120"
                          fixed="right"></el-table-column>
 
-        <el-table-column prop="purchaseOrderQty" label="采购件数" width="80"
+        <el-table-column prop="planQty" label="本次发货件数" width="120"
                          fixed="right"></el-table-column>
-
-        <el-table-column prop="product.price" label="单价" width="80"
-                         fixed="right">
-          <template slot-scope="scope">
-            {{scope.row.product.price ? scope.row.product.price : 0, selCurrency ? selCurrency.symbolLeft : '' |
-            currency}}
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="purchaseOrderAmount" label="总额" width="100"
-                         fixed="right">
-          <template slot-scope="scope">
-            {{scope.row.purchaseOrderAmount ? scope.row.purchaseOrderAmount : 0, selCurrency ? selCurrency.symbolLeft :
-            '' | currency}}
-          </template>
-        </el-table-column>
-
 
         <!--默认操作列-->
         <el-table-column label="操作"
@@ -262,7 +205,7 @@
         <el-row type="flex" justify="center">
           <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave"
                      v-if="hasEdit">
-            下单
+            创建发货计划
           </el-button>
         </el-row>
       </el-col>
@@ -273,8 +216,8 @@
 
 <script>
   import {currency, intArrToStrArr} from '@/utils'
-  import phEnumModel from '@/api/phEnum'
-  import currencyModel from '@/api/currency'
+  import warehouseModel from '@/api/warehouse'
+  import supplierModel from '@/api/supplier'
   import planDetailDialog from './planDetailDialog'
 
   export default {
@@ -316,19 +259,9 @@
         // 选择框 TODO:
         supplierSelectOptions: [],
         warehouseSelectOptions: [],
-        settlementMethodSelectOptions: [],
-        currencySelectOptions: [],
-        selCurrency: {},
 
         // 编辑对象 TODO
-        editObject: {
-          id: null,
-          supplierId: null,
-          warehouseId: null,
-          settlementMethod: null,
-          currencyId: null,
-          accountPeriod: null
-        },
+        editObject: {},
 
         // 字段验证规则 TODO:
         rules: {
@@ -338,31 +271,22 @@
           warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
-          settlementMethod: [
-            {required: true, message: '必须输入', trigger: 'blur'}
-          ],
-          currencyId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
-          ],
-          accountPeriod: [
-            {required: true, message: '必须输入', trigger: 'blur'}
-          ],
           name: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },
 
         //数据
-        url: "/procurementPlanItems", // 资源URL
+        url: "/procurementOrderItems", // 资源URL
         downloadUrl: "", //下载Url
         filters: [
           {
-            field: "procurementPlanId",
+            field: "procurementOrderId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["cartonSpec", "product", "product.currency", "product.supplier"],  // 关联对象
+        relations: ["cartonSpec", "product"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
       }
@@ -385,86 +309,25 @@
         this.loading = true;
         if (this.primary) {
           //获取计划数据
-          this.editObject = JSON.parse(JSON.stringify(this.primary));
-          //转化时间
-          this.editObject.limitTime = this.editObject.formatLimitTime;
-          this.editObject.executeTime = this.editObject.formatExecuteTime;
-          //转化分类
-          this.editObject.categoryId = intArrToStrArr(this.editObject.categoryId);
-          this.editObject.accountPeriod = 60;
-          this.editObject.settlementMethod = '3';
-          // 付款方式
-          this.settlementMethodSelectOptions = phEnumModel.getSelectOptions('SettlementMethod');
-          this.initCurrencData();
-          this.initSupplierData();
-          this.initWarehouseData();
-          this.getList();
+          this.editObject = {};
 
+          // 采购单信息转化成发货单信息
+          this.editObject.name = this.primary.name;
+          this.editObject.warehouseId = this.primary.warehouseId + '';
+          this.editObject.supplierId = this.primary.supplierId + '';
+          this.editObject.supplier = this.primary.supplier;
+          this.editObject.procurementOrderId = this.primary.id;
+          this.editObject.procurementPlanId = this.primary.procurementPlanId;
+
+          this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+          this.supplierSelectOptions = supplierModel.getSelectOptions();
+          this.getList();
           this.loading = false;
         }
         else {
-          this.$message.error("无效的采购计划!");
+          this.$message.error("无效的采购单!");
           this.loading = false;
         }
-      },
-
-      // 初始化供货商数据
-      initSupplierData() {
-        this.loading = true;
-        let url = `/procurementPlans/${this.primary.id}/suppliers`;
-        this.global.axios.get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.supplierSelectOptions = [];
-            res.forEach(r => {
-              this.supplierSelectOptions.push(r);
-            });
-            this.loading = false;
-          })
-          .catch(err => {
-            this.loading = false;
-          })
-      },
-
-      // 初始化仓库数据
-      initWarehouseData() {
-        this.loading = true;
-        let url = "/warehouses";
-        let filters = [
-          {"field": "status", "op": "eq", "data": "1"},
-          {"field": "type", "op": "in", "data": "普通,原料仓,工厂仓"}
-        ];
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-
-        this.global.axios.get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.warehouseSelectOptions = [];
-            res.forEach(r => {
-              this.warehouseSelectOptions.push(r);
-            });
-            this.loading = false;
-          })
-          .catch(err => {
-            this.loading = false;
-          });
-      },
-
-      // 初始化货币数据
-      initCurrencData() {
-        this.loading = true;
-        currencyModel.getCurrencies()
-          .then(resp => {
-            let res = resp || [];
-            this.currencySelectOptions = [];
-            res.forEach(r => {
-              this.currencySelectOptions.push(r);
-            });
-            this.loading = false;
-          })
-          .catch(err => {
-            this.loading = false;
-          });
       },
 
       /********************* 表格相关方法  ***************************/
@@ -498,18 +361,10 @@
             let res = resp.data || [];
             let data = []
             res.forEach(r => {
-              // 默认使用未下单的箱数，作为要采购的箱数
-              r.purchaseOrderCartonQty = r.noPurchaseOrderCartonQty;
-              // 默认采购件
-              r.purchaseOrderQty = r.purchaseOrderCartonQty * r.numberOfCarton;
-
-              // 默认使用未下单的总金额，作为要采购的总金额
-              r.purchaseOrderAmount = r.noPurchaseOrderAmount;
-
-              if (r.product && r.product.currency && !this.editObject.currencyId) {
-                this.editObject.currencyId = r.product.currency.id;
-                this.selCurrency = JSON.parse(JSON.stringify(r.product.currency));
-              }
+              // 默认使用未发货的箱数，作为要发货的箱数
+              r.planCartonQty = r.noOrderCartonQty;
+              // 默认发货件
+              r.planQty = r.planCartonQty * r.numberOfCarton;
               data.push(r);
             });
 
@@ -536,20 +391,12 @@
 
       //报警样式
       dangerClassName({row, rowIndex}) {
-        // 产品无价格
-        if (!row.product || !row.product.price) {
-          return 'danger-row';
-        }
         // 产品无装箱数
         if (!row.numberOfCarton) {
           return 'danger-row';
         }
         // 产品无箱规
         if (!row.cartonSpecId || row.cartonSpecId == -1) {
-          return 'danger-row';
-        }
-        // 产品无供货商
-        if (!row.supplierId) {
           return 'danger-row';
         }
 
@@ -574,8 +421,8 @@
 
           if (column.property == 'cartonQty'
             || column.property == 'orderCartonQty'
-            || column.property == 'noPurchaseOrderCartonQty'
-            || column.property == 'purchaseOrderCartonQty') {
+            || column.property == 'noOrderCartonQty'
+            || column.property == 'planCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -592,7 +439,7 @@
             }
           }
 
-          if (column.property == 'purchaseOrderQty') {
+          if (column.property == 'planQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -608,24 +455,6 @@
               sums[index] = 'N/A';
             }
           }
-
-          if (column.property == 'purchaseOrderAmount') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] = currency(sums[index], this.selCurrency ? this.selCurrency.symbolLeft : null);
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
         });
 
         return sums;
@@ -639,38 +468,6 @@
       /*本地搜索*/
       search() {
         this.tableData = JSON.parse(JSON.stringify(this.data));
-        if (this.editObject.supplierId != null && this.editObject.supplierId != '') {
-          this.tableData = this.tableData.filter(
-            item => {
-              if (item.supplierId == this.editObject.supplierId) {
-                return true;
-              }
-            });
-        }
-      },
-
-      /* 修改货币 */
-      onCurrencyChange(val) {
-        this.currencySelectOptions.forEach(r => {
-          if (val == r.id) {
-            this.selCurrency = r;
-          }
-        });
-        this.$forceUpdate();
-      },
-
-      /* 修改供货商 */
-      onSupplierChange(val) {
-        this.search();
-        this.$forceUpdate();
-      },
-      /* 修改结算方式 */
-      onSettlementMethodChange() {
-        this.$forceUpdate();
-      },
-      /* 帐期修改 */
-      onAccountPeriodChange() {
-        this.$forceUpdate();
       },
 
       /********************* 操作按钮相关方法  ***************************/
@@ -686,13 +483,9 @@
           }
 
           this.confirmLoading = true;
-
           let msg = '';
           this.tableData.forEach(r => {
-            // 产品无价格
-            if (!r.product || !r.product.price) {
-              msg += `产品${r.product.skuCode}价格必须输入!\n`;
-            }
+
             // 产品无装箱数
             if (!r.numberOfCarton) {
               msg += `产品${r.product.skuCode}装箱数必须输入!\n`;
@@ -701,14 +494,6 @@
             if (!r.cartonSpecId || r.cartonSpecId == -1) {
               msg += `产品${r.product.skuCode}箱规不正确! 如不确定箱规可以箱规可以选择Undefined。\n`;
             }
-            // 产品无供货商
-            if (!r.supplierId) {
-              msg += `产品${r.product.skuCode}必须选择供货商。\n`;
-            }
-            // 无采购箱数
-            // if (!r.purchaseOrderQty) {
-            //   msg += `产品${r.product.skuCode}必须选择设置采购箱数。\n`;
-            // }
           });
 
           if (msg != '') {
@@ -725,7 +510,7 @@
 
       /* 编辑明细 */
       onDefaultEdit(row) {
-        this.$refs.planDetailDialog.openDialog(JSON.parse(JSON.stringify(row)), JSON.parse(JSON.stringify(this.selCurrency)));
+        this.$refs.planDetailDialog.openDialog(JSON.parse(JSON.stringify(row)));
       },
       /* 保存明细回调 */
       modifyDetailCBEvent(row) {
@@ -734,24 +519,15 @@
             arr[index] = row;
           }
         });
-        let hasSupplier = false;
-        this.supplierSelectOptions.forEach((item, index, arr) => {
-          if (item.id == row.supplierId) {
-            hasSupplier = true;
-          }
-        });
-        if (hasSupplier == false) {
-          this.supplierSelectOptions.push({id: row.supplierId, name: row.supplierName});
-        }
         this.search();
       },
+
       onDefaultDelete(row) {
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
               let idx = null;
-
               this.data.forEach((item, index) => {
                   if (item.skuCode === row.skuCode) {
                     idx = index;
@@ -761,7 +537,6 @@
               );
               this.date = this.data.splice(idx, 1);
               this.search();
-
               done();
             } else done()
           }
@@ -772,25 +547,17 @@
 
       // 下单
       saveObject() {
-        let _order = {};
-        _order.procurementPlanId = this.editObject.id;
-        _order.supplierId = this.editObject.supplierId;
-        _order.warehouseId = this.editObject.warehouseId;
-        _order.settlementMethod = this.editObject.settlementMethod;
-        _order.currencyId = this.editObject.currencyId;
-        _order.accountPeriod = this.editObject.accountPeriod;
-        _order.name = this.editObject.name;
-
+        let _order = JSON.parse(JSON.stringify(this.editObject));
         let _details = [];
         this.tableData.forEach(r => {
-          if (r.purchaseOrderCartonQty > 0) {
+          if (r.planCartonQty > 0) {
             let _detail = {};
             _detail.productId = r.productId;
             _detail.cartonSpecId = r.cartonSpecId;
             _detail.numberOfCarton = r.numberOfCarton;
-            _detail.cartonQty = r.purchaseOrderCartonQty;
+            _detail.shippedCartonQty = r.planCartonQty;
             _detail.skuCode = r.product.skuCode;
-            _detail.price = r.product.price;
+            _detail.shippedNote = r.shippedNote;
             _details.push(_detail);
           }
         });
@@ -803,7 +570,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        this.global.axios.post('/procurementOrders', _order)
+        this.global.axios.post('/procurementShippedOrders', _order)
           .then(resp => {
             let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});

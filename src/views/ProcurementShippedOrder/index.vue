@@ -29,7 +29,7 @@
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executing" lazy>
             <span slot="label">
-              <i class="el-icon-s-flag"></i> 发货中
+              <i class="el-icon-s-flag"></i> 发货单发货中
             </span>
             <keep-alive>
               <phTab type="executing" ref="executing"/>

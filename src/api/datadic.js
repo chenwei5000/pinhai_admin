@@ -34,9 +34,7 @@ const datadicModel = {
         list = await store.dispatch('app/loadDatadics');
       }
       if (list) {
-        console.log(list);
         list.forEach(obj => {
-          console.log(obj.type + "-" + type);
           if (obj.type && obj.type == type) {
             _options.push({
               label: obj.valueName,
@@ -44,8 +42,6 @@ const datadicModel = {
             });
           }
         });
-
-        console.log(_options);
       }
     }
     _loadData();

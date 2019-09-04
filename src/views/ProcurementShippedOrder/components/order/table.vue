@@ -52,6 +52,25 @@
     >
       <el-table-column prop="code" label="编号" width="140"></el-table-column>
 
+      <el-table-column prop="note" label="下单完成度" width="120">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="下单完成度" width="250" trigger="hover">
+            <div>
+              完成度：{{ scope.row.qty.orderedCompleteness }}%<BR/>
+              总件数：{{ scope.row.qty.qty }} 件<BR/>
+              已下单：{{ scope.row.qty.orderQty}} 件 <BR/>
+            </div>
+            <span slot="reference">
+              <el-progress :text-inside="true" :stroke-width="16"
+                           :percentage="scope.row.qty.orderedCompleteness > 100 ? 100: scope.row.qty.orderedCompleteness"
+                           status="success"
+              ></el-progress>
+            </span>
+          </el-popover>
+
+        </template>
+      </el-table-column>
+
       <el-table-column prop="name" label="名称" min-width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
@@ -91,11 +110,15 @@
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          <el-button v-if="hasEdit" size="small" icon="el-icon-date" circle
+                     @click="onDefaultEdit(scope.row)" type="primary">
+          </el-button>
+
+          <el-button v-if="hasAdd" size="small" icon="el-icon-truck" circle
+                     @click="onDefaultAdd(scope.row)" type="success">
           </el-button>
 
         </template>
@@ -120,9 +143,13 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
+    <!--确认完成日期对话框-->
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
+
+    <!--创建发货对话框-->
+    <createDialog ref="createDialog" @createCBEvent="modifyCBEvent">
+    </createDialog>
 
   </div>
 
@@ -132,6 +159,7 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import editDialog from './dialog'
+  import createDialog from '../create/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
@@ -148,6 +176,7 @@
 
     components: {
       editDialog,
+      createDialog,
       phPercentage
     },
     props: {
@@ -164,7 +193,25 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
-
+      hasEdit() {
+        if (this.type == 'completionDate') {
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
+      hasAdd() {
+        if (this.type == 'orderExecuting') {
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
+      hasOperation() {
+        return this.hasEdit || this.hasAdd;
+      },
       // 显示进度条
       hasCompleteness() {
         return false;
@@ -176,10 +223,6 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: false,
         // 多选记录对象
         selected: [],
 
@@ -542,7 +585,11 @@
         // 弹窗
         this.$refs.editDialog.openDialog(row.id);
       },
-
+      /* 行编辑按钮 */
+      onDefaultAdd(row) {
+        // 弹窗
+        this.$refs.createDialog.openDialog(row.id);
+      },
       /* 行删除按钮 */
       onDefaultDelete(row) {
         let url = `${this.url}/${row.id}`;

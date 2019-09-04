@@ -1,22 +1,12 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
-
-    <el-row style="margin-bottom: 20px;">
-
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
-
-      <el-button type="primary" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
-      </el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
-
-      <el-button type="primary" icon="el-icon-user-solid" v-if="hasExecute" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="hasExecute" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="hasExecute" @click="onShare">分享</el-button>
-
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px"
+             class="ph-dialog" @close='closeDialog' fullscreen>
+    <el-row
+      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
+      <el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onConfirmDate">确认完成日期</el-button>
+      <el-button type="primary" @click="closeDialog">取 消</el-button>
     </el-row>
 
     <!-- 折叠面板 -->
@@ -24,43 +14,61 @@
 
       <el-collapse-item name="infoFrom">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购单内容</div>
-        <itemTable ref="itemTable" :primary="primary"></itemTable>
+        <div slot="title" class="title">2. 采购产品详情</div>
+        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
-
-        <attachment ref="attachment" :primary="primary"></attachment>
-
+      <el-collapse-item name="person" style="margin-top: 10px">
+        <div slot="title" class="title">3. 跟单负责人</div>
+        <person @reloadCBEvent="reloadCBEvent" ref="person" v-if="primaryComplete" :primary="primary"></person>
       </el-collapse-item>
 
-
+      <el-collapse-item name="logs" style="margin-top: 10px">
+        <div slot="title" class="title">4. 日志</div>
+        <logs @reloadCBEvent="reloadCBEvent" ref="logs" :logs="logs" v-if="logComplete"></logs>
+      </el-collapse-item>
     </el-collapse>
+    <!-- 弹窗框 -->
+    <dateDialog ref="dateDialog" @modifyCBEvent="modifyCBEvent"></dateDialog>
 
   </el-dialog>
 
 </template>
 
 <script>
-  import infoFrom from '../edit/form'
-  import itemTable from '../detail/table'
-  import attachment from '../edit/attachment'
+
+  import {mapGetters} from 'vuex'
+  import infoFrom from './form'
+  import logs from './logs';
+  import person from './person'
+  import itemTable from './itemTable'
+  import dateDialog from './dateDialog'
+
+  import {currency, intArrToStrArr} from '@/utils'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment
+      person,
+      logs,
+      dateDialog
     },
     props: {},
+    filters: {
+      currency: currency
+    },
     computed: {
+      ...mapGetters([
+        'device',
+        'rolePower'
+      ]),
       hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
+        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1) {
           return true;
         }
         else {
@@ -68,7 +76,7 @@
         }
       },
       title() {
-        return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        return '采购单跟单 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -76,10 +84,13 @@
       return {
         primaryId: null,  //主ID
         primary: {}, //主对象
+        logs: [], //日志对象
+        primaryComplete: false,
+        logComplete: false,
         dialogVisible: false, //Dialog 是否开启
         activeNames: [],   //折叠面板开启项
-        relations: ["supplier", "warehouse"],
-        url: "/procurementOrders",
+        url: '/procurementOrders',
+        relations: ["procurementPlan", "currency", "warehouse", "supplier"],  // 关联对象
       }
     },
 
@@ -93,16 +104,45 @@
     methods: {
       initData() {
         if (this.primaryId) {
+          let url = `${this.url}/${this.primaryId}`;
+          url += "?relations=" + JSON.stringify(this.relations);
+
+          this.primaryComplete = false;
+
           //获取计划数据
-        let url = `${this.url}/${this.primaryId}`;
-          if (this.relations && this.relations.length > 0) {
-            url += "?relations=" + JSON.stringify(this.relations);
-          }
           this.global.axios
             .get(url)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
+              this.dialogVisible = true;
+              this.primaryComplete = true;
+            })
+            .catch(err => {
+            });
+
+          // 获取日志数据
+          let filters = [];
+          let logUrl = '/procurementOrderLogs';
+          let relations = ["creator"]
+          this.logComplete = false;
+
+          filters.push(
+            {
+              field: "procurementOrderId",
+              op: 'eq',
+              data: this.primaryId
+            })
+          logUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          logUrl += "&sort=id&dir=desc";
+          logUrl += "&relations=" + JSON.stringify(relations);
+
+          this.global.axios
+            .get(logUrl)
+            .then(resp => {
+              let res = resp.data;
+              this.logs = res || [];
+              this.logComplete = true;
               this.dialogVisible = true;
             })
             .catch(err => {
@@ -115,37 +155,29 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        //this.activeNames = ['infoFrom', 'itemTable'];
+        this.activeNames = ['infoFrom', 'itemTable', 'person'];
+      },
+      closeDialog() {
+        this.primary = {};
+        this.primaryId = null;
+        this.logs = [];
+        this.dialogVisible = false;
+        this.primaryComplete = false;
+        this.logComplete = false;
       },
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
+        this.initData();
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
       },
-      //提交审核
-      onCommit() {
+      /* 重新加载 */
+      reloadCBEvent() {
+        this.initData();
       },
-      //同意审核
-      onAgree() {
-      },
-      //拒绝审核
-      onRefuse() {
-      },
-      //撤回
-      onWithdraw() {
-      },
-      //指派
-      onAssign() {
-      },
-      //交接
-      onHandover() {
-      },
-      //分享
-      onShare() {
-      },
-      //完成
-      onComplete() {
+      onConfirmDate() {
+        this.$refs.dateDialog.openDialog(this.primary);
       }
     }
   }
