@@ -29,6 +29,13 @@
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+          //工具按钮
+          maxUploadCount: 20, //提交数量
+          exportFileName: '菜单列表',
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: true,
+
           columns: [
             {type: 'selection'},
             {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
