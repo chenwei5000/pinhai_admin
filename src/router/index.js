@@ -31,17 +31,14 @@ Vue.use(Router)
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
-  {
+export const constantRoutes = [{
     path: '/redirect',
     component: Layout,
     hidden: true,
-    children: [
-      {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
+    children: [{
+      path: '/redirect/:path*',
+      component: () => import('@/views/redirect/index')
+    }]
   },
   {
     path: '/login',
@@ -82,32 +79,41 @@ export const constantRoutes = [
     path: '',
     component: Layout,
     redirect: 'dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/Dashboard/index'),
-        name: 'Dashboard',
-        meta: {title: '控制台', icon: 'dashboard', noCache: true, affix: true}
+    children: [{
+      path: 'dashboard',
+      component: () => import('@/views/Dashboard/index'),
+      name: 'Dashboard',
+      meta: {
+        title: '控制台',
+        icon: 'dashboard',
+        noCache: true,
+        affix: true
       }
-    ]
+    }]
   },
   {
     path: '/x`',
     component: Layout,
     name: 'documentation',
-    meta: {title: '模版', icon: 'documentation'},
-    children: [
-      {
+    meta: {
+      title: '模版',
+      icon: 'documentation'
+    },
+    children: [{
         path: 'table',
         component: () => import('@/views/PhTpl/table'),
         name: 'tableTpl',
-        meta: {title: '表格模版'}
+        meta: {
+          title: '表格模版'
+        }
       },
       {
         path: 'form',
         component: () => import('@/views/PhTpl/table'),
         name: 'formTpl',
-        meta: {title: '表单模版'}
+        meta: {
+          title: '表单模版'
+        }
       }
     ]
   },
@@ -115,30 +121,39 @@ export const constantRoutes = [
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: {title: 'guide', icon: 'guide', noCache: true}
+    children: [{
+      path: 'index',
+      component: () => import('@/views/guide/index'),
+      name: 'Guide',
+      meta: {
+        title: 'guide',
+        icon: 'guide',
+        noCache: true
       }
-    ]
+    }]
   },
   {
     path: '/icon',
     component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: 'icons', icon: 'icon', noCache: true }
+    children: [{
+      path: 'index',
+      component: () => import('@/views/icons/index'),
+      name: 'Icons',
+      meta: {
+        title: 'icons',
+        icon: 'icon',
+        noCache: true
       }
-    ]
+    }]
   },
   {
     path: '/procurementShippedOrder/print',
     component: () => import('@/views/ProcurementShippedOrder/print'),
+    hidden: true
+  },
+  {
+    path: '/warehouseAllocation/print',
+    component: () => import('@/views/WarehouseAllocation/print'),
     hidden: true
   },
 
@@ -152,7 +167,9 @@ export const asyncRoutes = [];
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({y: 0}),
+  scrollBehavior: () => ({
+    y: 0
+  }),
   routes: constantRoutes
 })
 
