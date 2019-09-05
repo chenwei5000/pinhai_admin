@@ -152,6 +152,12 @@ export const constantRoutes = [{
     hidden: true
   },
   {
+    path: '/procurementReceivedOrder/print',
+    component: () => import('@/views/ProcurementReceivedOrder/print'),
+    hidden: true
+  },
+  //print
+  {
     path: '/warehouseAllocation/print',
     component: () => import('@/views/WarehouseAllocation/print'),
     hidden: true

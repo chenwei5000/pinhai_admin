@@ -5,13 +5,13 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
 
     <el-row
-      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
       <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
       <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" @click="onShipped">执行发货</el-button>
 
-      <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute" >
-      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
+      <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute">
+        <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
       </router-link>
 
       <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
@@ -23,17 +23,17 @@
 
       <el-collapse-item name="infoFrom">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent"  v-if="primaryComplete" :primary="primary"></infoFrom>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 发货计划内容</div>
-        <itemTable ref="itemTable"  v-if="primaryComplete" :primary="primary"></itemTable>
+        <itemTable ref="itemTable" v-if="primaryComplete" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment"  v-if="primaryComplete" :primary="primary"></attachment>
+        <attachment ref="attachment" v-if="primaryComplete" :primary="primary"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="person" style="margin-top: 10px">
@@ -43,7 +43,7 @@
     </el-collapse>
 
     <!-- 弹窗框 -->
-    <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"> </shippedDialog>
+    <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"></shippedDialog>
     <phStatus statusName="ProcurementShippedOrderStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
               :objStatus="primary.status"></phStatus>
 
@@ -78,11 +78,11 @@
           return false;
         }
       },
-      hasAdmin(){
+      hasAdmin() {
         return true;
       },
 
-      hasWithdraw(){
+      hasWithdraw() {
         if ([4].indexOf(this.primary.status) > -1) {
           return true;
         }
@@ -90,7 +90,7 @@
           return false;
         }
       },
-      hasShipped(){
+      hasShipped() {
         return this.primary.status == 3;
       },
       title() {
@@ -208,7 +208,7 @@
       onShipped() {
         this.$refs.shippedDialog.openDialog(this.primary);
       },
-      onShippedCBEvent(object){
+      onShippedCBEvent(object) {
         this.initData();
       },
 

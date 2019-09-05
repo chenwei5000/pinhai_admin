@@ -81,7 +81,7 @@
     <el-row>
       <el-col :md="24">
         <el-form-item label="备注" prop="remark">
-          <div style="font-size: 12px" v-html="editObject.remark"></div>
+          <div style="font-size: 12px" v-html="editObject.formatRemark"></div>
         </el-form-item>
       </el-col>
     </el-row>

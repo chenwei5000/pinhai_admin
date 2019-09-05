@@ -16,7 +16,7 @@
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
+      <el-collapse-item name="attachment" style="margin-top: 10px; padding-bottom: 5px;">
         <div slot="title" class="title">3. 附件</div>
         <attachment ref="attachment" :primary="primary"></attachment>
       </el-collapse-item>

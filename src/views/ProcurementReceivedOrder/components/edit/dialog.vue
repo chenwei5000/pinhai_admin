@@ -1,54 +1,38 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible"
+             :visible.sync="dialogVisible" style="padding-bottom: 40px"
+             class="ph-dialog" @close='closeDialog' fullscreen>
 
-    <el-row style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
+    <el-row
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <el-button type="warning" icon="el-icon-s-flag" v-if="primary.status === 4" @click="onConfirm">一键确认</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status === 4" @click="onComplete">收货完成</el-button>
-      <el-button type="success" icon="el-icon-printer" v-if="primary.status === 4" @click="onPrint" :disabled="true">打印收货单</el-button>
+      <router-link target="_blank" :to="'/procurementReceivedOrder/print?id='+primary.id">
+        <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
+      </router-link>
 
+      <el-button type="success" icon="el-icon-s-claim" @click="onComplete">确认收货</el-button>
     </el-row>
 
-    <!-- 折叠面板 -->
-    <el-collapse v-model="activeNames">
-
-      <el-collapse-item name="infoFrom">
-        <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
-      </el-collapse-item>
-
-      <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 产品详情</div>
-        <itemTable ref="itemTable" :primary="primary"></itemTable>
-      </el-collapse-item>
-
-      <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary"></attachment>
-      </el-collapse-item>
-
-    </el-collapse>
-
-
-
+    <itemTable ref="itemTable" :primary="primary"></itemTable>
+    <h4>附件</h4>
+    <attachment ref="attachment" :primary="primary"></attachment>
+    <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent"></saveDialog>
   </el-dialog>
 
 </template>
 
 <script>
-  import infoFrom from './form'
-  import itemTable from '../detail/table'
+  import itemTable from './detailTable'
   import attachment from './attachment'
-  import person from './person'
+  import saveDialog from './saveDialog'
 
   export default {
     components: {
-      infoFrom,
       itemTable,
       attachment,
-      person
+      saveDialog
     },
     props: {},
     computed: {
@@ -95,16 +79,22 @@
         this.initData();
         this.activeNames = ['infoFrom', 'itemTable'];
       },
+      closeDialog() {
+        this.primaryId = null;
+        this.primary = {};
+        this.activeNames = [];
+        this.dialogVisible = false;
+      },
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
+        this.closeDialog();
       },
 
-
       //确认收货
-      onConfirm(){
+      onConfirm() {
         this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
           .then(resp => {
             this.$message.info("确认收货成功");
@@ -122,10 +112,17 @@
       },
 
       //收货完成
-      onComplete(){
-        this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
+      onComplete() {
+        // 明细对象
+        let details = this.$refs.itemTable.tableData;
+        this.$refs.saveDialog.openDialog(this.primary, details);
+      },
+
+      //打印收货单
+      onPrint() {
+        this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("收货完成");
+            this.$message.info("打印收货单");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = false;
@@ -137,23 +134,9 @@
             this.confirmLoading = false;
           })
       },
-
-      //打印收货单
-      onPrint(){
-        this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
-          .then(resp => {
-            this.$message.info("打印收货单");
-            this.loading = false;
-            this.confirmLoading = false;
-            this.dialogVisible = false;
-            this.$emit("modifyCBEvent",  resp.data);
-
-          })
-          .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
-          })
-      },
+      onAll() {
+        this.$refs.itemTable.onAll();
+      }
     }
   }
 </script>

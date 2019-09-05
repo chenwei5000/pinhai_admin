@@ -2,12 +2,12 @@
   <div>
     <el-upload
       class="upload-demo"
+      action=""
       :on-preview="handlePreview"
       :before-remove="handleBeforeRemove"
       multiple
       :file-list="attachments">
     </el-upload>
-
   </div>
 </template>
 

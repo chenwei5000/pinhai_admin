@@ -561,7 +561,7 @@
             _details.push(_detail);
           }
         });
-        _order.orderItems = _details;
+        _order.shippedOrderItems = _details;
 
         const loading = this.$loading({
           lock: true,

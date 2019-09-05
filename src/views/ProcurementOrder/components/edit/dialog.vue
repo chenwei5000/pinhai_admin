@@ -4,8 +4,8 @@
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px"
              class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row
-      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">发布</el-button>
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
+    <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">发布</el-button>
       <!--el-button type="success" icon="el-icon-success" v-if="primary.status == 2" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 2" @click="onRefuse">不同意</el-button-->
 

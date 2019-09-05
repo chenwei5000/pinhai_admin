@@ -1,8 +1,10 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog' fullscreen>
-    <el-row style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
+             fullscreen>
+    <el-row
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
       <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
       <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
@@ -171,8 +173,8 @@
         // 默认展开所有折叠面板
         this.activeNames = ['infoFrom', 'itemTable', 'attachment', 'person', 'logs'];
       },
-      closeDialog(){
-        this.primary={};
+      closeDialog() {
+        this.primary = {};
         this.primaryId = null;
         this.logs = [];
         this.dialogVisible = false;

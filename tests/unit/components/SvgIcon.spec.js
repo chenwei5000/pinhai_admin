@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import SvgIcon from '@/components/SvgIcon/table.vue'
+import SvgIcon from '@/components/SvgIcon/detailTable.vue'
 describe('SvgIcon.vue', () => {
   it('iconClass', () => {
     const wrapper = shallowMount(SvgIcon, {

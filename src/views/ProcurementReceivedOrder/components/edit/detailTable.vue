@@ -2,15 +2,42 @@
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
-
+    <el-form inline
+             ref="editObject"
+             label-position="right"
+             label-width="120px"
+    >
+      <el-row>
+        <el-col :md="6">
+          <el-form-item label="编码:">
+            <span style="font-size: 12px">{{primary.code}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
+          <el-form-item label="物流单号:" prop="trackNumber">
+            <span style="font-size: 12px">{{primary.trackNumber?primary.trackNumber : '无'}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
+          <el-form-item label="供货商:" prop="supplierId">
+            <span style="font-size: 12px">{{primary.supplier.name}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
+          <el-form-item label="收货仓库:" prop="warehouseId">
+            <span style="font-size: 12px">{{primary.warehouse.name}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
       style="width: 100%"
       stripe
       border
-      max-height="500"
       highlight-current-row
+      :max-height="tableMaxHeight"
       :row-class-name="dangerClassName"
       cell-class-name="ph-cell"
       header-cell-class-name="ph-cell-header"
@@ -22,7 +49,7 @@
       id="table"
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left">
+      <el-table-column prop="product.skuCode" label="SKU编码" width="200">
 
       </el-table-column>
 
@@ -42,7 +69,6 @@
       </el-table-column>
 
       <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
 
       <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
@@ -50,26 +76,48 @@
 
       <el-table-column prop="receivedNote" label="异常备注" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="异常备注" width="250" trigger="hover"
-                      v-if="scope.row.receivedNote && scope.row.receivedNote.length > 10">
-            <div v-html="scope.row.receivedNote"></div>
-            <span slot="reference">{{ scope.row.receivedNote ? scope.row.receivedNote.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.receivedNote }}
-          </span>
+
+          <el-input type="textarea" v-model="scope.row.receivedNote"
+                    rows="1"
+                    style="width: 110px;margin: 3px 0;"
+                    show-word-limit></el-input>
+
         </template>
       </el-table-column>
 
-      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="120" fixed="right"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right"></el-table-column>
+      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="180" fixed="right" align="center">
 
+        <template slot="header" slot-scope="scope">
+          <span>本次到货箱数</span><BR/>
+          <el-button type="primary" size="mini" plain @click="onAll">全部到货</el-button>
+          <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
+        </template>
+
+        <template slot-scope="scope">
+          <el-input-number v-model="scope.row.receivedCartonQty"
+                           size="mini"
+                           style="width: 120px;margin: 3px 0;"
+                           :precision="3"
+                           :min="0"
+                           :step="1"
+                           @change="onReceivedCartonQty(scope.row)"
+                           :max="1000000" label="请填本次到货箱数">
+          </el-input-number>
+
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right">
+
+      </el-table-column>
     </el-table>
   </div>
+
 
 </template>
 
 <script>
+
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
 
@@ -92,6 +140,9 @@
 
     data() {
       return {
+        // 表格最大高度
+        tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
+
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
@@ -108,7 +159,7 @@
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
-        loading: false,
+        loading: false
       }
     },
 
@@ -116,8 +167,16 @@
     },
 
     mounted() {
+
+      //全屏，表格高度处理
+      window.onresize = () => {
+        this.getTableHeight();
+      }
+
+
       this.$nextTick(() => {
         this.initData();
+        this.getTableHeight();
         this.getList();
       })
     },
@@ -128,6 +187,20 @@
       initData() {
       },
 
+      // 获取表格的高度
+      getTableHeight() {
+        if (this.device !== 'mobile') {
+          //浏览器高度
+          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          //表格高度
+          let tableHeight = windowHeight;
+          tableHeight = tableHeight - 180;
+          this.tableMaxHeight = tableHeight;
+        }
+        else {
+          this.tableMaxHeight = 400;
+        }
+      },
 
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
@@ -211,8 +284,8 @@
             let res = resp.data
             let data = res || []
 
-            this.data = data
-            this.search()
+            this.data = data;
+            this.search();
 
             this.total = res.length || 0
             this.loading = false
@@ -236,6 +309,22 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
+      },
+
+      onAll() {
+        this.tableData.forEach((item, index, arr) => {
+          arr[index].receivedCartonQty = item.shippedCartonQty;
+          arr[index].receivedQty = item.shippedQty;
+        });
+      },
+      onClear() {
+        this.tableData.forEach((item, index, arr) => {
+          arr[index].receivedCartonQty = 0;
+          arr[index].receivedQty = 0;
+        });
+      },
+      onReceivedCartonQty(row) {
+        row.receivedQty = (row.receivedCartonQty * row.numberOfCarton).toFixed(0);
       }
     }
   }
