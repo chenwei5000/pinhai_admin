@@ -41,10 +41,10 @@
       <el-table-column prop="product.name" label="产品名" min-width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 27">
+                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
             <div v-html="scope.row.product.name"></div>
             <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 27 ? scope.row.product.name.substr(0,25)+'..' : scope.row.product.name : ''
+              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
               }}</span>
           </el-popover>
           <span v-else>
