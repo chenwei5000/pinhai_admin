@@ -84,13 +84,7 @@
     <!-- 编辑明细对话框 -->
     <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
     </itemDialog>
-    <el-col :md="24">
-      <el-row type="flex" justify="center">
-        <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSmart">
-          创建
-        </el-button>
-      </el-row>
-    </el-col>
+
   </div>
 
 </template>
@@ -182,10 +176,10 @@
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         let flag = true; //是否存在此SKU的产品
-        console.log("1111", object);
+        let idx = null;
+        let _tmp = JSON.parse(JSON.stringify(this.tableData));
         this.tableData.forEach((item, index, arr) => {
           if (item.skuCode === object.skuCode) {
-            console.log(2222);
             arr[index] = object;
             flag = false;
           }
@@ -194,10 +188,9 @@
           this.tableData.push(object);
         }
 
-        console.log(this.tableData);
-        //this.$set(this.tableData,this.tableData);
-        //this.$forceUpdate();
-        //this.tableData[0].cartonSpecCode = "aaa";
+        this.tableData.push({});
+        this.tableData.pop();
+
       },
 
       /********************* 工具条按钮  ***************************/
