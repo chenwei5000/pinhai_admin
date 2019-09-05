@@ -80,7 +80,6 @@
 
     data() {
       return {
-
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
           ? (this.$route.query.s !== null ? this.$route.query.s : 'executing')
@@ -96,7 +95,7 @@
       // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
         const queryFlag = '?s=';
-        const queryPath = '/m2/WarehouseAllocation_index';
+        const queryPath = '/m3/WarehouseAllocation_index';
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },

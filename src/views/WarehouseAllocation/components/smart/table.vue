@@ -1,16 +1,15 @@
 <template>
-    <!-- 表格工具条 添加、导入、导出等 -->
+  <!-- 表格工具条 添加、导入、导出等 -->
   <div class="ph-table">
-    <tableToolBar
-      v-bind="toolbarConfig"
-      @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
-      @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
-      @onToolBarDownloadData="onToolBarDownloadData"
-      @onToolBarImportData="onToolBarImportData"
-    >
-    </tableToolBar>
+
+    <el-row class="table-tool" type="flex" justify="space-between">
+      <el-col :md="18">
+        <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
+                   size="small">
+          新增
+        </el-button>
+      </el-col>
+    </el-row>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -24,17 +23,44 @@
       header-cell-class-name="ph-cell-header"
       :data="tableData"
       v-loading="loading"
-      show-summary
+      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      id="table"
     >
-      <el-table-column label="序号" width="50" type=index></el-table-column>
-      <el-table-column prop="skuCode" label="SKU" sortable min-width="150"></el-table-column>
-      <el-table-column prop="productName" label="名称" width="200"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" min-width="120">
-      </el-table-column>
+      <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
+
+      <!--<el-table-column prop="productName" label="名称" min-width="200">-->
+      <!--<template slot-scope="scope">-->
+      <!--<el-popover placement="top-start" width="200" trigger="hover"-->
+      <!--v-if="scope.row.productName && scope.productName.length > 22">-->
+      <!--<div v-html="scope.row.productName"></div>-->
+      <!--<span slot="reference">{{-->
+      <!--scope.row.productName ? scope.row.productName.length > 22 ? scope.row.productName.substr(0,20)+'..' : scope.row.productName : ''-->
+      <!--}}</span>-->
+      <!--</el-popover>-->
+      <!--<span v-else>-->
+      <!--{{ scope.row.productName }}-->
+      <!--</span>-->
+      <!--</template>-->
+      <!--</el-table-column>-->
+
+      <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
+
+      <!--<el-table-column prop="remark" label="备注" width="130">-->
+      <!--<template slot-scope="scope">-->
+      <!--<el-popover placement="top-start" title="备注" width="250" trigger="hover"-->
+      <!--v-if="scope.row.remark && scope.row.remark.length > 10">-->
+      <!--<div v-html="scope.row.remark"></div>-->
+      <!--<span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>-->
+      <!--</el-popover>-->
+      <!--<span v-else>-->
+      <!--{{ scope.row.remark }}-->
+      <!--</span>-->
+      <!--</template>-->
+      <!--</el-table-column>-->
+
       <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="110"></el-table-column>
-      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110"></el-table-column>
-      <el-table-column prop="remark" label="备注" width="130"></el-table-column>
+      <el-table-column prop="shippedQty" label="shippedQtyTitle" min-width="110"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -43,7 +69,7 @@
         <template slot-scope="scope">
 
           <el-button size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit" >
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
           <el-button type="danger" size="mini"
@@ -58,6 +84,13 @@
     <!-- 编辑明细对话框 -->
     <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
     </itemDialog>
+    <el-col :md="24">
+      <el-row type="flex" justify="center">
+        <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSmart">
+          创建
+        </el-button>
+      </el-row>
+    </el-col>
   </div>
 
 </template>
@@ -66,26 +99,25 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
-  import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './dialog'
 
   export default {
     components: {
-      tableToolBar,
       itemDialog
     },
-    props: {
-    },
+    props: {},
     computed: {
       ...mapGetters([
         'device', 'rolePower'
       ]),
-       shippedQtyTitle() {
+      shippedQtyTitle() {
         return `调拨${this.unit == '箱' ? '件' : this.unit}数`;
       },
+      hasAdd() {
+        return true;
+      }
     },
-    filters: {
-    },
+    filters: {},
 
     data() {
       return {
@@ -96,29 +128,19 @@
         confirmLoading: false,
         //操作按钮控制
         hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
-
-        tableData: [
-        ],  // 前端表格显示的数据，本地搜索用
+        tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
         loading: false,
         unit: "箱",
-
-        // 表格工具条配置
-        toolbarConfig: {
-          hasEdit: false,
-          hasDelete: false,
-          hasAdd: true,
-          hasExportTpl: false,
-          hasExport: false,
-          hasImport: false,
-        }
       }
     },
 
     created() {
+    },
+    watch: {
+      tableData(val) {
+        console.log("tableData", val);
+      }
     },
 
     mounted() {
@@ -139,14 +161,17 @@
         this.$refs.itemDialog.openDialog(row);
       },
 
+      onSmart(row) {
+        this.tableData[0].cartonSpecCode = "aaaa1";
+      },
       /* 行删除功能 */
       onDefaultDelete(index) {
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-                this.tableData.splice(index, 1);
-                done();
+              this.tableData.splice(index, 1);
+              done();
             } else done()
           }
         }).catch(er => {
@@ -156,34 +181,29 @@
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
-          let flag = true; //是否存在此SKU的产品
-          this.tableData.forEach((item, index, arr) => {
-            if (item.skuCode === object.skuCode) {
-              arr[index] = object;
-              flag = false;
-            }
-          });
-          console.log(this.tableData);
-          if(flag){
-            this.tableData.push(object);
+        let flag = true; //是否存在此SKU的产品
+        console.log("1111", object);
+        this.tableData.forEach((item, index, arr) => {
+          if (item.skuCode === object.skuCode) {
+            console.log(2222);
+            arr[index] = object;
+            flag = false;
           }
+        });
+        if (flag) {
+          this.tableData.push(object);
+        }
+
+        console.log(this.tableData);
+        //this.$set(this.tableData,this.tableData);
+        //this.$forceUpdate();
+        //this.tableData[0].cartonSpecCode = "aaa";
       },
 
       /********************* 工具条按钮  ***************************/
-      onToolBarAdd() {
+      onDefaultAdd() {
         this.$refs.itemDialog.openDialog(null);
       },
-      onToolBarEdit() {
-      },
-      onToolBarDelete() {
-      },
-      onToolBarDownloadTpl() {
-      },
-      onToolBarDownloadData() {
-      },
-      onToolBarImportData() {
-
-      }
     }
   }
 </script>
@@ -201,5 +221,20 @@
     vertical-align: middle;
     padding: 0 10px;
   }
+
+  .table-tool {
+    background-color: #dfe6ec;
+    position: relative;
+    z-index: 890;
+    width: 100%;
+    min-height: 40px;
+    line-height: 30px;
+    padding: 5px 10px;
+  }
+
+  .excel-upload-input {
+    display: none !important;
+  }
+
 </style>
 

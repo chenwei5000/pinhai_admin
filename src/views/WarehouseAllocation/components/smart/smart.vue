@@ -10,7 +10,6 @@
              label-position="right"
              label-width="120px"
              v-loading="loading"
-             inline-message
     >
 
       <fieldset class="panel-heading">
@@ -25,9 +24,9 @@
         </legend>
 
       <el-row>
-        <el-col :md="10">
+        <el-col :md="8">
             <el-form-item label="发货仓库" prop="fromWarehouseId">
-              <el-select v-model="newObject.fromWarehouseId" style="width: 220px"
+              <el-select v-model="newObject.fromWarehouseId" style="width: 180px"
                         filterable placeholder="请选择发货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -39,9 +38,9 @@
             </el-form-item>
           </el-col>
 
-          <el-col :md="14">
+          <el-col :md="8">
             <el-form-item label="收货仓库" prop="toWarehouseId">
-              <el-select v-model="newObject.toWarehouseId" style="width: 220px"
+              <el-select v-model="newObject.toWarehouseId" style="width: 180px"
                         filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -52,13 +51,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
 
-        <el-row>
-          <el-col :md="14">
+          <el-col :md="8">
             <el-form-item label="预计发货时间" prop="expectTime">
               <el-date-picker
                 v-model="newObject.expectTime"
+                style="width: 180px"
                 format="yyyy-MM-dd"
                 type="date"
                 placeholder="预计发货时间"></el-date-picker>
@@ -83,7 +81,7 @@
       </fieldset>
     </el-form>
 
-   
+
   </div>
 
 </template>
@@ -143,10 +141,10 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.loading = false;
       },
-     
+
 
       /********************* 操作按钮相关方法  ***************************/
       // 调拨 TODO:
