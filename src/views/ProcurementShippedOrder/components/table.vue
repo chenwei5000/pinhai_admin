@@ -9,16 +9,16 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" size="mini" style="width: 120px" placeholder="请输入"></el-input>
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px" placeholder="请输入"></el-input>
       </el-form-item>
 
       <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" size="mini" style="width: 120px"
+        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 110px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
@@ -306,12 +306,6 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
-          }
           if (params.name) {
             this.searchParam.name.value = params.name;
           }
@@ -326,9 +320,6 @@
           }
           if (params.warehouseId) {
             this.searchParam.warehouseId.value = params.warehouseId;
-          }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
           }
         }
       }
@@ -345,7 +336,7 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
       },
 

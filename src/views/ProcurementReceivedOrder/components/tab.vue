@@ -28,8 +28,6 @@
             data: 4
           }
         }
-
-
         //已完成
         else if (this.type === 'complete') {
           return {
@@ -42,7 +40,7 @@
           return {
             field: 'status',
             op: 'in',
-            data: "4,6"
+            data: "4,5,6"
           }
         }
       }

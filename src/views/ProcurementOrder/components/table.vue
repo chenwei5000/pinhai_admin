@@ -9,11 +9,11 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" clearable v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">

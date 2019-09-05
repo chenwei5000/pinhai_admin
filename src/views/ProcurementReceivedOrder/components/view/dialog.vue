@@ -3,14 +3,6 @@
   <!-- 修改弹窗 TODO: title -->
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
 
-    <el-row style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
-
-      <el-button type="warning" icon="el-icon-s-flag" v-if="primary.status === 4" @click="onConfirm">一键确认</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="primary.status === 4" @click="onComplete">收货完成</el-button>
-      <el-button type="success" icon="el-icon-printer" v-if="primary.status === 4" @click="onPrint" :disabled="true">打印收货单</el-button>
-
-    </el-row>
-
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
 
@@ -39,16 +31,14 @@
 
 <script>
   import infoFrom from './form'
-  import itemTable from '../detail/table'
+  import itemTable from './detailTable'
   import attachment from './attachment'
-  import person from './person'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment,
-      person
+      attachment
     },
     props: {},
     computed: {
@@ -93,7 +83,7 @@
       openDialog(primaryId) {
         this.primaryId = primaryId;
         this.initData();
-        this.activeNames = ['infoFrom', 'itemTable'];
+        this.activeNames = ['infoFrom', 'itemTable', 'attachment'];
       },
 
       /* 子组件编辑完成后相应事件 */

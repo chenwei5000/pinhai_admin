@@ -7,11 +7,23 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px"
+                  placeholder="请输入"></el-input>
+      </el-form-item>
+
+      <el-form-item label="物流单号">
+        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
+                  placeholder="请输入物流单号"></el-input>
+      </el-form-item>
+
+      <el-form-item label="名称">
+        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 110px"
+                  placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" style="width: 120px"  placeholder="请选择供货商">
+        <el-select filterable v-model="searchParam.supplierId.value" size="mini"
+                   style="width: 100px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -21,7 +33,9 @@
       </el-form-item>
 
       <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value" style="width: 120px"  placeholder="请选择收货仓库">
+        <el-select filterable v-model="searchParam.warehouseId.value"
+                   size="mini"
+                   style="width: 100px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -67,37 +81,71 @@
         </template>
       </el-table-column>
 
-
-      <el-table-column prop="supplier.name" label="供货商" min-width="120"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="120"></el-table-column>
-      <el-table-column prop="trackNumber" label="物流信息" width="120">
+      <el-table-column prop="name" label="名称" min-width="200">
         <template slot-scope="scope">
-        物流单号: {{ scope.row.trackNumber}}<br>
-      物流公司:  {{ scope.row.channel}}<br>
-      车牌:  {{ scope.row.plateNumber }}<br>
-      联系人: {{ scope.row.linkman }}<br>
-      电话: {{ scope.row.tel }}<br>
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.name && scope.row.name.length > 22">
+            <div v-html="scope.row.name"></div>
+            <span slot="reference">{{
+              scope.row.name ? scope.row.name.length > 22 ? scope.row.name.substr(0,20)+'..' : scope.row.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.name }}
+          </span>
         </template>
+      </el-table-column>
+
+      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
+      <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
+
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.trackNumber">
+            <div>
+              物流单号: {{ scope.row.trackNumber}}<br>
+              物流公司: {{ scope.row.channel}}<br>
+              车牌: {{ scope.row.plateNumber }}<br>
+              联系人: {{ scope.row.linkman }}<br>
+              电话: {{ scope.row.tel }}<br>
+            </div>
+            <span slot="reference">
+              物流单号: {{ scope.row.trackNumber}}
+            </span>
+
+          </el-popover>
+          <span v-else>
+            无
+          </span>
+        </template>
+      </el-table-column>
 
       </el-table-column>
       <el-table-column prop="formatExpectTime" label="预计到货日期" width="120"></el-table-column>
       <el-table-column prop="formatReceivedTime" label="收货日期" width="120"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="120">
+      <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover">
+          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+                      v-if="scope.row.remark && scope.row.remark.length > 10">
             <div v-html="scope.row.formatRemark"></div>
             <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>
           </el-popover>
+          <span v-else>
+            {{ scope.row.remark }}
+          </span>
         </template>
       </el-table-column>
 
+      <el-table-column prop="id" label="ID" width="90"></el-table-column>
+
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          <el-button v-if="hasEdit" size="small" icon="el-icon-receiving" circle
+                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
           <el-button v-if="hasView" size="small" icon="el-icon-view" circle
@@ -130,6 +178,9 @@
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
+    <!--查看对话框-->
+    <viewDialog ref="viewDialog" >
+    </viewDialog>
   </div>
 
 </template>
@@ -138,6 +189,7 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import editDialog from './edit/dialog'
+  import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from "../../../api/supplier";
@@ -155,6 +207,7 @@
 
     components: {
       editDialog,
+      viewDialog,
       phPercentage
     },
     props: {
@@ -169,9 +222,23 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower'
+        'device', 'rolePower'
       ]),
-
+      hasEdit() {
+        if (this.type === 'shipped') {
+          return true;
+        }
+        return false;
+      },
+      hasView() {
+        if (this.type === 'complete' || this.type === 'all') {
+          return true;
+        }
+        return false;
+      },
+      hasOperation() {
+        return this.hasView || this.hasEdit
+      }
     },
 
     data() {
@@ -179,11 +246,6 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
-        hasView: true,
         // 多选记录对象
         selected: [],
 
@@ -197,7 +259,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementReceivedOrders', // 资源URL
         countUrl: '/procurementReceivedOrders/count', // 资源URL
-        relations: ["procurementOrder","supplier","warehouse"],  // 关联对象
+        relations: ["procurementOrder", "supplier", "warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -205,16 +267,17 @@
 
         //搜索 TODO: 根据实际情况调整
 
-        supplierSelectOptions:[],
+        supplierSelectOptions: [],
         warehouseSelectOptions: [],
         statusSelectOptions: [],
 
-
         searchParam: {
-          supplierId: {value: null, op: 'in', id: 'supplierId'},
-          warehouseId: {value: null, op: 'in', id: 'warehouseId'},
-          code: {value: null, op: 'bw', id: 'name'},
-
+          trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
+          supplierId: {value: null, op: 'eq', id: 'supplierId'},
+          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          status: {value: null, op: 'eq', id: 'status'},
+          name: {value: null, op: 'bw', id: 'status'},
+          code: {value: null, op: 'bw', id: 'code'},
         },
 
         //弹窗
@@ -253,18 +316,6 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
-          }
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
-          }
           if (params.name) {
             this.searchParam.name.value = params.name;
           }
@@ -273,6 +324,12 @@
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
+          }
+          if (params.supplierId) {
+            this.searchParam.supplierId.value = params.supplierId;
+          }
+          if (params.warehouseId) {
+            this.searchParam.warehouseId.value = params.warehouseId;
           }
         }
       }
@@ -290,23 +347,8 @@
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
-
-     //   待收货 无删除
-        if (this.type === 'shipped') {
-          this.hasView = false
-        }
-
-        //已完成 无删除
-        else if (this.type === 'complete') {
-          this.hasEdit = false;
-        }
-
-        else if (this.type === 'all') {
-          this.hasEdit = false;
-        }
-
-        },
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+      },
 
       // 获取表格的高度
       getTableHeight() {
@@ -347,10 +389,12 @@
         this.page = 1
 
         //TODO:根据实际情况调整
+        this.searchParam.trackNumber.value = null;
+        this.searchParam.status.value = null;
         this.searchParam.code.value = null;
         this.searchParam.supplierId.value = null;
         this.searchParam.warehouseId.value = null;
-
+        this.searchParam.name.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -586,11 +630,8 @@
 
       /* 行查看按钮 */
       onDefaultView(row) {
-        this.$refs.editDialog.openDialog(row.id);
-        },
-
-      /* 行删除按钮 */
-
+        this.$refs.viewDialog.openDialog(row.id);
+      },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
       modifyCBEvent(object) {

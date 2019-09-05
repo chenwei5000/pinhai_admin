@@ -3,6 +3,7 @@
   <!-- 编辑表单 TODO:-->
   <el-form :rules="rules" :model="editObject" status-icon inline
            ref="editObject" label-position="right"
+           v-if="initComplete"
            label-width="120px"
            v-loading="loading"
   >
@@ -124,6 +125,8 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
+        initComplete: false,
+
         // 编辑对象 TODO
         editObject: {},
 
@@ -147,37 +150,18 @@
        */
       initData() {
         this.loading = true;
+        this.initComplete = false;
         if (this.primary) {
           //获取计划数据
           this.editObject = JSON.parse(JSON.stringify(this.primary));
           this.loading = false;
+          this.initComplete = true;
         }
         else {
           this.$message.error("无效!");
           this.loading = false;
         }
-      },
-
-      /********************* 操作按钮相关方法  ***************************/
-      /* 保存对象 */
-      // onSave() {
-      //   this.global.axios.put(`/procurementReceivedOrders/receivedTime/${this.primary.id}`, this.primary)
-      //     .then(resp => {
-      //       this.$message.info("保存成功");
-      //       this.loading = false;
-      //       this.confirmLoading = false;
-      //       this.dialogVisible = false;
-      //       this.$emit("modifyCBEvent", resp.data);
-      //
-      //     })
-      //     .catch(err => {
-      //       this.loading = false;
-      //       this.confirmLoading = false;
-      //     })
-      // },
-
-      // 创建计划
-
+      }
     }
   }
 </script>
