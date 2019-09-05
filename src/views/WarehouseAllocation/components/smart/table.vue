@@ -28,36 +28,14 @@
     >
       <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
 
-      <!--<el-table-column prop="productName" label="名称" min-width="200">-->
-      <!--<template slot-scope="scope">-->
-      <!--<el-popover placement="top-start" width="200" trigger="hover"-->
-      <!--v-if="scope.row.productName && scope.productName.length > 22">-->
-      <!--<div v-html="scope.row.productName"></div>-->
-      <!--<span slot="reference">{{-->
-      <!--scope.row.productName ? scope.row.productName.length > 22 ? scope.row.productName.substr(0,20)+'..' : scope.row.productName : ''-->
-      <!--}}</span>-->
-      <!--</el-popover>-->
-      <!--<span v-else>-->
-      <!--{{ scope.row.productName }}-->
-      <!--</span>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
+      <el-table-column prop="productName" label="名称" min-width="200">
+      </el-table-column>
 
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
 
-      <!--<el-table-column prop="remark" label="备注" width="130">-->
-      <!--<template slot-scope="scope">-->
-      <!--<el-popover placement="top-start" title="备注" width="250" trigger="hover"-->
-      <!--v-if="scope.row.remark && scope.row.remark.length > 10">-->
-      <!--<div v-html="scope.row.remark"></div>-->
-      <!--<span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>-->
-      <!--</el-popover>-->
-      <!--<span v-else>-->
-      <!--{{ scope.row.remark }}-->
-      <!--</span>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
+      <el-table-column prop="remark" label="备注" width="130">
+      </el-table-column>
 
       <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="110"></el-table-column>
       <el-table-column prop="shippedQty" label="shippedQtyTitle" min-width="110"></el-table-column>
