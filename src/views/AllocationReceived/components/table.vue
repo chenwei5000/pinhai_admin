@@ -21,11 +21,12 @@
                   placeholder="请输入名称"></el-input>
       </el-form-item>
 
-      <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" size="mini"
+      <el-form-item label="发货仓库">
+        <el-select filterable v-model="searchParam.fromWarehouseId.value"
+                   size="mini"
                    style="width: 100px" placeholder="请选择">
           <el-option
-            v-for="(item,idx) in supplierSelectOptions"
+            v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -33,7 +34,7 @@
       </el-form-item>
 
       <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value"
+        <el-select filterable v-model="searchParam.toWarehouseId.value"
                    size="mini"
                    style="width: 100px" placeholder="请选择">
           <el-option
@@ -81,23 +82,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 22">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 22 ? scope.row.name.substr(0,20)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
+      <el-table-column prop="fromWarehouse.name" label="发货仓库" min-width="100"></el-table-column>
+      <el-table-column prop="toWarehouse.name" label="收货仓库" min-width="100"></el-table-column>
 
       <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
         <template slot-scope="scope">
@@ -191,16 +177,15 @@
   import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
-  import supplierModel from "../../../api/supplier";
   import warehouseModel from "../../../api/warehouse";
 
-  const valueSeparator = '~'
-  const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
-  const paramSeparator = ','
-  const equal = '='
-  const equalPattern = /=/g
-  const queryFlag = 'q='
-  const queryPattern = new RegExp('q=.*' + paramSeparator)
+  const valueSeparator = '~';
+  const valueSeparatorPattern = new RegExp(valueSeparator, 'g');
+  const paramSeparator = ',';
+  const equal = '=';
+  const equalPattern = /=/g;
+  const queryFlag = 'q=';
+  const queryPattern = new RegExp('q=.*' + paramSeparator);
 
   export default {
 
@@ -256,9 +241,9 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementReceivedOrders', // 资源URL
-        countUrl: '/procurementReceivedOrders/count', // 资源URL
-        relations: ["procurementOrder", "supplier", "warehouse"],  // 关联对象
+        url: '/allocationReceiveds', // 资源URL
+        countUrl: '/allocationReceiveds/count', // 资源URL
+        relations: ["fromWarehouse", "toWarehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -266,14 +251,13 @@
 
         //搜索 TODO: 根据实际情况调整
 
-        supplierSelectOptions: [],
         warehouseSelectOptions: [],
         statusSelectOptions: [],
 
         searchParam: {
           trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
-          supplierId: {value: null, op: 'eq', id: 'supplierId'},
-          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          fromWarehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          toWarehouseId: {value: null, op: 'eq', id: 'warehouseId'},
           status: {value: null, op: 'eq', id: 'status'},
           name: {value: null, op: 'bw', id: 'status'},
           code: {value: null, op: 'bw', id: 'code'},
@@ -324,11 +308,11 @@
           if (params.code) {
             this.searchParam.code.value = params.code;
           }
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
+          if (params.fromWarehouseId) {
+            this.searchParam.fromWarehouseId.value = params.fromWarehouseId;
           }
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
+          if (params.toWarehouseId) {
+            this.searchParam.toWarehouseId.value = params.toWarehouseId;
           }
         }
       }
@@ -345,7 +329,6 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
-        this.supplierSelectOptions = supplierModel.getSelectOptions();
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
       },
 
@@ -391,16 +374,16 @@
         this.searchParam.trackNumber.value = null;
         this.searchParam.status.value = null;
         this.searchParam.code.value = null;
-        this.searchParam.supplierId.value = null;
-        this.searchParam.warehouseId.value = null;
+        this.searchParam.fromWarehouseId.value = null;
+        this.searchParam.toWarehouseId.value = null;
         this.searchParam.name.value = null;
 
         // 重置url
-        history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
+        history.replaceState(history.state, '', location.href.replace(queryPattern, ''));
 
         this.$nextTick(() => {
           this.getList()
-        })
+        });
 
         /**
          * 按下重置按钮后触发,
@@ -449,15 +432,15 @@
       /*获取列表*/
       /* shouldStoreQuery 是否开启通过url记录查询参数， true表示开启 */
       getList(shouldStoreQuery) {
-        let url = this.url
-        let countUrl = this.countUrl
-        let params = ''
-        let searchParams = ''
-        let size = this.size
-        let page = this.page
+        let url = this.url;
+        let countUrl = this.countUrl;
+        let params = '';
+        let searchParams = '';
+        let size = this.size;
+        let page = this.page;
 
         if (!url) {
-          console.warn('url 为空, 不发送请求')
+          console.warn('url 为空, 不发送请求');
           return
         }
 
@@ -483,12 +466,12 @@
 
         // 处理分页信息
         // 根据偏移值计算接口正确的页数
-        params += `pageSize=${size}&currentPage=${page}`
-        searchParams += `pageSize=${size}&currentPage=${page}`
+        params += `pageSize=${size}&currentPage=${page}`;
+        searchParams += `pageSize=${size}&currentPage=${page}`;
 
         // 处理排序
         if (this.phSort) {
-          params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
+          params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`;
           searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
         }
 
@@ -507,7 +490,7 @@
 
         filters.forEach((param, k) => {
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
-        })
+        });
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
@@ -520,26 +503,26 @@
         }
 
         // 请求开始
-        this.loading = true
+        this.loading = true;
 
         //获取数据
         this.global.axios
           .get(countUrl + params)
           .then(resp => {
-            let res = resp.data
+            let res = resp.data;
             this.total = res || 0
           })
           .catch(err => {
-          })
+          });
 
         //获取数据
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data
-            let data = res || []
-            this.data = data
-            this.loading = false
+            let res = resp.data;
+            let data = res || [];
+            this.data = data;
+            this.loading = false;
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -551,17 +534,17 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err)
+            this.$emit('error', err);
             this.loading = false
-          })
+          });
 
         // 存储query记录, 便于后面恢复
         if (shouldStoreQuery > 0) {
 
-          let newUrl = ''
+          let newUrl = '';
           let searchQuery = queryFlag + (searchParams)
             .replace(/&/g, paramSeparator)
-            .replace(equalPattern, valueSeparator) + paramSeparator
+            .replace(equalPattern, valueSeparator) + paramSeparator;
 
           // 非第一次查询
           if (location.href.indexOf(queryFlag) > -1) {
@@ -576,7 +559,7 @@
 
       /* 多选功能 */
       handleSelectionChange(val) {
-        this.selected = val
+        this.selected = val;
 
         /**
          * 多选启用时生效, 返回(selected)已选中行的数组
