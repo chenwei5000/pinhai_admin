@@ -162,6 +162,11 @@ export const constantRoutes = [{
     component: () => import('@/views/WarehouseAllocation/print'),
     hidden: true
   },
+  {
+    path: '/allocationReceived/print',
+    component: () => import('@/views/AllocationReceived/print'),
+    hidden: true
+  },
 
 ]
 

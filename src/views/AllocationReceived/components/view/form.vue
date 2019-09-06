@@ -14,33 +14,27 @@
         </el-form-item>
       </el-col>
       <el-col :md="8">
-        <el-form-item label="名称" prop="name">
-          <span style="font-size: 12px">{{editObject.name}}</span>
+        <el-form-item label="预计到货时间" prop="expectTime">
+          <span style="font-size: 12px">{{editObject.formatExpectTime}}</span>
         </el-form-item>
       </el-col>
       <el-col :md="8">
-        <el-form-item label="预计到货时间" prop="expectTime">
-          <span style="font-size: 12px">{{editObject.formatExpectTime}}</span>
+        <el-form-item label="收货日期" prop="receivedTime">
+          <span style="font-size: 12px">{{editObject.formatReceivedTime}}</span>
         </el-form-item>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :md="8">
-        <el-form-item label="收货日期" prop="receivedTime">
-          <span style="font-size: 12px">{{editObject.formatReceivedTime}}</span>
+        <el-form-item label="发货仓库" prop="fromWarehouseId">
+          <span style="font-size: 12px">{{editObject.fromWarehouse.name}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="8">
-        <el-form-item label="供货商" prop="supplierId">
-          <span style="font-size: 12px">{{editObject.supplier.name}}</span>
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="8">
-        <el-form-item label="收货仓库" prop="warehouseId">
-          <span style="font-size: 12px">{{editObject.warehouse.name}}</span>
+        <el-form-item label="收货仓库" prop="toWarehouseId">
+          <span style="font-size: 12px">{{editObject.toWarehouse.name}}</span>
         </el-form-item>
       </el-col>
     </el-row>
@@ -153,9 +147,13 @@
         this.initComplete = false;
         if (this.primary) {
           //获取计划数据
+
           this.editObject = JSON.parse(JSON.stringify(this.primary));
           this.loading = false;
           this.initComplete = true;
+          console.log("11",this.editObject)
+
+
         }
         else {
           this.$message.error("无效!");

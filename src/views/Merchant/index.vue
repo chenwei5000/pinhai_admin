@@ -70,9 +70,6 @@
               $el: {
                 placeholder: '请输入类型'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             {
               $type: 'input',
@@ -104,9 +101,6 @@
               $el: {
                 placeholder: '请输入地址'
               },
-              rules: [
-                validRules.required,
-              ]
             },
               {
               $type: 'input',
@@ -115,9 +109,6 @@
               $el: {
                 placeholder: '请输入联系人'
               },
-              rules: [
-                validRules.required,
-              ]
             },
               {
               $type: 'input',
@@ -126,9 +117,6 @@
               $el: {
                 placeholder: '请输入联系电话'
               },
-              rules: [
-                validRules.required,
-              ]
             },
             phFromItems.status()
           ]

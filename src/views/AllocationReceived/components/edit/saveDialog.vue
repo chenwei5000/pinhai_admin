@@ -128,7 +128,7 @@
           this.details.forEach(r=>{
             _details.push({id: r.id, receivedCartonQty: r.receivedCartonQty, receivedNote: r.receivedNote});
           });
-          _object.receivedOrderItems = _details;
+          _object.receivedItems = _details;
 
           const loading = this.$loading({
             lock: true,

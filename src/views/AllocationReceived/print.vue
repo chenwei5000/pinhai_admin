@@ -3,17 +3,17 @@
        class="main-article" element-loading-text="采购入库单">
 
     <div class="article__heading">
-      <div class="article__heading__title">调拨入库单{{primary.code}}</div>
+      <div class="article__heading__title">采购入库单{{primary.code}}</div>
     </div>
     <el-row style="margin-bottom: 10px">
       <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        发货单位：{{primary.procurementOrder.supplier.name}}
+        发货仓库：{{primary.fromWarehouse.name}}
       </el-col>
       <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
         物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}}
       </el-col>
       <el-col :span="8" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        接收单位：品海科技 {{primary.warehouse.name}}
+        收货仓库： {{primary.toWarehouse.name}}
       </el-col>
     </el-row>
 
@@ -31,9 +31,6 @@
         <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
 
         <el-table-column prop="product.skuCode" label="SKU" width="200">
-        </el-table-column>
-
-        <el-table-column prop="product.name" label="名称" width="256">
         </el-table-column>
 
         <el-table-column prop="product.name" label="规格型号" width="150">
@@ -117,7 +114,6 @@
     data() {
       return {
         primaryId: null,
-        primary: {procurementOrder: {supplier: {name: ""}}, warehouse: {name: ""}},
         items: [],
         fullscreenLoading: true,
       }
@@ -137,7 +133,7 @@
 
           //获取计划数据
           let url = `/allocationReceiveds/${this.primaryId}`;
-          url += "?relations=" + JSON.stringify(["fromWarehouse", "toWarehouse"]);
+          url += "?relations=" + JSON.stringify(["procurementOrder", "procurementOrder.supplier", "toWarehouse","fromWarehouse"]);
 
           _arr.push(this.global.axios
             .get(url)
@@ -149,7 +145,7 @@
             })
           );
 
-          let itemsUrl = `allocationReceivedItems/`
+          let itemsUrl = `allocationReceivedItems/`;
           // 处理查询
           itemsUrl += "?filters=" + JSON.stringify({
             "groupOp": "AND", "rules": [
@@ -161,7 +157,7 @@
             ]
           });
           // 处理关联加载
-          itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec"]);
+          itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec","toWarehouse","fromWarehouse"]);
           //排序
           itemsUrl + "&sort=sortNum&dir=asc"
 
@@ -228,17 +224,17 @@
 
 <style lang="scss">
   @mixin clearfix {
-  &:before {
-    display: table;
-    content: '';
-    clear: both;
-  }
+    &:before {
+      display: table;
+      content: '';
+      clear: both;
+    }
 
-  &:after {
-     display: table;
-     content: '';
-     clear: both;
-   }
+    &:after {
+      display: table;
+      content: '';
+      clear: both;
+    }
   }
 
   .main-article {
@@ -263,7 +259,7 @@
 
   .node-article-content {
     margin: 20px 0 0;
-  @include clearfix;
+    @include clearfix;
     font-size: 16px;
     color: #333;
     letter-spacing: 0.5px;
@@ -271,108 +267,108 @@
     margin-bottom: 30px;
     font-family: medium-content-serif-font, Georgia, Cambria, "Times New Roman", Times, serif;
 
-  &
-  > :last-child {
-    margin-bottom: 0;
-  }
+    &
+    > :last-child {
+      margin-bottom: 0;
+    }
 
-  b,
-  strong {
-    font-weight: inherit;
-    font-weight: bolder;
-  }
+    b,
+    strong {
+      font-weight: inherit;
+      font-weight: bolder;
+    }
 
-  img {
-    max-width: 100%;
-    display: block;
-    margin: 0 auto;
-  }
+    img {
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
 
-  p {
-    font-weight: 400;
-    font-style: normal;
-    font-size: 21px;
-    line-height: 1.58;
-    letter-spacing: -.003em;
+    p {
+      font-weight: 400;
+      font-style: normal;
+      font-size: 21px;
+      line-height: 1.58;
+      letter-spacing: -.003em;
 
-  }
+    }
 
-  ul {
-    margin-bottom: 30px;
-  }
+    ul {
+      margin-bottom: 30px;
+    }
 
-  li {
-    --x-height-multiplier: 0.375;
-    --baseline-multiplier: 0.17;
+    li {
+      --x-height-multiplier: 0.375;
+      --baseline-multiplier: 0.17;
 
-    letter-spacing: .01rem;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 21px;
-    line-height: 1.58;
-    letter-spacing: -.003em;
-    margin-left: 30px;
-    margin-bottom: 14px;
-  }
+      letter-spacing: .01rem;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 21px;
+      line-height: 1.58;
+      letter-spacing: -.003em;
+      margin-left: 30px;
+      margin-bottom: 14px;
+    }
 
-  a {
-    text-decoration: none;
-    background-repeat: repeat-x;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, .84) 100%, rgba(0, 0, 0, 0) 0);
-    background-size: 1px 1px;
-    background-position: 0 calc(1em + 1px);
-    padding: 0 6px;
-  }
+    a {
+      text-decoration: none;
+      background-repeat: repeat-x;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, .84) 100%, rgba(0, 0, 0, 0) 0);
+      background-size: 1px 1px;
+      background-position: 0 calc(1em + 1px);
+      padding: 0 6px;
+    }
 
-  code {
-    background: rgba(0, 0, 0, .05);
-    padding: 3px 4px;
-    margin: 0 2px;
-    font-size: 16px;
-    display: inline-block;
-  }
+    code {
+      background: rgba(0, 0, 0, .05);
+      padding: 3px 4px;
+      margin: 0 2px;
+      font-size: 16px;
+      display: inline-block;
+    }
 
-  img {
-    border: 0;
-  }
+    img {
+      border: 0;
+    }
 
-  /* 解决 IE6-7 图片缩放锯齿问题 */
-  img {
-    -ms-interpolation-mode: bicubic;
-  }
+    /* 解决 IE6-7 图片缩放锯齿问题 */
+    img {
+      -ms-interpolation-mode: bicubic;
+    }
 
-  blockquote {
-    --x-height-multiplier: 0.375;
-    --baseline-multiplier: 0.17;
-    font-family: medium-content-serif-font, Georgia, Cambria, "Times New Roman", Times, serif;
-    letter-spacing: .01rem;
-    font-weight: 400;
-    font-style: italic;
-    font-size: 21px;
-    line-height: 1.58;
-    letter-spacing: -.003em;
-    border-left: 3px solid rgba(0, 0, 0, .84);
-    padding-left: 20px;
-    margin-left: -23px;
-    padding-bottom: 2px;
-  }
+    blockquote {
+      --x-height-multiplier: 0.375;
+      --baseline-multiplier: 0.17;
+      font-family: medium-content-serif-font, Georgia, Cambria, "Times New Roman", Times, serif;
+      letter-spacing: .01rem;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 21px;
+      line-height: 1.58;
+      letter-spacing: -.003em;
+      border-left: 3px solid rgba(0, 0, 0, .84);
+      padding-left: 20px;
+      margin-left: -23px;
+      padding-bottom: 2px;
+    }
 
-  a {
-    text-decoration: none;
-  }
+    a {
+      text-decoration: none;
+    }
 
-  h2,
-  h3,
-  h4 {
-    font-size: 34px;
-    line-height: 1.15;
-    letter-spacing: -.015em;
-    margin: 53px 0 0;
-  }
+    h2,
+    h3,
+    h4 {
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: -.015em;
+      margin: 53px 0 0;
+    }
 
-  h4 {
-    font-size: 26px;
-  }
+    h4 {
+      font-size: 26px;
+    }
 
   }
 
