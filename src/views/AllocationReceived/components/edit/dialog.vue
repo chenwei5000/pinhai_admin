@@ -8,7 +8,7 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <router-link target="_blank" :to="'/procurementReceivedOrder/print?id='+primary.id">
+      <router-link target="_blank" :to="'/allocationReceived/print?id='+primary.id">
         <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
       </router-link>
 
@@ -37,7 +37,7 @@
     props: {},
     computed: {
       title() {
-        return '采购入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
+        return '调拨入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -62,7 +62,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementReceivedOrders/${this.primaryId}?relations=${JSON.stringify(["supplier", "warehouse"])}`)
+            .get(`/allocationReceiveds/${this.primaryId}?relations=${JSON.stringify(["fromWarehouse", "toWarehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -95,7 +95,7 @@
 
       //确认收货
       onConfirm() {
-        this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
+        this.global.axios.put(`/allocationReceiveds/confirmTask/${this.primaryId}`)
           .then(resp => {
             this.$message.info("确认收货成功");
             this.loading = false;
@@ -120,7 +120,7 @@
 
       //打印收货单
       onPrint() {
-        this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
+        this.global.axios.get(`/attachments/allocationReceiveds/${this.primaryId}`)
           .then(resp => {
             this.$message.info("打印收货单");
             this.loading = false;

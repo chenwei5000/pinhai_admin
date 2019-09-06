@@ -26,7 +26,7 @@
 
     data() {
       return {
-        url: "/attachments/procurementShippedOrder",
+        url: "/attachments/warehouseAllocation",
         relations: ["creator"],
         filters: [
           {"field": "relevanceId", "op": "eq", "data": this.primary.id}

@@ -171,7 +171,7 @@
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      }
+      };
 
 
       this.$nextTick(() => {
@@ -275,20 +275,20 @@
           params += "&relations=" + JSON.stringify(this.relations);
         }
         // 请求开始
-        this.loading = true
+        this.loading = true;
 
         //获取数据
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data
-            let data = res || []
+            let res = resp.data;
+            let data = res || [];
 
             this.data = data;
             this.search();
 
-            this.total = res.length || 0
-            this.loading = false
+            this.total = res.length || 0;
+            this.loading = false;
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -300,7 +300,7 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err)
+            this.$emit('error', err);
             this.loading = false
           })
       },

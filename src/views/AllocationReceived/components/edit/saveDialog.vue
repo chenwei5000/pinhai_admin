@@ -137,7 +137,7 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
 
-          this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primary.id}`, _object)
+          this.global.axios.put(`/allocationReceiveds/receivedTask/${this.primary.id}`, _object)
             .then(resp => {
               this.$message.info("收货完成");
               loading.close();

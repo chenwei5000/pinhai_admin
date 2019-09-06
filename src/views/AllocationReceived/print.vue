@@ -3,7 +3,7 @@
        class="main-article" element-loading-text="采购入库单">
 
     <div class="article__heading">
-      <div class="article__heading__title">采购入库单{{primary.code}}</div>
+      <div class="article__heading__title">调拨入库单{{primary.code}}</div>
     </div>
     <el-row style="margin-bottom: 10px">
       <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
@@ -136,8 +136,8 @@
           let _arr = [];
 
           //获取计划数据
-          let url = `/procurementReceivedOrders/${this.primaryId}`;
-          url += "?relations=" + JSON.stringify(["procurementOrder", "procurementOrder.supplier", "warehouse"]);
+          let url = `/allocationReceiveds/${this.primaryId}`;
+          url += "?relations=" + JSON.stringify(["fromWarehouse", "toWarehouse"]);
 
           _arr.push(this.global.axios
             .get(url)
@@ -149,12 +149,12 @@
             })
           );
 
-          let itemsUrl = `procurementReceivedOrderItems/`
+          let itemsUrl = `allocationReceivedItems/`
           // 处理查询
           itemsUrl += "?filters=" + JSON.stringify({
             "groupOp": "AND", "rules": [
               {
-                field: "procurementShippedOrderId",
+                field: "warehouseAllocationId",
                 op: 'eq',
                 data: this.primaryId ? this.primaryId : -1
               }
