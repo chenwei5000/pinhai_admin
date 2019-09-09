@@ -3,11 +3,11 @@
   <div class="page-container">
 
     <aside>
-      为了保证本采购计划的执行，需要指派对应的采购负责人，可多选。指派的采购负责人将会收到对应的邮件和系统消息提醒。
-      默认会自动把对应品类的采购负责人自动选中。
+      为了保证本国内调拨的执行，需要指派对应的仓库负责人，可多选。指派的仓库负责人将会收到对应的邮件和系统消息提醒。
+      默认会自动把对应品类的仓库负责人自动选中。
     </aside>
 
-    <h5>采购负责人：</h5>
+    <h5>仓库负责人：</h5>
 
     <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary" v-if="completed"></person>
 
@@ -67,7 +67,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/warehouseAllocations/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -83,7 +83,7 @@
           this.$emit("step3CBEvent", 3);
         }
         else{
-          this.$message.error("必须选择采购负责人");
+          this.$message.error("必须选择仓库负责人");
         }
       },
       onBack() {

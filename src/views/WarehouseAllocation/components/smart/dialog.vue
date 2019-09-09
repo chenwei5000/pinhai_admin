@@ -10,7 +10,6 @@
 
     <div class="ph-form">
       <!-- 编辑表单 TODO:-->
-      {{this.detailItem}}
       <el-form :rules="rules" :model="detailItem" status-icon inline
                ref="detailItem" label-position="right"
                label-width="120px"

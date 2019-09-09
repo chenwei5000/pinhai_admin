@@ -6,7 +6,8 @@
              :model="newObject"
              status-icon
              inline
-             ref="smart"
+             inline-message
+             ref="newObject"
              label-position="right"
              label-width="120px"
              v-loading="loading"
@@ -72,7 +73,7 @@
 
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSmart">
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
               创建
             </el-button>
           </el-row>
@@ -109,7 +110,6 @@
         warehouseSelectOptions: [],
         // 新对象  TODO:
         newObject: {
-          id: null,
           expectTime: null,
           fromWarehouseId: null,
           toWarehouseId: null
@@ -144,25 +144,53 @@
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.loading = false;
       },
-
-
       /********************* 操作按钮相关方法  ***************************/
       // 调拨 TODO:
-      onSmart() {
-        this.$refs.smart.validate(valid => {
+      onCreate() {
+        this.$refs.newObject.validate(valid => {
           if (!valid) {
             return;
           }
-        this.$emit("step1CBEvent", 1);
-        })
+        let detailItems = this.$refs.itemTable.tableData;
+        if (!detailItems || detailItems.length == 0) {
+            this.$message.error("调拨单内容不能为空!");
+            return;
+          }
+          this.saveObject(detailItems);
+        });
       },
 
+           // 下单
+      saveObject(detailItems) {
+        let _order = JSON.parse(JSON.stringify(this.newObject));
+        _order.warehouseAllocationItems = detailItems;
+
+        const loading = this.$loading({
+          lock: true,
+          text: '下单中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        this.global.axios.post('/warehouseAllocations', _order) 
+          .then(resp => {
+            let _newObject = resp.data;
+            this.$message({type: 'success', message: '操作成功'});
+            this.$refs.itemTable.tableData = null;
+            loading.close();
+            this.$emit("step1CBEvent", _newObject.id);
+          })
+          .catch(err => {
+            loading.close();
+          })
+      },
       /*
        * 创建成功之后，将子组件发送的数据继续向上传递给父组件
        */
       createCBEvent(newObjectId) {
         this.$emit("step1CBEvent", newObjectId);
       },
+      
     }
   }
 </script>

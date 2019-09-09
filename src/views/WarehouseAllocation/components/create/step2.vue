@@ -3,7 +3,10 @@
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
       <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
+       <aside style="font-size: 12px">
+        您可以在这里上传一些跟本次调拨相关的文件。方便以后查询。
+        </aside>
+        <h5>附件: </h5>
         <attachment ref="attachment" :primary="primary" v-if="completed"></attachment>
       </el-collapse-item>
     </el-collapse>
@@ -39,7 +42,7 @@
 
     data() {
       return {
-        completed: true,
+        completed: false,
         primary: {}, //主对象
         activeNames: ["attachment"],   //折叠面板开启项
       }

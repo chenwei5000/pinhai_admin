@@ -13,7 +13,7 @@
               <i class="el-icon-circle-plus-outline"></i> 创建调拨
             </span>
             <keep-alive>
-              <phCreate @createCBEvent="createCBEvent"></phCreate>
+              <phCreate @createCBEvent="createCBEvent" ref="create"></phCreate>
             </keep-alive>
           </el-tab-pane>
 
@@ -103,9 +103,15 @@
       createCBEvent(objectId) {
         if (objectId) {
           if (this.$refs.editTable) {
-            this.$refs.orderExecuting.onRefreshTable();
             this.$refs.executing.onRefreshTable();
           }
+        }else{
+          this.activeStatus = "executing";
+          this.$message({
+            type: "success",
+            message: "成功了,请刷新表格！"
+          });
+          this.$refs.create.stepsActive = 0;
         }
       }
     },
