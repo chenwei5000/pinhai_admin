@@ -1,16 +1,29 @@
 <template>
+  <div>
+    <!-- 折叠面板 -->
+    <el-collapse v-model="activeNames">
 
-  <div class="page-container">
+      <el-collapse-item name="infoFrom">
+        <div slot="title" class="title">1. 基本信息</div>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary" v-if="completed"></infoFrom>
+      </el-collapse-item>
 
+      <el-collapse-item name="itemTable" style="margin-top: 10px">
+        <div slot="title" class="title">2. 采购计划内容</div>
+        <itemTable ref="itemTable" :primary="primary" v-if="completed"></itemTable>
+      </el-collapse-item>
 
-    <h5>负责人：</h5>
+      <el-collapse-item name="attachment" style="margin-top: 10px">
+        <div slot="title" class="title">3. 附件</div>
+        <attachment ref="attachment" :primary="primary" v-if="completed"></attachment>
+      </el-collapse-item>
 
-    <person @reloadCBEvent="reloadCBEvent" ref="person" :primary="primary" v-if="completed"></person>
+    </el-collapse>
 
     <el-row>
-      <el-col :md="12">
+      <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 40px" @click="onNext">
+          <el-button type="primary" style="margin-top: 15px" @click="onNext">
             下一步 >
           </el-button>
         </el-row>
@@ -22,11 +35,15 @@
 </template>
 
 <script>
-  import person from '../edit/person'
+  import infoFrom from '../edit/form'
+  import itemTable from '../detail/table'
+  import attachment from '../edit/attachment'
 
   export default {
     components: {
-      person
+      infoFrom,
+      itemTable,
+      attachment,
     },
     props: {
       primaryId: {
@@ -40,6 +57,7 @@
       return {
         completed: false,
         primary: {}, //主对象
+        activeNames: ["infoFrom", "itemTable", "attachment"],   //折叠面板开启项
       }
     },
 
@@ -56,7 +74,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/inventoryTasks/${this.primaryId}`)
+            .get(`/procurementPlans/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -68,24 +86,28 @@
         }
       },
       onNext() {
-        if(this.primary && this.primary.dataAuthories && this.primary.dataAuthories.length > 0){
-          this.$emit("step2CBEvent", 2);
-        }
-        else{
-          this.$message.error("必须选择负责人");
-        }
+        this.$emit("step2CBEvent", 2);
       },
-      reloadCBEvent(){
+      onBack() {
+        this.$emit("step2CBEvent", 0);
+      },
+
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+      },
+      /* 重新加载 */
+      reloadCBEvent() {
         this.initData();
       }
+
     }
   }
 </script>
 
 <style type="text/less" lang="scss" scoped>
-  .page-container {
-    padding: 30px;
+  .title {
+    font-size: 14px;
+    font-weight: bold;
   }
-
 </style>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="ph-form">
 
-    <!-- 添加功能 form-表单, fieldSet-字段租, legend-标题, tooltip-提示框 -->
+    <!-- 添加功能 form-表单, fieldset-字段租, legend-标题, tooltip-提示框 -->
     <el-form :rules="rules"
              :model="newObject"
              status-icon
@@ -15,8 +15,11 @@
 
       <fieldset class="panel-heading">
 
+        <legend class="panel-title">创建盘点任务
+        </legend>
+
         <el-row>
-          <el-col :md="10">
+          <el-col :md="24">
             <el-form-item label="仓库" prop="warehouseId">
               <el-select v-model="newObject.warehouseId" style="width: 220px">
                 <el-option
@@ -28,25 +31,23 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
 
-       <el-row>
-         <el-col :md="14">
-          <el-form-item label="截至日期" prop="limitTime">
-            <el-date-picker
-              v-model="newObject.limitTime"
-              format="yyyy-MM-dd"
-              value-format="yyyy-MM-dd"
-              type="date"
-              placeholder="截至日期"></el-date-picker>
-          </el-form-item>
-        </el-col>
-       </el-row>
+          <el-col :md="24">
+            <el-form-item label="截止日期" prop="limitTime">
+              <el-date-picker
+                v-model="newObject.limitTime"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                type="date"
+                placeholder="截止日期"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onGenerate">
-              生成盘点任务
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onNext">
+              下一步
             </el-button>
           </el-row>
         </el-col>
@@ -54,6 +55,11 @@
       </fieldset>
     </el-form>
 
+    <!-- 智能备货明细列表 -->
+    <itemTable
+      ref="itemTable"
+      @createCBEvent="createCBEvent"
+    ></itemTable>
   </div>
 
 </template>
@@ -109,9 +115,8 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.initWarehouseData();
-
         this.loading = false;
       },
 
@@ -122,7 +127,7 @@
         }
         this.loading = true;
         let url = "/warehouses/permissions";
-        url +=  + val.join(",");
+        url += "?perId=" + val.join(",");
         this.global.axios.get(url)
           .then(resp => {
             let res = resp.data || [];
@@ -141,14 +146,27 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      // 创建盘点明细  TODO:
+      // 创建盘点任务 TODO:
+      onNext() {
+        this.$refs.smart.validate(valid => {
+          if (!valid) {
+            return;
+          }
+          this.confirmLoading = true;
+          // 弹窗
+          this.$refs.itemTable.openDialog(this.newObject);
 
-      onGenerate() {
-
-        console.log("11111111111")
-       this.$emit("step1CBEvent", 2 );
-        console.log("222222222222")
+          this.confirmLoading = false;
+        })
       },
+
+      /*
+       * 创建成功之后，将子组件发送的数据继续向上传递给父组件
+       */
+      createCBEvent(newObjectId) {
+        this.$emit("step1CBEvent", newObjectId);
+      },
+
     }
   }
 </script>

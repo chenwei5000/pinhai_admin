@@ -17,15 +17,14 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="auditing" lazy>
+          <el-tab-pane name="inventorying" class="fontColor" lazy>
             <span slot="label">
-              <i class="el-icon-s-check"></i> 待盘点
+              <i class="el-icon-edit"></i> 待盘点
             </span>
             <keep-alive>
-              <phTab type="inventorying"/>
+              <phTab type="inventorying" ref="editTable"/>
             </keep-alive>
           </el-tab-pane>
-
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="complete" lazy>
@@ -59,7 +58,7 @@
   import phTab from './components/tab'
   import phCreate from './components/create'
 
-  const actionFlag = 's='
+  const actionFlag = 's=';
 
   export default {
 
@@ -71,12 +70,12 @@
     data() {
       return {
         // TODO 页面标题
-        title: '盘点任务',
+        title: '盘点任务管理',
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'create')
-          : 'create',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'inventorying')
+          : 'inventorying',
       }
     },
 

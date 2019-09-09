@@ -45,6 +45,8 @@
             {prop: 'address', label: '地址', 'min-width': 250},
             {prop: 'linkman', label: '联系人', width: 100},
             {prop: 'tel', label: '联系电话', width: 125},
+            {prop: 'collectionAccount', label: '收款账户', width: 125},
+
             phColumns.status,
             phColumns.lastModified
           ],
@@ -108,6 +110,14 @@
               label: '联系电话',
               $el: {
                 placeholder: '请输入联系电话'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'collectionAccount',
+              label: '收款账户',
+              $el: {
+                placeholder: '请输入收款账户'
               },
             },
             phFromItems.status()
