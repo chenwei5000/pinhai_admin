@@ -25,10 +25,10 @@
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="ship" class="fontColor" lazy>
             <span slot="label">
-              <i class="el-icon-ship"></i> 订船信息
+              <i class="el-icon-ship"></i> 物流信息
             </span>
             <keep-alive>
-              <shipFrom type="editing" ref="editTable"/>
+              <shipFrom @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></shipFrom>
             </keep-alive>
           </el-tab-pane>
 
@@ -42,33 +42,32 @@
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改
+          <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="executing" lazy>
             <span slot="label">
               <i class="el-icon-s-custom"></i> 指派负责人
             </span>
             <keep-alive>
-              <phTab type="executing"/>
+              <person @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></person>
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改
+          <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="complete" lazy>
             <span slot="label">
               <i class="el-icon-paperclip"></i> 附件
             </span>
             <keep-alive>
-              <phTab type="complete"/>
+              <attachment :primary="primary"></attachment>
             </keep-alive>
-          </el-tab-pane -->
+          </el-tab-pane>
 
         </el-tabs>
       </div>
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="formVisible = false">取 消</el-button>
-      <el-button type="primary" @click="save">保 存</el-button>
+      <el-button @click="closeDialog">关 闭</el-button>
     </div>
   </el-dialog>
 </template>
@@ -76,28 +75,19 @@
 <script>
   import infoForm from './infoForm';
   import shipFrom from './shipFrom';
+  import person from './person';
+  import attachment from './attachment';
 
   import planModel from "@/api/linerShippingPlan";
-  // loading 组件
-  import {Loading} from "element-ui";
-
-  let loadingInstance = null;
-
-  const showLoading = () => {
-    loadingInstance = Loading.service({fullscreen: true});
-  };
-  const closeLoding = () => {
-    if (loadingInstance) {
-      loadingInstance.close();
-    }
-  };
 
   export default {
     props: {},
 
     components: {
       infoForm,
-      shipFrom
+      shipFrom,
+      person,
+      attachment
     },
 
     computed: {
