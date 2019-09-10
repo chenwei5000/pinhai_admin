@@ -162,10 +162,6 @@
       @editCalendarEvent="editCalendarEvent"
     ></editEvent>
 
-    <!-- 订船信息 -->
-    <shipInfo
-      ref="shipInfo"
-    ></shipInfo>
   </div>
 </template>
 
@@ -182,8 +178,7 @@
 
   import planModel from "../../api/linerShippingPlan";
   import createEvent from "./components/createEvent";
-  import editEvent from "./components/editEvent";
-  import shipInfo from "./components/shipInfo";
+  import editEvent from "./components/edit/dialog";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -197,8 +192,7 @@
     components: {
       fullCalendar: fullCalendar,
       createEvent: createEvent,
-      editEvent: editEvent,
-      shipInfo: shipInfo
+      editEvent: editEvent
     },
     name: "plan",
     data() {
@@ -322,9 +316,9 @@
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
 
-        if(!this.searchFlg){ //设置时间
-          let time = `${this.startDate}, ${this.endDate}` ;
-          filters.push({'field': 'etdTime', op: 'timeRange', data : time});
+        if (!this.searchFlg) { //设置时间
+          let time = `${this.startDate}, ${this.endDate}`;
+          filters.push({'field': 'etdTime', op: 'timeRange', data: time});
         }
 
         if (filters && filters.length > 0) {
@@ -403,16 +397,18 @@
         }
       },
 
+      // 修改
       handleEventClick(event) {
-        // this.$refs.editEvent.$emit("openDialog", event.event.id);
-        this.$refs.shipInfo.$emit("openDialog", event.event.id);
+        this.$refs.editEvent.openDialog(event.event.id);
+        //this.$refs.shipInfo.$emit("openDialog", event.event.id);
 
       },
-
+      // 添加
       handleDateClick(day, jsEvent) {
         // 开启弹窗
-        this.$refs.createEvent.$emit("openDialog", day.dateStr);
+        this.$refs.createEvent.openDialog(day.dateStr);
       },
+
       moreClick(day, events, jsEvent) {
         // console.log('moreCLick', day, events, jsEvent)
       },
@@ -427,9 +423,10 @@
       editCalendarEvent(event, title) {
         for (let i = 0; i < this.calendarEvents.length; i++) {
           if (this.calendarEvents[i].id == event.id) {
-            this.calendarEvents[i].start = event.formatEtdTime,
-              this.calendarEvents[i].title = title.title,
-              this.calendarEvents[i].className = title.className
+              this.calendarEvents[i].start = event.formatEtdTime;
+              this.calendarEvents[i].title = title.title;
+              this.calendarEvents[i].className = title.className;
+              break;
           }
         }
       },
@@ -446,7 +443,6 @@
       resetSearch() {
         this.$refs.searchForm.resetFields();
 
-        //TODO:根据实际情况调整
         this.searchParam.portOfLoading.value = null;
         this.searchParam.shipmentId.value = null;
         this.searchParam.destinationFulfillmentCenterId.value = null;
