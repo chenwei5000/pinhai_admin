@@ -39,13 +39,13 @@
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改
+          <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="all" lazy>
             <span slot="label">
-              <i class="el-icon-s-order"></i> 发货明细
+              <i class="el-icon-s-order"></i> 产品明细
             </span>
             <keep-alive>
-              <phTab type="all"/>
+              <detail :primary="primary"></detail>
             </keep-alive>
           </el-tab-pane>
 
@@ -80,6 +80,7 @@
   import shipFrom from './shipFrom';
   import person from './person';
   import attachment from './attachment';
+  import detail from './table';
 
   import planModel from "@/api/linerShippingPlan";
 
@@ -90,7 +91,8 @@
       infoForm,
       shipFrom,
       person,
-      attachment
+      attachment,
+      detail
     },
 
     computed: {

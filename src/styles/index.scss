@@ -230,6 +230,9 @@ aside {
       padding: 0 !important;
       font-size: 12px !important;
     }
+    /deep/ .cell {
+      line-height: 100% !important;
+    }
 
     /deep/ .ph-cell-header {
       padding: 1px 0 !important;
@@ -243,15 +246,20 @@ aside {
     /deep/ .el-form-item__label {
       font-size: 12px !important;
       font-weight: bold !important;
+      line-height: 26px !important;
       color: #333;
     }
+    /deep/ .el-form-item__content {
+      line-height: 26px !important;
+    }
+
     /deep/ .el-form-item {
       margin-bottom: 5px !important;
     }
     /deep/ .panel-title {
       font-size: 13px !important;
     }
-    /deep/ .el-input__inner{
+    /deep/ .el-input__inner {
       font-size: 12px !important;
     }
   }
@@ -266,7 +274,7 @@ aside {
   /deep/ .el-steps {
     padding: 5px 8% !important;
 
-    /deep/ .el-step__title{
+    /deep/ .el-step__title {
       font-size: 13px;
     }
   }
@@ -277,7 +285,11 @@ aside {
     /deep/ .el-form-item__label {
       font-size: 12px !important;
       font-weight: bold !important;
+      line-height: 26px !important;
       color: #333;
+    }
+    /deep/ .el-form-item__content {
+      line-height: 26px !important;
     }
     /deep/ .el-form-item {
       margin-bottom: 5px !important;
@@ -285,24 +297,36 @@ aside {
     /deep/ .panel-title {
       font-size: 13px !important;
     }
-    /deep/ .el-input__inner{
+    /deep/ .el-input__inner {
       font-size: 12px !important;
     }
   }
 
-  /deep/ .el-upload-list__item-name{
+  /deep/ .el-upload-list__item-name {
     font-size: 12px !important;
   }
-  /deep/ .el-timeline{
+  /deep/ .el-timeline {
     font-size: 12px !important;
   }
 }
 
-.ph-dialog{
-  /deep/ .el-dialog__body{
+.ph-dialog {
+  /deep/ .el-dialog__body {
     padding: 10px 20px;
   }
-  /deep/ .el-dialog__header{
+  /deep/ .el-dialog__header {
     padding: 10px 20px;
+  }
+  .el-tabs {
+    /deep/ .el-tabs__item span {
+      font-size: 13px !important;
+    }
+  }
+  /deep/ .el-steps {
+    padding: 5px 8% !important;
+
+    /deep/ .el-step__title {
+      font-size: 13px;
+    }
   }
 }

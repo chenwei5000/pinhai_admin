@@ -2,8 +2,8 @@ const validRules = {
 
   required: {
     required: true,
-    message: '该内容必须输入!',
-    trigger: 'change'
+    message: '必填',
+    trigger: 'blur'
   },
 
   number: {
@@ -15,7 +15,7 @@ const validRules = {
       }
     },
     message: '必须是数字!',
-    trigger: 'change'
+    trigger: 'blur'
   },
 
   integer: {
@@ -27,15 +27,15 @@ const validRules = {
       }
     },
     message: '必须为正整数',
-    trigger: 'change'
+    trigger: 'blur'
   },
 
   strMax(len) {
     return {
       max: len,
       whitespace: true, //处理空格
-      message: '长度不能超过'+len+'位',
-      trigger: 'change'
+      message: '长度不能超过' + len + '位',
+      trigger: 'blur'
     }
   },
 }
