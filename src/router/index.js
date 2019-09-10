@@ -41,6 +41,11 @@ export const constantRoutes = [{
     }]
   },
   {
+    path: '/releaseLogs',
+    component: () => import('../layout/components/Navbar/releaseLogs.vue'),
+    hidden: true
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
