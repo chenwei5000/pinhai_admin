@@ -7,6 +7,13 @@
              @close='closeDialog'
              fullscreen>
 
+    <el-row
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
+
+      <el-button size="small" @click="closeDialog">取 消</el-button>
+
+    </el-row>
+
     <div class="ph-card">
       <div class="ph-card-body">
 
@@ -64,10 +71,6 @@
 
         </el-tabs>
       </div>
-    </div>
-
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="closeDialog">关 闭</el-button>
     </div>
   </el-dialog>
 </template>
