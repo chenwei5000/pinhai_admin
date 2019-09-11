@@ -45,7 +45,7 @@
 <script>
   import phTab from './components/tab'
 
-  const actionFlag = 's='
+  const actionFlag = 's=';
 
   export default {
 

@@ -496,7 +496,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        this.global.axios.put(`/procurementPlans/${this.editObject.id}`, _object)
+        this.global.axios.put(`/inventoryTasks/${this.editObject.id}`, _object)
           .then(resp => {
             let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});

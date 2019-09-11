@@ -9,38 +9,17 @@
              inline-message
              @submit.native.prevent>
 
-      <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
-      </el-form-item>
-
-      <el-form-item label="名称">
-        <el-input size="mini" clearable v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
-      </el-form-item>
-
-      <el-form-item label="期望交货日期">
-        <el-date-picker
-          size="mini"
-          v-model="searchParam.limitTime.value"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-
-      </el-form-item>
-
-      <el-form-item label="状态">
-        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
+      <el-form-item label="仓库">
+        <el-select filterable v-model="searchParam.warehouseId.value"
+                   size="mini"
+                   style="width: 100px" placeholder="请选择">
           <el-option
-            v-for="(item,idx) in statusSelectOptions"
+            v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
         </el-select>
       </el-form-item>
-
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
@@ -65,82 +44,22 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
-
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
           <el-tag size="small"
-                  :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
+                  :type="scope.row.status === 0
+            ? 'warning' : scope.row.status === 1
+            ? 'primary' : scope.row.status === 2
             ? 'info' : 'success'"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="note" label="完成度" width="120" v-if="hasCompleteness">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
-            <div>
-              完成度：{{ scope.row.qty.completeness }}%<BR/>
-              总件数：{{ scope.row.qty.qty }} 件<BR/>
-              已下单：{{scope.row.qty.orderQty}} 件 ({{scope.row.qty.orderedCompleteness}}%) <BR/>
-              已发货：{{scope.row.qty.shippedQty}} 件 ({{scope.row.qty.shippedCompleteness}}%)<BR/>
-              已收货：{{scope.row.qty.receivedQty}} 件 ({{scope.row.qty.receivedCompleteness}}%) <BR/>
-            </div>
-            <span slot="reference">
-              <el-progress :text-inside="true" :stroke-width="16"
-                           :percentage="scope.row.qty.completeness > 100 ? 100: scope.row.qty.completeness"
-                           status="success"
-              ></el-progress>
-            </span>
-          </el-popover>
+      <el-table-column prop="code" label="编码" width="140"></el-table-column>
+      <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
 
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="categoryName" label="分类" min-width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
-            <div v-html="scope.row.categoryName"></div>
-            <span slot="reference">{{
-              scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.categoryName }}
-          </span>
-        </template>
-
-      </el-table-column>
-
-      <el-table-column prop="name" label="名称" min-width="250">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 27">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100"></el-table-column>
-      <el-table-column prop="tags" label="标签" width="120"></el-table-column>
-
-      <el-table-column prop="note" label="备注" width="120" v-if="false">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover">
-            <div v-html="scope.row.formatNote"></div>
-            <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-        </template>
-      </el-table-column>
-
+      <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
+      <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
 
       <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
 
@@ -152,6 +71,10 @@
 
           <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
+          <el-button v-if="hasView" size="small" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
@@ -184,6 +107,9 @@
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
+    <!--查看对话框-->
+    <viewDialog ref="viewDialog" >
+    </viewDialog>
   </div>
 
 </template>
@@ -192,20 +118,23 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import editDialog from './edit/dialog'
+  import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
+  import warehouseModel from "../../../api/warehouse"
 
-  const valueSeparator = '~'
-  const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
-  const paramSeparator = ','
-  const equal = '='
-  const equalPattern = /=/g
-  const queryFlag = 'q='
-  const queryPattern = new RegExp('q=.*' + paramSeparator)
+  const valueSeparator = '~';
+  const valueSeparatorPattern = new RegExp(valueSeparator, 'g');
+  const paramSeparator = ',';
+  const equal = '=';
+  const equalPattern = /=/g;
+  const queryFlag = 'q=';
+  const queryPattern = new RegExp('q=.*' + paramSeparator);
 
   export default {
 
     components: {
-      editDialog
+      editDialog,
+      viewDialog
     },
     props: {
       type: {
@@ -222,25 +151,29 @@
         'device','rolePower','rolePower'
       ]),
 
-      // 显示进度条
-      hasCompleteness() {
-        if (this.type === 'editing') {
-          return false;
-        }
-        //待审核
-        else if (this.type === 'auditing') {
-          return false;
-        }
-        //执行中
-        else if (this.type === 'executing') {
+      hasEdit() {
+        if (this.type === 'inventorying') {
           return true;
         }
-        else if (this.type === 'complete') {
+        return false;
+      },
+
+      hasDelete() {
+        if (this.type === 'inventorying') {
           return true;
         }
-        else if (this.type === 'all') {
+        return false;
+      },
+
+      hasView() {
+        if (this.type === 'complete' || this.type === 'all') {
           return true;
         }
+        return false;
+      },
+
+      hasOperation() {
+        return this.hasView || this.hasEdit
       }
     },
 
@@ -248,11 +181,6 @@
       return {
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
         // 多选记录对象
         selected: [],
 
@@ -264,23 +192,20 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementPlans', // 资源URL
-        countUrl: '/procurementPlans/count', // 资源URL
-        relations: ["creator"],  // 关联对象
+        url: '/inventoryTasks', // 资源URL
+        countUrl: '/inventoryTasks/count', // 资源URL
+        relations: ["creator","warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
-        statusSelectOptions: [],
-        categorySelectOptions: [],
+
+        warehouseSelectOptions: [],
+
         searchParam: {
-          categoryId: {value: null, op: 'in', id: 'categoryId'},
-          name: {value: null, op: 'bw', id: 'name'},
-          limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
-          status: {value: null, op: 'eq', id: 'status'},
-          code: {value: null, op: 'bw', id: 'name'},
+          warehouseId: {value: null, op: 'in', id: 'warehouseId'},
         },
 
         //弹窗
@@ -348,23 +273,9 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
+        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryTaskStatus');
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
 
-        if (this.type === 'editing') {
-        }
-        //待审核 无删除
-        else if (this.type === 'auditing') {
-          this.hasDelete = false;
-        }
-        //执行中 无删除
-        else if (this.type === 'executing') {
-          this.hasDelete = false;
-        }//完成 无删除
-        else if (this.type === 'complete') {
-          this.hasDelete = false;
-        }
-        else if (this.type === 'all') {
-        }
       },
 
       // 获取表格的高度
@@ -405,11 +316,7 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.categoryId.value = null;
-        this.searchParam.limitTime.value = null;
-        this.searchParam.name.value = null;
-        this.searchParam.status.value = null;
-        this.searchParam.code.value = null;
+        this.searchParam.warehouseId.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -424,7 +331,7 @@
          * @event reset
          */
         this.$emit('reset')
-
+        //
         // this.$emit(
         //   'update:customQuery',
         //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
@@ -518,13 +425,13 @@
         }
 
         // 请求开始
-        this.loading = true
+        this.loading = true;
 
         //获取数据
         this.global.axios
           .get(countUrl + params)
           .then(resp => {
-            let res = resp.data
+            let res = resp.data;
             this.total = res || 0
           })
           .catch(err => {
@@ -534,10 +441,10 @@
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data
-            let data = res || []
-            this.data = data
-            this.loading = false
+            let res = resp.data;
+            let data = res || [];
+            this.data = data;
+            this.loading = false;
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -549,23 +456,23 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err)
+            this.$emit('error', err);
             this.loading = false
-          })
+          });
 
         // 存储query记录, 便于后面恢复
         if (shouldStoreQuery > 0) {
 
-          let newUrl = ''
+          let newUrl = '';
           let searchQuery = queryFlag + (searchParams)
             .replace(/&/g, paramSeparator)
-            .replace(equalPattern, valueSeparator) + paramSeparator
+            .replace(equalPattern, valueSeparator) + paramSeparator;
 
           // 非第一次查询
           if (location.href.indexOf(queryFlag) > -1) {
             newUrl = location.href.replace(queryPattern, searchQuery)
           } else {
-            let search = location.href.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`
+            let search = location.href.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`;
             newUrl = location.origin + location.pathname + location.search + location.hash + search
           }
           history.pushState(history.state, 'ph-table search', newUrl)
@@ -574,7 +481,7 @@
 
       /* 多选功能 */
       handleSelectionChange(val) {
-        this.selected = val
+        this.selected = val;
 
         /**
          * 多选启用时生效, 返回(selected)已选中行的数组
@@ -599,8 +506,8 @@
         if (this.size === val) {
           return
         }
-        this.page = 1
-        this.size = val
+        this.page = 1;
+        this.size = val;
         this.getList(true)
       },
 
@@ -609,7 +516,7 @@
         if (this.page === val) {
           return
         }
-        this.page = val
+        this.page = val;
         this.getList(true)
       },
 
@@ -625,6 +532,12 @@
         this.$refs.editDialog.openDialog(row.id);
       },
 
+      /* 行查看按钮 */
+      onDefaultView(row) {
+        // 弹窗
+        this.$refs.viewDialog.openDialog(row.id);
+      },
+
       /* 行删除按钮 */
       onDefaultDelete(row) {
         let url = `${this.url}/${row.id}`;
@@ -632,14 +545,14 @@
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              this.loading = true
+              this.loading = true;
 
               this.global.axios
                 .delete(url)
                 .then(resp => {
-                  this.loading = false
+                  this.loading = false;
                   this.$message.info("删除成功!");
-                  done()
+                  done();
                   this.getList()
                 })
                 .catch(er => {
@@ -668,4 +581,3 @@
     }
   }
 </style>
-

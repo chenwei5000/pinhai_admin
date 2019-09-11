@@ -1,3 +1,4 @@
+@@ -0,0 +1,610 @@
 <template>
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
@@ -66,20 +67,6 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
-            <div v-html="scope.row.product.skuCode"></div>
-            <span slot="reference">{{
-              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
-        </template>
-      </el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="90">
         <template slot-scope="scope">
@@ -94,35 +81,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
-      <el-table-column prop="product.groupName" label="款式" width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
-            <div v-html="scope.row.product.groupName"></div>
-            <span slot="reference">{{
-              scope.row.product.groupName ? scope.row.product.groupName.length > 12 ? scope.row.product.groupName.substr(0,10)+'..' : scope.row.product.groupName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.groupName }}
-            </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-      <el-table-column prop="safetyStockWeek" label="备货周数" width="80"></el-table-column>
-      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
-      <el-table-column prop="sevenSalesCount" label="7日销量(件)" width="100"></el-table-column>
-      <el-table-column prop="amazonTotalStock" label="亚马逊含在途库存(件)" width="140"></el-table-column>
-      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100"></el-table-column>
-      <el-table-column prop="unfinishedPlanQty" label="国内在途(箱)" width="100"></el-table-column>
-
-
-      <el-table-column prop="qty" label="采购件数" width="80"></el-table-column>
-
-      <el-table-column prop="orderQty" label="下单件数" width="80" v-if="hasExecute"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货件数" width="80" v-if="hasExecute"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货件数" width="80" v-if="hasExecute"></el-table-column>
+      <el-table-column prop="code" label="编码" width="200"></el-table-column>
+      <el-table-column prop="name" label="名称" min-width="200"></el-table-column>
+      <el-table-column prop="warehouseName" label="仓库" width="100"></el-table-column>
+      <el-table-column prop="creator" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
+      <el-table-column prop="formatCreateTime" label="创建时间" width="100"></el-table-column>
 
       <el-table-column prop="productName" label="名称" width="200">
         <template slot-scope="scope">
@@ -261,7 +225,7 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementPlanItems", // 资源URL
+        url: "/inventoryTaskItems", // 资源URL
         downloadUrl: "", //下载Url
         searchParam: {
           skuCode: null,
@@ -271,7 +235,7 @@
         },
         filters: [
           {
-            field: "procurementPlanId",
+            field: "InventoryTaskId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
@@ -313,7 +277,7 @@
       initData() {
         this.loading = true;
         this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
+        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryTaskStatus');
 
         // 设置下载链接
         this.downloadUrl = this.url;
@@ -607,4 +571,3 @@
   }
 
 </style>
-

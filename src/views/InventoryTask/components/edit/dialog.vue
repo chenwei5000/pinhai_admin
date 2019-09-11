@@ -52,7 +52,7 @@
       </el-collapse-item>
     </el-collapse>
 
-    <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
+    <phStatus statusName="InventoryTaskStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
               :objStatus="primary.status"></phStatus>
 
     <auditing ref="auditing" @saveAuditCBEvent="saveAuditCBEvent"></auditing>
@@ -64,10 +64,7 @@
 
   import {mapGetters} from 'vuex'
   import infoFrom from './form'
-  import itemTable from '../detail/table'
-  import attachment from './attachment'
-  import logs from './logs';
-  import person from './person'
+  import itemTable from '../view/table'
   import phStatus from '@/components/PhStatus'
   import auditing from '@/components/PhAuditing'
 
@@ -75,11 +72,8 @@
     components: {
       infoFrom,
       itemTable,
-      attachment,
-      person,
       phStatus,
       auditing,
-      logs
     },
     props: {},
     computed: {
@@ -128,7 +122,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/inventoryTasks/${this.primaryId}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -140,12 +134,11 @@
 
           // 获取日志数据
           let filters = [];
-          let logUrl = '/procurementPlanLogs';
           let relations = ["creator"]
 
           filters.push(
             {
-              field: "procurementPlanId",
+              field: "inventoryTaskId",
               op: 'eq',
               data: this.primaryId
             })
@@ -204,7 +197,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        let url = `/procurementPlans/status/${this.primaryId}/${status}`;
+        let url = `/inventoryTasks/status/${this.primaryId}/${status}`;
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
@@ -232,7 +225,7 @@
                 background: 'rgba(0, 0, 0, 0.7)'
               });
 
-              let url = `/procurementPlans/${bAction}/${this.primaryId}`;
+              let url = `/inventoryTasks/${bAction}/${this.primaryId}`;
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();

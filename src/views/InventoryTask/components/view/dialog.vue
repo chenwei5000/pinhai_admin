@@ -1,3 +1,4 @@
+@@ -0,0 +1,450 @@
 <template>
 
   <el-dialog :title="dialogTitle"
@@ -281,7 +282,7 @@
         confirmLoading: false,
 
         // 资源URL
-        url: "/procurementPlanItems",
+        url: "/inventoryTaskItems",
         relations: ["product"],  // 关联对象
         //明细对象ID
         detailItemId: null,
@@ -370,7 +371,6 @@
             safetyStockWeek: 10,
             numberOfCarton: null,
             cartonQty: 1,
-            procurementPlanId: this.primary.id
           }
 
         }
@@ -447,4 +447,3 @@
 
 
 </style>
-

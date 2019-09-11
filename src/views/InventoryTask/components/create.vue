@@ -1,103 +1,173 @@
 <template>
-  <div>
-    <!-- 步骤条 TODO: -->
-    <el-steps :active="stepsActive" finish-status="success" align-center simple>
-      <el-step title="1.创建任务" icon="el-icon-s-opportunity"></el-step>
-      <el-step title="2.盘点任务" icon="el-icon-edit-outline"></el-step>
-      <el-step title="3.指派工作" icon="el-icon-s-custom"></el-step>
-      <el-step title="4.生成盘点任务" icon="el-icon-s-check"></el-step>
-    </el-steps>
+  <div class="ph-form">
 
-    <!-- 创建盘点任务组件 -->
-    <step1
-      v-if="stepsActive==0"
-      @step1CBEvent="step1CBEvent">
-    </step1>
+    <!-- 添加功能 form-表单, fieldSet-字段租, legend-标题, tooltip-提示框 -->
+    <el-form :rules="rules"
+             :model="newObject"
+             status-icon
+             inline
+             ref="step1"
+             label-position="right"
+             label-width="120px"
+             v-loading="loading"
+             inline-message
+    >
 
-    <!-- 盘点任务组件 -->
-    <step2
-      v-if="stepsActive==1" :primaryId="object.id"
-      @step2CBEvent="step2CBEvent">
-    </step2>
+      <fieldset class="panel-heading">
 
-    <!--指派工作组件-->
-    <step3
-      v-if="stepsActive==2" :primaryId="object.id"
-      @step3CBEvent="step3CBEvent">
-    </step3>
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="仓库" prop="warehouseId">
+              <el-select v-model="newObject.warehouseId" style="width: 220px">
+                <el-option
+                  v-for="(item , idx)  in warehouseSelectOptions"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="idx"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-    <!--生成盘点任务组件-->
-    <step4
-      v-if="stepsActive==3" :primaryId="object.id"
-      @step4CBEvent="step4CBEvent">
-    </step4>
+        <el-row>
+          <el-col :md="14">
+            <el-form-item label="截至日期" prop="limitTime">
+              <el-date-picker
+                v-model="newObject.limitTime"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                type="date"
+                placeholder="截至日期"></el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-col :md="24">
+          <el-row type="flex" justify="center">
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onNext">
+              下一步
+            </el-button>
+          </el-row>
+        </el-col>
+
+      </fieldset>
+    </el-form>
 
   </div>
 
 </template>
 
 <script>
-  import step1 from './smart/smart'
-  import step2 from './create/step2'
-  import step3 from './create/step3'
-  import step4 from './create/step4'
+  import warehouseModel from '@/api/warehouse'
+  import {intArrToStrArr} from '@/utils'
 
   export default {
-    components: {
-      step1,
-      step2,
-      step3,
-      step4
-    },
-
+    components: {},
     props: {},
-
     computed: {},
 
     data() {
       return {
-        // 默认选择的步骤 从0开始
-        stepsActive: 0,
+        // 表单加载状态
+        loading: false,
+        // 点击按钮之后，按钮锁定不可在点
+        confirmLoading: false,
 
-        // 新对象
-        object: {
-          id: null
-        }
+        // 选择框 TODO:
+        warehouseSelectOptions: [],
+
+        // 新对象  TODO:
+        newObject: {
+          limitTime: null,
+          warehouseId: null,
+        },
+        // 字段验证规则 TODO:
+        rules: {
+          limitTime: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          warehouseId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+        },
       }
     },
 
-    created() {
-    },
-
     mounted() {
+      // 渲染完毕，控件加载完毕后执行
+      this.$nextTick(() => {
+        this.initData();
+      })
     },
-
     methods: {
-      // 创建盘点任务成功之后回调
-      step1CBEvent(objectId) {
-        // 继续向父组件抛出时间，创建成功后刷新列表
-        this.$emit("createCBEvent", objectId);
+      /********************* 基础方法  *****************************/
+      //初始化数据 TODO:根据实际情况调整
+      initData() {
+        this.loading = true;
+        // 加载选择框数据
+        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.initWarehouseData();
 
-        if (objectId) {
-          this.object.id = objectId;
-          // 切换到第二步
-          this.stepsActive = 1;
+        this.loading = false;
+      },
+
+      // 初始化仓库数据
+      initWarehouseData(val = null) {
+        if (!val) {
+          return;
         }
+        this.loading = true;
+        let url = "/warehouses/permissions";
+        url += +val.join(",");
+        this.global.axios.get(url)
+          .then(resp => {
+            let res = resp.data || [];
+            this.warehouseSelectOptions = [];
+            res.forEach(r => {
+              this.warehouseSelectOptions.push({
+                label: r.name,
+                value: r.id + ''
+              });
+            });
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       },
-      // 盘点任务确认成功之后回调
-      step2CBEvent(step) {
-        // 切换步骤
-        this.stepsActive = step;
-        // 继续向父组件抛出时间，刷新列表
-        this.$emit("createCBEvent", this.object.id);
+
+      /********************* 操作按钮相关方法  ***************************/
+      // 创建盘点明细  TODO:
+
+      onNext() {
+        this.$refs.step1.validate(valid => {
+
+          const loading = this.$loading({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+
+          if (!valid) {
+            return;
+          }
+          this.global.axios
+            .post("/inventoryTasks", this.newObject)
+            .then(resp => {
+              this.$message.info("盘点任务创建成功");
+              loading.close();
+              this.loading = false
+            })
+            .catch(err => {
+              loading.close();
+            });
+
+        });
       },
-      step3CBEvent(step) {
-        // 切换步骤
-        this.stepsActive = step;
-      },
-      step4CBEvent(step) {
-        // 切换步骤
-        this.stepsActive = step;
+      createCBEvent(newObjectId) {
+        this.$emit("step2CBEvent", newObjectId);
       },
     }
   }
@@ -108,6 +178,7 @@
   .panel-heading {
     color: #444;
     border: 1px #cfd9db solid;
+    margin-top: 10px;
   }
 
   .panel-title {
@@ -116,5 +187,9 @@
     padding: 0 10px;
   }
 
-</style>
+  .el-form-item {
+    //margin-bottom: 7px;
+  }
 
+
+</style>

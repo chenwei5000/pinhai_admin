@@ -107,7 +107,7 @@
       // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
         const queryFlag = '?s=';
-        const queryPath = '/m2/ProcurementPlan_index';
+        const queryPath = '/m3/ProcurementPlan_index';
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },
