@@ -8,7 +8,7 @@
         v-model="filterText">
       </el-input>
 
-      <div class="block" style="height: 585px;">
+      <div class="block" style="height: 400px;">
         <el-scrollbar style="height: 100%">
           <el-tree
             ref="tree"

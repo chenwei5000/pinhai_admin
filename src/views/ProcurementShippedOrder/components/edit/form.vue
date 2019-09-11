@@ -208,16 +208,16 @@
         // 字段验证规则 TODO:
         rules: {
           code: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           supplierId: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           warehouseId: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           name: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ]
         },
       }

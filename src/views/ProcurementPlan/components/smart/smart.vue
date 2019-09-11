@@ -300,31 +300,31 @@
         // 字段验证规则 TODO:
         rules: {
           limitTime: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           executeTime: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           categoryId: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           merchantId: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           warehouseId: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           safetyStockWeek: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           vip1SafetyStockWeek: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           vip2SafetyStockWeek: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ],
           handleMethod: [
-            {required: true, message: '必填', trigger: 'blur'}
+            {required: true, message: '必须输入', trigger: 'blur'}
           ]
         },
       }

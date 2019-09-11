@@ -41,7 +41,7 @@
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click" placement="top-start" @command="handleCommand">
         <div>
           <div class="avatar-wrapper">
-            <img src="../../../assets/avatars/avatar.gif" class="user-avatar">
+            <img src="../../assets/avatars/avatar.gif" class="user-avatar">
           </div>
 
           <div class="user-info">
@@ -54,19 +54,19 @@
         <!--下拉菜单项 -->
         <el-dropdown-menu slot="dropdown">
 
-            <el-dropdown-item icon="el-ph-icon-cog" command="openPassDialog">修改密码</el-dropdown-item>
-            <el-dropdown-item icon="el-ph-icon-account" command="openPersonalMsgDialog">个人资料</el-dropdown-item>
-          <router-link to="/releaseLogs" target="_blank">
-            <el-dropdown-item icon="el-ph-icon-lightbulb" command="releaseLog">系统更新日志</el-dropdown-item>
+          <router-link to="/profile/index">
+            <el-dropdown-item icon="el-ph-icon-cog">修改密码</el-dropdown-item>
+          </router-link>
+          <router-link to="/">
+            <el-dropdown-item icon="el-ph-icon-account" command="editInfo">个人资料</el-dropdown-item>
+          </router-link>
+          <router-link to="/">
+            <el-dropdown-item icon="el-ph-icon-lightbulb" divided command="releaseLog">系统更新日志</el-dropdown-item>
           </router-link>
           <el-dropdown-item icon="el-ph-icon-tuichu" command="logout">退出</el-dropdown-item>
 
         </el-dropdown-menu>
       </el-dropdown>
-
-      <modifyPasswordDialog ref="modifyPasswordDialog">  </modifyPasswordDialog>
-
-      <personalMsg ref="personalMsg"></personalMsg>
 
 
       <!-- 更多 -->
@@ -87,8 +87,6 @@
   import Reload from '@/components/Reload'
   import Help from '@/components/Help'
   import More from '@/components/More'
-  import modifyPasswordDialog from './modifyPasswordDialog'
-  import personalMsg from './personalMsg'
 
   import systemMode from '@/api/system'
 
@@ -102,16 +100,14 @@
       Search,
       Reload,
       Help,
-      More,
-      modifyPasswordDialog,
-      personalMsg
+      More
     },
     computed: {
       //store 的状态必须变成计算方法，只有这样state值修改之后，才会重新计算
       mine() {
         return this.$store.state.user.user;
       },
-    
+
       ...mapGetters([
         'sidebar',
         'device','rolePower'
@@ -127,22 +123,10 @@
           await systemMode.logout();
           this.$router.push(`/login?redirect=${this.$route.fullPath}`)
         }
-        if (command == 'openPassDialog'){
-            this.openPassDialog();
+        else {
+          this.$message('click on item ' + command);
         }
-        if (command == 'openPersonalMsgDialog'){
-            this.openPersonalMsgDialog();
-        }
-      
-      },
-    //打开密码修改框
-    openPassDialog(){
-        this.$refs.modifyPasswordDialog.dialogVisible=true;
-    },
-
-    openPersonalMsgDialog(){
-        this.$refs.personalMsg.dialogVisible=true;
-    },
+      }
     }
   }
 </script>

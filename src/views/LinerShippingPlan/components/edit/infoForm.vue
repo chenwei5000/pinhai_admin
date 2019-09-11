@@ -190,8 +190,7 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" size="mini" style="margin-top: 20px" :loading="confirmLoading" @click="onSave"
-                       v-if="hasEdit">
+            <el-button type="primary" style="margin-top: 20px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
               保存基本信息
             </el-button>
           </el-row>
@@ -376,6 +375,21 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
+
+  .panel-heading {
+    color: #444;
+    border: 1px #cfd9db solid;
+  }
+
+  .panel-title {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+  }
+
+  .el-form-item {
+    //margin-bottom: 7px;
+  }
 
 </style>
 

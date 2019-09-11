@@ -15,10 +15,9 @@
         <el-col :md="8">
           <el-form-item :label="editObject.type=='空运'? '航空公司' : '船运公司'" prop="carrier">
             <el-input v-model="editObject.carrier"
-                      maxlength="40"
+                      maxlength="20"
                       show-word-limit
                       size="mini"
-                      @input="updateInput"
                       style="width: 200px"
                       placeholder="请填写"
                       clearable></el-input>
@@ -28,23 +27,22 @@
         <el-col :md="8">
           <el-form-item label="货代公司" prop="forwardingCompany">
             <el-input v-model="editObject.forwardingCompany"
-                      maxlength="40"
+                      maxlength="20"
                       show-word-limit
                       size="mini"
-                      @input="updateInput"
                       style="width: 200px"
                       placeholder="请填写"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="截单时间" prop="bookingClosingTime" label-width="120px">
-            <el-date-picker v-model="editObject.bookingClosingTime"
-                            type="datetime"
-                            size="mini"
-                            @input="updateInput"
-                            style="width: 200px"
-                            placeholder="选择日期时间"></el-date-picker>
+          <el-form-item label="目的港口">
+            <el-input v-model="editObject.portOfDestination"
+                      maxlength="20"
+                      show-word-limit
+                      size="mini"
+                      style="width: 200px"
+                      placeholder="请填写"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -52,141 +50,66 @@
       <el-row>
 
         <el-col :md="8">
-          <el-form-item label="目的港口">
-            <el-input v-model="editObject.portOfDestination"
-                      maxlength="40"
-                      show-word-limit
-                      size="mini"
-                      @input="updateInput"
-                      style="width: 200px"
-                      placeholder="请填写"></el-input>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="8">
           <el-form-item label="船名航次">
-            <el-input v-model="editObject.vesselName"
-                      maxlength="40"
-                      show-word-limit
-                      size="mini"
-                      @input="updateInput"
-                      style="width: 200px"
-                      placeholder="请填写"></el-input>
+            <el-input placeholder v-model="editObject.vesselName"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
           <el-form-item label="物流单号">
-            <el-input v-model="editObject.so"
-                      maxlength="40"
-                      show-word-limit
-                      size="mini"
-                      @input="updateInput"
-                      style="width: 200px"
-                      placeholder="请填写"></el-input>
+            <el-input placeholder v-model="editObject.so"></el-input>
           </el-form-item>
         </el-col>
-      </el-row>
-
-      <el-row>
 
         <el-col :md="8">
           <el-form-item label="提单号">
-            <el-input v-model="editObject.ladingBillNumber"
-                      maxlength="40"
-                      show-word-limit
-                      size="mini"
-                      @input="updateInput"
-                      style="width: 200px"
-                      placeholder="请填写"></el-input>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="8">
-          <el-form-item label="箱号">
-            <el-input v-model="editObject.boxNumber"
-                      maxlength="40"
-                      show-word-limit
-                      size="mini"
-                      @input="updateInput"
-                      style="width: 200px"
-                      placeholder="请填写"></el-input>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="8">
-          <el-form-item label="封条号">
-            <el-input v-model="editObject.sealNumber"
-                      maxlength="40"
-                      show-word-limit
-                      size="mini"
-                      @input="updateInput"
-                      style="width: 200px"
-                      placeholder="请填写"></el-input>
-          </el-form-item>
-        </el-col>
-
-      </el-row>
-
-      <el-row>
-        <el-col :md="8">
-          <el-form-item label="截港时间" prop="cyClosingTime" label-width="120px">
-            <el-date-picker v-model="editObject.cyClosingTime"
-                            type="datetime"
-                            size="mini"
-                            @input="updateInput"
-                            style="width: 200px"
-                            placeholder="选择日期时间"></el-date-picker>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="8">
-          <el-form-item label="预计到港时间" prop="etaTime" label-width="120px">
-            <el-date-picker v-model="editObject.etaTime"
-                            type="datetime"
-                            size="mini"
-                            @input="updateInput"
-                            style="width: 200px"
-                            placeholder="选择日期时间"></el-date-picker>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="8">
-          <el-form-item label="预约送仓时间" prop="bookingTime" label-width="120px">
-            <el-date-picker v-model="editObject.bookingTime"
-                            type="datetime"
-                            size="mini"
-                            @input="updateInput"
-                            style="width: 200px"
-                            placeholder="选择日期时间"></el-date-picker>
+            <el-input placeholder v-model="editObject.ladingBillNumber"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-form-item label="物流备注">
+      <el-form-item label="箱号">
+        <el-input placeholder v-model="editObject.boxNumber"></el-input>
+      </el-form-item>
+
+      <el-form-item label="封条号">
+        <el-input placeholder v-model="editObject.sealNumber"></el-input>
+      </el-form-item>
+
+      <el-form-item label="FBA ID">
+        <el-input placeholder v-model="editObject.shipmentId" readonly></el-input>
+      </el-form-item>
+
+      <el-form-item label="Reference ID">
+        <el-input placeholder v-model="editObject.referenceId" readonly></el-input>
+      </el-form-item>
+      <el-form-item label="开船时间" prop="etdTime">
+        <el-date-picker v-model="editObject.etdTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+      </el-form-item>
+
+      <el-form-item label="截单时间" prop="bookingClosingTime" label-width="120px">
+        <el-date-picker v-model="editObject.bookingClosingTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+      </el-form-item>
+      <el-form-item label="截港时间" prop="cyClosingTime" label-width="120px">
+        <el-date-picker v-model="editObject.cyClosingTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+      </el-form-item>
+      <el-form-item label="预计到港时间" prop="etaTime" label-width="120px">
+        <el-date-picker v-model="editObject.etaTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+      </el-form-item>
+
+      <el-form-item label="预约送仓时间" prop="bookingTime" label-width="120px">
+        <el-date-picker v-model="editObject.bookingTime" type="datetime" placeholder="选择日期时间"></el-date-picker>
+      </el-form-item>
+
+      <el-form-item label="订船备注">
         <el-input
           type="textarea"
-          :autosize="{ minRows: 4, maxRows: 4}"
+          :autosize="{ minRows: 2, maxRows: 4}"
           placeholder="请输入内容"
-          size="mini"
-          @input="updateInput"
-          maxlength="200"
-          show-word-limit
           v-model="editObject.shipDetail"
           style="width:500px"
         ></el-input>
       </el-form-item>
-
-      <el-row>
-        <el-col :md="24">
-          <el-row type="flex" justify="center">
-            <el-button type="primary" size="mini" style="margin-top: 20px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
-              保存物流信息
-            </el-button>
-          </el-row>
-        </el-col>
-      </el-row>
-
     </el-form>
   </div>
 </template>
@@ -194,6 +117,19 @@
 
 <script>
   import planModel from "@/api/linerShippingPlan";
+  // loading 组件
+  import {Loading} from "element-ui";
+
+  let loadingInstance = null;
+
+  const showLoading = () => {
+    loadingInstance = Loading.service({fullscreen: true});
+  };
+  const closeLoding = () => {
+    if (loadingInstance) {
+      loadingInstance.close();
+    }
+  };
 
   export default {
     props: {
@@ -207,13 +143,6 @@
         return true;
       }
     },
-
-    mounted() {
-      this.$nextTick(() => {
-        this.initData();
-      });
-    },
-
     data() {
       return {
         // 表单加载状态
@@ -221,79 +150,93 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
+        // 选择框 TODO:
+        fromWarehouses: [],
+        toWarehouses: [],
+        harbours: [],
+        categorys: [],
+        users: [],
+
         // 编辑对象 TODO
         editObject: {},
 
+        form: {
+          carrier: "",
+          forwardingCompany: "",
+          portOfDestination: "",
+          vesselName: "",
+          so: "",
+          etdTime: "",
+          ladingBillNumber: "",
+          boxNumber: "",
+          sealNumber: "",
+          bookingClosingTime: "",
+          cyClosingTime: "",
+          etaTime: "",
+          bookingTime: "",
+          shipmentId: "",
+          referenceId: ""
+        },
         rules: {
+          etdTime: [
+            {required: true, message: "开船时间不能为空", trigger: "blur"}
+          ],
           carrier: [
-            {required: true, message: "必填", trigger: "blur"}
+            {required: true, message: "船运公司不能为空", trigger: "blur"}
           ],
           forwardingCompany: [
-            {required: true, message: "必填", trigger: "blur"}
+            {required: true, message: "货代公司不能为空", trigger: "blur"}
           ],
           bookingClosingTime: [
-            {required: true, message: "必填", trigger: "blur"}
+            {required: true, message: "截单时间不能为空", trigger: "blur"}
           ]
         }
       };
     },
     methods: {
-      /********************* 基础方法  *****************************/
-      /**
-       * 初始化数据
-       */
-      initData() {
-        this.loading = true;
-        if (this.primary) {
-          //获取计划数据
-          this.editObject = JSON.parse(JSON.stringify(this.primary));
-          this.loading = false;
-        }
-        else {
-          this.$message.error("无效的出口计划!");
-          this.loading = false;
-        }
-      },
-
-      updateInput(val) {
-        this.$forceUpdate();
-      },
-
-      /********************* 操作按钮相关方法  ***************************/
-      /* 保存对象 */
-      onSave() {
-        this.$refs.editObject.validate(valid => {
-          if (!valid) {
+      // 保存修改
+      save() {
+        this.$refs["form"].validate(valid => {
+          if (valid) {
+            showLoading();
+            this.global.axios
+              .put(`/linerShippingPlans/shipDate/${this.event_id}`, this.form)
+              .then(data => {
+                // 添加新的计划
+                if (data.status == 200) {
+                  let event = data.data;
+                  let title = planModel.generateEventTitle(event);
+                  this.$emit("editCalendarEvent", event, title);
+                  closeLoding();
+                  this.formVisible = false;
+                }
+              });
+          } else {
             return false;
           }
-          this.modifyObject();
         });
       },
-
-      // 修改采购单
-      modifyObject() {
-        let _object = JSON.parse(JSON.stringify(this.editObject));
-
-        const loading = this.$loading({
-          lock: true,
-          text: '保存中..',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        this.global.axios.put(`/linerShippingPlans/shipDate/${this.editObject.id}`, _object)
-          .then(resp => {
-            let _newObject = resp.data;
-            this.$message({type: 'success', message: '操作成功'});
-            loading.close();
-            // 回传消息
-            this.$emit("modifiedInfoCBEvent", _newObject);
-          })
-          .catch(err => {
-            loading.close();
-          })
+      navigateTo() {
+        console.log("跳转");
+        this.$router.push({path: "/dashboard"});
       }
     },
+    mounted() {
+      this.$on("openDialog", id => {
+        this.event_id = id;
+        this.global.axios.get(`/linerShippingPlans/${id}`).then(data => {
+          if (data.status === 200) {
+            this.formVisible = true;
+            this.form = data.data;
+            this.form.etdTime = this.form.formatEtdTime;
+            this.form.bookingClosingTime = this.form.formatBookingClosingTime;
+            this.form.cyClosingTime = this.form.formatCyClosformatCyClosingTimeingTime;
+            this.form.etaTime = this.form.formatEtaTime;
+            this.form.bookingTime = this.form.formatBookingTime;
+          }
+        });
+      });
+    }
   };
 </script>
 

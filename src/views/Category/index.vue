@@ -17,7 +17,6 @@
 
   import phEnumModel from '../../api/phEnum'
   import userModel from '../../api/user'
-  import harbourModel from '../../api/harbour'
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
@@ -30,7 +29,7 @@
         title: '分类列表',
         tableConfig: {
           url: '/categories',
-          relations: ["creator", "user", "dataDicItem.type", "harbour"],
+          relations: ["creator", "user", "dataDicItem.type"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
           },
@@ -41,7 +40,6 @@
             {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 100},
             {prop: 'user.name', label: '采购负责人', width: 100},
-            {prop: 'harbour.name', label: '港口', width: 100},
             {prop: 'safetyStockWeek', label: '安全库存(周)', width: 100, 'label-class-name': 'ph-header-small'},
             {prop: 'vip1SafetyStockWeek', label: 'Vip1安全库存(周)', width: 120, 'label-class-name': 'ph-header-small'},
             {prop: 'vip2SafetyStockWeek', label: 'Vip2安全库存(周)', width: 120, 'label-class-name': 'ph-header-small'},
@@ -95,19 +93,6 @@
                 filterable: true
               },
               $options: userModel.getSelectOptions(),
-              rules: [
-                validRules.required
-              ]
-            },
-            {
-              $type: 'select',
-              $id: 'harbourId',
-              label: '港口',
-              $el: {
-                placeholder: '请选择港口,可筛选',
-                filterable: true
-              },
-              $options: harbourModel.getSelectOptions(),
               rules: [
                 validRules.required
               ]

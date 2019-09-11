@@ -7,13 +7,6 @@
              @close='closeDialog'
              fullscreen>
 
-    <el-row
-      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-
-      <el-button size="small" @click="closeDialog">取 消</el-button>
-
-    </el-row>
-
     <div class="ph-card">
       <div class="ph-card-body">
 
@@ -32,45 +25,50 @@
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="ship" class="fontColor" lazy>
             <span slot="label">
-              <i class="el-icon-ship"></i> 物流信息
+              <i class="el-icon-ship"></i> 订船信息
             </span>
             <keep-alive>
-              <shipFrom @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></shipFrom>
+              <shipFrom type="editing" ref="editTable"/>
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改 -->
+          <!-- TODO: name 根据实际情况修改
           <el-tab-pane name="all" lazy>
             <span slot="label">
-              <i class="el-icon-s-order"></i> 产品明细
+              <i class="el-icon-s-order"></i> 发货明细
             </span>
             <keep-alive>
-              <detail :primary="primary"></detail>
+              <phTab type="all"/>
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改 -->
+          <!-- TODO: name 根据实际情况修改
           <el-tab-pane name="executing" lazy>
             <span slot="label">
               <i class="el-icon-s-custom"></i> 指派负责人
             </span>
             <keep-alive>
-              <person @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></person>
+              <phTab type="executing"/>
             </keep-alive>
           </el-tab-pane>
 
-          <!-- TODO: name 根据实际情况修改 -->
+          <!-- TODO: name 根据实际情况修改
           <el-tab-pane name="complete" lazy>
             <span slot="label">
               <i class="el-icon-paperclip"></i> 附件
             </span>
             <keep-alive>
-              <attachment :primary="primary"></attachment>
+              <phTab type="complete"/>
             </keep-alive>
-          </el-tab-pane>
+          </el-tab-pane -->
 
         </el-tabs>
       </div>
+    </div>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="formVisible = false">取 消</el-button>
+      <el-button type="primary" @click="save">保 存</el-button>
     </div>
   </el-dialog>
 </template>
@@ -78,21 +76,28 @@
 <script>
   import infoForm from './infoForm';
   import shipFrom from './shipFrom';
-  import person from './person';
-  import attachment from './attachment';
-  import detail from './table';
 
   import planModel from "@/api/linerShippingPlan";
+  // loading 组件
+  import {Loading} from "element-ui";
+
+  let loadingInstance = null;
+
+  const showLoading = () => {
+    loadingInstance = Loading.service({fullscreen: true});
+  };
+  const closeLoding = () => {
+    if (loadingInstance) {
+      loadingInstance.close();
+    }
+  };
 
   export default {
     props: {},
 
     components: {
       infoForm,
-      shipFrom,
-      person,
-      attachment,
-      detail
+      shipFrom
     },
 
     computed: {

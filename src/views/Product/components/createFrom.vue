@@ -20,12 +20,6 @@
               <el-radio-button label="0">关闭</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="新品" style="width: 400px" prop="newGoods">
-            <el-radio-group v-model.number="newProduct.newGoods">
-              <el-radio-button label="1">是</el-radio-button>
-              <el-radio-button label="0">否</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
         </el-row>
 
         <el-row>
@@ -260,7 +254,6 @@
           leadDay: null,
           vipLevel: 0,
           oversize: 0,
-          newGoods:0,
         },
         rules: {
           status: [
