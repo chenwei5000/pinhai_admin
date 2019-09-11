@@ -73,7 +73,8 @@
       <el-table-column prop="oversize" v-if="unfinishedHide" label="超大" min-width="100"
                        :formatter='row => (row.oversize === 1 ? "是" : "否")'></el-table-column>
       <el-table-column prop="comment" label="备注" min-width="120"></el-table-column>
-
+      <el-table-column prop="newGoods" v-if="unfinishedHide" label="新品" min-width="100"
+                       :formatter='row => (row.newGoods === 1 ? "是" : "否")'></el-table-column>
       <el-table-column prop="status" label="状态" width="80">
         <template slot-scope="scope">
           <el-tag
