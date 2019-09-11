@@ -1,6 +1,5 @@
 <template>
   <div class="block ph-form">
-    <span>系统更新日志</span>
     <el-timeline>
       <el-timeline-item v-for="(log, index) in logLine"
                         :key="index"
@@ -73,7 +72,7 @@
        */
       initData() {
         this.global.axios.get("/releaseLogs").then(resp => {
-          this.logs = resp.data;
+          this.logs = resp.data.reverse();
         })
       },
     }
