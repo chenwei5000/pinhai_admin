@@ -45,7 +45,6 @@
         activeNames: [], //折叠面板开启项
       }
     },
-
     created() {
     },
 
@@ -58,7 +57,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/inventoryTasks/${this.primaryId}?relations=${JSON.stringify([ "warehouse"])}`)
+            .get(`/inventoryTasks/${this.primaryId}?relations=${JSON.stringify(["warehouseStock","storageLocation","warehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -87,24 +86,6 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
         this.closeDialog();
-      },
-
-      //确认收货
-      onConfirm() {
-        this.global.axios.put(`/inventoryTasks/confirmTask/${this.primaryId}`)
-          .then(resp => {
-            this.$message.info("确认收货成功");
-            this.loading = false;
-            this.confirmLoading = false;
-            this.dialogVisible = true;
-            this.$refs.itemTable.getList();
-            this.$emit("modifyCBEvent", resp.data);
-
-          })
-          .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
-          })
       },
 
       //收货完成

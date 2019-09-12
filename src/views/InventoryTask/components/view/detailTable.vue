@@ -2,26 +2,8 @@
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
-    <el-form inline
-             ref="editObject"
-             label-position="right"
-             label-width="120px"
-    >
-      <el-row>
-        <el-col :md="12">
-          <el-form-item label="仓库:" prop="warehouseId">
-            <span style="font-size: 12px">{{primary.warehouse.name}}</span>
-          </el-form-item>
-        </el-col>
 
-        <el-col :md="12">
-          <el-form-item label="截止时间:" prop="formatLimitTime">
-            <span style="font-size: 12px">{{primary.formatLimitTime}}</span>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-    
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -60,31 +42,8 @@
       <el-table-column prop="storageLocation.name" label="货位" width="100"></el-table-column>
       <el-table-column prop="price" label="价格" width="80"></el-table-column>
       <el-table-column prop="warehouseStock.name" label="系统库存(件数)" width="130"></el-table-column>
-      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-
-        <template slot="header" slot-scope="scope">
-          <span>实际库存(件数)</span><BR/>
-          <el-button type="primary" size="mini" plain @click="onAll">全部盘点</el-button>
-          <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
-        </template>
-
-        <template slot-scope="scope">
-          <el-input-number v-model="scope.row.checkedStock"
-                           size="mini"
-                           style="width: 120px;margin: 3px 0;"
-                           :precision="3"
-                           :min="0"
-                           :step="1"
-                           @change="onReceivedCheckedStock(scope.row)"
-                           :max="1000000" label="请填实际库存">
-          </el-input-number>
-
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="stockError" label="库存误差" width="90" fixed="right">
-
-      </el-table-column>
+      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center"></el-table-column>
+      <el-table-column prop="stockError" label="库存误差" width="90" fixed="right"></el-table-column>
     </el-table>
   </div>
 

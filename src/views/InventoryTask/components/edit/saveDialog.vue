@@ -21,12 +21,12 @@
                @submit.native.prevent
                v-loading="loading"
       >
-        <el-form-item label="本次到货">
-          <span style="font-size: 12px">{{primary.allCartonQty}}箱, 合{{primary.allQty}}件</span>
+        <el-form-item label="实际库存">
+          <span style="font-size: 12px">{{primary.checkedStock}}</span>
         </el-form-item>
-        <el-form-item label="收货日期" prop="receivedTime">
+        <el-form-item label="截止日期" prop="limitTime">
           <el-date-picker
-            v-model="primary.receivedTime"
+            v-model="primary.limitTime"
             format="yyyy-MM-dd"
             type="date"
             placeholder="收货日期"></el-date-picker>
@@ -137,9 +137,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
 
-          this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primary.id}`, _object)
+          this.global.axios.put(`/inventoryTasks/receivedTask/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("收货完成");
+              this.$message.info("盘点完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();
