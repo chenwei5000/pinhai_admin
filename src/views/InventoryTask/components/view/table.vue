@@ -1,4 +1,3 @@
-@@ -0,0 +1,610 @@
 <template>
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
@@ -62,7 +61,6 @@
       :data="tableData"
       v-loading="loading"
       show-summary
-      :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
@@ -310,59 +308,6 @@
           }
         }
         return '';
-      },
-
-      /*汇总数据*/
-      getSummaries(param) {
-        const {columns, data} = param;
-        const sums = [];
-
-        columns.forEach((column, index) => {
-          if (column.property == 'product.skuCode') {
-            const values = data.map(item => item[column.property]);
-            sums[index] = values.reduce((prev) => {
-              return prev + 1;
-            }, 0);
-            sums[index] = '合计: ' + sums[index] + ' 行';
-          }
-
-          if (column.property == 'cartonQty') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] += ' 箱';
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-          if (column.property == 'amount') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] = currency(sums[index]);
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-        });
-
-        return sums;
       },
 
       /*获取列表*/

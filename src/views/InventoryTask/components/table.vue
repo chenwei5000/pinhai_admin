@@ -48,22 +48,19 @@
         <template slot-scope="scope">
           <el-tag size="small"
                   :type="scope.row.status === 0
-            ? 'warning' : scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
+            ? 'warning' : scope.row.status === 3
+            ? 'primary' : scope.row.status === 6
             ? 'info' : 'success'"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
-
+      <el-table-column prop="name" label="名称" min-width="150"></el-table-column>
       <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
       <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
-
       <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
-
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">

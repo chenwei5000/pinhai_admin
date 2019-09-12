@@ -6,7 +6,7 @@
              :model="newObject"
              status-icon
              inline
-             ref="step1"
+             ref="create"
              label-position="right"
              label-width="120px"
              v-loading="loading"
@@ -43,10 +43,32 @@
           </el-col>
         </el-row>
 
+        <el-row>
+          <el-col :md="24">
+            <el-form-item label="备注" prop="note">
+              <el-col :span="22">
+                <el-input type="textarea" v-model="newObject.note"
+                          maxlength="500"
+                          show-word-limit
+                          rows="3"
+                          cols="80"
+                          show-word-limit></el-input>
+              </el-col>
+
+              <el-col :span="2">
+                <el-tooltip class="item" effect="light" content="备注。提供给所指派对象的描述。支持换行！" placement="right">
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </el-col>
+
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-col :md="24">
           <el-row type="flex" justify="center">
             <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onNext">
-              下一步
+              生成盘点任务
             </el-button>
           </el-row>
         </el-col>
@@ -81,6 +103,7 @@
         newObject: {
           limitTime: null,
           warehouseId: null,
+          note: null,
         },
         // 字段验证规则 TODO:
         rules: {
@@ -141,15 +164,7 @@
       // 创建盘点明细  TODO:
 
       onNext() {
-        this.$refs.step1.validate(valid => {
-
-          const loading = this.$loading({
-            lock: true,
-            text: 'Loading',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          });
-
+        this.$refs.create.validate(valid => {
           if (!valid) {
             return;
           }
@@ -157,13 +172,9 @@
             .post("/inventoryTasks", this.newObject)
             .then(resp => {
               this.$message.info("盘点任务创建成功");
-              loading.close();
-              this.loading = false
             })
             .catch(err => {
-              loading.close();
             });
-
         });
       },
       createCBEvent(newObjectId) {

@@ -17,7 +17,7 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="auditing" lazy>
+          <el-tab-pane name="inventorying" lazy>
             <span slot="label">
               <i class="el-icon-s-check"></i> 待盘点
             </span>
@@ -75,8 +75,8 @@
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'create')
-          : 'create',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'inventorying')
+          : 'inventorying',
       }
     },
 
