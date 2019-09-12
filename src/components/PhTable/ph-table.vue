@@ -12,8 +12,8 @@
       <slot name="search"></slot>
       <el-form-item>
         <!--https://github.com/ElemeFE/element/pull/5920-->
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </ph-form>
 
@@ -196,7 +196,7 @@
           <el-button v-if="isTree && hasNew" type="primary" size="mini"
                      @click="onDefaultNew(scope.row)">新增
           </el-button>
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
           <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
@@ -234,8 +234,9 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 7px 0 0 0;"
       background
+      size="mini"
       :layout="paginationLayout"
       id="ph-table-page"
       ref="pageForm"
@@ -244,7 +245,7 @@
     </el-pagination>
 
     <!--弹出框-->
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog" top="3vh">
+    <el-dialog :title="dialogTitle" class="ph-dialog" :visible.sync="dialogVisible" v-if="hasDialog" top="3vh">
 
       <el-scrollbar class="menu-wrapper" noresize>
         <el-row>
@@ -259,8 +260,8 @@
       </el-scrollbar>
 
       <div slot="footer" v-show="!isView">
-        <el-button @click="cancel" size="small">取 消</el-button>
-        <el-button type="primary" @click="confirm" :loading="confirmLoading" size="small">确 定</el-button>
+        <el-button @click="cancel" size="mini">取 消</el-button>
+        <el-button type="primary" @click="confirm" :loading="confirmLoading" size="mini">确 定</el-button>
       </div>
 
     </el-dialog>
@@ -702,7 +703,8 @@
             "label-width": "100px",
             "label-suffix": ":",
             "status-icon": true,
-            size: "small"
+            size: "mini",
+            "inline-message": true,
           }
         }
       },
@@ -771,8 +773,10 @@
         phSort: null,
         defaultTableAttrs: {
           'style': "width: 100%",
-          'cell-style': {padding: "2px 0", 'font-size': '13px'},
-          'header-cell-style': {padding: "2px 0"},
+          //'cell-style': {padding: "2px 0", 'font-size': '13px'},
+          //'header-cell-style': {padding: "2px 0"},
+          "cell-class-name": "ph-cell",
+          "header-cell-class-name": "ph-cell-header",
           stripe: true,
           border: true,
           "highlight-current-row": true,
@@ -887,8 +891,8 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
-          tableHeight = tableHeight - 82; //减标题高度
+          tableHeight = tableHeight - 115; //减框架头部高度
+          //tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度

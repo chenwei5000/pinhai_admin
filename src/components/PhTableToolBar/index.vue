@@ -6,18 +6,18 @@
 
     <el-col :md="18">
       <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
-                 size="small" id="table-add">
+                 size="mini" id="table-add">
         新增
       </el-button>
 
       <el-button v-if="hasDelete" type="danger" icon="el-icon-error" @click="onDefaultDelete"
-                 size="small">
+                 size="mini">
         删除
       </el-button>
     </el-col>
 
     <el-dropdown @command="onDefaultCommand" v-if="hasExportTpl || hasExport || hasImport">
-      <el-button type="primary" icon="el-icon-folder-opened" size="small">
+      <el-button type="primary" icon="el-icon-folder-opened" size="mini">
         导入导出<i class="el-icon-arrow-down el-icon--right"></i>
       </el-button>
       <el-dropdown-menu slot="dropdown">
@@ -156,8 +156,8 @@
     position: relative;
     z-index: 890;
     width: 100%;
-    min-height: 40px;
-    line-height: 30px;
+    min-height: 24px;
+    line-height: 24px;
     padding: 5px 10px;
   }
 

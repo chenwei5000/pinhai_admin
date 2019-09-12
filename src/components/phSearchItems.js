@@ -122,6 +122,8 @@ const phSearchItems = {
       label: '状态',
       $el: {
         op: 'eq',
+        size: 'mini',
+        style: 'width:120px',
         placeholder: '请选择状态'
       },
       $options: phEnumModel.getSelectOptions('Status')

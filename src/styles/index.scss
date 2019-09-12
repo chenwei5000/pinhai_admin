@@ -232,7 +232,8 @@ aside {
     }
 
     /deep/ .ph-cell-header {
-      padding: 1px 0 !important;
+      line-height: 24px!important;
+      padding: 3px 0 !important;
       font-size: 12px !important;
       font-weight: bold !important;
       color: #333;
