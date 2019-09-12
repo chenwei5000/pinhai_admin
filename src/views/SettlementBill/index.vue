@@ -7,52 +7,32 @@
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="create" lazy>
+          <el-tab-pane name="inpayment" class="fontColor" lazy>
             <span slot="label">
-              <i class="el-icon-circle-plus-outline"></i> 创建计划
+              <i class="el-icon-coin"></i> 待结算
             </span>
             <keep-alive>
-              <phCreate @createCBEvent="createCBEvent"></phCreate>
+              <phTab type="inpayment" ref="editTable"/>
             </keep-alive>
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="editing" class="fontColor" lazy>
+          <el-tab-pane name="unpaid" lazy>
             <span slot="label">
-              <i class="el-icon-edit"></i> 编辑中
+              <i class="el-icon-s-check"></i> 结算中
             </span>
             <keep-alive>
-              <phTab type="editing" ref="editTable"/>
+              <phTab type="unpaid"/>
             </keep-alive>
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="auditing" lazy>
+          <el-tab-pane name="rejected" lazy>
             <span slot="label">
-              <i class="el-icon-s-check"></i> 待审核
+              <i class="el-icon-money"></i> 已结算
             </span>
             <keep-alive>
-              <phTab type="auditing"/>
-            </keep-alive>
-          </el-tab-pane>
-
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="executing" lazy>
-            <span slot="label">
-              <i class="el-icon-s-flag"></i> 执行中
-            </span>
-            <keep-alive>
-              <phTab type="executing"/>
-            </keep-alive>
-          </el-tab-pane>
-
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="complete" lazy>
-            <span slot="label">
-              <i class="el-icon-s-claim"></i> 完成
-            </span>
-            <keep-alive>
-              <phTab type="complete"/>
+              <phTab type="rejected"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -76,15 +56,11 @@
 
 <script>
   import phTab from './components/tab'
-  import phCreate from './components/create'
 
   const actionFlag = 's='
-
   export default {
-
     components: {
-      phTab,
-      phCreate
+      phTab
     },
 
     data() {
@@ -94,8 +70,8 @@
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'editing')
-          : 'editing',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'inpayment')
+          : 'inpayment',
       }
     },
 
@@ -107,7 +83,7 @@
       // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
         const queryFlag = '?s=';
-        const queryPath = '/m2/ProcurementPlan_index';
+        const queryPath = '/m2/SettlementBill_index';
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },

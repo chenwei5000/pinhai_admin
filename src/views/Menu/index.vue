@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -66,6 +64,8 @@
               label: '菜单级别',
               $el: {
                 op: 'eq',
+                size: 'mini',
+                style: 'width:120px',
                 placeholder: '请选择菜单级别'
               },
               $options: [
@@ -89,6 +89,8 @@
               label: '名称',
               $el: {
                 op: 'bw',
+                size: 'mini',
+                style: 'width:120px',
                 placeholder: '请输入名称'
               }
             },
@@ -98,6 +100,8 @@
               label: '操作标识',
               $el: {
                 op: 'bw',
+                size: 'mini',
+                style: 'width:120px',
                 placeholder: '请输入操作标识'
               }
             },
@@ -109,7 +113,7 @@
               $type: 'select',
               $id: 'level',
               label: '菜单级别',
-              $default: 1,
+              $default: '1',
               $el: {},
               $options: [
                 {
