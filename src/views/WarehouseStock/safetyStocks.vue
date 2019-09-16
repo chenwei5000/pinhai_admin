@@ -2,9 +2,9 @@
   <div class="app-container">
        <!--搜索-->
     <el-form :inline="true" :model="param" ref="searchForm" id="filter-form"
-             @submit.native.prevent :rules="rules">
-      <el-form-item label="分类" prop="category">
-        <el-select v-model="param.category" multiple placeholder="请选择原料分类">
+             @submit.native.prevent>
+      <el-form-item label="分类" prop="category" >
+        <el-select v-model="param.category" multiple placeholder="请选择原料分类" @change="onChange"> 
           <el-option
             v-for="item in categories"
             :key="item.value"
@@ -17,7 +17,7 @@
        <el-form-item label="国内成品库存" prop="warehouse">
         <el-select v-model="param.warehouse" multiple placeholder="请选择仓库">
           <el-option
-            v-for="item in warehouses"
+            v-for="item in warehouses"  
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -27,6 +27,7 @@
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+        <el-button @click="resetSearch" size="small">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -62,16 +63,9 @@ import warehouseModel from '../../api/warehouse';
           category: '',
           warehouse: '',
         },
-        rules: {
-          category: [
-            {required: true, message: '不能为空', trigger: 'blur'}
-          ],
-           warehouse: [
-            {required: true, message: '不能为空', trigger: 'blur'}
-          ],
-        },
         categories: categoryModel.getMineSelectProdcutOptions(),
-        warehouses: warehouseModel.getSelectDomesticOptions(),
+        warehouses: [],
+        // warehouseModel.getSelectDomesticOptions(),
         tableConfig: {
           url: null,
           relations: ["safetyStocks"],
@@ -93,6 +87,8 @@ import warehouseModel from '../../api/warehouse';
             {prop: 'categoryName', label: '分类', 'min-width': 100},
             {prop: 'unit', label: '单位', 'min-width': 100},
             {prop: 'safetyStocks.demandedQty2', label: '4周消耗', 'min-width': 120},
+            {prop: 'safetyStocks.stockGapQty1', label: 'P0缺口', 'min-width': 100},
+            {prop: 'safetyStocks.stockGapQty2', label: 'P1缺口', 'min-width': 100},
             {prop: 'safetyStocks.stockGapQty3', sortable: true, label: 'P2缺口', 'min-width': 100},
             {prop: 'safetyStocks.stockGapQty4', label: 'P3缺口', 'min-width': 100},
             {prop: 'vipLevelName', label: 'Vip级别', 'min-width': 100},
@@ -105,6 +101,35 @@ import warehouseModel from '../../api/warehouse';
     },
     computed: {},
     methods: {
+      resetSearch() {
+        this.param.category = '';
+        this.param.warehouse = '';
+      },
+      onChange(){
+          console.log("内容是： ", this.param.category)
+          let cateId = this.param.category;
+          if( cateId != null){
+             this.loading = true;
+             let url = "/warehouses/category";
+             url += "?cateId=" + cateId.join(",");
+             this.global.axios.get(url)
+              .then(resp => {
+                let res = resp.data || [];
+                this.warehouses = [];
+                res.forEach(r => {
+                  this.warehouses.push({
+                    label: r.name,
+                    value: r.id + ''
+                  });
+                });
+                this.loading = false;
+              })
+              .catch(err => {
+                this.loading = false;
+              });
+          }
+      },
+
       statusClassName({row}) {
         try{
           if (row && row.safetyStocks && row.safetyStocks.stockGapQty3 > 0) {
