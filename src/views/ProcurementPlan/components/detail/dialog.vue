@@ -4,9 +4,10 @@
              append-to-body
              v-if="dialogVisible"
              width="80%"
-             top="20px"
+             top="10vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
+
     <div class="ph-form">
       <!-- 编辑表单 TODO:-->
       <el-form :rules="rules" :model="detailItem" status-icon inline
@@ -220,20 +221,15 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-row>
-          <el-col :md="24">
-            <el-row type="flex" justify="center">
-              <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave"
-                         v-if="hasEdit">
-                保存
-              </el-button>
-            </el-row>
-          </el-col>
-        </el-row>
-
       </el-form>
     </div>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog">取 消</el-button>
+    </div>
+
+
   </el-dialog>
 
 </template>

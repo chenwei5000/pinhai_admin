@@ -227,7 +227,7 @@ aside {
     }
 
     /deep/ .ph-cell {
-      padding: 0 !important;
+      padding: 0 5px !important;
       font-size: 12px !important;
     }
     /deep/ .cell {
@@ -239,9 +239,12 @@ aside {
     /deep/ .ph-cell-header {
       font-size: 12px !important;
       font-weight: bold !important;
-      padding: 2px !important;
+      padding: 2px 5px !important;
       line-height: 26px;
       color: #333;
+    }
+    /deep/ .el-table--medium th, .el-table--medium td{
+      padding: 3px;
     }
   }
 
