@@ -31,12 +31,35 @@
       <el-table-column prop="logisticsWeek" label="运输周数" width="100"></el-table-column>
       <el-table-column prop="safetyWeek" label="销售周数" width="100"></el-table-column>
       <el-table-column prop="coverageWeek" label="覆盖周数" width="100"></el-table-column>
-      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100"></el-table-column>
       <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
-      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110"></el-table-column>
+      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100"></el-table-column>
+      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110" v-if="false"></el-table-column>
       <el-table-column prop="validateStockQty" label="有效库存(件)" width="100"></el-table-column>
 
-      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100"></el-table-column>
+      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100">
+        <template slot-scope="scope">
+          <el-popover v-if="scope.row.domesticStockCartonQty > 0 " placement="top-start" title="国内库存(箱)" width="250" trigger="hover">
+            <div v-html="br(scope.row.domesticStocks)"></div>
+            <span slot="reference">{{ scope.row.domesticStockCartonQty }}</span>
+          </el-popover>
+          <span v-else>{{ scope.row.domesticStockCartonQty }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="cartonSpecVolume" label="箱子体积(m³)" width="100">
+
+        <template slot-scope="scope">
+          <span v-if="false">{{ scope.row.cartonSpec.length }} * {{ scope.row.cartonSpec.width }} * {{ scope.row.cartonSpec.height }} </span>
+          <span>{{scope.row.cartonSpecVolume}}</span>
+        </template>
+
+      </el-table-column>
+
+      <el-table-column prop="oversize" label="OverSize" width="70">
+        <template slot-scope="scope">
+          <span>{{ scope.row.oversize ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
 
 
       <el-table-column prop="productName" label="名称" width="200">
@@ -58,6 +81,9 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="boxVolume" label="体积(m³)" width="100" fixed="right" align="center">
+      </el-table-column>
+
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
@@ -77,6 +103,7 @@
         <el-row type="flex" justify="center">
           <el-button type="primary" style="margin-top: 15px"
                      size="mini"
+                     @click="onBack"
                      :loading="confirmLoading">
             上一步
           </el-button>
@@ -88,7 +115,7 @@
           <el-button type="primary" style="margin-top: 15px"
                      size="mini"
                      :loading="confirmLoading">
-            下一步
+            转出口计划明细
           </el-button>
         </el-row>
       </el-col>
@@ -100,7 +127,7 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency} from '@/utils'
+  import {currency, parseLineBreak} from '@/utils'
 
   export default {
     components: {},
@@ -120,7 +147,7 @@
       },
     },
     filters: {
-      currency: currency
+      currency: currency,
     },
 
     data() {
@@ -170,6 +197,9 @@
 
     methods: {
       /********************* 基础方法  *****************************/
+      br(text) {
+        return parseLineBreak(text);
+      },
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
       },
@@ -229,6 +259,24 @@
               sums[index] = 'N/A';
             }
           }
+
+          if (column.property == 'boxVolume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = sums[index].toFixed(2) + ' m³';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
         });
 
         return sums;
@@ -375,7 +423,12 @@
 
       onReceivedCartonQty(row) {
         //row.receivedQty = (row.receivedCartonQty * row.numberOfCarton).toFixed(0);
+      },
+
+      onBack() {
+        this.$emit("step2CBEvent", 0);
       }
+
     }
   }
 </script>

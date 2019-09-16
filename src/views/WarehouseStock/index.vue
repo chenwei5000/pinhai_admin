@@ -1,13 +1,6 @@
 <template>
   <div class="app-container">
-
     <div class="ph-card">
-
-      <!-- title -->
-      <ph-card-header :title="title" type="table">
-
-      </ph-card-header>
-
       <!-- 表格 -->
       <div class="ph-card-body">
         <!-- 说明  https://femessage.github.io/el-data-table/-->

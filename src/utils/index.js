@@ -387,6 +387,20 @@ export function intArrToStrArr(intArr) {
   }
 }
 
+
+export function strArrToIntArr(strArr) {
+  let intArr = [];//保存转换后的整型字符串
+  if (strArr) {
+    strArr.forEach(item => {
+      intArr.push(parseInt(item));
+    });
+    return intArr;
+  }
+  else {
+    return null;
+  }
+}
+
 const digitsRE = /(\d{3})(?=\d)/g
 
 export function currency(value, currency, decimals) {
