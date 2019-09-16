@@ -95,8 +95,8 @@
         this.newObject = JSON.parse(JSON.stringify(object));
         this.stepsActive = 1;
       },
-      step2CBEvent(){
-
+      step2CBEvent(step){
+        this.stepsActive = step;
       }
     }
   }
