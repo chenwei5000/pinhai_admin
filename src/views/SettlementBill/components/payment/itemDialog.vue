@@ -35,14 +35,12 @@
           <el-col :md="14">
             <el-form-item label="数量" prop="pdNumber">
 
-              <el-input-number v-model="detailItem.pdNumber"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               @change="onQtyChange"
-                               :max="100000" label="数量">
 
-              </el-input-number>
+              <el-input v-model.trim="detailItem.pdNumber"
+                        maxlength="50"
+                        show-word-limit
+                        @change="onQtyChange"
+                        style="width: 200px" placeholder="数量" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="数量" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -56,14 +54,11 @@
 
             <el-form-item label="单价" prop="pdPrice">
 
-              <el-input-number v-model="detailItem.pdPrice"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               @change="onQtyChange"
-                               :max="100000" label="单价">
-
-              </el-input-number>
+              <el-input v-model.trim="detailItem.pdPrice"
+                        maxlength="50"
+                        show-word-limit
+                        @change="onQtyChange"
+                        style="width: 200px" placeholder="单价" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="单价" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -75,13 +70,10 @@
           <el-col :md="14">
             <el-form-item label="总额" prop="pdAmount">
 
-              <el-input-number v-model="detailItem.pdAmount"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               :max="10000000" label="总额">
-
-              </el-input-number>
+              <el-input v-model.trim="detailItem.pdAmount"
+                        maxlength="50"
+                        show-word-limit
+                        style="width: 200px" placeholder="总额" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="总额，付款总额必须小于等于所有相关发票的总金额" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -144,13 +136,16 @@
             validRules.required
           ],
           pdNumber: [
-            validRules.required
+            validRules.required,
+            validRules.integer
           ],
           pdPrice: [
-            validRules.required
+            validRules.required,
+            validRules.number
           ],
           pdAmount: [
-            validRules.required
+            validRules.required,
+            validRules.number
           ],
         },
       }

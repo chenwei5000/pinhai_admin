@@ -36,16 +36,10 @@
           <el-col :md="14">
             <el-form-item label="发票金额" prop="price">
 
-              <el-input-number v-model="detailItem.price"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               style="width: 200px"
-                               @change="onQtyChange"
-                               size="mini"
-                               :max="10000000" label="发票金额">
-
-              </el-input-number>
+              <el-input v-model.trim="detailItem.price"
+                        maxlength="50"
+                        show-word-limit
+                        style="width: 200px" placeholder="总额" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="单价" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -149,7 +143,8 @@
             validRules.required
           ],
           price: [
-            validRules.required
+            validRules.required,
+            validRules.number
           ]
         },
       }
@@ -207,7 +202,7 @@
           this.confirmLoading = true;
           let object = JSON.parse(JSON.stringify(this.detailItem));
           object.invoiceTime = moment(object.invoiceTime).format("YYYY-MM-DD")
-          this.$emit("modifyCBEvent", this.detailItem);
+          this.$emit("modifyCBEvent", object);
           this.confirmLoading = false;
           this.dialogVisible = false;
           this.closeDialog();

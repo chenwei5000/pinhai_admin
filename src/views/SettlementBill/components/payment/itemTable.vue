@@ -129,6 +129,7 @@
 
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
+        financeBills: [], // 采购预付款单
 
         // 表格加载效果
         loading: false,
@@ -168,8 +169,36 @@
           pdNumber: 1,
           pdPrice: this.primary.unpaidAmount,
           pdRemarks: '购买产品的费用',
+          financeBillId: null,
           pdAmount: this.primary.unpaidAmount
         });
+
+        console.log(this.primary);
+
+        let url = "/financeBills";
+        let filters = [
+          {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode},
+          {"field": "status", "op": "eq", "data": 2},
+        ]
+        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        url += "&sort=id&dir=asc";
+
+        this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data || [];
+            res.forEach(r => {
+              this.data.push({
+                pdNumber: 1,
+                financeBillId: r.id,
+                pdPrice: -r.paymentAmount,
+                pdRemarks: `预付款单[${r.code}]冲销`,
+                pdAmount: -r.paymentAmount
+              });
+            });
+          })
+          .catch(err => {
+          });
 
         this.search();
         this.loading = false;
@@ -247,7 +276,12 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row);
+        if (row.financeBillId) {
+          this.$message.error("冲销项目不能修改只能删除!");
+        }
+        else {
+          this.$refs.itemDialog.openDialog(row);
+        }
       },
 
       /* 行删除功能 */
