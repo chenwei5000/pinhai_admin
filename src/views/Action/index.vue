@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -61,6 +59,7 @@
                 op: 'eq',
                 placeholder: '请输入ID',
                 maxlength: "100",
+                size: "mini",
                 "show-word-limit": true,
                 clearable: true
               }
@@ -73,6 +72,7 @@
                 op: 'bw',
                 placeholder: '请输入资源标识',
                 maxlength: "20",
+                size: "mini",
                 "show-word-limit": true,
                 clearable: true
               }

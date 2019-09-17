@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -60,6 +58,7 @@
                 placeholder: '请输入字典类型名称',
                 clearable: true,
                 maxlength: "40",
+                size: "mini",
                 "show-word-limit": true,
               }
             },
@@ -71,6 +70,7 @@
                 op: 'bw',
                 placeholder: '请输入字典值名称',
                 clearable: true,
+                size: "mini",
                 maxlength: "40",
                 "show-word-limit": true,
               }

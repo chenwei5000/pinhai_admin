@@ -13,11 +13,27 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 付款项(请与发票明细一致)</div>
+        <div slot="title" class="title">2. 付款项</div>
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
+      <el-collapse-item name="billTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 发票</div>
+        <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="attachment" style="margin-top: 10px">
+        <div slot="title" class="title">4. 附件</div>
+        <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
+      </el-collapse-item>
+
     </el-collapse>
+
+    <el-row type="flex" justify="center">
+      <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onPayment">
+        申请付款
+      </el-button>
+    </el-row>
   </el-dialog>
 
 </template>
@@ -25,13 +41,17 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import infoFrom from '../view/form'
+  import infoFrom from './form'
   import itemTable from './itemTable'
+  import billTable from './billTable'
+  import attachment from './attachment'
 
   export default {
     components: {
       infoFrom,
-      itemTable
+      itemTable,
+      billTable,
+      attachment
     },
     props: {},
     computed: {
@@ -62,6 +82,7 @@
         primary: {}, //主对象
         primaryComplete: false,
         dialogVisible: false, //Dialog 是否开启
+        confirmLoading: false,
         activeNames: [],   //折叠面板开启项
       }
     },
@@ -89,7 +110,7 @@
             .catch(err => {
             });
         }
-        else{
+        else {
           this.$message.error("无效的结算单");
         }
       },
@@ -99,7 +120,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom'];
+        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
       },
       closeDialog() {
         this.primary = {};
@@ -107,6 +128,37 @@
         this.logs = [];
         this.dialogVisible = false;
         this.primaryComplete = false;
+      },
+
+      onPayment() {
+        this.$refs.infoFrom.$refs.editObject.validate(valid => {
+          if (!valid) {
+            return false
+          }
+          let editObject = this.$refs.infoFrom.editObject;
+          let items = JSON.parse(JSON.stringify(this.$refs.itemTable.data));
+          let bills = JSON.parse(JSON.stringify(this.$refs.billTable.data));
+          console.log(items);
+          if (!items || items.length == 0) {
+            this.$message.error("请设置付款项目");
+            return false;
+          }
+          if (!bills || bills.length == 0) {
+            this.$message.error("请设置发票信息");
+            return false;
+          }
+          console.log(bills);
+
+          // this.loading = true;
+          // this.confirmLoading = true;
+          // this.$emit("modifyCBEvent", this.detailItem);
+          // this.confirmLoading = false;
+          // this.dialogVisible = false;
+          // this.closeDialog();
+
+        })
+
+
       },
 
       /* 子组件编辑完成后相应事件 */

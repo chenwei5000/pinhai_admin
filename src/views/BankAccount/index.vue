@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -35,9 +33,9 @@
           columns: [
             {type: 'selection'},
             phColumns.id,
-            {prop: 'accountName', label: '户名', "min-width": 100},
+            {prop: 'accountName', label: '户名', "min-width": 200},
             {prop: 'accountCardHide', label: '银行卡号', "min-width": 160},
-            {prop: 'openingBank', label: '开户行', "min-width": 120},
+            {prop: 'openingBank', label: '开户行', "min-width": 200},
             {prop: 'currencyId', label: '货币类型ID', hidden: 'false', "min-width": 120},
             {prop: 'currency.name', label: '币种', "min-width": 120},
 

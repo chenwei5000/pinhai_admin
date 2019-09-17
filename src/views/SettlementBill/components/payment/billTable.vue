@@ -32,22 +32,19 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
+      <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
       </el-table-column>
 
-      <el-table-column prop="pdNumber" label="数量" width="150">
+      <el-table-column prop="invoiceTime" label="开票日期" width="150">
       </el-table-column>
 
-      <el-table-column prop="pdPrice" label="单价" width="150">
+      <el-table-column prop="price" label="发票金额" width="150">
         <template slot-scope="scope">
-          {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="pdAmount" label="金额" width="150">
-        <template slot-scope="scope">
-          {{scope.row.pdAmount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
-        </template>
+      <el-table-column prop="productName" label="说明" width="150">
       </el-table-column>
 
       <!--默认操作列-->
@@ -81,7 +78,7 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import itemDialog from './itemDialog'
+  import itemDialog from './billDialog'
 
   export default {
     components: {
@@ -162,15 +159,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-
-        //类型、数量、单价、总金额、备注
-        this.data.push({
-          pdNumber: 1,
-          pdPrice: this.primary.unpaidAmount,
-          pdRemarks: '购买产品的费用',
-          pdAmount: this.primary.unpaidAmount
-        });
-
         this.search();
         this.loading = false;
       },
@@ -259,7 +247,7 @@
               let idx = null;
 
               this.data.forEach((item, index) => {
-                  if (item.pdRemarks === row.pdRemarks) {
+                  if (item.invoiceNumber === row.invoiceNumber) {
                     idx = index;
                     return;
                   }
@@ -281,13 +269,13 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         let addFlg = true;
         this.data.forEach((item, index, arr) => {
-          if (item.pdRemarks == object.pdRemarks) {
+          if (item.invoiceNumber == object.invoiceNumber) {
             arr[index] = object;
             addFlg = false;
           }
         });
 
-        if (addFlg) {
+        if(addFlg){
           this.data.push(object);
         }
         this.data.push({});

@@ -79,6 +79,26 @@
         </el-col>
       </el-row>
 
+      <el-row>
+        <el-col :md="24">
+          <el-form-item label="收款账户" prop="accountId">
+            <el-select filterable
+                       v-model="editObject.accountId"
+                       style="width: 500px"
+                       size="mini"
+                       placeholder="请选择供应商收款帐号">
+              <el-option
+                v-for="(item,idx) in accountSelectOptions"
+                :label="item.bankAccount.accountName + '-'
+                + item.bankAccount.currency.name + '-'
+                + item.bankAccount.openingBank + '-' + item.bankAccount.accountCardHide " :value="item.id"
+                :key="idx"
+              ></el-option>
+            </el-select>
+
+          </el-form-item>
+        </el-col>
+      </el-row>
 
     </el-form>
   </div>
@@ -88,6 +108,7 @@
 <script>
 
   import {currency, intArrToStrArr, parseTime} from '@/utils'
+  import validRules from '@/components/validRules'
 
   export default {
     components: {},
@@ -128,13 +149,19 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        initComplete:false,
+        initComplete: false,
+
+        accountSelectOptions: [],
 
         // 编辑对象 TODO
         editObject: {},
 
         // 字段验证规则 TODO:
-        rules: {},
+        rules: {
+          accountId: [
+            validRules.required
+          ]
+        },
       }
     },
 
@@ -156,8 +183,31 @@
         if (this.primary) {
           //获取计划数据
           this.editObject = JSON.parse(JSON.stringify(this.primary));
-          this.loading = false;
-          this.initComplete = true;
+          let filters = [
+            {
+              field: "companyManagementId",
+              op: 'eq',
+              data: this.editObject.supplier ? this.editObject.supplier.companyId : -1
+            }
+          ];
+          let relations = ["bankAccount", "companyManagement", "bankAccount.currency"];
+          let url = `/collectionAccounts?filters=${JSON.stringify({
+            "groupOp": "AND",
+            "rules": filters
+          })}&relations=${JSON.stringify(relations)}`
+          this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data
+              let data = res || []
+              this.accountSelectOptions = data;
+              this.loading = false;
+              this.initComplete = true;
+            })
+            .catch(err => {
+              this.loading = false
+              this.initComplete = true;
+            })
         }
         else {
           this.$message.error("无效的采购计划!");
