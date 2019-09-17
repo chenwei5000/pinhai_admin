@@ -58,6 +58,7 @@
               $el: {
                 op: 'eq',
                 placeholder: '请输入ID',
+                size:"mini",
                 maxlength: "100",
                 size: "mini",
                 "show-word-limit": true,
@@ -70,6 +71,7 @@
               label: '资源标识',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入资源标识',
                 maxlength: "20",
                 size: "mini",

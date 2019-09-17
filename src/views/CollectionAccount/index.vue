@@ -34,7 +34,6 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'companyManagementId', label: '公司ID', hidden: true, "min-width": 100},
             {prop: 'bankAccountId', label: '银行账号ID', hidden: true, "min-width": 100},
             {prop: 'companyManagement.fullName', label: '公司名', "min-width": 200},
@@ -42,6 +41,7 @@
             {prop: 'contact', label: '联系人',  "min-width": 60},
             {prop: 'phoneHide', label: '联系人电话', "min-width": 80},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 

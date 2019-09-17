@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -33,7 +31,6 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'code', label: '编码', 'min-width': 200},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 200, fixed: 'left'},
             {prop: 'address', label: '地址', 'min-width': 150},
@@ -45,6 +42,7 @@
             {prop: 'leader.name', label: '负责人', 'min-width': 150},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
@@ -59,6 +57,7 @@
                 placeholder: '请输入名称',
                 clearable: true,
                 maxlength: "40",
+                size:"mini",
                 style: "width:120px;",
                 "show-word-limit": true,
               }
@@ -69,6 +68,7 @@
               label: '编码',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入编码',
                 style: "width:120px;",
                 clearable: true
@@ -84,6 +84,7 @@
               placeholder: '请输入负责人',
               style: "width:120px;",
               filterable: true,
+              size:"mini",
               maxlength: "40",
               "show-word-limit": true,
             },

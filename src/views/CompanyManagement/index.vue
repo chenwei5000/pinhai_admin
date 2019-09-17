@@ -29,7 +29,6 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {
               prop: 'type', label: '类型',"min-width": 90,
               formatter: row => (row.type == 1 ? '本公司' :
@@ -46,13 +45,14 @@
             {prop: 'address', label: '地址', "min-width": 200},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.datadic("type",'类型','type'),
             phSearchItems.abbreviation,
+            phSearchItems.datadic("type",'类型','type'),
             phSearchItems.datadic("region",'管理区域','region'),
             phSearchItems.status()
           ],

@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -30,7 +28,6 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '代码', sortable: 'custom', width: 80},
             {prop: 'symbolLeft', label: '左侧符', width: 80},
@@ -40,18 +37,32 @@
             {prop: 'decimalPlaces', label: '小数位数', width: 80},
             {prop: 'value', label: '汇率值', sortable: 'custom', width: 100},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
             phSearchItems.name,
-            phSearchItems.code,
+            {
+              $type: 'input',
+              $id: 'code',
+              label: '代码',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入代码',
+                size:"mini",
+                style: 'height:25px',
+                clearable: true,
+                maxlength: "40",
+               c: true,
+              }
+            },
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.name,
+            phFromItems.name(),
             {
               $type: 'input',
               $id: 'code',

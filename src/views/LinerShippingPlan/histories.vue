@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -50,9 +48,9 @@
             {prop: 'cartonQty', label: '发货箱数', 'min-width': 100},
           ],
           //搜索
-        
+
           //修改或新增
-         
+
         }
       }
     },

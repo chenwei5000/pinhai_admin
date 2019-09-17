@@ -41,7 +41,7 @@
           <el-row>
             <el-col :md="8">
               <el-form-item label="供货商" prop="supplierId">
-                <el-select v-model="editObject.supplierId" @change="onSupplierChange"
+                <el-select v-model="editObject.supplierId" @change="onSupplierChange" size="mini"
                            filterable placeholder="请选择供货商">
                   <el-option
                     v-for="(item , idx) in supplierSelectOptions"
@@ -59,7 +59,7 @@
 
             <el-col :md="8">
               <el-form-item label="收货仓库" prop="warehouseId">
-                <el-select v-model="editObject.warehouseId"
+                <el-select v-model="editObject.warehouseId" size="mini"
                            filterable placeholder="请选择收货仓库">
                   <el-option
                     v-for="(item , idx)  in warehouseSelectOptions"
@@ -80,6 +80,7 @@
                 <el-input v-model.trim="editObject.name"
                           maxlength="100"
                           show-word-limit
+                          size="mini"
                           style="width: 200px" placeholder="请填写名称" clearable></el-input>
 
                 <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
@@ -93,7 +94,7 @@
           <el-row>
             <el-col :md="8">
               <el-form-item label="结算方式" prop="settlementMethod">
-                <el-select v-model="editObject.settlementMethod" @change="onSettlementMethodChange"
+                <el-select v-model="editObject.settlementMethod" @change="onSettlementMethodChange" size="mini"
                            filterable placeholder="请选择结算方式">
                   <el-option
                     v-for="(item , idx)  in settlementMethodSelectOptions"
@@ -111,7 +112,7 @@
 
             <el-col :md="8">
               <el-form-item label="结算货币" prop="currencyId">
-                <el-select v-model="editObject.currencyId" @change="onCurrencyChange"
+                <el-select v-model="editObject.currencyId" @change="onCurrencyChange" size="mini"
                            filterable placeholder="请选择结算货币">
                   <el-option
                     v-for="(item , idx)  in currencySelectOptions"
@@ -134,7 +135,7 @@
                                  style="width: 155px"
                                  :min="1"
                                  :step="1"
-                                 :max="365" label="帐期">
+                                 :max="365" size="mini" label="帐期">
                 </el-input-number>
                 天
                 <el-tooltip class="item" effect="light" content="生产商、批发商向零售商供货后，直至零售商付款的这段时间周期" placement="right">
@@ -208,7 +209,7 @@
         <el-table-column prop="noPurchaseOrderCartonQty" label="未下箱数" width="80"></el-table-column>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
-        <el-table-column prop="purchaseOrderCartonQty" label="采购箱数" width="80"
+        <el-table-column prop="purchaseOrderCartonQty" label="本次采购箱数" width="100"
                          fixed="right"></el-table-column>
 
         <el-table-column prop="purchaseOrderQty" label="采购件数" width="80"

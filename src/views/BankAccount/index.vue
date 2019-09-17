@@ -32,7 +32,6 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'accountName', label: '户名', "min-width": 200},
             {prop: 'accountCardHide', label: '银行卡号', "min-width": 160},
             {prop: 'openingBank', label: '开户行', "min-width": 200},
@@ -41,6 +40,7 @@
 
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
