@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -57,6 +55,7 @@
               $options: categoryModel.getMineSelectProdcutOptions(),
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请输入分类名称'
               }
                 },

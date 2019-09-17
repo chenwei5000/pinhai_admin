@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -31,11 +29,11 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'location', label: '地址', sortable: 'custom', 'min-width': 100},
             {prop: 'creator.name', label: '创建人', width: 100},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
@@ -44,7 +42,7 @@
             phSearchItems.status()
           ],
           form: [
-            phFromItems.name,
+            phFromItems.name(),
             {
               $type: 'input',
               $id: 'location',

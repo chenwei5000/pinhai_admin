@@ -10,15 +10,15 @@
                @submit.native.prevent>
 
         <el-form-item label="SKU">
-          <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+          <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" size="mini" clearable></el-input>
         </el-form-item>
 
         <el-form-item label="分类">
-          <el-input v-model="searchParam.category" placeholder="请输入分类名称" clearable></el-input>
+          <el-input v-model="searchParam.category" placeholder="请输入分类名称" size="mini" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-          <el-button @click="resetSearch" size="small">重置</el-button>
+          <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+          <el-button @click="resetSearch" size="mini">重置</el-button>
         </el-form-item>
       </el-form>
 

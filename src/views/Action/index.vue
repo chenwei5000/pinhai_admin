@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -60,6 +58,7 @@
               $el: {
                 op: 'eq',
                 placeholder: '请输入ID',
+                size:"mini",
                 maxlength: "100",
                 "show-word-limit": true,
                 clearable: true
@@ -71,6 +70,7 @@
               label: '资源标识',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入资源标识',
                 maxlength: "20",
                 "show-word-limit": true,

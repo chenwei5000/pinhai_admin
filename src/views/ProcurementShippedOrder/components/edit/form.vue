@@ -21,7 +21,7 @@
           <el-input v-else v-model.trim="editObject.name"
                     maxlength="100"
                     show-word-limit
-                    style="width: 220px" placeholder="请填写名称" clearable></el-input>
+                    style="width: 220px"  size="mini" placeholder="请填写名称" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -31,7 +31,7 @@
         <el-form-item label="发货厂商" prop="supplierId">
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.supplier.name}}</span>
           <el-select v-else v-model="editObject.supplierId"
-                     style="width: 220px"
+                     style="width: 220px" size="mini"
                      filterable placeholder="请选择">
             <el-option
               v-for="(item , idx)  in supplierSelectOptions"
@@ -46,7 +46,7 @@
       <el-col :md="14">
         <el-form-item label="收货仓库" prop="warehouseId">
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.warehouse.name}}</span>
-          <el-select v-else v-model="editObject.warehouseId" style="width: 220px"
+          <el-select v-else v-model="editObject.warehouseId" style="width: 220px"  size="mini"
                      filterable placeholder="请选择收货仓库">
             <el-option
               v-for="(item , idx)  in warehouseSelectOptions"
@@ -65,7 +65,7 @@
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
           <el-input v-else v-model="editObject.trackNumber"
                     show-word-limit
-                    style="width: 220px" placeholder="请填写单号" clearable></el-input>
+                    style="width: 220px"  size="mini" placeholder="请填写单号" clearable></el-input>
         </el-form-item>
       </el-col>
 
@@ -73,7 +73,7 @@
         <el-form-item label="物流公司" prop="channel">
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
           <el-input v-else v-model="editObject.channel"
-                    style="width: 220px" placeholder="请填写公司" clearable></el-input>
+                    style="width: 220px"  size="mini" placeholder="请填写公司" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -85,7 +85,7 @@
 
           <el-input v-else v-model="editObject.plateNumber"
                     show-word-limit
-                    style="width: 220px" placeholder="请填写车牌" clearable></el-input>
+                    style="width: 220px"  size="mini" placeholder="请填写车牌" clearable></el-input>
         </el-form-item>
       </el-col>
 
@@ -95,7 +95,7 @@
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
 
           <el-input v-else v-model="editObject.linkman"
-                    style="width: 220px" placeholder="请填写联系人" clearable></el-input>
+                    style="width: 220px" size="mini" placeholder="请填写联系人" clearable></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -107,7 +107,7 @@
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
 
           <el-input v-else v-model="editObject.tel"
-                    style="width: 220px" placeholder="请填写电话" clearable></el-input>
+                    style="width: 220px"  size="mini" placeholder="请填写电话" clearable></el-input>
         </el-form-item>
       </el-col>
 
@@ -120,6 +120,7 @@
             v-model="editObject.expectTime"
             format="yyyy-MM-dd"
             type="date"
+            size="mini"
             placeholder="预计发货时间"></el-date-picker>
         </el-form-item>
       </el-col>
@@ -138,6 +139,7 @@
                       show-word-limit
                       rows="3"
                       cols="80"
+                      size="mini"
                       show-word-limit></el-input>
           </el-col>
 

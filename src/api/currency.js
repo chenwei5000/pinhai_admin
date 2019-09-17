@@ -27,7 +27,7 @@ const currencyModel = {
           });
         });
       }
-    }
+    };
     _loadData();
     return _options;
   }

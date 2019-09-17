@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -56,6 +54,7 @@
               label: '版本',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入版本'
               }
             },

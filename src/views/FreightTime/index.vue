@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -34,12 +32,12 @@
           //列表
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 200},
             {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 200},
             {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 200},
             {prop: 'spendDays', label: '物流时间(天)', 'min-width': 100},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索
@@ -51,6 +49,7 @@
               $options: harbourModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请选择发货港口'
               }
             },
@@ -61,6 +60,7 @@
               $options: shippingMethodModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请选择物流方式'
               }
             },
@@ -71,6 +71,7 @@
               $options: harbourModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请输入收货港口'
               }
             },

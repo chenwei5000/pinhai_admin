@@ -13,6 +13,8 @@
       </router-link>
 
       <el-button type="success" icon="el-icon-s-claim" @click="onComplete">确认收货</el-button>
+
+      <el-button type="primary" @click="closeDialog">取 消</el-button>
     </el-row>
 
     <itemTable ref="itemTable" :primary="primary"></itemTable>

@@ -108,6 +108,7 @@
                                style="width: 155px"
                                :min="0"
                                :step="1"
+                               size="mini"
                                :max="10000000" label="申请付款金额">
               </el-input-number>
 
@@ -124,6 +125,7 @@
                 v-model="paymentObjet.prepayTime"
                 style="width: 155px"
                 type="date"
+                size="mini"
                 placeholder="选择日期">
               </el-date-picker>
 
@@ -142,6 +144,7 @@
                                style="width: 155px"
                                :min="0"
                                :step="1"
+                               size="mini"
                                :max="100" label="金额占比">
               </el-input-number>
 
@@ -155,7 +158,7 @@
         <el-row>
           <el-col :md="24">
             <el-row type="flex" justify="center">
-              <el-button type="primary" style="margin-top: 40px" @click="onPayment">
+              <el-button type="primary" style="margin-top: 10px" size="small" @click="onPayment">
                 申请
               </el-button>
             </el-row>

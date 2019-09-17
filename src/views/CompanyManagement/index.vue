@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -31,23 +29,23 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
-            {prop: 'type', label: '类型',"min-width": 100},
+            {prop: 'fullName', label: '全称', fixed: 'left', "min-width": 150},
             {prop: 'abbreviation', label: '简称', "min-width": 100},
-            {prop: 'fullName', label: '全称', "min-width": 100},
+            {prop: 'type', label: '类型',"min-width": 100},
             {prop: 'address', label: '地址', "min-width": 100},
             {prop: 'region', label: '区域', "min-width": 100},
             {prop: 'contact', label: '联系人', "min-width": 100},
             {prop: 'phone', label: '联系人电话', "min-width": 100},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
-            phSearchItems.datadic("type",'类型','type'),
             phSearchItems.abbreviation,
+            phSearchItems.datadic("type",'类型','type'),
             phSearchItems.datadic("region",'管理区域','region'),
             phSearchItems.status()
           ],
