@@ -21,6 +21,10 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="类型">
+        <el-input v-model="searchParam.type.value" size="mini" style="width: 120px" placeholder="请输入"></el-input>
+      </el-form-item>
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
@@ -55,10 +59,9 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="type" label="类型" min-width="50"></el-table-column>
       <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="name" label="名称" min-width="150"></el-table-column>
       <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
-      <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
       <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
 
@@ -149,21 +152,21 @@
       ]),
 
       hasEdit() {
-        if (this.type === 'inventorying') {
+        if (this.type === 'inventoryLosses') {
           return true;
         }
         return false;
       },
 
       hasDelete() {
-        if (this.type === 'inventorying') {
+        if (this.type === 'inventoryLosses') {
           return true;
         }
         return false;
       },
 
       hasView() {
-        if (this.type === 'complete' || this.type === 'all') {
+        if (this.type === 'confirmed' || this.type === 'all') {
           return true;
         }
         return false;
@@ -189,8 +192,8 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/inventoryTasks', // 资源URL
-        countUrl: '/inventoryTasks/count', // 资源URL
+        url: '/inventories', // 资源URL
+        countUrl: '/inventories/count', // 资源URL
         relations: ["creator","warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
@@ -203,6 +206,8 @@
 
         searchParam: {
           warehouseId: {value: null, op: 'in', id: 'warehouseId'},
+          type: {value: null, op: 'bw', id: 'type'},
+
         },
 
         //弹窗

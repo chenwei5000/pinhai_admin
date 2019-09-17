@@ -1,17 +1,13 @@
 <template>
-  <div class="ph-form">
-
+  <div>
     <el-upload
       class="upload-demo"
-      :action="uploadUrl"
+      action=""
       :on-preview="handlePreview"
-      :before-remove="beforeRemove"
-      :on-success="handleSuccess"
+      :before-remove="handleBeforeRemove"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" size="small">+ 添加附件</el-button>
     </el-upload>
-
   </div>
 </template>
 
@@ -26,11 +22,7 @@
         default: {}
       }
     },
-    computed: {
-      uploadUrl() {
-        return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
-      }
-    },
+    computed: {},
 
     data() {
       return {
@@ -42,6 +34,7 @@
         attachments: []
       }
     },
+
     created() {
     },
 
@@ -84,40 +77,14 @@
         }
       },
 
-      remove(file){
-        if (this.primary) {
-          let url = `${this.global.generateUrl(this.url)}/${file.id}`;
-          this.global.axios
-            .delete(url)
-            .then(resp => {
-              this.$message.info("附件删除成功!");
-            })
-            .catch(err => {
-            });
-        }
-      },
-
       /********************* 操作按钮相关方法  ***************************/
-      //上传成功
-      handleSuccess() {
-        this.initData();
-      },
       // 预览
       handlePreview(file) {
         window.open(file.url, '_blank');
       },
-      // 删除
-      beforeRemove(file, fileList) {
-        return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.remove(file);
-              done(true);
-            } else {
-              done(false);
-            }
-          }
-        })
+      handleBeforeRemove(file, fileList) {
+        this.$message.error("无法删除");
+        return false;
       }
     }
   }
@@ -135,10 +102,5 @@
     vertical-align: middle;
     padding: 0 10px;
   }
-
-  .el-form-item {
-    //margin-bottom: 7px;
-  }
-
 </style>
 
