@@ -268,12 +268,15 @@
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         let addFlg = true;
+
         this.data.forEach((item, index, arr) => {
           if (item.invoiceNumber == object.invoiceNumber) {
             arr[index] = object;
             addFlg = false;
           }
         });
+
+        console.log(object);
 
         if(addFlg){
           this.data.push(object);

@@ -4,7 +4,7 @@
              append-to-body
              v-if="dialogVisible"
              width="80%"
-             top="10vh"
+             top="20vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
 
@@ -18,33 +18,36 @@
       >
         <el-row>
           <el-col :md="10">
-            <el-form-item label="付款项目" prop="pdRemarks">
+            <el-form-item label="发票号" prop="invoiceNumber">
 
-              <el-input v-model.trim="detailItem.pdRemarks"
+              <el-input v-model.trim="detailItem.invoiceNumber"
                         maxlength="50"
                         show-word-limit
-                        style="width: 200px" placeholder="请填写付款项目" clearable></el-input>
+                        size="mini"
+                        style="width: 200px" placeholder="发票号"></el-input>
 
 
-              <el-tooltip class="item" effect="light" content="付款项说明，最好与发票中的付款项目一致。" placement="right">
+              <el-tooltip class="item" effect="light" content="发票号" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="数量" prop="pdNumber">
+            <el-form-item label="发票金额" prop="price">
 
-              <el-input-number v-model="detailItem.pdNumber"
+              <el-input-number v-model="detailItem.price"
                                :precision="0"
                                :min="1"
                                :step="1"
+                               style="width: 200px"
                                @change="onQtyChange"
-                               :max="100000" label="数量">
+                               size="mini"
+                               :max="10000000" label="发票金额">
 
               </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="数量" placement="right">
+              <el-tooltip class="item" effect="light" content="单价" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
@@ -53,62 +56,55 @@
 
         <el-row>
           <el-col :md="10">
+            <el-form-item label="开票日期" prop="invoiceTime">
 
-            <el-form-item label="单价" prop="pdPrice">
+              <el-date-picker
+                v-model="detailItem.invoiceTime"
+                format="yyyy-MM-dd"
+                type="date"
+                @input="updateInput"
+                style="width: 200px"
+                size="mini"
+                placeholder="开票日期"></el-date-picker>
 
-              <el-input-number v-model="detailItem.pdPrice"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               @change="onQtyChange"
-                               :max="100000" label="单价">
-
-              </el-input-number>
-
-              <el-tooltip class="item" effect="light" content="单价" placement="right">
+              <el-tooltip class="item" effect="light" content="开票日期" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
-
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="总额" prop="pdAmount">
+            <el-form-item label="说明" prop="productName">
 
-              <el-input-number v-model="detailItem.pdAmount"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               :max="10000000" label="总额">
+              <el-input v-model.trim="detailItem.productName"
+                        maxlength="200"
+                        show-word-limit
+                        size="mini"
+                        style="width: 200px" placeholder="说明" clearable></el-input>
 
-              </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="总额，付款总额必须小于等于所有相关发票的总金额" placement="right">
+              <el-tooltip class="item" effect="light" content="说明,发票说明" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :md="24">
-            <el-row type="flex" justify="center">
-              <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave"
-                         v-if="hasEdit">
-                保存
-              </el-button>
-            </el-row>
           </el-col>
         </el-row>
 
       </el-form>
     </div>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog">取 消</el-button>
+    </div>
+
   </el-dialog>
 
 </template>
 
 <script>
   import validRules from '@/components/validRules'
+  import moment from 'moment'
 
   export default {
     components: {},
@@ -146,18 +142,15 @@
 
         // 字段验证规则 TODO:
         rules: {
-          pdRemarks: [
+          invoiceNumber: [
             validRules.required
           ],
-          pdNumber: [
+          invoiceTime: [
             validRules.required
           ],
-          pdPrice: [
+          price: [
             validRules.required
-          ],
-          pdAmount: [
-            validRules.required
-          ],
+          ]
         },
       }
     },
@@ -189,9 +182,11 @@
         this.dialogVisible = false;
         this.loading = false;
         this.confirmLoading = false;
-        this.detailItem = null;
+        this.detailItem = {};
       },
-
+      updateInput(val) {
+        this.$forceUpdate();
+      },
       onQtyChange(val) {
         if (this.detailItem) {
           // 总额 = 数量 * 单价
@@ -210,6 +205,8 @@
           }
           this.loading = true;
           this.confirmLoading = true;
+          let object = JSON.parse(JSON.stringify(this.detailItem));
+          object.invoiceTime = moment(object.invoiceTime).format("YYYY-MM-DD")
           this.$emit("modifyCBEvent", this.detailItem);
           this.confirmLoading = false;
           this.dialogVisible = false;

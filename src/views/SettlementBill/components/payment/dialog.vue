@@ -138,6 +138,7 @@
           let editObject = this.$refs.infoFrom.editObject;
           let items = JSON.parse(JSON.stringify(this.$refs.itemTable.data));
           let bills = JSON.parse(JSON.stringify(this.$refs.billTable.data));
+          let attachments = JSON.parse(JSON.stringify(this.$refs.attachment.attachments));
           console.log(items);
           if (!items || items.length == 0) {
             this.$message.error("请设置付款项目");
@@ -145,6 +146,10 @@
           }
           if (!bills || bills.length == 0) {
             this.$message.error("请设置发票信息");
+            return false;
+          }
+          if (!attachments || attachments.length == 0) {
+            this.$message.error("请上传电子版发票");
             return false;
           }
           console.log(bills);
