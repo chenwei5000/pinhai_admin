@@ -29,11 +29,11 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 100},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏

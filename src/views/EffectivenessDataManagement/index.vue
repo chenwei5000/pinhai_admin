@@ -36,7 +36,6 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'statDateFormat', label: 'Stat Date', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'category.name', label: '分类', sortable: 'custom', "min-width": 120},
             {prop: 'session', label: 'Sessions', "min-width": 120},
@@ -44,6 +43,7 @@
             {prop: 'unitsOrdered', label: 'Units Ordered', "min-width": 120},
             {prop: 'unitSessionPercentage', label: 'Unit Session Percentage', "min-width": 120},
             {prop: 'orderedProductSale', label: 'Ordered product Sales', "min-width": 120},
+            phColumns.id,
           ],
 
           // 搜索区块定义

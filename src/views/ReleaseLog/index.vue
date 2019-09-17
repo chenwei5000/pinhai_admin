@@ -30,7 +30,6 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {
               prop: 'releaseTime',
               label: '发版日期',
@@ -44,6 +43,7 @@
             {prop: 'version', label: '系统版本', sortable: 'custom', 'min-width': 120},
             {prop: 'caption', label: '更新说明', sortable: 'custom', 'min-width': 400},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏
