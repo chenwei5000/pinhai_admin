@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -36,15 +34,15 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'companyManagementId', label: '公司ID', hidden: 'false', "min-width": 120},
             {prop: 'bankAccountId', label: '银行账号ID', hidden: 'false',"min-width": 160},
-            {prop: 'companyManagement.fullName', label: '公司名', "min-width": 100},
+            {prop: 'companyManagement.fullName', label: '公司名', fixed: 'left', "min-width": 100},
             {prop: 'bankAccount.accountName', label: '户名', sortable:'custom', "min-width": 60},
             {prop: 'contact', label: '联系人',  "min-width": 60},
             {prop: 'phoneHide', label: '联系人电话', "min-width": 80},
 
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 

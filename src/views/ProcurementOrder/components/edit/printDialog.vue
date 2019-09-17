@@ -26,7 +26,7 @@
           >
             <fieldset class="panel-heading">
               <legend class="panel-title">需方
-                <el-tooltip class="item" effect="light" placement="right">
+                <el-tooltip class="item" effect="light" size="mini" placement="right">
                   <div slot="content">
                     采购需求方。
                   </div>
@@ -42,7 +42,7 @@
                               show-word-limit
                               name="demanderName"
                               @input="updateInput"
-                              style="width: 200px" placeholder="请填写需求方公司名称" clearable>
+                              style="width: 200px" size="mini" placeholder="请填写需求方公司名称" clearable>
 
                     </el-input>
                   </el-form-item>
@@ -55,7 +55,7 @@
                               name="demanderAddress"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写需求方公司地址" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写需求方公司地址" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -68,7 +68,7 @@
                               name="demanderLinkMan"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 200px" placeholder="请填写需求方联系人" clearable></el-input>
+                              style="width: 200px" size="mini" placeholder="请填写需求方联系人" clearable></el-input>
                   </el-form-item>
                 </el-col>
 
@@ -79,7 +79,7 @@
                               name="demanderLinkMethod"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写需求方联系电话" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写需求方联系电话" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -92,7 +92,7 @@
                               name="demanderDeliveryAddress"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写需求收货地址" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写需求收货地址" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -100,7 +100,7 @@
 
             <fieldset class="panel-heading">
               <legend class="panel-title">供方
-                <el-tooltip class="item" effect="light" placement="right">
+                <el-tooltip class="item" effect="light" size="mini" placement="right">
                   <div slot="content">
                     采购提供方。
                   </div>
@@ -116,7 +116,7 @@
                               name="supplierName"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 200px" placeholder="请填写供货方公司名称" clearable></el-input>
+                              style="width: 200px" size="mini" placeholder="请填写供货方公司名称" clearable></el-input>
                   </el-form-item>
                 </el-col>
 
@@ -127,7 +127,7 @@
                               name="supplierAddress"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写供货方公司地址" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写供货方公司地址" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -140,7 +140,7 @@
                               name="supplierLinkMan"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 200px" placeholder="请填写供货方联系人" clearable></el-input>
+                              style="width: 200px" size="mini" placeholder="请填写供货方联系人" clearable></el-input>
                   </el-form-item>
                 </el-col>
 
@@ -151,7 +151,7 @@
                               name="supplierLinkMethod"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写供货方联系电话" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写供货方联系电话" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -164,7 +164,7 @@
                               name="supplierBankName"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 200px" placeholder="请填写供货方收款银行" clearable></el-input>
+                              style="width: 200px" size="mini" placeholder="请填写供货方收款银行" clearable></el-input>
                   </el-form-item>
                 </el-col>
 
@@ -175,7 +175,7 @@
                               name="supplierBankAccountName"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写供货方收款户名" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写供货方收款户名" clearable></el-input>
                   </el-form-item>
                 </el-col>
 
@@ -188,7 +188,7 @@
                               name="supplierBankAccount"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写供货方收款账号" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写供货方收款账号" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -196,7 +196,7 @@
 
             <fieldset class="panel-heading">
               <legend class="panel-title">要求
-                <el-tooltip class="item" effect="light" placement="right">
+                <el-tooltip class="item" effect="light" size="mini" placement="right">
                   <div slot="content">
                     采购合同相关要求。
                   </div>
@@ -212,7 +212,7 @@
                               name="categoryName"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 200px" placeholder="请填写采购品类" clearable></el-input>
+                              style="width: 200px" size="mini" placeholder="请填写采购品类" clearable></el-input>
                   </el-form-item>
                 </el-col>
 
@@ -223,7 +223,7 @@
                               name="currency"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写结算货币" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写结算货币" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -235,7 +235,7 @@
                       v-model="printObject.deliveryTime"
                       name="deliveryTime"
                       type="date"
-                      size="small"
+                      size="mini"
                       format="yyyy年M月d日"
                       placeholder="选择交货时间">
                     </el-date-picker>
@@ -251,7 +251,7 @@
                     <el-date-picker
                       v-model="printObject.effectiveDate"
                       type="daterange"
-                      size="small"
+                      size="mini"
                       format="yyyy年M月d日"
                       range-separator="至"
                       start-placeholder="开始日期"
@@ -269,7 +269,7 @@
                               name="signAddress"
                               show-word-limit
                               @input="updateInput"
-                              style="width: 300px" placeholder="请填写签约地址" clearable></el-input>
+                              style="width: 300px" size="mini" placeholder="请填写签约地址" clearable></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>

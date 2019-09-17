@@ -4,7 +4,7 @@
     <el-form :inline="true" :model="param" ref="searchForm" id="filter-form"
              @submit.native.prevent :rules="rules">
       <el-form-item label="分类" prop="category">
-        <el-select v-model="param.category" multiple placeholder="请选择原料分类">
+        <el-select v-model="param.category" size="mini" multiple placeholder="请选择原料分类">
           <el-option
             v-for="item in categories"
             :key="item.value"
@@ -15,7 +15,7 @@
       </el-form-item>
 
        <el-form-item label="国内成品库存" prop="warehouse">
-        <el-select v-model="param.warehouse" multiple placeholder="请选择仓库">
+        <el-select v-model="param.warehouse" size="mini" multiple placeholder="请选择仓库">
           <el-option
             v-for="item in warehouses"
             :key="item.value"
@@ -26,13 +26,11 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
       </el-form-item>
     </el-form>
 
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
 
         <ph-table

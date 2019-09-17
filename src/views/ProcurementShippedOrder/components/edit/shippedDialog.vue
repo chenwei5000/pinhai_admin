@@ -32,7 +32,7 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="收货仓库" prop="warehouseId">
-              <el-select v-model="editObject.warehouseId" style="width: 220px"
+              <el-select v-model="editObject.warehouseId" style="width: 220px" size="mini"
                          filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -50,6 +50,7 @@
                 v-model="editObject.expectTime"
                 format="yyyy-MM-dd"
                 type="date"
+                size="mini"
                 placeholder="发货时间"></el-date-picker>
             </el-form-item>
           </el-col>
@@ -60,14 +61,14 @@
             <el-form-item label="物流单号" prop="trackNumber">
               <el-input v-model="editObject.trackNumber"
                         show-word-limit
-                        style="width: 220px" placeholder="请填写单号" clearable></el-input>
+                        style="width: 220px"  size="mini" placeholder="请填写单号" clearable></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
             <el-form-item label="物流公司" prop="channel">
               <el-input v-model="editObject.channel"
-                        style="width: 220px" placeholder="请填写公司" clearable></el-input>
+                        style="width: 220px" size="mini" placeholder="请填写公司" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -77,14 +78,14 @@
             <el-form-item label="车牌" prop="plateNumber">
               <el-input v-model="editObject.plateNumber"
                         show-word-limit
-                        style="width: 220px" placeholder="请填写车牌" clearable></el-input>
+                        style="width: 220px"  size="mini" placeholder="请填写车牌" clearable></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
             <el-form-item label="联系人" prop="linkman">
               <el-input v-model="editObject.linkman"
-                        style="width: 220px" placeholder="请填写联系人" clearable></el-input>
+                        style="width: 220px" size="mini" placeholder="请填写联系人" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -93,7 +94,7 @@
           <el-col :md="24">
             <el-form-item label="联系电话" prop="tel">
               <el-input v-model="editObject.tel"
-                        style="width: 220px" placeholder="请填写电话" clearable></el-input>
+                        style="width: 220px" size="mini" placeholder="请填写电话" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>

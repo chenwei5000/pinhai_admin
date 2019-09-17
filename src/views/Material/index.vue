@@ -3,11 +3,6 @@
 
     <div class="ph-card">
 
-      <!-- title -->
-      <ph-card-header :title="title" type="table">
-
-      </ph-card-header>
-
       <!-- 表格 -->
       <div class="ph-card-body">
         <!-- 说明  https://femessage.github.io/el-data-table/-->
@@ -38,6 +33,7 @@
       return {
         categoryNames: [],
         currencyNames: [],
+        supplierNames: [],
 
         title: '原材料管理', // 页面标题
         tableConfig: {
@@ -49,15 +45,14 @@
           tableAttrs: {
             stripe: true,
             border: true,
-            "row-class-categoryId": this.statusClasscategoryId,
-            "highlight-current-row": true
+            "row-class-name": this.statusClassName,
+            "highlight-current-row": true,
           },
 
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
             {type: 'selection'}, //多选
-            phColumns.id,
-            {prop: 'skuCode', label: 'SKU', 'min-width': 200},
+            {prop: 'skuCode', label: 'SKU', 'min-width': 200, fixed: 'left'},
             {prop: 'categoryId', label: '分类ID', sortable: 'custom', hidden: true},
             {prop: 'category.name', label: '分类名称', width: 80},
             {prop: 'name', label: '原材料名称', 'min-width': 250},
@@ -74,6 +69,7 @@
             {prop: 'leadDay', label: '交期(天)', hidden: true},
             {prop: 'comment', label: '备注', hidden: true},
             phColumns.status,
+            phColumns.id,
 
           ],
 
@@ -86,6 +82,7 @@
               label: '分类',
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请选择分类'
               },
               $options: categoryModel.getMineSelectMaterialOptions(),
@@ -107,12 +104,12 @@
                 validRules.required
               ]
             },
+            phFromItems.name(),
             {
               $type: 'select',
-              $id: 'groupCode',
+              $id: 'categoryId',
               label: '分类',
               $el: {
-                op: 'eq',
                 placeholder: '请输入分类'
               },
               $options: categoryModel.getMineSelectMaterialOptions(),
@@ -127,30 +124,22 @@
               $el: {
                 placeholder: '请选择结算货币'
               },
-              $options: function () {
-                var _currencyNames = [];
-                const loadData = async function () {
-                  currencyModel.getCurrencies().then(currencies => {
-                    currencies.forEach(currency => {
-                      _currencyNames.push({
-                        label: currency.name,
-                        value: currency.id
-                      });
-                    });
-                    return _currencyNames;
-                  });
-                };
-                loadData();
-                return _currencyNames;
-              },
+              $options: currencyModel.getSelectOptions(),
             },
-            phFromItems.name,
             {
               $type: 'input',
               $id: 'model',
               label: '型号',
               $el: {
                 placeholder: '请输入型号'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'unit',
+              label: '单位',
+              $el: {
+                placeholder: '请输入单位'
               },
             },
             {
@@ -206,8 +195,9 @@
               $el: {
                 placeholder: '请选择供货商'
               },
-              $options: supplierModel.getSuppilerOptions,
+              $options: supplierModel.getSelectOptions(),
             },
+            phFromItems.status()
           ]
         }
       }
@@ -220,16 +210,15 @@
     computed: {},
 
     // 各种相关方法定义
-    methods: {
-      // 状态样式
-      statusClasscategoryId({row, rowIndex}) {
+    methods:{
+      statusClassName({row}) {
         if (row.status && row.status !== 0) {
           return '';
         }
         else {
           return 'warning-row';
         }
-      },
+      }
     },
 
     // 观察data中的值发送变化后，调用

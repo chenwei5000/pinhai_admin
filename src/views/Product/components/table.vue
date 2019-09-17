@@ -6,7 +6,7 @@
     <el-form :inline="true" :model="productParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
       <el-form-item label="分类">
-        <el-select filterable v-model="productParam.categoryId.value" placeholder="请选择分类">
+        <el-select filterable v-model="productParam.categoryId.value" size="mini" placeholder="请选择分类">
           <el-option
             v-for="(item,idx) in categorySelectOptions"
             :label="item.label" :value="item.value"
@@ -17,16 +17,16 @@
       </el-form-item>
 
       <el-form-item label="SKU">
-        <el-input v-model="productParam.skuCode.value" placeholder="请输入SKU"></el-input>
+        <el-input v-model="productParam.skuCode.value" size="mini" placeholder="请输入SKU"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input v-model="productParam.name.value" placeholder="请输入名称"></el-input>
+        <el-input v-model="productParam.name.value" size="mini" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
 

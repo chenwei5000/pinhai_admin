@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -32,7 +30,6 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {
               prop: 'releaseTime',
               label: '发版日期',
@@ -46,6 +43,7 @@
             {prop: 'version', label: '系统版本', sortable: 'custom', 'min-width': 120},
             {prop: 'caption', label: '更新说明', sortable: 'custom', 'min-width': 400},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏
@@ -56,6 +54,7 @@
               label: '版本',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入版本'
               }
             },

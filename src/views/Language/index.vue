@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -22,8 +20,8 @@
   export default {
     data() {
       return {
-        title: '语言列表',
         tableConfig: {
+          title: '语言列表',
           url: '/languages',
           relations: ["creator"],
           tableAttrs: {
@@ -31,10 +29,10 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'name', label: '名称', 'min-width': 150, fixed: 'left', sortable: 'custom'},
             {prop: 'code', label: '代码', sortable: 'custom', 'min-width': 150},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
@@ -45,8 +43,8 @@
           ],
           //  弹窗表单, 用于新增与修改
           form: [
+            phFromItems.name(),
             phFromItems.code,
-            phFromItems.name,
             phFromItems.status()
           ]
         }

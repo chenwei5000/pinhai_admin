@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -35,7 +33,6 @@
           columns: [
             {type: 'selection'},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 150, fixed: 'left'},
-            phColumns.id,
             {prop: 'category.name', label: '分类', 'min-width': 120},
             {prop: 'categoryId', label: '分类ID', hidden: true, 'min-width': 120},
             {prop: 'length', label: '长(Cm)', width: 80},
@@ -61,6 +58,7 @@
             {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏
