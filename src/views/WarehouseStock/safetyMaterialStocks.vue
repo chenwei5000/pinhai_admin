@@ -2,9 +2,9 @@
   <div class="app-container">
        <!--搜索-->
     <el-form :inline="true" :model="param" ref="searchForm" id="filter-form"
-             @submit.native.prevent :rules="rules">
+             @submit.native.prevent >
       <el-form-item label="分类" prop="category">
-        <el-select v-model="param.category" size="mini" multiple placeholder="请选择原料分类">
+        <el-select v-model="param.category" size="mini" multiple placeholder="请选择原料分类" @change="onChange">
           <el-option
             v-for="item in categories"
             :key="item.value"
@@ -72,19 +72,9 @@ import warehouseModel from '../../api/warehouse';
           warehouse: '',
           materialWarehouse: '',
         },
-        rules: {
-          category: [
-            {required: true, message: '不能为空', trigger: 'blur'}
-          ],
-           warehouse: [
-            {required: true, message: '不能为空', trigger: 'blur'}
-          ],
-           materialWarehouse: [
-            {required: true, message: '不能为空', trigger: 'blur'}
-          ]
-        },
         categories: categoryModel.getMineSelectMaterialOptions(),
-        warehouses: warehouseModel.getSelectDomesticOptions(),
+        warehouses: [],
+        // warehouseModel.getSelectDomesticOptions(),
         materialWarehouses: warehouseModel.getSelectMaterialOptions(),
         tableConfig: {
           url: null,
@@ -121,6 +111,29 @@ import warehouseModel from '../../api/warehouse';
     },
     computed: {},
     methods: {
+      onChange(){
+          let cateId = this.param.category;
+          if( cateId != null){
+             this.loading = true;
+             let url = "/warehouses/category/productStock";
+             url += "?cateId=" + cateId.join(",");
+             this.global.axios.get(url)
+              .then(resp => {
+                let res = resp.data || [];
+                this.warehouses = [];
+                res.forEach(r => {
+                  this.warehouses.push({
+                    label: r.name,
+                    value: r.id + ''
+                  });
+                });
+                this.loading = false;
+              })
+              .catch(err => {
+                this.loading = false;
+              });
+          }
+      },
       statusClassName({row}) {
         try{
           if (row && row.safetyStocks && row.safetyStocks.stockGapQty3 > 0) {
