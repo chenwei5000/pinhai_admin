@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -33,13 +31,13 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'enName', label: '英文名', sortable: 'custom', "min-width": 120},
             {prop: 'isoCode2', label: '2位iso编码', "min-width": 120},
             {prop: 'isoCode3', label: '3位iso编码', "min-width": 120},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
@@ -50,7 +48,7 @@
           ],
           //  弹窗表单
           form: [
-            phFromItems.name,
+            phFromItems.name(),
             {
               $type: 'input',
               $id: 'enName',
@@ -94,6 +92,7 @@
         }
       }
     },
+    computed: {},
     methods: {
       statusClassName({row}) {
         if (row.status && row.status !== 0) {

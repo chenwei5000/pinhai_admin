@@ -35,7 +35,6 @@
           //列表
           columns: [
             {type: 'selection'},
-            phColumns.id,
             {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 100},
             {prop: 'user.name', label: '采购负责人', width: 100},
@@ -62,6 +61,7 @@
             },
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           // 搜索
@@ -113,7 +113,7 @@
             phFormItems.yesOrNo('needMaterial', '产品必须设置原材料'),
             {
               $type: 'input',
-              $id: 'safetyStockWeek ',
+              $id: 'safetyStockWeek',
               label: '安全库存(周)',
               $el: {
                 placeholder: '分类下普通产品安全库存周数'
@@ -124,7 +124,7 @@
             },
             {
               $type: 'input',
-              $id: 'vip1SafetyStockWeek ',
+              $id: 'vip1SafetyStockWeek',
               label: 'Vip1安全库存(周)',
               $el: {
                 placeholder: '分类下热卖产品安全库存周数'
@@ -135,7 +135,7 @@
             },
             {
               $type: 'input',
-              $id: 'vip2SafetyStockWeek ',
+              $id: 'vip2SafetyStockWeek',
               label: 'Vip2安全库存(周)',
               $el: {
                 placeholder: '分类下爆款产品安全库存周数'

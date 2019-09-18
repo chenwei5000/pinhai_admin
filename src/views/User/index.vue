@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -98,6 +96,7 @@
               label: '账号',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入账号',
                 clearable: true,
                 maxlength: "40",
@@ -111,6 +110,7 @@
               label: '状态',
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请选择状态'
               },
               $options: phEnumModel.getSelectOptions('UserStatus')

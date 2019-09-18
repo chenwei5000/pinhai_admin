@@ -3,50 +3,22 @@
   <div class="ph-table">
 
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true"
-             :model="searchParam"
-             ref="searchForm"
+    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 150px" placeholder="请输入"></el-input>
-      </el-form-item>
-
-      <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
-                  placeholder="请输入物流单号"></el-input>
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px"
+                  placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 110px" placeholder="请输入名称"></el-input>
-      </el-form-item>
-
-      <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" size="mini"
-                   style="width: 100px" placeholder="请选择">
-          <el-option
-            v-for="(item,idx) in supplierSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value"
-                   size="mini"
-                   style="width: 100px" placeholder="请选择">
-          <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
+        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 150px"
+                  placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
-        <el-button @click="resetSearch" size="mini">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+        <el-button @click="resetSearch" size="small">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -67,92 +39,80 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编码" min-width="150" fixed="left"></el-table-column>
+      <el-table-column prop="code" label="编码" width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" min-width="100">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 2
-            ? 'danger' : scope.row.status === 6
-            ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
+      <el-table-column prop="name" label="简称" width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="200">
+      <el-table-column prop="companyName" label="公司名称" min-width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 22">
-            <div v-html="scope.row.name"></div>
+                      v-if="scope.row.companyName && scope.row.companyName.length > 22">
+            <div v-html="scope.row.companyName"></div>
             <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 22 ? scope.row.name.substr(0,20)+'..' : scope.row.name : ''
+              scope.row.companyName ? scope.row.companyName.length > 22 ? scope.row.companyName.substr(0,20)+'..' : scope.row.companyName : ''
               }}</span>
           </el-popover>
           <span v-else>
-            {{ scope.row.name }}
+            {{ scope.row.companyName }}
           </span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
+      <el-table-column prop="city" label="所在城市" min-width="100"></el-table-column>
+      <el-table-column prop="region" label="管理区域" min-width="100"></el-table-column>
 
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
-
+        <el-table-column prop="address" label="地址" min-width="200">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.trackNumber">
-
-            <div>
-              物流单号: {{ scope.row.trackNumber}}<br>
-              物流公司: {{ scope.row.channel}}<br>
-              车牌: {{ scope.row.plateNumber }}<br>
-              联系人: {{ scope.row.linkman }}<br>
-              电话: {{ scope.row.tel }}<br>
-            </div>
-            <span slot="reference">
-              物流单号: {{ scope.row.trackNumber}}
-            </span>
-
+                      v-if="scope.row.address && scope.row.address.length > 22">
+            <div v-html="scope.row.address"></div>
+            <span slot="reference">{{
+              scope.row.address ? scope.row.address.length > 22 ? scope.row.address.substr(0,20)+'..' : scope.row.address : ''
+              }}</span>
           </el-popover>
           <span v-else>
-            无
+            {{ scope.row.address }}
           </span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="linkman" label="联系人" min-width="100"></el-table-column>
+      <el-table-column prop="tel" label="联系电话" min-width="100"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="collectionAccount" label="收款账户" min-width="200">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
-                      v-if="scope.row.remark && scope.row.remark.length > 10">
-            <div v-html="scope.row.formatRemark"></div>
-            <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.collectionAccount && scope.row.collectionAccount.length > 22">
+            <div v-html="scope.row.collectionAccount"></div>
+            <span slot="reference">{{
+              scope.row.collectionAccount ? scope.row.collectionAccount.length > 22 ? scope.row.collectionAccount.substr(0,20)+'..' : scope.row.collectionAccount : ''
+              }}</span>
           </el-popover>
           <span v-else>
-            {{ scope.row.remark }}
+            {{ scope.row.collectionAccount }}
           </span>
         </template>
       </el-table-column>
-
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="150" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary">
-          </el-button>
-
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
+          <!-- <el-button v-if="hasEdit" size="small" icon="el-icon-receiving" circle
+                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
+          </el-button> -->
+    <a title="库存管理">
+        <el-button  v-if="hasView" size="small" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
+        </el-button>
+    </a>
+       <el-button v-if="hasView" size="small" icon="el-icon-edit" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
+       </el-button>
+          
+      <el-button v-if="hasView" size="small" icon="el-icon-delete" circle
+                     @click="onDefaultDelete(scope.row)" type="danger" id="ph-table-view">
+      </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -175,22 +135,27 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
-    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
+
+    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog"  >
     </editDialog>
 
-  </div>
+    <stockDialog @modifyCBEvent="modifyCBEvent" ref="stockDialog" >
+    </stockDialog>
 
+
+
+  </div>
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
-  import supplierModel from '@/api/supplier'
-  import warehouseModel from '../../../api/warehouse';
+  import supplierModel from "../../../api/supplier";
+  import warehouseModel from "../../../api/warehouse";
+  import editDialog from './view/editDialog';
+  import stockDialog from './view/stockDialog';
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -204,6 +169,7 @@
 
     components: {
       editDialog,
+      stockDialog,
       phPercentage
     },
     props: {
@@ -220,17 +186,14 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
-
-      hasDelete() {
-        return true;
-      },
-
       hasEdit() {
-        return true;
+          return true;
       },
-
+      hasView() {
+          return true;
+      },
       hasOperation() {
-        return this.hasDelete || this.hasEdit;
+        return this.hasView || this.hasEdit
       }
     },
 
@@ -241,38 +204,31 @@
 
         // 多选记录对象
         selected: [],
+
         //分页
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [20, 50, 100],
+        paginationSizes: [1, 20, 50, 100],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementShippedOrders', // 资源URL
-        countUrl: '/procurementShippedOrders/count', // 资源URL
-        relations: ["creator", "supplier", "warehouse"],  // 关联对象
+        url: '/suppliers', // 资源URL
+        countUrl: '/suppliers/count', // 资源URL
+        relations: [],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
         loading: false,
 
-        //搜索 TODO: 根据实际情况调整
-        statusSelectOptions: [],
-        supplierSelectOptions: [],
-        warehouseSelectOptions: [],
+
         searchParam: {
-          trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
-          supplierId: {value: null, op: 'eq', id: 'supplierId'},
-          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
-          status: {value: null, op: 'eq', id: 'status'},
           name: {value: null, op: 'bw', id: 'status'},
           code: {value: null, op: 'bw', id: 'code'},
         },
 
         //弹窗
         dialogTitle: '新增',
-        dialogVisible: false,
         isNew: true,
         isEdit: false,
         isView: false,
@@ -335,9 +291,6 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
       },
 
       // 获取表格的高度
@@ -377,11 +330,8 @@
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
         this.page = 1
-        this.searchParam.trackNumber.value = null;
-        this.searchParam.status.value = null;
+        //TODO:根据实际情况调整
         this.searchParam.code.value = null;
-        this.searchParam.supplierId.value = null;
-        this.searchParam.warehouseId.value = null;
         this.searchParam.name.value = null;
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -396,18 +346,41 @@
          * @event reset
          */
         this.$emit('reset')
+
+        // this.$emit(
+        //   'update:customQuery',
+        //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
+        // )
       },
 
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
+        // 代码示例
+        // if (row.exemple === 0) {
+        //   return "0-普通"
+        // }
+        // else if (row.exemple === 1) {
+        //   return "1-热销"
+        //
+        // }
+        // else if (row.exemple === 2) {
+        //   return "2-爆款"
+        // }
+        // else {
+        //   return row.exemple;
+        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
+        // 代码示例 return 为css定义的样式 -row 结尾
+        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
+        //   return 'warning-row';
+        // }
         return '';
       },
 
@@ -456,7 +429,6 @@
           params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
           searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
         }
-
         // 处理查询
         let filters = [];
         Object.keys(this.searchParam).filter(k => {
@@ -473,11 +445,13 @@
         filters.forEach((param, k) => {
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
+
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
+
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -485,7 +459,6 @@
 
         // 请求开始
         this.loading = true
-
         //获取数据
         this.global.axios
           .get(countUrl + params)
@@ -495,6 +468,7 @@
           })
           .catch(err => {
           })
+
         //获取数据
         this.global.axios
           .get(url + params)
@@ -590,36 +564,36 @@
         this.$refs.editDialog.openDialog(row.id);
       },
 
+      /* 行查看按钮 */
+      onDefaultView(row) {
+        this.$refs.stockDialog.openDialog(row.id);
+      },
+
       /* 行删除按钮 */
       onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
+        console.log("删除了一行,ID wei : ", row.id)
+       this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              this.loading = true
-
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false
-                  this.$message.info("删除成功!");
-                  done()
-                  this.getList()
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+              })
+                .catch(err => {
                 })
-                .catch(er => {
-                  this.loading = false
-                })
+              done();
             } else done()
           }
         }).catch(er => {
           /*取消*/
         })
-
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(status) {
+      modifyCBEvent(object) {
         this.getList();
       },
     }
@@ -628,5 +602,31 @@
 
 <style type="text/less" lang="scss" scoped>
 
+  .el-table {
+    /deep/ .ph-header-small {
+      font-size: 12px !important;
+    }
+    /deep/ tr.warning-row {
+      background: rgb(233, 233, 235) !important;
+    }
+
+    /deep/ tr.warning-row td {
+      background: rgb(233, 233, 235) !important;
+    }
+
+    /deep/ tr.danger-row {
+      background: rgb(253, 226, 226) !important;
+    }
+
+    /deep/ tr.danger-row td {
+      background: rgb(253, 226, 226) !important;
+    }
+  }
+
+  .el-form-item__content {
+    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
+      width: 230px !important;
+    }
+  }
 </style>
 

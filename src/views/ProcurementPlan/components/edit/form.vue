@@ -13,7 +13,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="销售渠道" prop="merchantId">
-            <el-select v-model="editObject.merchantId" style="width: 220px"
+            <el-select v-model="editObject.merchantId" style="width: 220px" size="mini"
                        filterable placeholder="请选择销售渠道">
               <el-option
                 v-for="(item , idx)  in merchantSelectOptions"
@@ -34,7 +34,7 @@
             <el-input v-model="editObject.tags"
                       maxlength="20"
                       show-word-limit
-                      style="width: 220px" placeholder="请填写标签" clearable></el-input>
+                      style="width: 220px" size="mini" placeholder="请填写标签" clearable></el-input>
 
             <el-tooltip class="item" effect="light" content="给计划打上一个标签方便查找" placement="right">
               <i class="el-icon-question">&nbsp;</i>
@@ -47,7 +47,7 @@
         <el-col :md="10">
           <el-form-item label="分类" prop="categoryId">
 
-            <el-select v-model="editObject.categoryId" style="width: 220px"
+            <el-select v-model="editObject.categoryId" style="width: 220px" size="mini"
                        filterable multiple
                        @change="onCateChange"
                        placeholder="请选择分类,可多选">
@@ -68,7 +68,7 @@
         <el-col :md="14">
           <el-form-item label="款式" prop="categoryId">
 
-            <el-select v-model="editObject.groupName" style="width: 220px" filterable multiple
+            <el-select v-model="editObject.groupName" style="width: 220px" size="mini" filterable multiple
                        :disabled="hasCategory"
                        placeholder="请选择产品款式。可多选">
               <el-option
@@ -89,7 +89,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="国内库存" prop="warehouseId">
-            <el-select v-model="editObject.warehouseId" style="width: 220px"
+            <el-select v-model="editObject.warehouseId" style="width: 220px" size="mini"
                        :disabled="hasCategory"
                        filterable multiple placeholder="请选择库存,可多选">
               <el-option
@@ -114,6 +114,7 @@
               format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
               type="date"
+              size="mini"
               placeholder="期望交货日期"></el-date-picker>
 
             <el-tooltip class="item" effect="light" content="销售期望的交货日期" placement="right">
@@ -127,7 +128,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="非Vip备货周数" prop="safetyStockWeek">
-            <el-select v-model="editObject.safetyStockWeek" style="width: 220px"
+            <el-select v-model="editObject.safetyStockWeek" style="width: 220px" size="mini"
                        filterable placeholder="请选择非Vip备货周数">
               <el-option
                 v-for="week in 52"
@@ -147,7 +148,7 @@
 
         <el-col :md="14">
           <el-form-item label="Vip1备货周数" prop="vip1SafetyStockWeek">
-            <el-select v-model="editObject.vip1SafetyStockWeek" style="width: 220px"
+            <el-select v-model="editObject.vip1SafetyStockWeek" style="width: 220px" size="mini"
                        filterable placeholder="请选择Vip1备货周数">
               <el-option
                 v-for="week in 52"
@@ -168,7 +169,7 @@
       <el-row>
         <el-col :md="10">
           <el-form-item label="Vip2备货周数" prop="vip2SafetyStockWeek">
-            <el-select v-model="editObject.vip2SafetyStockWeek" style="width: 220px"
+            <el-select v-model="editObject.vip2SafetyStockWeek" style="width: 220px" size="mini"
                        filterable placeholder="请选择Vip2备货周数">
               <el-option
                 v-for="week in 52"
@@ -187,7 +188,7 @@
 
         <el-col :md="14">
           <el-form-item label="未完成采购计划处理方式" prop="handleMethod">
-            <el-select v-model="editObject.handleMethod" style="width: 220px"
+            <el-select v-model="editObject.handleMethod" style="width: 220px" size="mini"
                        filterable placeholder="请选择未完成采购计划处理方式">
 
               <el-option label="不考虑" value="0"></el-option>

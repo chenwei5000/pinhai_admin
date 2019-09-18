@@ -39,8 +39,7 @@ function generateArray(table) {
             c: outRow.length + colspan - 1
           }
         });
-      }
-      ;
+      };
 
       //Handle Value
       outRow.push(cellValue !== "" ? cellValue : null);
@@ -148,14 +147,14 @@ export function export_table_to_excel(id) {
 }
 
 export function export_json_to_excel({
-                                       multiHeader = [],
-                                       header,
-                                       data,
-                                       filename,
-                                       merges = [],
-                                       autoWidth = true,
-                                       bookType = 'xlsx'
-                                     } = {}) {
+  multiHeader = [],
+  header,
+  data,
+  filename,
+  merges = [],
+  autoWidth = true,
+  bookType = 'xlsx'
+} = {}) {
   /* original data */
   filename = filename || 'excel-list'
   data = [...data]
@@ -225,12 +224,13 @@ export function export_json_to_excel({
 
 //TODO: add By Tankai
 export function export_el_table_to_excel({
-                                           table,  //表格对象
-                                           downloadUrl, //下载链接
-                                           filename,   //导出文件名
-                                           noExportProps = [], //不需要导出的字段
-                                           tpl = false,  //是否是模版
-                                         } = {}) {
+  table, //表格对象
+  downloadUrl, //下载链接
+  filename, //导出文件名
+  noExportProps = [], //不需要导出的字段
+  tpl = false, //是否是模版
+  params,
+} = {}) {
 
   // 导出头部标题
   let tHeader = [];
@@ -242,7 +242,7 @@ export function export_el_table_to_excel({
   // 解析表格列
   let columns = (table && table.columns) ? table.columns : [];
   columns.forEach(obj => {
-    if(!obj.label || !obj.property){
+    if (!obj.label || !obj.property) {
       return;
     }
     if (noExportProps.indexOf(obj.label) > -1) { //去掉不需要导出的属性
@@ -260,11 +260,10 @@ export function export_el_table_to_excel({
       autoWidth: true,
       bookType: 'xlsx'
     })
-  }
-  else {
+  } else {
     //获取数据
     global.axios
-      .get(downloadUrl)
+      .get(downloadUrl + params)
       .then(resp => {
         let res = resp.data
         data = res || []
@@ -277,15 +276,13 @@ export function export_el_table_to_excel({
             tmp.forEach(obj => {
               if (_obj[obj]) {
                 _obj = _obj[obj];
-              }
-              else{
+              } else {
                 _obj = '';
               }
             });
 
             _val = _obj;
-          }
-          else {
+          } else {
             _val = v[j];
           }
           return _val;
@@ -304,4 +301,3 @@ export function export_el_table_to_excel({
       });
   }
 }
-

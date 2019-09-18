@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -41,12 +39,12 @@
 
           columns: [
             {type: 'selection'},
-            phColumns.id,
-            {prop: 'allName', label: '部门', "min-width": 300},
+            {prop: 'allName', label: '部门所属', fixed: 'left', "min-width": 300},
             {prop: 'name', label: '名称', "min-width": 100},
             {prop: 'user.name', label: '负责人', "min-width": 100},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 

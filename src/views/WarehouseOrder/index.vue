@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -63,6 +61,7 @@
               $options: warehouseModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请选择收货仓库'
               }
             },
@@ -72,6 +71,7 @@
               label: '批次码',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入批次码'
               }
             },
@@ -81,6 +81,7 @@
               label: '调拨单',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入调拨单编码'
               }
             },
@@ -113,6 +114,7 @@
               ],
               $el: {
                 op: 'eq',
+                size:"mini",
                 placeholder: '请选择类型'
               }
             },

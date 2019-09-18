@@ -21,6 +21,7 @@
               <el-date-picker
                 v-model="detailItem.otdTime"
                 type="date"
+                size="mini"
                 placeholder="选择日期">
               </el-date-picker>
 

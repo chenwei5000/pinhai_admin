@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -30,15 +28,28 @@
           },
           columns: [
             {type: 'selection'},
-            phColumns.id,
-            {prop: 'costType', label: '费用类型',"min-width": 100},
+            {prop: 'costType', label: '费用类型', fixed: 'left',"min-width": 100},
             {prop: 'costName', label: '费用名称', hidden: 'false', "min-width": 100},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
 
           // 搜索区块定义
           searchForm: [
+            {
+              $type: 'input',
+              $id: 'costType',
+              label: '费用类型',
+              $el: {
+                op: 'bw',
+                placeholder: '请输入费用',
+                size:"mini",
+                clearable: true,
+                maxlength: "40",
+                "show-word-limit": true,
+              }
+            },
             phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
