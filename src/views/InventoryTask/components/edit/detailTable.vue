@@ -105,9 +105,13 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
+  import tableToolBar from '@/components/PhTableToolBar'
+
 
   export default {
-    components: {},
+    components: {
+      tableToolBar
+    },
     props: {
       primary: {
         type: [Object],
@@ -133,7 +137,8 @@
 
         //数据 TODO: 根据实际情况调整
         url: "/inventoryTaskItems", // 资源URL
-        downloadUrl: "", //下载Url
+        downloadUrl: '', //下载Url
+        primaryId: '',
         filters: [
           {
             field: "inventoryTaskItemId",
@@ -151,7 +156,7 @@
         toolbarConfig: {
           hasExportTpl: true,
           hasExport: true,
-          hasImport: false,
+          hasImport: true,
         }
       }
     },
@@ -321,17 +326,25 @@
       },
 
       /********************* 工具条按钮  ***************************/
+      uploadPromise(res) {
+        let url = this.url + '';
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
       onToolBarDownloadTpl() {
         //获取数据
         let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
+        let downloadUrl = this.url + '/' +this.primaryId + "?pageSize=" + this.pageSize + "&currentPage=" + this.currentPage + "&relations=" + this.relations;
         import('@/vendor/Export2Excel').then(excel => {
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
+            filename: "盘点任务-模版",
+            noExportProps: ['更新人', '更新时间'],
             tpl: true,
           })
         })
@@ -339,21 +352,105 @@
       onToolBarDownloadData() {
         //获取数据
         let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
+        let params = '';
 
+        let downloadUrl = this.url
+
+        if (!downloadUrl) {
+          console.warn('url 为空, 导出数据失败！')
+          return
+        }
+        // 处理查询
+        if (this.filters && this.filters.length > 0) {
+          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
+        }
+        // 处理关联加载
+        if (this.relations && this.relations.length > 0) {
+          params += "&relations=" + JSON.stringify(this.relations);
+        }
         import('@/vendor/Export2Excel').then(excel => {
           this.loading = true;
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
+            filename: "盘点任务",
+            noExportProps: ['更新人', '更新时间'],
+            params: params
+          });
           this.loading = false;
         })
       },
-      onToolBarImportData() {
+      async onToolBarImportData(excelData) {
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
 
+        let table = this.$refs.table;
+        let columns = (table && table.columns) ? table.columns : [];
+        let header = [];
+        // 处理头部映射
+        excelData.header.forEach(_head => {
+          columns.forEach(_col => {
+            if (_head == _col.label) {
+              header[_head] = _col.property;
+            }
+          });
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          excelData.header.forEach(_head => {
+
+            let prop = header[_head];
+            if (prop) {
+              if (prop.indexOf('.') !== false) {
+                let tmps = prop.split('.');
+                for (var i = 0; i < tmps.length; i++) {
+                  if (i === 0) {
+                    prop = tmps[0];
+                  }
+                  else {
+                    prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
+                  }
+                }
+              }
+              _res[prop] = obj[_head];
+            }
+          });
+          resData.push(_res);
+        });
+        for (var i = 0; i < resData.length; i++) {
+          //TODO 后台需要判断inventoryTaskItemId
+          resData[i].inventoryTaskItemId = this.primaryId;
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i+1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+        loading.close();
+        this.$message.info("导入成功");
+        this.getList();
       }
 
     }

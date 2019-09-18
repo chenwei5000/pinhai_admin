@@ -32,13 +32,13 @@
 
         <el-row>
           <el-col :md="14">
-            <el-form-item label="截至日期" prop="limitTime">
+            <el-form-item label="截止日期" prop="limitTime">
               <el-date-picker
                 v-model="newObject.limitTime"
                 format="yyyy-MM-dd"
                 value-format="yyyy-MM-dd"
                 type="date"
-                placeholder="截至日期"></el-date-picker>
+                placeholder="截止日期"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
