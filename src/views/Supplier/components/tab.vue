@@ -20,28 +20,8 @@
     computed: {
       // TODO: 设置默认的搜索条件
       filters() {
-        //待收货
-        if (this.type === 'shipped') {
-          return {
-            'field': 'status',
-            op: 'in',
-            data: 4
-          }
-        }
-        //已完成
-        else if (this.type === 'complete') {
-          return {
-            field: 'status',
-            op: 'in',
-            data: 6
-          }
-        }
-        else if (this.type === 'all') {
-          return {
-            field: 'status',
-            op: 'in',
-            data: "4,5,6"
-          }
+        if (this.type === 'all') {
+          return {}
         }
       }
     },

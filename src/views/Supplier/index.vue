@@ -5,28 +5,6 @@
       <div class="ph-card-body">
 
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
-
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="shipped" lazy>
-            <span slot="label">
-              <i class="el-icon-s-flag"></i> 待收货
-            </span>
-            <keep-alive>
-              <phTab type="shipped"/>
-            </keep-alive>
-          </el-tab-pane>
-
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="complete" lazy>
-            <span slot="label">
-              <i class="el-icon-s-claim"></i> 完成
-            </span>
-            <keep-alive>
-              <phTab type="complete"/>
-            </keep-alive>
-          </el-tab-pane>
-
-          <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="all" lazy>
             <span slot="label">
               <i class="el-icon-s-order"></i> 全部
@@ -56,12 +34,11 @@
     data() {
       return {
         // TODO 页面标题
-        title: '采购入库管理',
-
+        title: '供应商管理',
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'shipped')
-          : 'shipped',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'all')
+          : 'all',
       }
     },
 
@@ -73,18 +50,10 @@
       // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
         const queryFlag = '?s=';
-        const queryPath = '/m3/ProcurementReceivedOrder_index';
+        const queryPath = '/m2/ProcurementReceivedOrder_index';
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },
-      /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
-      createCBEvent(objectId) {
-        if (objectId) {
-          if (this.$refs.editTable) {
-            this.$refs.editTable.onRefreshTable();
-          }
-        }
-      }
     },
 
   }
