@@ -391,6 +391,7 @@
           this.editObject.executeTime = this.editObject.formatExecuteTime;
           //转化分类
           this.editObject.categoryId = intArrToStrArr(this.editObject.categoryId);
+          this.editObject.warehouseId = null;
           this.editObject.accountPeriod = 60;
           this.editObject.settlementMethod = '3';
           // 付款方式

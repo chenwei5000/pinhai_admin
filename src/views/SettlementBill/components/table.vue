@@ -379,26 +379,30 @@
         const {columns, data} = param;
         const sums = [];
 
-        let amount = {};
+        let amount = [];
 
         data.forEach(r => {
           let symbolLeft = r['currency']['symbolLeft'];
 
-          if(amount.hasOwnProperty(symbolLeft)){
-            if(amount[symbolLeft]['price']){
+          if (amount.hasOwnProperty(symbolLeft)) {
+            if (amount[symbolLeft]['price']) {
               amount[symbolLeft]['price'] += r.unpaidAmount;
             }
-            else{
+            else {
               amount[symbolLeft]['price'] = r.unpaidAmount;
             }
           }
-          else{
+          else {
             amount[symbolLeft] = {};
-            amount[symbolLeft].price = r.unpaidAmount;
+            amount[symbolLeft]['price'] = r.unpaidAmount;
           }
         });
 
-        console.log(amount);
+        var keys = Object.keys(amount);
+        var str = '';
+        for (var i = 0; i < keys.length; i++) {
+          str += currency(amount[keys[i]].price, keys[i]);
+        }
 
         columns.forEach((column, index) => {
           if (column.property == 'code') {
@@ -410,23 +414,7 @@
           }
 
           if (column.property == 'unpaidAmount') {
-
-
-            const values = data.map(item => Number(item[column.property]));
-
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] = currency(sums[index]);
-            } else {
-              sums[index] = 'N/A';
-            }
+            sums[index] = str;
           }
 
         });

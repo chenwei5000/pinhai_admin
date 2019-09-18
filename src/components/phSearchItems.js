@@ -23,6 +23,7 @@ const phSearchItems = {
     label: '编码',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入编码',
       clearable: true
     }
@@ -35,6 +36,7 @@ const phSearchItems = {
     label: '名称',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入名称',
       clearable: true,
       maxlength: "40",
@@ -49,6 +51,7 @@ const phSearchItems = {
     label: '户名',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入户名',
       clearable: true
     }
@@ -61,6 +64,7 @@ const phSearchItems = {
     label: '简称',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入公司简称',
       clearable: true
     }
@@ -73,6 +77,7 @@ const phSearchItems = {
     label: '区域',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入公司所在区域',
       clearable: true
     }
@@ -85,6 +90,7 @@ const phSearchItems = {
     label: '联系人',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入联系人',
       clearable: true
     }
@@ -97,6 +103,7 @@ const phSearchItems = {
     label: '类型',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入类型',
       clearable: true
     }
@@ -109,6 +116,7 @@ const phSearchItems = {
     label: '产品名',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入产品名',
       clearable: true
     }
@@ -140,6 +148,7 @@ const phSearchItems = {
       $el: {
         op: 'eq',
         filterable: true,
+        size: "mini",
         placeholder: '请选择分类'
       }
     }
@@ -155,6 +164,7 @@ const phSearchItems = {
       $el: {
         op: 'eq',
         filterable: true,
+        size: "mini",
         placeholder: '请选择分类'
       }
     }
@@ -169,6 +179,7 @@ const phSearchItems = {
       $el: {
         op: 'eq',
         filterable: true,
+        size: "mini",
         placeholder: '请选择' + label
       },
       $options: datadicModel.getSelectOptions(type)
@@ -183,6 +194,7 @@ const phSearchItems = {
       label: '仓库',
       $el: {
         op: 'eq',
+        size: "mini",
         filterable: true,
         placeholder: '请选择仓库'
       },
@@ -197,6 +209,7 @@ const phSearchItems = {
     label: 'SKU编码',
     $el: {
       op: 'bw',
+      size: "mini",
       placeholder: '请输入SKU编码'
     }
   },
