@@ -139,8 +139,9 @@
       },
       /********************* 操作按钮相关方法  ***************************/
       // 生成盘亏盘盈单 TODO:
+
       onCreate() {
-        this.$refs.create.validate(valid => {
+        this.$refs.newObject.validate(valid => {
           if (!valid) {
             return;
           }

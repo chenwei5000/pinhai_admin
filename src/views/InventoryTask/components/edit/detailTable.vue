@@ -21,7 +21,16 @@
         </el-col>
       </el-row>
     </el-form>
-    
+
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar
+      v-bind="toolbarConfig"
+      @onToolBarDownloadTpl="onToolBarDownloadTpl"
+      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarImportData="onToolBarImportData"
+    >
+    </tableToolBar>
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -40,6 +49,7 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
+
       <el-table-column prop="product.skuCode" label="SKU编码" width="200"></el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
@@ -123,6 +133,7 @@
 
         //数据 TODO: 根据实际情况调整
         url: "/inventoryTaskItems", // 资源URL
+        downloadUrl: "", //下载Url
         filters: [
           {
             field: "inventoryTaskItemId",
@@ -134,7 +145,14 @@
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
-        loading: false
+        loading: false,
+
+        // 表格工具条配置
+        toolbarConfig: {
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: false,
+        }
       }
     },
 
@@ -300,7 +318,44 @@
       },
       onReceivedCheckedStock(row) {
         row.stockError = (row.checkedStock - row.warehouseStock.name).toFixed(0);
+      },
+
+      /********************* 工具条按钮  ***************************/
+      onToolBarDownloadTpl() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+
+        import('@/vendor/Export2Excel').then(excel => {
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: "采购计划内容-模版",
+            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
+            tpl: true,
+          })
+        })
+      },
+      onToolBarDownloadData() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+
+        import('@/vendor/Export2Excel').then(excel => {
+          this.loading = true;
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: "采购计划内容",
+            noExportProps: ['操作', '金额', 'ID']
+          })
+          this.loading = false;
+        })
+      },
+      onToolBarImportData() {
+
       }
+
     }
   }
 </script>

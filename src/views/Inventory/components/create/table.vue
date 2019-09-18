@@ -28,17 +28,17 @@
     >
       <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="productName" label="名称" min-width="200">
+      <el-table-column prop="productName" label="产品名" min-width="200">
       </el-table-column>
 
-      <el-table-column prop="cartonSpecCode" label="货位" min-width="120"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="价格" min-width="80"></el-table-column>
+      <el-table-column prop="storageLocation.name" label="货位" min-width="120"></el-table-column>
+      <el-table-column prop="price" label="价格" min-width="80"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="storageLocation.name" label="系统库存" width="130">
       </el-table-column>
 
-      <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="110"></el-table-column>
-      <el-table-column prop="shippedQty" label="shippedQtyTitle" min-width="110"></el-table-column>
+      <el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>
+      <el-table-column prop="number" label="差量" min-width="110"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -133,9 +133,6 @@
         this.$refs.itemDialog.openDialog(row);
       },
 
-      onSmart(row) {
-        this.tableData[0].cartonSpecCode = "aaaa1";
-      },
       /* 行删除功能 */
       onDefaultDelete(index) {
         this.$confirm('确认删除吗', '提示', {
