@@ -5,7 +5,7 @@ const phColumns = {
 
   id: {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, width: 80},
 
-  creator: {prop: 'creator.name', label: '创建人', width: 100},
+  creator: {prop: 'creator.name', label: '创建人', width: 80},
 
   status: {
     prop: 'status',

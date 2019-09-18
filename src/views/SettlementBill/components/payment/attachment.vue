@@ -28,16 +28,16 @@
     },
     computed: {
       uploadUrl() {
-        return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
+        return `${this.global.generateUrl(this.url)}/uploadFiles/${-this.primary.id}?accessToken=${this.$store.state.user.token}`;
       }
     },
 
     data() {
       return {
-        url: "/attachments/procurementPlan",
+        url: "/attachments/invoices",
         relations: ["creator"],
         filters: [
-          {"field": "relevanceId", "op": "eq", "data": this.primary.id}
+          {"field": "relevanceId", "op": "eq", "data": -this.primary.id}
         ],
         attachments: []
       }

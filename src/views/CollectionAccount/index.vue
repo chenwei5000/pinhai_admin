@@ -34,13 +34,12 @@
           //表格内容显示
           columns: [
             {type: 'selection'},
-            {prop: 'companyManagementId', label: '公司ID', hidden: 'false', "min-width": 120},
-            {prop: 'bankAccountId', label: '银行账号ID', hidden: 'false',"min-width": 160},
-            {prop: 'companyManagement.fullName', label: '公司名', fixed: 'left', "min-width": 100},
-            {prop: 'bankAccount.accountName', label: '户名', sortable:'custom', "min-width": 60},
+            {prop: 'companyManagementId', label: '公司ID', hidden: true, "min-width": 100},
+            {prop: 'bankAccountId', label: '银行账号ID', hidden: true, "min-width": 100},
+            {prop: 'companyManagement.fullName', label: '公司名', "min-width": 200},
+            {prop: 'bankAccount.accountName', label: '户名', sortable:'custom', "min-width": 200},
             {prop: 'contact', label: '联系人',  "min-width": 60},
             {prop: 'phoneHide', label: '联系人电话', "min-width": 80},
-
             phColumns.status,
             phColumns.id,
             phColumns.lastModified
@@ -71,6 +70,7 @@
               label: '银行账户',
               $el: {
                 filterable: true,
+
                 placeholder: '请选择银行账户(户名)'
               },
               $options: bankAccountModel.getSelectOptions(),
