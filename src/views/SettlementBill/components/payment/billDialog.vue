@@ -39,6 +39,7 @@
               <el-input v-model.trim="detailItem.price"
                         maxlength="50"
                         show-word-limit
+                        size="mini"
                         style="width: 200px" placeholder="总额" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="单价" placement="right">
