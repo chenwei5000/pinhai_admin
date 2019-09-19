@@ -69,15 +69,9 @@
 
           <el-col :md="14">
             <el-form-item label="总额" prop="pdAmount">
-
-              <el-input v-model.trim="detailItem.pdAmount"
-                        maxlength="50"
-                        show-word-limit
-                        style="width: 200px" placeholder="总额" clearable></el-input>
-
-              <el-tooltip class="item" effect="light" content="总额，付款总额必须小于等于所有相关发票的总金额" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
+              <span>{{detailItem.pdAmount, this.currency.symbolLeft | currency}}
+              &nbsp; 大写: {{this.currency.name}} {{detailItem.pdAmount | money}}
+              </span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -95,6 +89,7 @@
 
 <script>
   import validRules from '@/components/validRules'
+  import {currency, money} from '@/utils'
 
   export default {
     components: {},
@@ -117,6 +112,11 @@
         return true;
       }
     },
+    filters: {
+      currency: currency,
+      money: money
+    },
+
 
     data() {
       return {
@@ -129,6 +129,8 @@
 
         //明细对象
         detailItem: {},
+        // 货币
+        currency: {},
 
         // 字段验证规则 TODO:
         rules: {
@@ -166,10 +168,11 @@
       },
 
       /* 开启弹出编辑框 需要传明细ID */
-      openDialog(row) {
+      openDialog(row, currency) {
         if (row) {
           this.detailItem = JSON.parse(JSON.stringify(row));
         }
+        this.currency = currency;
         this.dialogVisible = true;
         this.initData();
       },
