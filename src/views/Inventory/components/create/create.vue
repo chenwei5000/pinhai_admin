@@ -1,7 +1,7 @@
 <template>
   <div class="ph-form">
 
-    <!-- 添加功能 form-表单, fieldset-字段租, legend-标题, tooltip-提示框 -->
+    <!-- 添加功能 form-表单, fieldSet-字段租, legend-标题, tooltip-提示框 -->
     <el-form :rules="rules"
              :model="newObject"
              status-icon
@@ -38,7 +38,7 @@
               <el-select v-model="newObject.type" style="width: 180px"
                          filterable placeholder="类型">
                 <el-option
-                  v-for="(item , idx)  in warehouseSelectOptions"
+                  v-for="(item , idx)  in typeSelection"
                   :label="item.label"
                   :value="item.value"
                   :key="idx"
@@ -63,7 +63,7 @@
           </el-col>
         </el-row>
 
-        <!-- 盤虧盤盈明细列表 -->
+        <!-- 盘亏盘盈明细列表 -->
         <itemTable
           ref="itemTable"
           @createCBEvent="createCBEvent"
@@ -103,6 +103,10 @@
 
         // 选择框 TODO:
         warehouseSelectOptions: [],
+        typeSelection: [
+          { value: '盘亏单'},
+          { value: '盘盈单'}
+        ],
         // 新对象  TODO:
         newObject: {
           warehouseId: null,
@@ -146,25 +150,42 @@
             return;
           }
 
-          const loading = this.$loading({
-            lock: true,
-            text: '处理中...',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          });
-
-          this.global.axios
-            .post("/inventories", this.newObject)
-            .then(resp => {
-              loading.close();
-              this.$message.info("盘亏盘盈单创建成功");
-              this.$emit("modifyCBEvent", resp.data);
-
-            })
-            .catch(err => {
-              loading.close();
-            });
+          let detailItems = this.$refs.itemTable.tableData;
+          if (!detailItems || detailItems.length == 0) {
+            this.$message.error("盘亏盘盈单内容不能为空!");
+            return;
+          }
+          this.saveObject(detailItems);
         });
+      },
+
+      saveObject(detailItems) {
+        let _order = JSON.parse(JSON.stringify(this.newObject));
+        _order.inventoryTaskItems = detailItems;
+
+        const loading = this.$loading({
+          lock: true,
+          text: '下单中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        this.global.axios
+          .post("/inventories", this.newObject)
+          .then(resp => {
+            loading.close();
+            this.$message.info("盘亏盘盈单创建成功");
+            this.$emit("modifyCBEvent", resp.data);
+          })
+          .catch(err => {
+            loading.close();
+          })
+      },
+      /*
+       * 创建成功之后，将子组件发送的数据继续向上传递给父组件
+       */
+      createCBEvent(newObjectId) {
+        this.$emit("step1CBEvent", newObjectId);
       },
     }
   }

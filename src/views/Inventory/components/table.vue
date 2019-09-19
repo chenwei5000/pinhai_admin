@@ -21,8 +21,13 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="类型">
-        <el-input v-model="searchParam.type.value" size="mini" style="width: 120px" placeholder="请输入"></el-input>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          size="mini"
+          v-model="searchParam.createTime.value"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
       </el-form-item>
 
       <el-form-item>
@@ -68,10 +73,6 @@
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
-
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
-          </el-button>
 
           <el-button v-if="hasView" size="small" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
@@ -151,22 +152,8 @@
         'device','rolePower','rolePower'
       ]),
 
-      hasEdit() {
-        if (this.type === 'inventoryLosses') {
-          return true;
-        }
-        return false;
-      },
-
-      hasDelete() {
-        if (this.type === 'inventoryLosses') {
-          return true;
-        }
-        return false;
-      },
-
       hasView() {
-        if (this.type === 'confirmed' || this.type === 'all') {
+        if (this.type === 'inventorySurplus' || this.type === 'inventoryLosses') {
           return true;
         }
         return false;
@@ -205,9 +192,8 @@
         warehouseSelectOptions: [],
 
         searchParam: {
-          warehouseId: {value: null, op: 'in', id: 'warehouseId'},
-          type: {value: null, op: 'bw', id: 'type'},
-
+          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          createTime: {value: null, op: 'timeRange', id: 'createTime'},
         },
 
         //弹窗
@@ -246,20 +232,11 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
+          if (params.warehouseId) {
+            this.searchParam.warehouseId.value = params.warehouseId;
           }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
-          }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
-          }
-          if (params.status) {
-            this.searchParam.status.value = params.status;
-          }
-          if (params.code) {
-            this.searchParam.code.value = params.code;
+          if (params.createTime) {
+            this.searchParam.createTime.value = params.createTime;
           }
         }
       }

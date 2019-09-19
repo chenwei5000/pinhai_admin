@@ -56,7 +56,6 @@
         </template>
       </el-table-column>
       <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="name" label="名称" min-width="150"></el-table-column>
       <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
       <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
@@ -202,7 +201,7 @@
         warehouseSelectOptions: [],
 
         searchParam: {
-          warehouseId: {value: null, op: 'in', id: 'warehouseId'},
+          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
         },
 
         //弹窗
@@ -241,20 +240,8 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
-          }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
-          }
-          if (params.status) {
-            this.searchParam.status.value = params.status;
-          }
-          if (params.code) {
-            this.searchParam.code.value = params.code;
+          if (params.warehouseId) {
+            this.searchParam.warehouseId.value = params.warehouseId;
           }
         }
       }

@@ -30,79 +30,18 @@
               <span style="font-size: 12px" v-model="detailItem.productName">{{detailItem.productName}}</span>
             </el-form-item>
           </el-col>
-
         </el-row>
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="箱规" prop="cartonSpecId">
-              <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
-                         style="width: 200px">
-                <el-option
-                  v-for="(item,idx) in cartonspecSelectOptions"
-                  :label="item.label" :value="item.value"
-                  :key="idx"
-                ></el-option>
-              </el-select>
-
-              <el-tooltip class="item" effect="light" content="产品外箱包装材料规格。" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
+            <el-form-item label="货位" prop="storageLocation">
+              <span style="font-size: 12px">DEFAULT</span>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="装箱数" prop="numberOfCarton">
-
-              <el-input-number v-model="detailItem.numberOfCarton"
-                               size="small"
-                               style="width: 200px;"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               :max="1000" label="请填写装箱数">
-              </el-input-number>
-
-              <el-tooltip class="item" effect="light" content="一箱有多少个产品." placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
-
-        </el-row>
-
-        <el-row>
-          <el-col :md="10">
-            <el-form-item label="应发箱数" prop="shippedCartonQty">
-              <el-input-number v-model="detailItem.shippedCartonQty"
-                               size="small"
-                               style="width: 200px;"
-                               :precision="3"
-                               :min="1"
-                               :step="1"
-                               :max="1000000" label="请填写应发箱数">
-              </el-input-number>
-            </el-form-item>
-          </el-col>
-
-          <el-col :md="14">
-            <el-form-item :label="shippedQtyTitle" prop="shippedQty">
-              <span style="font-size: 12px" v-model="detailItem.shippedQty">{{shippedQty}}</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :md="24">
-            <el-form-item label="备注" prop="priorityNote">
-              <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.remark"
-                          maxlength="500"
-                          show-word-limit
-                          rows="3"
-                          cols="80"
-                ></el-input>
-              </el-col>
+            <el-form-item label="价格" prop="price">
+              <span style="font-size: 12px" v-model="detailItem.price">{{detailItem.price}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -120,7 +59,6 @@
 </template>
 
 <script>
-  import cartonspecModel from '@/api/cartonspec'
   import validRules from '@/components/validRules'
 
   export default {
@@ -129,18 +67,15 @@
     },
     computed: {
       dialogTitle() {
-          return "添加国内调拨明细";
+          return "添加";
       },
       hasAdd() {
         return (this.detailItemId == null);
       },
-      shippedQtyTitle() {
-        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
-      },
       shippedQty() {
         return this.calShippedQty();
       }
-     
+
     },
 
     data() {
@@ -154,31 +89,16 @@
         // 资源URL
         //明细对象
         detailItem: {
-            cartonSpecId: null,
-            numberOfCarton: null,
-            productName: null,
-            shippedCartonQty: null,
-            skuCode: null,
-            shippedQty: null,
-            cartonSpecCode: null,
+          productName: null,
+          skuCode: null,
+          price: null,
         },
-        cartonspecSelectOptions: [],
-        unit: "箱",
 
         // 字段验证规则 TODO:
         rules: {
           skuCode: [
             validRules.required
           ],
-          cartonSpecId: [
-            validRules.required
-          ],
-          numberOfCarton: [
-            validRules.required
-          ],
-          shippedCartonQty: [
-            validRules.required
-          ]
         },
       }
     },
@@ -198,7 +118,7 @@
       initData() {
         //获取数据
         // 箱规
-   
+
       },
 
       // 计算发货件数
@@ -213,7 +133,6 @@
 
       /* 开启弹出编辑框 需要传明细ID */
       openDialog(row) {
-        this.cartonspecSelectOptions = cartonspecModel.getSelectOptions();
         this.dialogVisible = true;
         if(row != null){
            this.detailItem =  JSON.parse(JSON.stringify(row));
@@ -239,8 +158,8 @@
           this.global.axios
             .get(url)
             .then(resp => {
-              let res = resp.data
-              let data = res || {}
+              let res = resp.data;
+              let data = res || {};
 
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.numberOfCarton = data.numberOfCarton;

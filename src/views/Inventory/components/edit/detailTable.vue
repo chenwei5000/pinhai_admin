@@ -13,15 +13,26 @@
             <span style="font-size: 12px">{{primary.warehouse.name}}</span>
           </el-form-item>
         </el-col>
+      </el-row>
 
+      <el-row>
         <el-col :md="12">
-          <el-form-item label="截止时间:" prop="formatLimitTime">
-            <span style="font-size: 12px">{{primary.formatLimitTime}}</span>
+          <el-form-item label="类型:" prop="type">
+            <span style="font-size: 12px">{{primary.type}}</span>
+          </el-form-item>
+        </el-col>
+        </el-row>
+
+      <el-row>
+        <el-col :md="24">
+          <el-form-item label="备注:" prop="comments">
+            <span style="font-size: 12px">{{primary.comments}}</span>
           </el-form-item>
         </el-col>
       </el-row>
+
     </el-form>
-    
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -60,31 +71,8 @@
       <el-table-column prop="storageLocation.name" label="货位" width="100"></el-table-column>
       <el-table-column prop="price" label="价格" width="80"></el-table-column>
       <el-table-column prop="warehouseStock.name" label="系统库存(件数)" width="130"></el-table-column>
-      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-
-        <template slot="header" slot-scope="scope">
-          <span>实际库存(件数)</span><BR/>
-          <el-button type="primary" size="mini" plain @click="onAll">全部盘点</el-button>
-          <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
-        </template>
-
-        <template slot-scope="scope">
-          <el-input-number v-model="scope.row.checkedStock"
-                           size="mini"
-                           style="width: 120px;margin: 3px 0;"
-                           :precision="3"
-                           :min="0"
-                           :step="1"
-                           @change="onReceivedCheckedStock(scope.row)"
-                           :max="1000000" label="请填实际库存">
-          </el-input-number>
-
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="stockError" label="库存误差" width="90" fixed="right">
-
-      </el-table-column>
+      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center"></el-table-column>
+      <el-table-column prop="stockError" label="差量" width="90" fixed="right"></el-table-column>
     </el-table>
   </div>
 
@@ -122,15 +110,15 @@
         confirmLoading: false,
 
         //数据 TODO: 根据实际情况调整
-        url: "/inventoryTaskItems", // 资源URL
+        url: "/inventoryItems", // 资源URL
         filters: [
           {
-            field: "inventoryTaskItemId",
+            field: "inventoryItemId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock", "inventoryTaskItem","inventoryTask", "storageLocation"],  // 关联对象
+        relations: ["product", "warehouseStock", "inventoryItem","inventory", "storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果

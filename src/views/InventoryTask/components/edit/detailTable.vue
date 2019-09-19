@@ -8,13 +8,19 @@
              label-width="120px"
     >
       <el-row>
-        <el-col :md="12">
+        <el-col :md="8">
+          <el-form-item label="编码:" prop="code">
+            <span style="font-size: 12px">{{primary.code}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
           <el-form-item label="仓库:" prop="warehouseId">
             <span style="font-size: 12px">{{primary.warehouse.name}}</span>
           </el-form-item>
         </el-col>
 
-        <el-col :md="12">
+        <el-col :md="8">
           <el-form-item label="截止时间:" prop="formatLimitTime">
             <span style="font-size: 12px">{{primary.formatLimitTime}}</span>
           </el-form-item>

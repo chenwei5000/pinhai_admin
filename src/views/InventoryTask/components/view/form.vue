@@ -13,24 +13,20 @@
           <span style="font-size: 12px">{{editObject.code}}</span>
         </el-form-item>
       </el-col>
+    </el-row>
+
+    <el-row>
       <el-col :md="12">
-        <el-form-item label="名称" prop="name">
-          <span style="font-size: 12px">{{editObject.name}}</span>
+        <el-form-item label="仓库" prop="warehouseId">
+          <span style="font-size: 12px">{{editObject.warehouse.name}}</span>
         </el-form-item>
       </el-col>
-
     </el-row>
 
     <el-row>
       <el-col :md="12">
         <el-form-item label="截止日期" prop="limitTime">
           <span style="font-size: 12px">{{editObject.formatLimitTime}}</span>
-        </el-form-item>
-      </el-col>
-
-      <el-col :md="12">
-        <el-form-item label="仓库" prop="warehouseId">
-          <span style="font-size: 12px">{{editObject.warehouse.name}}</span>
         </el-form-item>
       </el-col>
     </el-row>
