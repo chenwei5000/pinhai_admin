@@ -31,6 +31,8 @@
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
+
+      @onToolBarAdd="onToolBarAdd"
       @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
       @onToolBarImportData="onToolBarImportData"
@@ -102,6 +104,11 @@
 
       </el-table-column>
     </el-table>
+
+    <!-- 编辑明细对话框 -->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
+    </itemDialog>
+
   </div>
 
 
@@ -112,10 +119,12 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
+  import itemDialog from './detailDialog'
 
 
   export default {
     components: {
+      itemDialog,
       tableToolBar
     },
     props: {
@@ -163,6 +172,7 @@
           hasExportTpl: true,
           hasExport: true,
           hasImport: true,
+          hasAdd: true,
         }
       }
     },
@@ -308,7 +318,11 @@
             this.loading = false
           })
       },
-
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.getList();
+      },
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {
@@ -457,8 +471,11 @@
         loading.close();
         this.$message.info("导入成功");
         this.getList();
-      }
+      },
 
+      onToolBarAdd() {
+        this.$refs.itemDialog.openDialog(null);
+      },
     }
   }
 </script>

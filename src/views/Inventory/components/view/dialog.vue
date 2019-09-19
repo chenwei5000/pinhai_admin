@@ -12,7 +12,7 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 盘点任务明细</div>
+        <div slot="title" class="title">2. 盘亏盘盈明细</div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
@@ -43,7 +43,7 @@
     props: {},
     computed: {
       title() {
-        return '编辑盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
+        return '查看盘亏盘盈单  ---  [' + this.primary.warehouse.name + ' ' + this.primary.fromatCreateTime +  ' ' + this.primary.type+"]";
       }
     },
 

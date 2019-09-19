@@ -1,6 +1,5 @@
 <template>
-  <div class="ph-form">
-
+  <div>
     <el-upload
       class="upload-demo"
       :action="uploadUrl"
@@ -9,7 +8,7 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" size="small">+ 添加附件</el-button>
+      <el-button class="button-new-tag" size="small" >+ 添加附件</el-button>
     </el-upload>
 
   </div>
@@ -37,11 +36,12 @@
         url: "/attachments/inventoryTask",
         relations: ["creator"],
         filters: [
-          {"field": "inventoryTaskId", "op": "eq", "data": this.primary.id}
+          {"field": "relevanceId", "op": "eq", "data": this.primary.id}
         ],
         attachments: []
       }
     },
+
     created() {
     },
 

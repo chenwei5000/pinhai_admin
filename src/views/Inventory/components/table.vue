@@ -53,18 +53,6 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="statusName" label="状态" width="100">
-        <template slot-scope="scope">
-          <el-tag size="small"
-                  :type="scope.row.status === 0
-            ? 'warning' : scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
-            ? 'info' : 'success'"
-                  disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="type" label="类型" min-width="50"></el-table-column>
       <el-table-column prop="code" label="编码" width="140"></el-table-column>
       <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
@@ -78,10 +66,6 @@
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -104,9 +88,6 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
-    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
-    </editDialog>
 
     <!--查看对话框-->
     <viewDialog ref="viewDialog" >
@@ -118,7 +99,6 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
   import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
   import warehouseModel from "../../../api/warehouse"
@@ -134,7 +114,6 @@
   export default {
 
     components: {
-      editDialog,
       viewDialog
     },
     props: {
@@ -153,14 +132,14 @@
       ]),
 
       hasView() {
-        if (this.type === 'inventorySurplus' || this.type === 'inventoryLosses') {
+        if (this.type === 'inventorySurplus' || this.type === 'inventoryLosses' ||this.type === 'all') {
           return true;
         }
         return false;
       },
 
       hasOperation() {
-        return this.hasView || this.hasEdit
+        return this.hasView
       }
     },
 
@@ -193,7 +172,7 @@
 
         searchParam: {
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
-          createTime: {value: null, op: 'timeRange', id: 'createTime'},
+          createTime: {value: null, op: 'bw', id: 'createTime'},
         },
 
         //弹窗
@@ -252,7 +231,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryTaskStatus');
+        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryStatus');
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
 
       },
@@ -505,11 +484,6 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 行编辑按钮 */
-      onDefaultEdit(row) {
-        // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
-      },
 
       /* 行查看按钮 */
       onDefaultView(row) {

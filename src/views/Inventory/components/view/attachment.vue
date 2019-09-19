@@ -26,10 +26,10 @@
 
     data() {
       return {
-        url: "/attachments/inventoryTask",
+        url: "/attachments/inventory",
         relations: ["creator"],
         filters: [
-          {"field": "inventoryTaskId", "op": "eq", "data": this.primary.id}
+          {"field": "inventoryId", "op": "eq", "data": this.primary.id}
         ],
         attachments: []
       }

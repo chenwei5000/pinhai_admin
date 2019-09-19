@@ -161,7 +161,7 @@
 
       saveObject(detailItems) {
         let _order = JSON.parse(JSON.stringify(this.newObject));
-        _order.inventoryTaskItems = detailItems;
+        _order.inventoryItems = detailItems;
 
         const loading = this.$loading({
           lock: true,

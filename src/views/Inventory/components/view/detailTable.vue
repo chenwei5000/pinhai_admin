@@ -81,15 +81,15 @@
         confirmLoading: false,
 
         //数据 TODO: 根据实际情况调整
-        url: "/inventoryTaskItems", // 资源URL
+        url: "/inventoryItems", // 资源URL
         filters: [
           {
-            field: "inventoryTaskItemId",
+            field: "inventoryItemId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock", "inventoryTaskItem","inventoryTask", "storageLocation"],  // 关联对象
+        relations: ["product", "warehouseStock", "inventoryItem","inventory", "storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
