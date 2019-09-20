@@ -71,7 +71,7 @@
         initComplete: false,
         confirmLoading: false,
         rules: {
-          receivedTime: [
+          limitTime: [
             {required: true, message: '收货日期必须输入', trigger: 'blur'}
           ],
         },
@@ -93,7 +93,7 @@
       openDialog(primary, details) {
         this.initComplete = false;
         this.primary = primary;
-        this.primary.receivedTime = new Date();
+        this.primary.limitTime = new Date();
         this.details = details;
         this.primary.allQty = 0;
         this.primary.allCartonQty = 0;

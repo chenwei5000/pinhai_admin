@@ -39,11 +39,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="storageLocation.name" label="货位" width="100"></el-table-column>
-      <el-table-column prop="price" label="价格" width="80"></el-table-column>
-      <el-table-column prop="warehouseStock.name" label="系统库存(件数)" width="130"></el-table-column>
+      <el-table-column prop="storageLocation.code" label="货位" width="100"></el-table-column>
+      <el-table-column prop="productPrice" label="价格" width="80"></el-table-column>
+      <el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>
       <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center"></el-table-column>
-      <el-table-column prop="stockError" label="库存误差" width="90" fixed="right"></el-table-column>
+      <el-table-column prop="number" label="差量" width="90" fixed="right"></el-table-column>
     </el-table>
   </div>
 
@@ -89,7 +89,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock", "inventoryItem","inventory", "storageLocation"],  // 关联对象
+        relations: ["product", "warehouseStock","inventory","inventoryTask", "storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -141,6 +141,7 @@
       dangerClassName({row}) {
       },
 
+
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
@@ -155,23 +156,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'shippedCartonQty' || column.property == 'receivedCartonQty') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] += ' 箱';
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-          if (column.property == 'shippedQty' || column.property == 'receivedQty') {
+          if (column.property == 'warehouseStock.qty' || column.property == 'checkedStock' || column.property == 'stockError') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -209,7 +194,7 @@
           params += "&relations=" + JSON.stringify(this.relations);
         }
         // 请求开始
-        this.loading = true
+        this.loading = true;
 
         //获取数据
         this.global.axios
@@ -248,17 +233,17 @@
       onAll() {
         this.tableData.forEach((item, index, arr) => {
           arr[index].checkedStock = item.checkedStock;
-          arr[index].stockError = item.stockError;
+          arr[index].number = item.number;
         });
       },
       onClear() {
         this.tableData.forEach((item, index, arr) => {
           arr[index].checkedStock = 0;
-          arr[index].stockError = 0;
+          arr[index].number = 0;
         });
       },
       onReceivedCheckedStock(row) {
-        row.stockError = (row.checkedStock - row.warehouseStock.name).toFixed(0);
+        row.number = (row.checkedStock - row.warehouseStock.qty).toFixed(2);
       }
     }
   }

@@ -61,23 +61,12 @@
       <el-table-column prop="product.skuCode" label="SKU编码" width="200"></el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
-        </template>
+
       </el-table-column>
 
-      <el-table-column prop="storageLocation.name" label="货位" width="100"></el-table-column>
-      <el-table-column prop="price" label="价格" width="80"></el-table-column>
-      <el-table-column prop="warehouseStock.name" label="系统库存(件数)" width="130"></el-table-column>
+      <el-table-column prop="storageLocation.code" label="货位" width="100"></el-table-column>
+      <el-table-column prop="productPrice" label="价格" width="80"></el-table-column>
+      <el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>
       <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
 
         <template slot="header" slot-scope="scope">
@@ -99,7 +88,6 @@
 
         </template>
       </el-table-column>
-
       <el-table-column prop="stockError" label="库存误差" width="90" fixed="right">
 
       </el-table-column>
@@ -156,7 +144,7 @@
         primaryId: '',
         filters: [
           {
-            field: "inventoryTaskItemId",
+            field: "relevanceId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
@@ -235,23 +223,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'shippedCartonQty' || column.property == 'receivedCartonQty') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] += ' 箱';
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-          if (column.property == 'shippedQty' || column.property == 'receivedQty') {
+          if (column.property == 'warehouseStock.qty' || column.property == 'checkedStock' || column.property == 'stockError') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -300,7 +272,6 @@
 
             this.data = data;
             this.search();
-
             this.total = res.length || 0
             this.loading = false
             /**
@@ -328,10 +299,9 @@
       search() {
         this.tableData = this.data;
       },
-
       onAll() {
         this.tableData.forEach((item, index, arr) => {
-          arr[index].checkedStock = item.checkedStock;
+          arr[index].checkedStock = item.warehouseStockQty;
           arr[index].stockError = item.stockError;
         });
       },
@@ -342,7 +312,8 @@
         });
       },
       onReceivedCheckedStock(row) {
-        row.stockError = (row.checkedStock - row.warehouseStock.name).toFixed(0);
+        row.stockError = (row.checkedStock - row.warehouseStockQty).toFixed(2);
+        console.log(row.stockError+"="+row.checkedStock+"*"+ row.warehouseStockQty)
       },
 
       /********************* 工具条按钮  ***************************/

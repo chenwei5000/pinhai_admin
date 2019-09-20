@@ -45,7 +45,6 @@
 
 <script>
 
-  import warehouseModel from '../../../../api/warehouse'
   import {intArrToStrArr} from '@/utils'
 
   export default {

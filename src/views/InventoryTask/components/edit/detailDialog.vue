@@ -47,35 +47,23 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="价格" prop="price">
-              <el-input  v-model.trim="detailItem.price"
-                        style="width: 200px" placeholder="请填写价格" clearable>
-              </el-input>
+            <el-form-item label="价格" prop="productPrice">
+              <span style="font-size: 12px">{{detailItem.productPrice}}</span>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row>
           <el-col :md="24">
-            <el-form-item label="备注" prop="priorityNote">
+            <el-form-item label="备注" prop="comments">
               <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.shippedNote"
+                <el-input type="textarea" v-model="detailItem.comments"
                           maxlength="500"
                           show-word-limit
                           rows="3"
                           cols="80"
                 ></el-input>
               </el-col>
-
-              <el-col :span="2">
-
-                <el-tooltip class="item" effect="light" placement="right">
-                  <div slot="content">发货备注</div>
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-
-              </el-col>
-
             </el-form-item>
           </el-col>
         </el-row>
@@ -93,7 +81,6 @@
 </template>
 
 <script>
-  import cartonspecModel from '@/api/cartonspec'
   import validRules from '@/components/validRules'
 
   export default {
@@ -116,12 +103,6 @@
       hasAdd() {
         return (this.detailItemId == null);
       },
-      procurementBoxQtyTitle() {
-        return `采购数量(${this.unit})`;
-      },
-      shippedQtyTitle() {
-        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
-      },
       shippedQty() {
         return this.calShippedQty();
       }
@@ -137,30 +118,18 @@
         confirmLoading: false,
 
         // 资源URL
-        url: "/procurementShippedOrderItems",
-        relations: ["product", "cartonSpec", "procurementOrderItem"],  // 关联对象
+        url: "/inventoryTaskItems",
+        relations: ["product","warehouseStock","inventoryTaskItem","inventoryTask","storageLocation"],  // 关联对象
         //明细对象ID
         detailItemId: null,
         //明细对象
         detailItem: {},
-        cartonspecSelectOptions: [],
-
-        unit: "箱",
 
         // 字段验证规则 TODO:
         rules: {
           skuCode: [
             validRules.required
           ],
-          cartonSpecId: [
-            validRules.required
-          ],
-          numberOfCarton: [
-            validRules.required
-          ],
-          shippedCartonQty: [
-            validRules.required
-          ]
         },
       }
     },
@@ -179,11 +148,10 @@
       initData() {
         //获取数据
         // 箱规
-        this.cartonspecSelectOptions = cartonspecModel.getSelectOptions();
 
         // 明细数据
         if (this.detailItemId) {
-          this.loading = true
+          this.loading = true;
           let url = `${this.url}/${this.detailItemId}`;
           if (this.relations && this.relations.length > 0) {
             url += "?relations=" + JSON.stringify(this.relations);
@@ -191,15 +159,12 @@
           this.global.axios
             .get(url)
             .then(resp => {
-              let res = resp.data
-              let data = res || {}
-              this.detailItem = data
+              let res = resp.data;
+              let data = res || {};
+              this.detailItem = data;
               // 转字段
               this.detailItem.productName = data.product.name;
-              this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              if (data.cartonSpecId == -3) { //原料采购
-                this.unit = data.product.unit;
-              }
+
               this.$forceUpdate();
               this.loading = false
             })
@@ -211,10 +176,6 @@
           // 设置添加默认值
           this.detailItem = {
             skuCode: '',
-            cartonSpecId: null,
-            numberOfCarton: null,
-            shippedCartonQty: 1,
-            procurementShippedOrderId: this.primary.id
           }
 
         }
@@ -286,7 +247,7 @@
           }
           this.loading = true;
           this.confirmLoading = true;
-          let method = 'post'
+          let method = 'post';
           let url = this.url + '';
           if (!this.detailItemId && this.detailItemId > 0) {
             method = 'put';

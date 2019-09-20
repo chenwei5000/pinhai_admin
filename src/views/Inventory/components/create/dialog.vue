@@ -40,11 +40,36 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="价格" prop="price">
-              <span style="font-size: 12px" v-model="detailItem.price">{{detailItem.price}}</span>
+            <el-form-item label="价格" prop="productPrice">
+              <span style="font-size: 12px" v-model="detailItem.productPrice">{{detailItem.productPrice}}</span>
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row>
+          <el-col :md="14">
+            <el-form-item label="系统库存(件)" prop="warehouseStockQty">
+              <span style="font-size: 12px" v-model="detailItem.warehouseStockQty">{{detailItem.warehouseStockQty}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="14">
+            <el-form-item label="实际库存" prop="checkedStock">
+              <span style="font-size: 12px" v-model="detailItem.checkedStock">{{detailItem.checkedStock}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="14">
+            <el-form-item label="差量" prop="number">
+              <span style="font-size: 12px" v-model="detailItem.number">{{number}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
       </el-form>
     </div>
 
@@ -72,8 +97,8 @@
       hasAdd() {
         return (this.detailItemId == null);
       },
-      shippedQty() {
-        return this.calShippedQty();
+      number() {
+        return this.calNumber();
       }
 
     },
@@ -91,7 +116,10 @@
         detailItem: {
           productName: null,
           skuCode: null,
-          price: null,
+          productPrice: null,
+          checkedStock: null,
+          number: null,
+          warehouseStockQty: null,
         },
 
         // 字段验证规则 TODO:
@@ -121,10 +149,10 @@
 
       },
 
-      // 计算发货件数
-      calShippedQty() {
-        if (this.detailItem.shippedCartonQty && this.detailItem.numberOfCarton) {
-          return (this.detailItem.shippedCartonQty * this.detailItem.numberOfCarton).toFixed(0);
+      // 计算差量
+      calNumber() {
+        if (this.detailItem.warehouseStockQty && this.detailItem.checkedStock) {
+          return (this.detailItem.checkedStock - this.detailItem.warehouseStockQty).toFixed(2);
         }
         else {
           return 0;
@@ -144,7 +172,6 @@
         this.loading = false;
         this.confirmLoading = false;
         this.detailItem = {};
-        this.unit = "箱";
       },
 
       onLoadProduct() {
@@ -154,21 +181,15 @@
         else {
           this.loading = true;
           this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.skuCode}`+ "?relations=" + JSON.stringify(["cartonSpec", "category"]);;
+          let url = `/products/sku/${this.detailItem.skuCode}`+ "?relations=" + JSON.stringify(["cartonSpec", "category","warehouseStock"]);;
           this.global.axios
             .get(url)
             .then(resp => {
               let res = resp.data;
               let data = res || {};
-
-              this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.numberOfCarton = data.numberOfCarton;
-              this.detailItem.cartonSpecCode = data.cartonSpecCode;
-              // 转字段
               this.detailItem.productName = data.name;
-              if (data.cartonSpecId == -3) { //原料采购
-                this.unit = data.unit;
-              }
+              this.detailItem.productPrice = data.price;
+              this.detailItem.warehouseStockQty = data.qty;
               this.confirmLoading = false;
               this.loading = false;
             })
@@ -184,7 +205,7 @@
           if (!valid) {
             return false
           }
-         this.detailItem.shippedQty = this.calShippedQty();
+         this.detailItem.number = this.calNumber();
          console.log("即将保存的对象 ", this.detailItem);
          this.$emit("modifyCBEvent", this.detailItem);
          this.closeDialog();

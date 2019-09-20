@@ -84,7 +84,7 @@
         url: "/inventoryTaskItems", // 资源URL
         filters: [
           {
-            field: "inventoryTaskItemId",
+            field: "relevanceId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }

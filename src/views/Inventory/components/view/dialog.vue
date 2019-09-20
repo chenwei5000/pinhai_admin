@@ -22,9 +22,6 @@
       </el-collapse-item>
 
     </el-collapse>
-
-
-
   </el-dialog>
 
 </template>

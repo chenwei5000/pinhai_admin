@@ -31,10 +31,10 @@
       <el-table-column prop="productName" label="产品名" min-width="200">
       </el-table-column>
 
-      <el-table-column prop="storageLocation.name" label="货位" min-width="120"></el-table-column>
-      <el-table-column prop="price" label="价格" min-width="80"></el-table-column>
+      <el-table-column prop="storageLocation.name" label="货位" min-width="120">DEFAULT</el-table-column>
+      <el-table-column prop="productPrice" label="价格" min-width="80"></el-table-column>
 
-      <el-table-column prop="storageLocation.name" label="系统库存" width="130">
+      <el-table-column prop="warehouseStock.qty" label="系统库存(件)" width="130">
       </el-table-column>
 
       <el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>
@@ -82,9 +82,6 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
-      shippedQtyTitle() {
-        return `调拨${this.unit == '箱' ? '件' : this.unit}数`;
-      },
       hasAdd() {
         return true;
       }
@@ -103,7 +100,6 @@
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
         loading: false,
-        unit: "箱",
       }
     },
 
@@ -129,7 +125,6 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        console.log("传给子类的编进", row)
         this.$refs.itemDialog.openDialog(row);
       },
 
@@ -162,7 +157,6 @@
         if (flag) {
           this.tableData.push(object);
         }
-
         this.tableData.push({});
         this.tableData.pop();
 

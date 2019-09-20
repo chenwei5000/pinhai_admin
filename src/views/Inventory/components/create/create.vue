@@ -149,7 +149,6 @@
           if (!valid) {
             return;
           }
-
           let detailItems = this.$refs.itemTable.tableData;
           if (!detailItems || detailItems.length == 0) {
             this.$message.error("盘亏盘盈单内容不能为空!");
