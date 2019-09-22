@@ -17,14 +17,15 @@
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="billTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 发票</div>
-        <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
+      <el-collapse-item name="attachment" style="margin-top: 10px">
+        <div slot="title" class="title">3. 发票上传</div>
+        <attachment ref="attachment" @invoiceRecognitionCB="invoiceRecognitionCB" :primary="primary"
+                    v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">4. 附件</div>
-        <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
+      <el-collapse-item name="billTable" style="margin-top: 10px">
+        <div slot="title" class="title">4. 发票信息</div>
+        <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
       </el-collapse-item>
 
     </el-collapse>
@@ -171,7 +172,11 @@
             order.listPaymentDetail = items;
 
             // 发票明细
-            order.listInvoice = bills;
+            order.listInvoice = [];
+            bills.forEach(r => {
+              r.type = 'PB';
+              order.listInvoice.push(r);
+            });
 
             // 附件
             order.listAttachment = [];
@@ -216,6 +221,14 @@
       /* 重新加载 */
       reloadCBEvent() {
         this.initData();
+      },
+
+      invoiceRecognitionCB(_invoices) {
+        let invoices = JSON.parse(JSON.stringify(_invoices));
+        console.log(invoices);
+        invoices.forEach(r => {
+          this.$refs.billTable.addInvoice(r);
+        });
       }
     }
   }

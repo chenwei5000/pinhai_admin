@@ -121,6 +121,14 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="unpaidApplyAmount" label="未申请金额" width="90" fixed="right">
+        <template slot-scope="scope">
+          <div style="text-align: right;">
+            {{ scope.row.unpaidApplyAmount, scope.row.currency.symbolLeft | currency }}
+          </div>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="unpaidAmount" label="未付金额" width="90" fixed="right">
         <template slot-scope="scope">
           <div style="text-align: right;">

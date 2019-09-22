@@ -24,25 +24,57 @@
       <el-table-column prop="code" label="付款单编码" sortable min-width="150">
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" sortable min-width="150">
-      </el-table-column>
-      <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
-
-      <el-table-column prop="product.groupName" label="款式" width="150"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-
-      <el-table-column prop="cartonQty" label="采购箱数" width="80"></el-table-column>
-      <el-table-column prop="qty" label="采购件数" width="80"></el-table-column>
-
-      <el-table-column prop="price" label="采购单价" width="80">
+      <el-table-column prop="statusName" label="状态" min-width="80">
         <template slot-scope="scope">
-          {{scope.row.price, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+          <el-tag size="small"
+                  :type="scope.row.status === 1
+            ? 'warning' : scope.row.status === 2
+            ? 'danger' : 'success'"
+                  disable-transitions>{{ scope.row.statusName }}
+          </el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="amount" sortable label="金额" width="120" align="right">
+
+      <el-table-column prop="applicationTime" label="申请时间" sortable min-width="100">
         <template slot-scope="scope">
-          {{scope.row.amount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+          <span>{{ scope.row.applicationTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="createTime" label="付款时间" sortable min-width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.paymentAmountTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="payableAmount" label="申请金额" width="80">
+        <template slot-scope="scope">
+          {{scope.row.payableAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="paymentAmount" label="实付金额" width="80">
+        <template slot-scope="scope">
+          {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="advanceAmount" label="预付冲账金额" width="100">
+        <template slot-scope="scope">
+          {{scope.row.advanceAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="invoicedAmount" label="开票金额" width="100">
+        <template slot-scope="scope">
+          {{scope.row.invoicedAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="collectionAccount.bankAccount.accountName" label="收款账户" width="300">
+        <template slot-scope="scope">
+          {{scope.row.collectionAccount.bankAccount.accountName}} - {{scope.row.collectionAccount.bankAccount.currency.name}} - {{scope.row.collectionAccount.bankAccount.accountCardHide}}
         </template>
       </el-table-column>
 
@@ -55,11 +87,10 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency} from '@/utils'
+  import {currency, parseTime} from '@/utils'
 
   export default {
-    components: {
-    },
+    components: {},
     props: {
       primary: {
         type: [Object],
@@ -109,7 +140,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "currency", "product.category"],  // 关联对象
+        relations: ["currency", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果

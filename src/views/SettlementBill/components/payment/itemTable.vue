@@ -164,16 +164,16 @@
       initData() {
         this.loading = true;
 
+        console.log(this.primary);
+
         //类型、数量、单价、总金额、备注
         this.data.push({
           pdNumber: 1,
-          pdPrice: this.primary.unpaidAmount,
+          pdPrice: this.primary.unpaidApplyAmount,
           pdRemarks: '购买产品的费用',
           financeBillId: null,
-          pdAmount: this.primary.unpaidAmount
+          pdAmount: this.primary.unpaidApplyAmount
         });
-
-        console.log(this.primary);
 
         let url = "/financeBills";
         let filters = [

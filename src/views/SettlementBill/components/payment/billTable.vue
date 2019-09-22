@@ -44,7 +44,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="productName" label="说明" width="150">
+      <el-table-column prop="company" label="公司" min-width="150">
       </el-table-column>
 
       <!--默认操作列-->
@@ -79,6 +79,7 @@
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './billDialog'
+  import moment from 'moment'
 
   export default {
     components: {
@@ -231,6 +232,27 @@
         this.search();
       },
 
+      addInvoice(invoice) {
+        if (invoice) {
+          console.log(invoice);
+          let addFlg = true;
+          this.data.forEach(r => {
+            if (r.invoiceNumber == invoice.InvoiceCode + invoice.InvoiceNum) {
+              addFlg = false;
+            }
+          });
+
+          if (addFlg) {
+            this.data.push({
+              invoiceNumber: invoice.InvoiceCode + invoice.InvoiceNum,
+              invoiceTime: moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD"),
+              price: invoice.AmountInFiguers,
+              company: invoice.SellerName + ":" + invoice.SellerRegisterNum
+            });
+          }
+          this.search();
+        }
+      },
 
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
@@ -276,9 +298,7 @@
           }
         });
 
-        console.log(object);
-
-        if(addFlg){
+        if (addFlg) {
           this.data.push(object);
         }
         this.data.push({});

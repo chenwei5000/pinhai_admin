@@ -9,7 +9,10 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" size="small">+ 添加附件</el-button>
+      <el-button class="button-new-tag" slot="trigger" size="small">+ 添加附件</el-button>
+
+      <el-button icon="el-icon-view" type="primary" size="small" @click="onInvoiceRecognition">发票内容识别</el-button>
+
     </el-upload>
 
   </div>
@@ -39,7 +42,8 @@
         filters: [
           {"field": "relevanceId", "op": "eq", "data": -this.primary.id}
         ],
-        attachments: []
+        attachments: [],
+        invoices: [],
       }
     },
 
@@ -86,7 +90,7 @@
         }
       },
 
-      remove(file){
+      remove(file) {
         if (this.primary) {
           ///attachments/procurementPlan/ff8080816c2e2a89016c855d7be40001?accessToken=MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg==
           let url = `${this.global.generateUrl(this.url)}/${file.id}`;
@@ -94,10 +98,40 @@
             .delete(url)
             .then(resp => {
               this.$message.info("附件删除成功!");
+              this.initData();
             })
             .catch(err => {
             });
         }
+      },
+
+      onInvoiceRecognition() {
+
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        this.invoices = [];
+
+        let promiseArr = [];
+        this.attachments.forEach(r => {
+          promiseArr.push(this.global.axios
+            .get(`/baidu/invoiceRecognition/${r.id}`)
+            .then(resp => {
+              this.invoices.push(resp.data);
+            }));
+        });
+
+        Promise.all(promiseArr).then(obj => {
+          loading.close();
+          this.$emit("invoiceRecognitionCB", this.invoices);
+        }).catch(err => {
+          loading.close();
+          this.$emit("invoiceRecognitionCB", this.invoices);
+        });
       },
 
       /********************* 操作按钮相关方法  ***************************/

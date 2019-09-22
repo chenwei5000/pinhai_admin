@@ -40,7 +40,7 @@
           </el-form-item>
         </el-col>
         <el-col :md="6">
-          <el-form-item label="付款日期">
+          <el-form-item label="要求付款日期">
             <span style="font-size: 12px">{{this.editObject.latestPaymentTime | parseTime('{y}-{m}-{d}')}}</span>
           </el-form-item>
         </el-col>
@@ -58,13 +58,18 @@
 
       <el-row>
         <el-col :md="6">
+          <el-form-item label="结算总额">
+            <span style="font-size: 12px">{{this.editObject.settlementAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
           <el-form-item label="未付金额">
             <span style="font-size: 12px">{{this.editObject.unpaidAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
         <el-col :md="6">
-          <el-form-item label="结算总额">
-            <span style="font-size: 12px">{{this.editObject.settlementAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="未申请金额">
+            <span style="font-size: 12px">{{this.editObject.unpaidApplyAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
         <el-col :md="6">
@@ -72,9 +77,16 @@
             <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
+
+        <el-col :md="6">
+          <el-form-item label="采购单预付款金额">
+            <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          </el-form-item>
+        </el-col>
+
         <el-col :md="6">
           <el-form-item label="已付金额">
-            <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
+            <span style="font-size: 12px">{{this.editObject.paymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
       </el-row>
