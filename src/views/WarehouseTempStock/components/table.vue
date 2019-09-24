@@ -43,76 +43,14 @@
 
       <el-table-column prop="name" label="简称" width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="company.fullName" label="公司名称" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.company.fullName && scope.row.company.fullName.length > 22">
-            <div v-html="scope.row.company.fullName"></div>
-            <span slot="reference">{{
-              scope.row.company.fullName ? scope.row.company.fullName.length > 22 ? scope.row.company.fullName.substr(0,20)+'..' : scope.row.company.fullName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.company.fullName }}
-          </span>
-        </template>
-      </el-table-column>
-
-      <!-- <el-table-column prop="city" label="所在城市" min-width="100"></el-table-column> -->
-      <el-table-column prop="company.region" label="管理区域" min-width="100"></el-table-column>
-
-      <el-table-column prop="company.address" label="地址" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.company.address && scope.row.company.address.length > 22">
-            <div v-html="scope.row.company.address"></div>
-            <span slot="reference">{{
-              scope.row.company.address ? scope.row.company.address.length > 22 ? scope.row.company.address.substr(0,20)+'..' : scope.row.company.address : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.company.address}}
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="company.contact" label="联系人" min-width="100"></el-table-column>
-      <el-table-column prop="company.phone" label="联系电话" min-width="100"></el-table-column>
-
-      <!-- <el-table-column prop="collectionAccount" label="收款账户" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.collectionAccount && scope.row.collectionAccount.length > 22">
-            <div v-html="scope.row.collectionAccount"></div>
-            <span slot="reference">{{
-              scope.row.collectionAccount ? scope.row.collectionAccount.length > 22 ? scope.row.collectionAccount.substr(0,20)+'..' : scope.row.collectionAccount : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.collectionAccount }}
-          </span>
-        </template>
-      </el-table-column> -->
-
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="150" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" >
         <template slot-scope="scope">
-
-          <!-- <el-button v-if="hasEdit" size="small" icon="el-icon-receiving" circle
-                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
-          </el-button> -->
-    <a title="库存管理">
-        <el-button  v-if="hasView" size="small" icon="el-icon-view" circle
-                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
-        </el-button>
-    </a>
-       <el-button v-if="hasView" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
-       </el-button>
-          
-      <el-button v-if="hasView" size="small" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)" type="danger" id="ph-table-view">
-      </el-button>
+          <a title="临时库存管理">
+              <el-button  v-if="hasView" size="small" icon="el-icon-view" circle
+                          @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
+              </el-button>
+          </a>
         </template>
       </el-table-column>
     </el-table>
@@ -213,9 +151,9 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/suppliers', // 资源URL
-        countUrl: '/suppliers/count', // 资源URL
-        relations: ["company"],  // 关联对象
+        url: '/warehouses', // 资源URL
+        countUrl: '/warehouses/count', // 资源URL
+        relations: ["supplier"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果

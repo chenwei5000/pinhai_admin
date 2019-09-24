@@ -276,12 +276,7 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        if (row.financeBillId) {
-          this.$message.error("冲销项目不能修改只能删除!");
-        }
-        else {
-          this.$refs.itemDialog.openDialog(row);
-        }
+        this.$refs.itemDialog.openDialog(row, this.primary.currency);
       },
 
       /* 行删除功能 */
@@ -331,7 +326,7 @@
 
       /********************* 工具条按钮  ***************************/
       onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
+        this.$refs.itemDialog.openDialog(null, this.primary.currency);
       },
       onToolBarEdit() {
 
