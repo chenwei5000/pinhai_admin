@@ -64,17 +64,10 @@
 
       </el-table-column>
 
-      <el-table-column prop="storageLocation.code" label="货位" width="100"></el-table-column>
-      <el-table-column prop="productPrice" label="价格" width="80"></el-table-column>
-      <el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>
+      <el-table-column prop="storageLocation.code" label="货位" width="100">DEFAULT</el-table-column>
+      <el-table-column prop="price" label="价格" width="80"></el-table-column>
+      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>-->
       <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-
-        <template slot="header" slot-scope="scope">
-          <span>实际库存(件数)</span><BR/>
-          <el-button type="primary" size="mini" plain @click="onAll">全部盘点</el-button>
-          <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
-        </template>
-
         <template slot-scope="scope">
           <el-input-number v-model="scope.row.checkedStock"
                            size="mini"
@@ -88,9 +81,9 @@
 
         </template>
       </el-table-column>
-      <el-table-column prop="stockError" label="库存误差" width="90" fixed="right">
+      <!--<el-table-column prop="stockError" label="库存误差" width="90" fixed="right">-->
 
-      </el-table-column>
+      <!--</el-table-column>-->
     </el-table>
 
     <!-- 编辑明细对话框 -->
@@ -139,7 +132,7 @@
         confirmLoading: false,
 
         //数据 TODO: 根据实际情况调整
-        url: "/inventoryTaskItems", // 资源URL
+        url: "/inventoryTasks", // 资源URL
         downloadUrl: '', //下载Url
         primaryId: '',
         filters: [
@@ -246,7 +239,7 @@
 
       /*获取列表*/
       getList() {
-        let url = this.url;
+        let url = this.url + `/taskId/${this.primary.id}`;
         let params = '';
         if (!url) {
           console.warn('url 为空, 不发送请求')
@@ -445,7 +438,7 @@
       },
 
       onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
+        this.$refs.itemDialog.openDialog(this.primary.id);
       },
     }
   }

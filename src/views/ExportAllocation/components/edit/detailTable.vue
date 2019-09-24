@@ -2,16 +2,34 @@
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
-
-
-    <!-- 表格工具条 添加、导入、导出等 -->
-    <tableToolBar
-      v-bind="toolbarConfig"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
-      @onToolBarDownloadData="onToolBarDownloadData"
+    <el-form inline
+             ref="editObject"
+             label-position="right"
+             label-width="120px"
     >
-    </tableToolBar>
-
+      <el-row>
+        <el-col :md="6">
+          <el-form-item label="编码:">
+            <span style="font-size: 12px">{{primary.code}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
+          <el-form-item label="物流单号:" prop="trackNumber">
+            <span style="font-size: 12px">{{primary.trackNumber?primary.trackNumber : '无'}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
+          <el-form-item label="供货商:" prop="supplierId">
+            <span style="font-size: 12px">{{primary.supplier.name}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="6">
+          <el-form-item label="收货仓库:" prop="warehouseId">
+            <span style="font-size: 12px">{{primary.warehouse.name}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -30,24 +48,69 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
+      <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
+      <el-table-column prop="product.skuCode" label="SKU编码" width="200">
 
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200"></el-table-column>
+      </el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
-
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
+            <div v-html="scope.row.product.name"></div>
+            <span slot="reference">{{
+              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.product.name }}
+          </span>
+        </template>
       </el-table-column>
 
-      <el-table-column prop="storageLocation.code" label="货位" width="100">DEFAULT</el-table-column>
-      <el-table-column prop="price" label="价格" width="80"></el-table-column>
-      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>-->
-      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-      </el-table-column>
-      <!--<el-table-column prop="stockError" label="库存误差" width="90" fixed="right">-->
+      <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
 
-      <!--</el-table-column>-->
+      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
+
+      <el-table-column prop="receivedNote" label="异常备注" width="130">
+        <template slot-scope="scope">
+
+          <el-input type="textarea" v-model="scope.row.receivedNote"
+                    rows="1"
+                    style="width: 110px;margin: 3px 0;"
+                    show-word-limit></el-input>
+
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="180" fixed="right" align="center">
+
+        <template slot="header" slot-scope="scope">
+          <span>本次到货箱数</span><BR/>
+          <el-button type="primary" size="mini" plain @click="onAll">全部到货</el-button>
+          <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
+        </template>
+
+        <template slot-scope="scope">
+          <el-input-number v-model="scope.row.receivedCartonQty"
+                           size="mini"
+                           style="width: 120px;margin: 3px 0;"
+                           :precision="3"
+                           :min="0"
+                           :step="1"
+                           @change="onReceivedCartonQty(scope.row)"
+                           :max="1000000" label="请填本次到货箱数">
+          </el-input-number>
+
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right">
+
+      </el-table-column>
     </el-table>
-
-
   </div>
 
 
@@ -57,13 +120,9 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
-  import tableToolBar from '@/components/PhTableToolBar'
-
 
   export default {
-    components: {
-      tableToolBar
-    },
+    components: {},
     props: {
       primary: {
         type: [Object],
@@ -88,29 +147,19 @@
         confirmLoading: false,
 
         //数据 TODO: 根据实际情况调整
-        url: "/inventoryTasks", // 资源URL
-        downloadUrl: '', //下载Url
-        primaryId: '',
+        url: "/procurementReceivedOrderItems", // 资源URL
         filters: [
           {
-            field: "relevanceId",
+            field: "procurementShippedOrderId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock", "inventoryTaskItem","inventoryTask", "storageLocation"],  // 关联对象
+        relations: ["product", "cartonSpec", "procurementShippedOrder", "procurementOrderItem", "storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
-        loading: false,
-
-        // 表格工具条配置
-        toolbarConfig: {
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: false,
-          hasAdd: false,
-        }
+        loading: false
       }
     },
 
@@ -122,7 +171,7 @@
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      };
+      }
 
 
       this.$nextTick(() => {
@@ -172,7 +221,23 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'warehouseStock.qty' || column.property == 'checkedStock' || column.property == 'stockError') {
+          if (column.property == 'shippedCartonQty' || column.property == 'receivedCartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+          if (column.property == 'shippedQty' || column.property == 'receivedQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -195,10 +260,10 @@
 
       /*获取列表*/
       getList() {
-        let url = this.url + `/taskId/${this.primary.id}`;
+        let url = this.url;
         let params = '';
         if (!url) {
-          console.warn('url 为空, 不发送请求');
+          console.warn('url 为空, 不发送请求')
           return
         }
         // 处理查询
@@ -210,19 +275,20 @@
           params += "&relations=" + JSON.stringify(this.relations);
         }
         // 请求开始
-        this.loading = true;
+        this.loading = true
 
         //获取数据
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data;
-            let data = res || [];
+            let res = resp.data
+            let data = res || []
 
             this.data = data;
             this.search();
-            this.total = res.length || 0;
-            this.loading = false;
+
+            this.total = res.length || 0
+            this.loading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -234,76 +300,32 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err);
+            this.$emit('error', err)
             this.loading = false
           })
       },
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.getList();
-      },
+
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {
         this.tableData = this.data;
       },
 
-      /********************* 工具条按钮  ***************************/
-      uploadPromise(res) {
-        let url = this.url + '';
-        return this.global.axios.post(url, res)
-          .then(resp => {
-          })
-          .catch(err => {
-          })
+      onAll() {
+        this.tableData.forEach((item, index, arr) => {
+          arr[index].receivedCartonQty = item.shippedCartonQty;
+          arr[index].receivedQty = item.shippedQty;
+        });
       },
-
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.url + '/' +this.primaryId + "?pageSize=" + this.pageSize + "&currentPage=" + this.currentPage + "&relations=" + this.relations;
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "盘点任务-模版",
-            noExportProps: ['更新人', '更新时间'],
-            tpl: true,
-          })
-        })
+      onClear() {
+        this.tableData.forEach((item, index, arr) => {
+          arr[index].receivedCartonQty = 0;
+          arr[index].receivedQty = 0;
+        });
       },
-      onToolBarDownloadData() {
-        //获取数据
-        let table = this.$refs.table;
-        let params = '';
-
-        let downloadUrl = this.url
-
-        if (!downloadUrl) {
-          console.warn('url 为空, 导出数据失败！')
-          return
-        }
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
-        }
-        import('@/vendor/Export2Excel').then(excel => {
-          this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "盘点任务",
-            noExportProps: ['更新人', '更新时间'],
-            params: params
-          });
-          this.loading = false;
-        })
-      },
+      onReceivedCartonQty(row) {
+        row.receivedQty = (row.receivedCartonQty * row.numberOfCarton).toFixed(0);
+      }
     }
   }
 </script>

@@ -18,13 +18,9 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="SKU" prop="skuCode">
-              <span v-if="!hasAdd" style="font-size: 12px">{{detailItem.skuCode}}</span>
-
-              <el-input v-else v-model.trim="detailItem.skuCode"
+              <el-input  v-model.trim="detailItem.skuCode"
                         style="width: 200px" placeholder="请填写SKU" clearable>
-
               </el-input>
-
             </el-form-item>
           </el-col>
 
@@ -48,22 +44,7 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="价格" prop="productPrice">
-              <span style="font-size: 12px">{{detailItem.productPrice}}</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :md="24">
-            <el-form-item label="备注" prop="comments">
-              <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.comments"
-                          maxlength="500"
-                          show-word-limit
-                          rows="3"
-                          cols="80"
-                ></el-input>
-              </el-col>
+              <span style="font-size: 12px">{{detailItem.price}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -71,7 +52,7 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="warning" @click="onLoadProduct" v-if="hasAdd" :loading="confirmLoading">获取产品默认信息</el-button>
+      <el-button type="warning" @click="onLoadProduct"  :loading="confirmLoading">获取产品默认信息</el-button>
       <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
       <el-button @click="closeDialog">取 消</el-button>
     </div>
@@ -123,7 +104,13 @@
         //明细对象ID
         detailItemId: null,
         //明细对象
-        detailItem: {},
+        detailItem: {
+            taskId: null,
+            skuCode: null,
+            productName: null,
+            storageLocationCode: null,
+            price: null,
+        },
 
         // 字段验证规则 TODO:
         rules: {
@@ -164,6 +151,7 @@
               this.detailItem = data;
               // 转字段
               this.detailItem.productName = data.product.name;
+              this.detailItem.productPrice = data.price;
 
               this.$forceUpdate();
               this.loading = false
@@ -195,7 +183,6 @@
       openDialog(detailItemId) {
         this.detailItemId = detailItemId;
         this.dialogVisible = true;
-        this.initData();
       },
 
       closeDialog() {
@@ -222,14 +209,10 @@
               let res = resp.data
               let data = res || {}
 
-              this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.numberOfCarton = data.numberOfCarton;
-              console.log(data);
               // 转字段
               this.detailItem.productName = data.name;
-              if (data.cartonSpecId == -3) { //原料采购
-                this.unit = data.unit;
-              }
+              this.detailItem.price = data.price;
+
               this.confirmLoading = false;
               this.loading = false;
             })
@@ -245,6 +228,7 @@
           if (!valid) {
             return false
           }
+          console.log("detailsItme", this.detailItemId)
           this.loading = true;
           this.confirmLoading = true;
           let method = 'post';
@@ -255,6 +239,7 @@
           }
 
           //转义字段
+          this.detailItem.taskId = this.primary.id;
           let _object = JSON.parse(JSON.stringify(this.detailItem));
 
           this.global.axios[method](url, _object)

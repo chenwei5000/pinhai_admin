@@ -12,7 +12,7 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 盘点任务明细</div>
+        <div slot="title" class="title">2. 产品详情</div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
@@ -43,7 +43,7 @@
     props: {},
     computed: {
       title() {
-        return '查看盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
+        return '出口调拨  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -68,7 +68,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/inventoryTasks/${this.primaryId}?relations=${JSON.stringify(["warehouseStock","storageLocation","warehouse"])}`)
+            .get(`/exportAllocations/${this.primaryId}?relations=${JSON.stringify(["team", "linerShippingPlan","fromWarehouse", "toWarehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -77,6 +77,19 @@
             .catch(err => {
             });
         }
+      },
+
+      /* 开启弹出编辑框 需要传主键ID */
+      openDialog(primaryId) {
+        this.primaryId = primaryId;
+        this.initData();
+        this.activeNames = ['infoFrom', 'itemTable', 'attachment'];
+      },
+
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.$emit("modifyCBEvent", object);
       },
     }
   }
