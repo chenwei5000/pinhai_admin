@@ -4,7 +4,7 @@
       <el-form :inline="true" ref="searchForm" id="filter-form"
                @submit.native.prevent>
         <el-form-item label="销售渠道">
-          <el-select filterable v-model="mine.merchantId" placeholder="请销售渠道">
+          <el-select filterable v-model="mine.merchantId" placeholder="请选择销售渠道">
             <el-option
               v-for="(item,idx) in merchantSelectOptions"
               :label="item.label" :value="item.value"
