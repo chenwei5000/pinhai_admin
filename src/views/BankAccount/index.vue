@@ -67,6 +67,8 @@
               $id: 'accountCard',
               label: '银行卡号',
               $el: {
+                maxlength:"20",
+                "show-word-limit": true,
                 placeholder: '请输入银行卡号'
               },
               rules: [

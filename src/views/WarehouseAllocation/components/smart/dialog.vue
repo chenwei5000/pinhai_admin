@@ -30,7 +30,6 @@
               <span style="font-size: 12px" v-model="detailItem.productName">{{detailItem.productName}}</span>
             </el-form-item>
           </el-col>
-
         </el-row>
 
         <el-row>
@@ -140,7 +139,7 @@
       shippedQty() {
         return this.calShippedQty();
       }
-     
+
     },
 
     data() {
@@ -198,7 +197,7 @@
       initData() {
         //获取数据
         // 箱规
-   
+
       },
 
       // 计算发货件数
@@ -235,7 +234,7 @@
         else {
           this.loading = true;
           this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.skuCode}`+ "?relations=" + JSON.stringify(["cartonSpec", "category"]);;
+          let url = `/products/sku/${this.detailItem.skuCode}`+ "?relations=" + JSON.stringify(["cartonSpec", "category"]);
           this.global.axios
             .get(url)
             .then(resp => {

@@ -95,6 +95,14 @@
             phFromItems.datadic("region", '管理区域', '', 'region'),
             {
               $type: 'input',
+              $id: 'taxNumber',
+              label: '纳税人识别号',
+              $el: {
+                placeholder: '请输入纳税人识别号'
+              },
+            },
+            {
+              $type: 'input',
               $id: 'contact',
               label: '联系人',
               $el: {
