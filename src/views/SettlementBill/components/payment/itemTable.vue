@@ -164,8 +164,6 @@
       initData() {
         this.loading = true;
 
-        console.log(this.primary);
-
         //类型、数量、单价、总金额、备注
         this.data.push({
           pdNumber: 1,
@@ -175,26 +173,41 @@
           pdAmount: this.primary.unpaidApplyAmount
         });
 
-        let url = "/financeBills";
+        let all_url = "/financeBills";
         let filters = [
           {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode},
           {"field": "status", "op": "eq", "data": 2},
         ]
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        url += "&sort=id&dir=asc";
+        all_url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        all_url += "&sort=id&dir=asc";
 
         this.global.axios
-          .get(url)
+          .get(all_url)
           .then(resp => {
             let res = resp.data || [];
-            res.forEach(r => {
-              this.data.push({
-                pdNumber: 1,
-                financeBillId: r.id,
-                pdPrice: -r.paymentAmount,
-                pdRemarks: `预付款单[${r.code}]冲销`,
-                pdAmount: -r.paymentAmount
-              });
+            res.forEach(bill => {
+              let use_url = `/paymentDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
+              this.global.axios
+                .get(use_url)
+                .then(res => {
+                  let amount = res.data || 0;
+                  this.data.push({
+                    pdNumber: 1,
+                    financeBillId: bill.id,
+                    pdPrice: -(bill.paymentAmount + amount),
+                    pdRemarks: `预付款单[${bill.code}]冲销`,
+                    pdAmount: -(bill.paymentAmount + amount),
+                  });
+                })
+                .catch(err => {
+                  this.data.push({
+                    pdNumber: 1,
+                    financeBillId: bill.id,
+                    pdPrice: -(bill.paymentAmount),
+                    pdRemarks: `预付款单[${bill.code}]冲销`,
+                    pdAmount: -(bill.paymentAmount),
+                  });
+                });
             });
           })
           .catch(err => {
@@ -224,7 +237,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'phNumber') {
+          if (column.property == 'pdNumber') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -240,7 +253,7 @@
             }
           }
 
-          if (column.property == 'pdAmount' || column.property == 'pdPrice') {
+          if (column.property == 'pdAmount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

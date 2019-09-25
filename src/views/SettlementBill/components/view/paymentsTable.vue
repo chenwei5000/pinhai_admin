@@ -56,7 +56,8 @@
 
       <el-table-column prop="paymentAmount" label="实付金额" width="80">
         <template slot-scope="scope">
-          {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+          {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, scope.row.currency ? scope.row.currency.symbolLeft :
+          '' | currency}}
         </template>
       </el-table-column>
 
@@ -74,11 +75,31 @@
 
       <el-table-column prop="collectionAccount.bankAccount.accountName" label="收款账户" width="300">
         <template slot-scope="scope">
-          {{scope.row.collectionAccount.bankAccount.accountName}} - {{scope.row.collectionAccount.bankAccount.currency.name}} - {{scope.row.collectionAccount.bankAccount.accountCardHide}}
+          {{scope.row.collectionAccount.bankAccount.accountName}} -
+          {{scope.row.collectionAccount.bankAccount.currency.name}} -
+          {{scope.row.collectionAccount.bankAccount.accountCardHide}}
         </template>
       </el-table-column>
 
+
+      <!--默认操作列-->
+      <el-table-column label="操作" v-if="hasOperation"
+                       no-export="true"
+                       width="50" fixed="right">
+        <template slot-scope="scope">
+
+          <el-button v-if="hasView" type="primary" size="mini"
+                     id="ph-table-del" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)">
+          </el-button>
+
+        </template>
+      </el-table-column>
     </el-table>
+
+    <!--查看对话框-->
+    <paymentsViewDialog ref="paymentsViewDialog">
+    </paymentsViewDialog>
 
   </div>
 
@@ -88,9 +109,12 @@
 
   import {mapGetters} from 'vuex'
   import {currency, parseTime} from '@/utils'
+  import paymentsViewDialog from './paymentsViewDialog'
 
   export default {
-    components: {},
+    components: {
+      paymentsViewDialog
+    },
     props: {
       primary: {
         type: [Object],
@@ -110,6 +134,8 @@
           return false;
         }
       },
+
+
     },
     filters: {
       currency: currency
@@ -120,6 +146,9 @@
         // 选择项
         statusSelectOptions: [],
         prioritySelectOptions: [],
+
+        hasOperation: true,
+        hasView: true,
 
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
@@ -180,7 +209,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'product.skuCode') {
+          if (column.property == 'code') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -188,41 +217,11 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] += ' 箱';
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-          if (column.property == 'qty') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-              sums[index] += ' 件';
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-          if (column.property == 'amount') {
+          if (column.property == 'payableAmount' ||
+            column.property == 'paymentAmount' ||
+            column.property == 'advanceAmount' ||
+            column.property == 'invoicedAmount'
+          ) {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -312,85 +311,12 @@
         this.search();
       },
 
-
       /********************* 操作按钮相关方法  ***************************/
-      /* 行修改功能 */
-      onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row.id);
+      /* 行删除按钮 */
+      onDefaultView(row) {
+        // 弹窗
+        this.$refs.paymentsViewDialog.openDialog(row.id);
       },
-
-      /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              let url = `${this.url}/${row.id}`;
-              this.global.axios.delete(url).then(resp => {
-                this.$message({type: 'success', message: '删除成功'});
-                let obj = resp.data;
-                this.getList();
-              })
-                .catch(err => {
-                })
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
-
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.getList();
-      },
-
-      /********************* 工具条按钮  ***************************/
-      onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
-      },
-      onToolBarEdit() {
-
-      },
-      onToolBarDelete() {
-
-      },
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
-            tpl: true,
-          })
-        })
-      },
-      onToolBarDownloadData() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
-          this.loading = false;
-        })
-      },
-      onToolBarImportData() {
-
-      }
     }
   }
 </script>
