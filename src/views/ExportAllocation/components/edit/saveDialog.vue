@@ -21,15 +21,16 @@
                @submit.native.prevent
                v-loading="loading"
       >
-        <el-form-item label="本次到货">
+        <el-form-item label="本次应发：">
           <span style="font-size: 12px">{{primary.allCartonQty}}箱, 合{{primary.allQty}}件</span>
         </el-form-item>
-        <el-form-item label="收货日期" prop="receivedTime">
-          <el-date-picker
-            v-model="primary.receivedTime"
-            format="yyyy-MM-dd"
-            type="date"
-            placeholder="收货日期"></el-date-picker>
+
+        <el-form-item label="编码：">
+          <span style="font-size: 12px">{{primary.code}}</span>
+        </el-form-item>
+
+        <el-form-item label="打托数量">
+          <el-input size="mini" v-model="primary.useTrayQty" style="width: 110px" placeholder="请输入打托数量"></el-input>
         </el-form-item>
 
       </el-form>
@@ -58,7 +59,7 @@
         'rolePower'
       ]),
       title() {
-        return '确认收货';
+        return '确认发货';
       }
     },
 
@@ -71,9 +72,6 @@
         initComplete: false,
         confirmLoading: false,
         rules: {
-          receivedTime: [
-            {required: true, message: '收货日期必须输入', trigger: 'blur'}
-          ],
         },
       }
     },
@@ -93,13 +91,14 @@
       openDialog(primary, details) {
         this.initComplete = false;
         this.primary = primary;
-        this.primary.receivedTime = new Date();
         this.details = details;
+        this.primary.useTrayQty = 0;
         this.primary.allQty = 0;
         this.primary.allCartonQty = 0;
         this.details.forEach(r=>{
-          this.primary.allQty += r.receivedQty;
-          this.primary.allCartonQty += r.receivedCartonQty;
+          this.primary.useTrayQty = r.useTrayQty;
+          this.primary.allQty += r.shippedQty;
+          this.primary.allCartonQty += r.shippedCartonQty;
         });
 
         this.initData();
@@ -123,10 +122,9 @@
             return false
           }
           let _object = {};
-          _object.receivedTime = this.primary.receivedTime;
           let _details = [];
           this.details.forEach(r=>{
-            _details.push({id: r.id, receivedCartonQty: r.receivedCartonQty, receivedNote: r.receivedNote});
+            _details.push({id: r.id, shippedCartonQty: r.shippedCartonQty, receivedNote: r.receivedNote});
           });
           _object.receivedOrderItems = _details;
 
@@ -137,9 +135,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
 
-          this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primary.id}`, _object)
+          this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("收货完成");
+              this.$message.info("发货完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

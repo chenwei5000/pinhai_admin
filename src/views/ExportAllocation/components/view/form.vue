@@ -9,79 +9,76 @@
   >
     <el-row>
       <el-col :md="8">
-        <el-form-item label="编码" prop="code">
+        <el-form-item label="调拨单编码" prop="code">
           <span style="font-size: 12px">{{editObject.code}}</span>
         </el-form-item>
       </el-col>
       <el-col :md="8">
-        <el-form-item label="名称" prop="name">
-          <span style="font-size: 12px">{{editObject.name}}</span>
+        <el-form-item label="发船日期" prop="linerShippingPlanFormatEtdTime">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.formatEtdTime}}</span>
         </el-form-item>
       </el-col>
       <el-col :md="8">
-        <el-form-item label="预计到货时间" prop="expectTime">
-          <span style="font-size: 12px">{{editObject.formatExpectTime}}</span>
+        <el-form-item label="货柜编号" prop="linerShippingPlanCode">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.code}}</span>
         </el-form-item>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :md="8">
-        <el-form-item label="收货日期" prop="receivedTime">
-          <span style="font-size: 12px">{{editObject.formatReceivedTime}}</span>
+        <el-form-item label="FBA ID" prop="linerShippingPlanShipmentId">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.shipmentId}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="8">
-        <el-form-item label="供货商" prop="supplierId">
-          <span style="font-size: 12px">{{editObject.supplier.name}}</span>
+        <el-form-item label="发船港口" prop="linerShippingPlanPortOfLoading">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.portOfLoading}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="8">
-        <el-form-item label="收货仓库" prop="warehouseId">
-          <span style="font-size: 12px">{{editObject.warehouse.name}}</span>
+        <el-form-item label="出口品类" prop="linerShippingPlanCategoryName">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.categoryName}}</span>
         </el-form-item>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :md="8">
-        <el-form-item label="物流单号" prop="trackNumber">
-          <span style="font-size: 12px">{{editObject.trackNumber?editObject.trackNumber : '无'}}</span>
+        <el-form-item label="发货仓库" prop="fromWarehouseId">
+          <span style="font-size: 12px">{{editObject.fromWarehouse.name}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="8">
-        <el-form-item label="物流公司" prop="channel">
-          <span style="font-size: 12px">{{editObject.channel?editObject.channel : '无'}}</span>
+        <el-form-item label="收货仓库" prop="toWarehouseId">
+          <span style="font-size: 12px">{{editObject.toWarehouse.name}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="8">
-        <el-form-item label="车牌" prop="plateNumber">
-          <span style="font-size: 12px">{{editObject.plateNumber?editObject.plateNumber : '无'}}</span>
+        <el-form-item label="收货仓库标识" prop="linerShippingPlanDestinationFulfillmentCenterId">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.destinationFulfillmentCenterId}}</span>
         </el-form-item>
       </el-col>
 
     </el-row>
     <el-row>
       <el-col :md="8">
-        <el-form-item label="联系人" prop="linkman">
-          <span style="font-size: 12px">{{editObject.linkman?editObject.linkman : '无'}}</span>
+        <el-form-item label="负责人" prop="linerShippingPlanMerchandiser">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.merchandiser}}</span>
         </el-form-item>
       </el-col>
       <el-col :md="8">
-        <el-form-item label="电话" prop="tel">
-          <span style="font-size: 12px">{{editObject.tel?editObject.tel : '无'}}</span>
+        <el-form-item label="船运公司" prop="linerShippingPlanCarrier">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.carrier?editObject.linerShippingPlan.carrier:'无'}}</span>
         </el-form-item>
       </el-col>
-    </el-row>
-
-    <el-row>
-      <el-col :md="24">
-        <el-form-item label="备注" prop="remark">
-          <div style="font-size: 12px" v-html="editObject.formatRemark"></div>
+      <el-col :md="8">
+        <el-form-item label="货代公司" prop="linerShippingPlanForwardingCompany">
+          <span style="font-size: 12px">{{editObject.linerShippingPlan.forwardingCompany?editObject.linerShippingPlan.forwardingCompany:'无'}}</span>
         </el-form-item>
       </el-col>
     </el-row>

@@ -8,11 +8,11 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <router-link target="_blank" :to="'/procurementReceivedOrder/print?id='+primary.id">
-        <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
+      <router-link target="_blank" :to="'/warehouseAllocation/print?id='+primary.id">
+        <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印调拨单</el-button>
       </router-link>
 
-      <el-button type="success" icon="el-icon-s-claim"  @click="onComplete">确认收货</el-button>
+      <el-button type="success" icon="el-icon-s-claim"  @click="onComplete" v-if="">确认发货</el-button>
 
       <el-button type="primary" @click="closeDialog">取 消</el-button>
     </el-row>
@@ -39,7 +39,7 @@
     props: {},
     computed: {
       title() {
-        return '采购入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
+        return '出口调拨  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
     },
 
@@ -64,7 +64,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementReceivedOrders/${this.primaryId}?relations=${JSON.stringify(["supplier", "warehouse"])}`)
+            .get(`/exportAllocations/${this.primaryId}?relations=${JSON.stringify(["team", "linerShippingPlan","fromWarehouse", "toWarehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -95,11 +95,11 @@
         this.closeDialog();
       },
 
-      //确认收货
+      //确认发货
       onConfirm() {
-        this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
+        this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("确认收货成功");
+            this.$message.info("确认发货成功");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = true;
@@ -113,18 +113,18 @@
           })
       },
 
-      //收货完成
+      //发货完成
       onComplete() {
         // 明细对象
         let details = this.$refs.itemTable.tableData;
         this.$refs.saveDialog.openDialog(this.primary, details);
       },
 
-      //打印收货单
+      //打印调拨单
       onPrint() {
-        this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
+        this.global.axios.get(`/attachments/warehouseAllocations/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("打印收货单");
+            this.$message.info("打印调拨单");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = false;

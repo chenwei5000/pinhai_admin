@@ -48,14 +48,6 @@
 
         <el-row>
           <el-col :md="14">
-            <el-form-item label="系统库存(件)" prop="warehouseStockQty">
-              <span style="font-size: 12px" v-model="detailItem.warehouseStockQty">{{detailItem.warehouseStockQty}}</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :md="14">
             <el-form-item label="实际库存" prop="checkedStock">
               <span style="font-size: 12px" v-model="detailItem.checkedStock">{{detailItem.checkedStock}}</span>
             </el-form-item>

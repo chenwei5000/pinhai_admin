@@ -1,49 +1,30 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible"
+             :visible.sync="dialogVisible" style="padding-bottom: 40px"
+             class="ph-dialog" @close='closeDialog' fullscreen>
 
-    <!-- 折叠面板 -->
-    <el-collapse v-model="activeNames">
-
-      <el-collapse-item name="infoFrom">
-        <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
-      </el-collapse-item>
-
-      <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 盘点任务明细</div>
-        <itemTable ref="itemTable" :primary="primary"></itemTable>
-      </el-collapse-item>
-
-      <el-collapse-item name="attachment" style="margin-top: 10px; padding-bottom: 5px;">
-        <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary"></attachment>
-      </el-collapse-item>
-
-    </el-collapse>
-
-
-
+    <itemTable ref="itemTable" :primary="primary"></itemTable>
+    <h4>附件</h4>
+    <attachment ref="attachment" :primary="primary"></attachment>
   </el-dialog>
 
 </template>
-
 <script>
-  import infoFrom from './form'
+
   import itemTable from './detailTable'
   import attachment from './attachment'
-
   export default {
+
     components: {
-      infoFrom,
       itemTable,
-      attachment
+      attachment,
     },
     props: {},
     computed: {
       title() {
-        return '查看盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
+        return '查看盘点任务  ---  [' + this.primary.warehouse.name· + ' ' + this.primary.formatLimitTime + "]";
       }
     },
 
@@ -55,7 +36,6 @@
         activeNames: [], //折叠面板开启项
       }
     },
-
     created() {
     },
 
@@ -77,6 +57,26 @@
             .catch(err => {
             });
         }
+      },
+
+      /* 开启弹出编辑框 需要传主键ID */
+      openDialog(primaryId) {
+        this.primaryId = primaryId;
+        this.initData();
+        this.activeNames = ['infoFrom', 'itemTable'];
+      },
+      closeDialog() {
+        this.primaryId = null;
+        this.primary = {};
+        this.activeNames = [];
+        this.dialogVisible = false;
+      },
+
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.$emit("modifyCBEvent", object);
+        this.closeDialog();
       },
     }
   }

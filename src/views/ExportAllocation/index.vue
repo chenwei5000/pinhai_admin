@@ -6,15 +6,6 @@
 
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
-          <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="shipped" lazy>
-            <span slot="label">
-              <i class="el-icon-s-flag"></i> 待收货
-            </span>
-            <keep-alive>
-              <phTab type="shipped"/>
-            </keep-alive>
-          </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executing" lazy>
@@ -26,6 +17,15 @@
             </keep-alive>
           </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="shipped" lazy>
+            <span slot="label">
+              <i class="el-icon-s-flag"></i> 待收货
+            </span>
+            <keep-alive>
+              <phTab type="shipped"/>
+            </keep-alive>
+          </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="complete" lazy>

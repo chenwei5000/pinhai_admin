@@ -41,7 +41,7 @@
 
       <el-table-column prop="storageLocation.code" label="货位" width="100"></el-table-column>
       <el-table-column prop="productPrice" label="价格" width="80"></el-table-column>
-      <el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>
+      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>-->
       <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center"></el-table-column>
       <el-table-column prop="number" label="差量" width="90" fixed="right"></el-table-column>
     </el-table>

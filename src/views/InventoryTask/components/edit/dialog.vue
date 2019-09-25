@@ -13,22 +13,18 @@
     <itemTable ref="itemTable" :primary="primary"></itemTable>
     <h4>附件</h4>
     <attachment ref="attachment" :primary="primary"></attachment>
-    <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent"></saveDialog>
   </el-dialog>
 
 </template>
-
 <script>
 
   import itemTable from './detailTable'
   import attachment from './attachment'
-  import saveDialog from './saveDialog'
   export default {
 
     components: {
       itemTable,
       attachment,
-      saveDialog
     },
     props: {},
     computed: {
@@ -101,9 +97,6 @@
        })
 
       },
-      onAll() {
-        this.$refs.itemTable.onAll();
-      }
     }
   }
 </script>

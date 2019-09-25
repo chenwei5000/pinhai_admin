@@ -7,28 +7,6 @@
              label-position="right"
              label-width="120px"
     >
-      <el-row>
-        <el-col :md="6">
-          <el-form-item label="编码:">
-            <span style="font-size: 12px">{{primary.code}}</span>
-          </el-form-item>
-        </el-col>
-        <el-col :md="6">
-          <el-form-item label="物流单号:" prop="trackNumber">
-            <span style="font-size: 12px">{{primary.trackNumber?primary.trackNumber : '无'}}</span>
-          </el-form-item>
-        </el-col>
-        <el-col :md="6">
-          <el-form-item label="供货商:" prop="supplierId">
-            <span style="font-size: 12px">{{primary.supplier.name}}</span>
-          </el-form-item>
-        </el-col>
-        <el-col :md="6">
-          <el-form-item label="收货仓库:" prop="warehouseId">
-            <span style="font-size: 12px">{{primary.warehouse.name}}</span>
-          </el-form-item>
-        </el-col>
-      </el-row>
     </el-form>
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -49,8 +27,20 @@
       id="table"
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200">
-
+      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left"></el-table-column>
+      <el-table-column prop="product.groupName" label="款式" width="150">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
+            <div v-html="scope.row.product.groupName"></div>
+            <span slot="reference">{{
+              scope.row.product.groupName ? scope.row.product.groupName.length > 12 ? scope.row.product.groupName.substr(0,10)+'..' : scope.row.product.groupName : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.product.groupName }}
+            </span>
+        </template>
       </el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
@@ -68,47 +58,52 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="product.model" label="型号" width="100"></el-table-column>
+      <el-table-column prop="product.color" label="颜色" width="120"></el-table-column>
+      <el-table-column prop="product.size" label="尺码" width="80"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
       <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-
-      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
-
-      <el-table-column prop="receivedNote" label="异常备注" width="130">
-        <template slot-scope="scope">
-
-          <el-input type="textarea" v-model="scope.row.receivedNote"
-                    rows="1"
-                    style="width: 110px;margin: 3px 0;"
-                    show-word-limit></el-input>
-
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="180" fixed="right" align="center">
+      <el-table-column prop="numberOfCarton" label="装箱数" width="120"></el-table-column>
+      <el-table-column prop="stock" label="库存量" width="100"></el-table-column>
+      <el-table-column prop="sufficientStock" label="库存满足" width="100"></el-table-column>
+      <el-table-column prop="cartonQty" label="计划箱数" width="100"></el-table-column>
+      <el-table-column prop="qty" label="计划件数" width="100"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="应发箱数" width="200" align="center">
 
         <template slot="header" slot-scope="scope">
-          <span>本次到货箱数</span><BR/>
-          <el-button type="primary" size="mini" plain @click="onAll">全部到货</el-button>
-          <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
+          <span>本次应发箱数</span><BR/>
+          <el-button type="primary" size="mini" plain @click="onAll">全部发货</el-button>
+          <el-button type="success" size="mini" plain @click="onClear">  清空</el-button>
         </template>
 
         <template slot-scope="scope">
-          <el-input-number v-model="scope.row.receivedCartonQty"
+          <el-input-number v-model="scope.row.shippedCartonQty"
                            size="mini"
                            style="width: 120px;margin: 3px 0;"
                            :precision="3"
                            :min="0"
                            :step="1"
-                           @change="onReceivedCartonQty(scope.row)"
-                           :max="1000000" label="请填本次到货箱数">
+                           @change="onShippedCartonQty(scope.row)"
+                           :max="1000000" label="请填本次应发箱数">
           </el-input-number>
 
         </template>
+
       </el-table-column>
+      <el-table-column prop="shippedQty" label="应发件数" width="100"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货数量" width="100"></el-table-column>
 
-      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right">
-
+      <el-table-column prop="shippedNote" label="备注" width="130">
+        <template slot-scope="scope">
+          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+                      v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
+            <div v-html="scope.row.shippedNote"></div>
+            <span slot="reference">{{ scope.row.shippedNote ? scope.row.shippedNote.substr(0,8)+'..' : '' }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.receivedNote }}
+          </span>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -147,15 +142,15 @@
         confirmLoading: false,
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementReceivedOrderItems", // 资源URL
+        url: "/warehouseAllocationItems", // 资源URL
         filters: [
           {
-            field: "procurementShippedOrderId",
+            field: "warehouseAllocationId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "cartonSpec", "procurementShippedOrder", "procurementOrderItem", "storageLocation"],  // 关联对象
+        relations: ["product", "cartonSpec", "warehouseAllocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -221,7 +216,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'shippedCartonQty' || column.property == 'receivedCartonQty') {
+          if (column.property == 'shippedCartonQty' ) {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -310,21 +305,21 @@
       search() {
         this.tableData = this.data;
       },
-
       onAll() {
         this.tableData.forEach((item, index, arr) => {
-          arr[index].receivedCartonQty = item.shippedCartonQty;
-          arr[index].receivedQty = item.shippedQty;
+          arr[index].shippedCartonQty = item.cartonQty;
+          arr[index].shippedQty = item.qty;
         });
       },
+
       onClear() {
         this.tableData.forEach((item, index, arr) => {
-          arr[index].receivedCartonQty = 0;
-          arr[index].receivedQty = 0;
+          arr[index].shippedCartonQty = 0;
+          arr[index].shippedQty = 0;
         });
       },
-      onReceivedCartonQty(row) {
-        row.receivedQty = (row.receivedCartonQty * row.numberOfCarton).toFixed(0);
+      onShippedCartonQty(row) {
+        row.shippedQty = (row.shippedCartonQty * row.numberOfCarton).toFixed(0);
       }
     }
   }

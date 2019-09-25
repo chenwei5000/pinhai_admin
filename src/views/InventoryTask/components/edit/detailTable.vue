@@ -242,7 +242,7 @@
         let url = this.url + `/taskId/${this.primary.id}`;
         let params = '';
         if (!url) {
-          console.warn('url 为空, 不发送请求')
+          console.warn('url 为空, 不发送请求');
           return
         }
         // 处理查询
@@ -254,19 +254,19 @@
           params += "&relations=" + JSON.stringify(this.relations);
         }
         // 请求开始
-        this.loading = true
+        this.loading = true;
 
         //获取数据
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data
-            let data = res || []
+            let res = resp.data;
+            let data = res || [];
 
             this.data = data;
             this.search();
-            this.total = res.length || 0
-            this.loading = false
+            this.total = res.length || 0;
+            this.loading = false;
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -278,7 +278,7 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err)
+            this.$emit('error', err);
             this.loading = false
           })
       },
@@ -291,22 +291,6 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
-      },
-      onAll() {
-        this.tableData.forEach((item, index, arr) => {
-          arr[index].checkedStock = item.warehouseStockQty;
-          arr[index].stockError = item.stockError;
-        });
-      },
-      onClear() {
-        this.tableData.forEach((item, index, arr) => {
-          arr[index].checkedStock = 0;
-          arr[index].stockError = 0;
-        });
-      },
-      onReceivedCheckedStock(row) {
-        row.stockError = (row.checkedStock - row.warehouseStockQty).toFixed(2);
-        console.log(row.stockError+"="+row.checkedStock+"*"+ row.warehouseStockQty)
       },
 
       /********************* 工具条按钮  ***************************/

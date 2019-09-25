@@ -72,11 +72,11 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="code" label="调拨单编码" width="120"></el-table-column>
       <el-table-column prop="linerShippingPlan.code" label="货柜编号" min-width="60"></el-table-column>
       <el-table-column prop="linerShippingPlan.shipmentId" label="FBA ID" min-width="100"></el-table-column>
       <el-table-column prop="linerShippingPlan.portOfLoading" label="发船港口" min-width="100"></el-table-column>
       <el-table-column prop="linerShippingPlan.categoryName" label="出口品类" min-width="200"></el-table-column>
-      <el-table-column prop="code" label="调拨单编码" width="120"></el-table-column>
       <el-table-column prop="fromWarehouseId" label="发货仓库" width="120"></el-table-column>
       <el-table-column prop="toWarehouseId" label="收货仓库" width="120"></el-table-column>
       <el-table-column prop="linerShippingPlan.destinationFulfillmentCenterId" label="收货仓库标识" width="120"></el-table-column>
@@ -326,12 +326,10 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.trackNumber.value = null;
-        this.searchParam.status.value = null;
         this.searchParam.code.value = null;
-        this.searchParam.supplierId.value = null;
-        this.searchParam.warehouseId.value = null;
-        this.searchParam.name.value = null;
+        this.searchParam.fromWarehouseId.value = null;
+        this.searchParam.toWarehouseId.value = null;
+
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))

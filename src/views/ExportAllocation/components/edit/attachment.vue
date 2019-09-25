@@ -34,7 +34,7 @@
 
     data() {
       return {
-        url: "/attachments/procurementShippedOrder",
+        url: "/attachments/linerShippingPlan",
         relations: ["creator"],
         filters: [
           {"field": "relevanceId", "op": "eq", "data": this.primary.id}

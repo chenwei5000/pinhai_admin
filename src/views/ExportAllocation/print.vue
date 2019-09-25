@@ -1,19 +1,16 @@
 <template>
   <div v-loading.fullscreen.lock="fullscreenLoading"
-       class="main-article" element-loading-text="采购入库单">
+       class="main-article" element-loading-text="调拨单">
 
     <div class="article__heading">
-      <div class="article__heading__title">采购入库单{{primary.code}}</div>
+      <div class="article__heading__title">调拨单{{primary.code}}</div>
     </div>
     <el-row style="margin-bottom: 10px">
-      <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        发货单位：{{primary.procurementOrder.supplier.name}}
+      <el-col :span="12" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
+        发货仓库：{{primary.fromWarehouse.name}}
       </el-col>
-      <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}}
-      </el-col>
-      <el-col :span="8" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        接收单位：品海科技 {{primary.warehouse.name}}
+      <el-col :span="12" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
+        收货仓库： {{primary.toWarehouse.name}}
       </el-col>
     </el-row>
 
@@ -117,7 +114,7 @@
     data() {
       return {
         primaryId: null,
-        primary: {procurementOrder: {supplier: {name: ""}}, warehouse: {name: ""}},
+        primary: {warehouseAllocation: {fromWarehouse: {name: ""}}, toWarehouse: {name: ""}},
         items: [],
         fullscreenLoading: true,
       }
@@ -136,7 +133,7 @@
           let _arr = [];
 
           //获取计划数据
-          let url = `/procurementReceivedOrders/${this.primaryId}`;
+          let url = `/warehouseAllocations/${this.primaryId}`;
           url += "?relations=" + JSON.stringify(["procurementOrder", "procurementOrder.supplier", "warehouse"]);
 
           _arr.push(this.global.axios
@@ -149,12 +146,12 @@
             })
           );
 
-          let itemsUrl = `procurementReceivedOrderItems/`
+          let itemsUrl = `warehouseAllocationItems/`
           // 处理查询
           itemsUrl += "?filters=" + JSON.stringify({
             "groupOp": "AND", "rules": [
               {
-                field: "procurementShippedOrderId",
+                field: "warehouseAllocationId",
                 op: 'eq',
                 data: this.primaryId ? this.primaryId : -1
               }
@@ -169,8 +166,8 @@
           _arr.push(this.global.axios
             .get(itemsUrl)
             .then(resp => {
-              let res = resp.data
-              let data = res || []
+              let res = resp.data;
+              let data = res || [];
               this.items = data;
             })
             .catch(err => {
