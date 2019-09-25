@@ -88,7 +88,6 @@
 
       remove(file){
         if (this.primary) {
-          ///attachments/procurementPlan/ff8080816c2e2a89016c855d7be40001?accessToken=MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg==
           let url = `${this.global.generateUrl(this.url)}/${file.id}?accessToken=${this.$store.state.user.token}`;
           this.global.axios
             .delete(url)

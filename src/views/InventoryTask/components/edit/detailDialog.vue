@@ -39,10 +39,7 @@
             </el-form-item>
           </el-col>
 
-        </el-row>
-
-        <el-row>
-          <el-col :md="10">
+          <el-col :md="14">
             <el-form-item label="价格" prop="productPrice">
               <span style="font-size: 12px">{{detailItem.price}}</span>
             </el-form-item>
@@ -75,10 +72,10 @@
     computed: {
       dialogTitle() {
         if (this.hasAdd) {
-          return "添加发货计划明细";
+          return "添加盘点任务明细";
         }
         else {
-          return "修改发货计划明细";
+          return "修改盘点任务明细";
         }
       },
       hasAdd() {

@@ -295,7 +295,7 @@
 
       /********************* 工具条按钮  ***************************/
       uploadPromise(res) {
-        let url = this.url + '';
+        let url = '/inventoryTaskItems';
         return this.global.axios.post(url, res)
           .then(resp => {
           })
@@ -348,6 +348,7 @@
           this.loading = false;
         })
       },
+
       async onToolBarImportData(excelData) {
         if (!excelData) {
           this.$message.error("导入失败!");
@@ -401,7 +402,8 @@
         });
         for (var i = 0; i < resData.length; i++) {
           //TODO 后台需要判断inventoryTaskItemId
-          resData[i].inventoryTaskItemId = this.primaryId;
+          resData[i].taskId = this.primary.id;
+          resData[i].skuCode = resData[i].productSkuCode;
           promiseArr.push(this.uploadPromise(resData[i]));
           if (promiseArr.length >= this.maxUploadCount) {
             await Promise.all(promiseArr).then(obj => {

@@ -67,7 +67,7 @@
     data() {
       return {
         // TODO 页面标题
-        title: '采购入库管理',
+        title: '出口调拨管理',
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1

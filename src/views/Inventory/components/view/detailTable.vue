@@ -229,22 +229,6 @@
       search() {
         this.tableData = this.data;
       },
-
-      onAll() {
-        this.tableData.forEach((item, index, arr) => {
-          arr[index].checkedStock = item.checkedStock;
-          arr[index].number = item.number;
-        });
-      },
-      onClear() {
-        this.tableData.forEach((item, index, arr) => {
-          arr[index].checkedStock = 0;
-          arr[index].number = 0;
-        });
-      },
-      onReceivedCheckedStock(row) {
-        row.number = (row.checkedStock - row.warehouseStock.qty).toFixed(2);
-      }
     }
   }
 </script>

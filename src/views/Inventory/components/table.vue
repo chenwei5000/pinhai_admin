@@ -49,7 +49,6 @@
       :data="data"
       :max-height="tableMaxHeight"
       v-loading="loading"
-      @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
       id="table"
     >
@@ -262,7 +261,7 @@
           if (!valid) {
             return
           }
-          this.page = 1
+          this.page = 1;
           this.getList(true);
         })
       },
@@ -271,13 +270,14 @@
       resetSearch() {
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
-        this.page = 1
+        this.page = 1;
 
         //TODO:根据实际情况调整
         this.searchParam.warehouseId.value = null;
+        this.searchParam.createTime.value = null;
 
         // 重置url
-        history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
+        history.replaceState(history.state, '', location.href.replace(queryPattern, ''));
 
         this.$nextTick(() => {
           this.getList()
@@ -437,16 +437,6 @@
         }
       },
 
-      /* 多选功能 */
-      handleSelectionChange(val) {
-        this.selected = val;
-
-        /**
-         * 多选启用时生效, 返回(selected)已选中行的数组
-         * @event selection-change
-         */
-        this.$emit('selection-change', val)
-      },
 
       /* 排序功能 */
       handleSortChange: function (column) {

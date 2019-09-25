@@ -12,7 +12,8 @@
         <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印调拨单</el-button>
       </router-link>
 
-      <el-button type="success" icon="el-icon-s-claim"  @click="onComplete" v-if="">确认发货</el-button>
+      <el-button type="success" icon="el-icon-s-claim"  @click="onComplete" v-if="primary.status === 3">确认发货</el-button>
+      <el-button type="danger" icon="el-icon-s-opportunity" v-if="primary.status === 3" @click="onStatus">修改状态</el-button>
 
       <el-button type="primary" @click="closeDialog">取 消</el-button>
     </el-row>
@@ -21,6 +22,8 @@
     <h4>附件</h4>
     <attachment ref="attachment" :primary="primary"></attachment>
     <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent"></saveDialog>
+    <phStatus statusName="LinerShippingPlanItemStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
+              :objStatus="primary.status"></phStatus>
   </el-dialog>
 
 </template>
@@ -29,11 +32,14 @@
   import itemTable from './detailTable'
   import attachment from './attachment'
   import saveDialog from './saveDialog'
+  import phStatus from '@/components/PhStatus'
+
 
   export default {
     components: {
       itemTable,
       attachment,
+      phStatus,
       saveDialog
     },
     props: {},
@@ -93,6 +99,33 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
         this.closeDialog();
+      },
+
+      // 管理员修改状态
+      onStatus() {
+        this.$refs.phStatus.openDialog();
+      },
+      saveStatusCBEvent(status) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let url = `/warehouseAllocations/status/${this.primaryId}/${status}`;
+        this.global.axios.put(url)
+          .then(resp => {
+            this.$refs.phStatus.closeDialog();
+            this.$message.info('操作成功!');
+            loading.close();
+            this.initData();
+            // 继续向父组件抛出事件 修改成功刷新列表
+            this.$emit("modifyCBEvent");
+          })
+          .catch(err => {
+            loading.close();
+          });
       },
 
       //确认发货

@@ -134,7 +134,7 @@
 
           //获取计划数据
           let url = `/warehouseAllocations/${this.primaryId}`;
-          url += "?relations=" + JSON.stringify(["procurementOrder", "procurementOrder.supplier", "warehouse"]);
+          url += "?relations=" + JSON.stringify(["team", "linerShippingPlan","fromWarehouse", "toWarehouse"]);
 
           _arr.push(this.global.axios
             .get(url)
@@ -146,7 +146,7 @@
             })
           );
 
-          let itemsUrl = `warehouseAllocationItems/`
+          let itemsUrl = `warehouseAllocationItems/`;
           // 处理查询
           itemsUrl += "?filters=" + JSON.stringify({
             "groupOp": "AND", "rules": [
