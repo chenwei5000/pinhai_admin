@@ -1,11 +1,5 @@
 <template>
   <div class="ph-form">
-
-    <el-row>
-
-
-    </el-row>
-
     <el-upload
       class="upload-demo"
       :action="uploadUrl"

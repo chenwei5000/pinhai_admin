@@ -23,6 +23,7 @@
               <el-input v-model.trim="detailItem.pdRemarks"
                         maxlength="50"
                         show-word-limit
+                        size="mini"
                         style="width: 200px" placeholder="请填写付款项目" clearable></el-input>
 
 
@@ -35,10 +36,10 @@
           <el-col :md="14">
             <el-form-item label="数量" prop="pdNumber">
 
-
               <el-input v-model.trim="detailItem.pdNumber"
                         maxlength="50"
                         show-word-limit
+                        size="mini"
                         @change="onQtyChange"
                         style="width: 200px" placeholder="数量" clearable></el-input>
 
@@ -57,6 +58,7 @@
               <el-input v-model.trim="detailItem.pdPrice"
                         maxlength="50"
                         show-word-limit
+                        size="mini"
                         @change="onQtyChange"
                         style="width: 200px" placeholder="单价" clearable></el-input>
 
@@ -69,7 +71,8 @@
 
           <el-col :md="14">
             <el-form-item label="总额" prop="pdAmount">
-              <span>{{detailItem.pdAmount, this.currency.symbolLeft | currency}}
+              <span style="font-size: 12px" v-if="detailItem.pdAmount">
+                {{detailItem.pdAmount, this.currency.symbolLeft | currency}}
               &nbsp; 大写: {{this.currency.name}} {{detailItem.pdAmount | money}}
               </span>
             </el-form-item>
@@ -79,8 +82,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog" size="mini">取 消</el-button>
     </div>
 
   </el-dialog>
@@ -101,11 +104,11 @@
     },
     computed: {
       dialogTitle() {
-        if (this.detailItem.pdNumber == null) {
-          return "添加付款项目";
+        if (this.detailItem.pdRemarks) {
+          return "修改付款项目";
         }
         else {
-          return "修改付款项目";
+          return "添加付款项目";
         }
       },
       hasEdit() {
@@ -181,7 +184,7 @@
         this.dialogVisible = false;
         this.loading = false;
         this.confirmLoading = false;
-        this.detailItem = null;
+        this.detailItem = {};
       },
 
       onQtyChange(val) {
@@ -191,6 +194,7 @@
           let pdPrice = this.detailItem.pdPrice || 0;
 
           this.detailItem.pdAmount = pdNumber * pdPrice;
+          this.$forceUpdate();
         }
       },
 

@@ -2,19 +2,6 @@
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
-
-    <!-- 表格工具条 添加、导入、导出等 -->
-    <tableToolBar
-      v-bind="toolbarConfig"
-      @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
-      @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
-      @onToolBarDownloadData="onToolBarDownloadData"
-      @onToolBarImportData="onToolBarImportData"
-    >
-    </tableToolBar>
-
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -29,46 +16,28 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'pdRemarks', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
+      <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
       </el-table-column>
 
-      <el-table-column prop="invoiceTime" label="开票日期" width="150">
+      <el-table-column prop="pdNumber" label="数量" width="150">
       </el-table-column>
 
-      <el-table-column prop="price" label="发票金额" width="150">
+      <el-table-column prop="pdPrice" label="单价" width="150">
         <template slot-scope="scope">
-          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="company" label="公司" min-width="150">
-      </el-table-column>
-
-      <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation"
-                       no-export="true"
-                       width="120" fixed="right">
+      <el-table-column prop="amount" label="金额" width="150">
         <template slot-scope="scope">
-
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
-          </el-button>
-
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-
-          </el-button>
+          {{scope.row.amount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
+
     </el-table>
-
-    <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
-    </itemDialog>
   </div>
 
 </template>
@@ -77,15 +46,9 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
-  import tableToolBar from '@/components/PhTableToolBar'
-  import itemDialog from './billDialog'
-  import moment from 'moment'
 
   export default {
-    components: {
-      tableToolBar,
-      itemDialog
-    },
+    components: {},
     props: {
       primary: {
         type: [Object],
@@ -127,6 +90,7 @@
 
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
+        financeBills: [], // 采购预付款单
 
         // 表格加载效果
         loading: false,
@@ -160,8 +124,26 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-        this.search();
-        this.loading = false;
+        if(this.primary){
+
+          let url = "/paymentDetails";
+          let filters = [
+            {"field": "procurementPaymentOrderId", "op": "eq", "data": this.primary.id}
+          ]
+          url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          url += "&sort=id&dir=asc";
+
+          this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data || [];
+              this.data = res;
+              this.search();
+              this.loading = false;
+            })
+            .catch(err => {
+            });
+        }
       },
 
       /********************* 表格相关方法  ***************************/
@@ -176,7 +158,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'costManagementTitle') {
+          if (column.property == 'pdRemarks') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -184,7 +166,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'phNumber') {
+          if (column.property == 'pdNumber') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -200,7 +182,7 @@
             }
           }
 
-          if (column.property == 'pdAmount' || column.property == 'pdPrice') {
+          if (column.property == 'amount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -225,6 +207,7 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
+        console.log(this.tableData);
       },
 
       /*本地重置搜索*/
@@ -232,99 +215,8 @@
         this.search();
       },
 
-      addInvoice(invoice) {
-        if (invoice) {
-          console.log(invoice);
-          let addFlg = true;
-          this.data.forEach(r => {
-            if (r.invoiceNumber == invoice.InvoiceCode + invoice.InvoiceNum) {
-              addFlg = false;
-            }
-          });
-
-          if (addFlg) {
-            this.data.push({
-              invoiceNumber: invoice.InvoiceCode + invoice.InvoiceNum,
-              invoiceTime: moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD"),
-              price: invoice.AmountInFiguers,
-              company: invoice.SellerName + ":" + invoice.SellerRegisterNum
-            });
-          }
-          this.search();
-        }
-      },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 行修改功能 */
-      onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row);
-      },
-
-      /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              let idx = null;
-
-              this.data.forEach((item, index) => {
-                  if (item.invoiceNumber === row.invoiceNumber) {
-                    idx = index;
-                    return;
-                  }
-                }
-              );
-              this.date = this.data.splice(idx, 1);
-              this.search();
-
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
-
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        let addFlg = true;
-
-        this.data.forEach((item, index, arr) => {
-          if (item.invoiceNumber == object.invoiceNumber) {
-            arr[index] = object;
-            addFlg = false;
-          }
-        });
-
-        if (addFlg) {
-          this.data.push(object);
-        }
-        this.data.push({});
-        this.data.pop();
-        this.search();
-      },
-
-      /********************* 工具条按钮  ***************************/
-      onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
-      },
-      onToolBarEdit() {
-
-      },
-      onToolBarDelete() {
-
-      },
-      onToolBarDownloadTpl() {
-
-      },
-      onToolBarDownloadData() {
-
-      },
-      onToolBarImportData() {
-
-      }
     }
   }
 </script>

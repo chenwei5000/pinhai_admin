@@ -39,6 +39,7 @@
               <el-input v-model.trim="detailItem.price"
                         maxlength="50"
                         show-word-limit
+                        size="mini"
                         style="width: 200px" placeholder="总额" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="单价" placement="right">
@@ -68,16 +69,16 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="说明" prop="productName">
+            <el-form-item label="公司" prop="company">
 
-              <el-input v-model.trim="detailItem.productName"
+              <el-input v-model.trim="detailItem.company"
                         maxlength="200"
                         show-word-limit
                         size="mini"
-                        style="width: 200px" placeholder="说明" clearable></el-input>
+                        style="width: 200px" placeholder="公司" clearable></el-input>
 
 
-              <el-tooltip class="item" effect="light" content="说明,发票说明" placement="right">
+              <el-tooltip class="item" effect="light" content="公司" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>

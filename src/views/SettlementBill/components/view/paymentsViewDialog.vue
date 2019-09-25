@@ -1,40 +1,38 @@
 <template>
 
-  <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
-             fullscreen>
+  <el-dialog :title="dialogTitle"
+             class="ph-dialog"
+             append-to-body
+             v-if="dialogVisible"
+             width="80%"
+             top="5vh"
+             @close='closeDialog'
+             :visible.sync="dialogVisible">
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
 
-      <el-collapse-item name="infoFrom">
-        <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
-      </el-collapse-item>
-
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 付款项</div>
+        <div slot="title" class="title">1. 付款项</div>
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
+      <el-collapse-item name="billTable" style="margin-top: 10px">
+        <div slot="title" class="title">2. 发票信息</div>
+        <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
+      </el-collapse-item>
+
       <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 发票上传</div>
+        <div slot="title" class="title">3. 发票文件</div>
         <attachment ref="attachment" @invoiceRecognitionCB="invoiceRecognitionCB" :primary="primary"
                     v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
-      <el-collapse-item name="billTable" style="margin-top: 10px">
-        <div slot="title" class="title">4. 发票信息</div>
-        <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
-      </el-collapse-item>
-
     </el-collapse>
 
-    <el-row type="flex" justify="center">
-      <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onPayment">
-        申请付款
-      </el-button>
-    </el-row>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="closeDialog">关 闭</el-button>
+    </div>
   </el-dialog>
 
 </template>
@@ -42,14 +40,12 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import infoFrom from './form'
-  import itemTable from './itemTable'
-  import billTable from './billTable'
-  import attachment from './attachment'
+  import itemTable from './paymentItemTable'
+  import billTable from './paymentBillTable'
+  import attachment from './paymentAttachment'
 
   export default {
     components: {
-      infoFrom,
       itemTable,
       billTable,
       attachment
@@ -72,8 +68,8 @@
       hasAdmin() {
         return true;
       },
-      title() {
-        return `申请付款 [${this.primary.code}]`;
+      dialogTitle() {
+        return `付款单明细[${this.primary.code}]`;
       }
     },
 
@@ -81,6 +77,7 @@
       return {
         primaryId: null,  //主ID
         primary: {}, //主对象
+
         primaryComplete: false,
         dialogVisible: false, //Dialog 是否开启
         confirmLoading: false,
@@ -98,10 +95,10 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder"];
+          let relations = ["currency"];
           //获取计划数据
           this.global.axios
-            .get(`/settlementBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
+            .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};

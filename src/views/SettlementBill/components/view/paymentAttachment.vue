@@ -3,15 +3,11 @@
 
     <el-upload
       class="upload-demo"
-      :action="uploadUrl"
+      action=""
       :on-preview="handlePreview"
-      :before-remove="beforeRemove"
-      :on-success="handleSuccess"
+      :before-remove="handleBeforeRemove"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" slot="trigger" size="small">+ 添加附件</el-button>
-
-      <el-button icon="el-icon-view" type="primary" size="small" @click="onInvoiceRecognition">发票内容识别</el-button>
 
     </el-upload>
 
@@ -40,19 +36,18 @@
         url: "/attachments/invoices",
         relations: ["creator"],
         filters: [
-          {"field": "relevanceId", "op": "eq", "data": -this.primary.id}
+          {"field": "relevanceId", "op": "eq", "data": this.primary.id}
         ],
         attachments: [],
-        invoices: [],
       }
     },
 
     created() {
+      this.initData();
     },
 
     mounted() {
       this.$nextTick(() => {
-        this.initData();
       });
     },
     methods: {
@@ -77,7 +72,6 @@
               let data = res || [];
               this.attachments = [];
               data.forEach(obj => {
-                ///attachments/linerShippingPlan/view/8a2328796ab95c3f016b027628f1002c?accessToken=NDAzRDREQ0Y3OEMzRTZDMzczMjZFOTU4NEExM0FGQUIsMg==
                 this.attachments.push({
                   id: obj.id,
                   name: obj.fileName,
@@ -87,51 +81,8 @@
             })
             .catch(err => {
             });
+
         }
-      },
-
-      remove(file) {
-        if (this.primary) {
-          ///attachments/procurementPlan/ff8080816c2e2a89016c855d7be40001?accessToken=MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg==
-          let url = `${this.global.generateUrl(this.url)}/${file.id}`;
-          this.global.axios
-            .delete(url)
-            .then(resp => {
-              this.$message.info("附件删除成功!");
-              this.initData();
-            })
-            .catch(err => {
-            });
-        }
-      },
-
-      onInvoiceRecognition() {
-
-        const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        this.invoices = [];
-
-        let promiseArr = [];
-        this.attachments.forEach(r => {
-          promiseArr.push(this.global.axios
-            .get(`/baidu/invoiceRecognition/${r.id}`)
-            .then(resp => {
-              this.invoices.push(resp.data);
-            }));
-        });
-
-        Promise.all(promiseArr).then(obj => {
-          loading.close();
-          this.$emit("invoiceRecognitionCB", this.invoices);
-        }).catch(err => {
-          loading.close();
-          this.$emit("invoiceRecognitionCB", this.invoices);
-        });
       },
 
       /********************* 操作按钮相关方法  ***************************/
@@ -143,18 +94,9 @@
       handlePreview(file) {
         window.open(file.url, '_blank');
       },
-      // 删除
-      beforeRemove(file, fileList) {
-        return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.remove(file);
-              done(true);
-            } else {
-              done(false);
-            }
-          }
-        })
+      handleBeforeRemove(file, fileList) {
+        this.$message.error("无法删除");
+        return false;
       }
     }
   }
