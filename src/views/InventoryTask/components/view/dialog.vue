@@ -24,7 +24,7 @@
     props: {},
     computed: {
       title() {
-        return '查看盘点任务  ---  [' + this.primary.warehouse.name· + ' ' + this.primary.formatLimitTime + "]";
+        return '查看盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
       }
     },
 

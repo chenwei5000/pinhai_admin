@@ -4,6 +4,7 @@
   <div class="ph-table">
 
 
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -22,28 +23,21 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
+
       <el-table-column prop="product.skuCode" label="SKU编码" width="200"></el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
-        </template>
+
       </el-table-column>
 
-      <el-table-column prop="storageLocation.code" label="货位" width="100"></el-table-column>
-      <el-table-column prop="productPrice" label="价格" width="80"></el-table-column>
+      <el-table-column prop="storageLocation.code" label="货位" width="100">DEFAULT</el-table-column>
+      <el-table-column prop="price" label="价格" width="80"></el-table-column>
       <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>-->
-      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center"></el-table-column>
-      <el-table-column prop="number" label="差量" width="90" fixed="right"></el-table-column>
+      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
+      </el-table-column>
+      <!--<el-table-column prop="stockError" label="库存误差" width="90" fixed="right">-->
+
+      <!--</el-table-column>-->
     </el-table>
   </div>
 
@@ -54,6 +48,7 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
+
 
   export default {
     components: {},
@@ -82,18 +77,20 @@
 
         //数据 TODO: 根据实际情况调整
         url: "/inventoryItems", // 资源URL
+        primaryId: '',
         filters: [
           {
-            field: "inventoryItemId",
+            field: "relevanceId",
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock","inventory","inventoryTask", "storageLocation"],  // 关联对象
+        relations: ["product", "warehouseStock", "inventoryTaskItem","inventoryTask", "storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
-        loading: false
+        loading: false,
+
       }
     },
 
@@ -105,7 +102,7 @@
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      }
+      };
 
 
       this.$nextTick(() => {
@@ -140,7 +137,6 @@
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
       },
-
 
       /*汇总数据*/
       getSummaries(param) {
@@ -179,10 +175,10 @@
 
       /*获取列表*/
       getList() {
-        let url = this.url;
+        let url = this.url + `/inventoryId/${this.primary.id}`;
         let params = '';
         if (!url) {
-          console.warn('url 为空, 不发送请求')
+          console.warn('url 为空, 不发送请求');
           return
         }
         // 处理查询
@@ -200,14 +196,13 @@
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data
-            let data = res || []
+            let res = resp.data;
+            let data = res || [];
 
             this.data = data;
             this.search();
-
-            this.total = res.length || 0
-            this.loading = false
+            this.total = res.length || 0;
+            this.loading = false;
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -219,11 +214,10 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err)
+            this.$emit('error', err);
             this.loading = false
           })
       },
-
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {

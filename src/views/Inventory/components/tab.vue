@@ -22,15 +22,15 @@
       filters() {
         if (this.type === 'inventoryLosses') {
           return {
-            'field': 'status',
-            op: 'in',
+            'field': 'type',
+            op: 'eq',
             data: 1
           }
         }
         else if (this.type === 'inventorySurplus') {
           return {
-            field: 'status',
-            op: 'in',
+            field: 'type',
+            op: 'eq',
             data: 2
           }
         }

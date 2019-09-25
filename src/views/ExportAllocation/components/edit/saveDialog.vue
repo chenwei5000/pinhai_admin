@@ -121,12 +121,7 @@
           if (!valid) {
             return false
           }
-          let _object = {};
-          let _details = [];
-          this.details.forEach(r=>{
-            _details.push({id: r.id, shippedCartonQty: r.shippedCartonQty, receivedNote: r.receivedNote});
-          });
-          _object.receivedOrderItems = _details;
+          let _object = this.primary;
 
           const loading = this.$loading({
             lock: true,

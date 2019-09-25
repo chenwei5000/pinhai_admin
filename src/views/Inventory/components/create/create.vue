@@ -85,6 +85,7 @@
 
 <script>
   import warehouseModel from '@/api/warehouse'
+  import phEnumModel from '@/api/phEnum'
   import {intArrToStrArr} from '@/utils'
   import itemTable from './table'
 
@@ -103,10 +104,7 @@
 
         // 选择框 TODO:
         warehouseSelectOptions: [],
-        typeSelection: [
-          { value: '盘亏单'},
-          { value: '盘盈单'}
-        ],
+        typeSelection: [],
         // 新对象  TODO:
         newObject: {
           warehouseId: null,
@@ -139,6 +137,7 @@
         this.loading = true;
         // 加载选择框数据
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.typeSelection = phEnumModel.getSelectOptions('InventoryStatus');
         this.loading = false;
       },
       /********************* 操作按钮相关方法  ***************************/

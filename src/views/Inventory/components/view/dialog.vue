@@ -40,7 +40,7 @@
     props: {},
     computed: {
       title() {
-        return '查看盘亏盘盈单  ---  [' + this.primary.warehouse.name + ' ' + this.primary.fromatCreateTime +  ' ' + this.primary.type+"]";
+        return '查看盘亏盘盈单  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatCreateTime +  ' ' + this.primary.type+"]";
       }
     },
 
