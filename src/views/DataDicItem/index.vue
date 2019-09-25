@@ -52,7 +52,7 @@
             {
               $type: 'input',
               $id: 'name',
-              label: '字典类型名',
+              label: '字典类型名称',
               $el: {
                 op: 'bw',
                 size:"mini",
