@@ -12,34 +12,65 @@
     >
 
       <el-row>
-        <el-col :md="12">
-          <el-form-item label="本次实付金额" prop="paymentAmount">
-
-            <el-input v-model.trim="editObject.paymentAmount"
-                      size="mini"
-                      style="width: 200px" placeholder="本次实付金额" clearable></el-input>
-
+        <el-col :md="8">
+          <el-form-item label="供货商">
+            <span style="font-size: 12px">{{this.editObject.supplier.name}}</span>
           </el-form-item>
         </el-col>
 
+        <el-col :md="8">
+          <el-form-item label="采购单编码">
+            <span style="font-size: 12px">{{this.editObject.procurementOrder.code}}</span>
+          </el-form-item>
+        </el-col>
 
-        <el-col :md="12">
-          <el-form-item label="金额大写">
-              <span style="font-size: 12px"  v-if="editObject.paymentAmount">
-                  {{this.editObject.currency.name}} {{editObject.paymentAmount | money}}
-              </span>
+        <el-col :md="8">
+          <el-form-item label="采购单名称">
+            <span style="font-size: 12px">{{this.editObject.procurementOrder.name}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :md="8">
+          <el-form-item label="结算方式">
+            <span style="font-size: 12px">{{this.editObject.procurementOrder.settlementMethodName}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="结算货币">
+            <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="最晚付款日期">
+            <span style="font-size: 12px">{{this.editObject.prepayTime | parseTime('{y}-{m}-{d}')}}</span>
           </el-form-item>
         </el-col>
 
       </el-row>
 
       <el-row>
-        <el-col>
-          <el-form-item label="备注">
-            <el-input v-model="editObject.note" type="textarea"
-                      :autosize="{minRows: 2, maxRows: 2}" style="width: 300px"></el-input>
+        <el-col :md="8">
+          <el-form-item label="申请金额">
+            <b style="font-size:12px; color:blue">{{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}</b>
           </el-form-item>
         </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="采购单总额">
+            <span style="font-size: 12px">{{this.editObject.procurementOrderAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="采购单已付金额">
+            <span style="font-size: 12px">{{this.editObject.procurementOrderPaymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          </el-form-item>
+        </el-col>
+
       </el-row>
 
     </el-form>
@@ -49,7 +80,7 @@
 
 <script>
 
-  import {currency, money, intArrToStrArr, parseTime} from '@/utils'
+  import {currency, intArrToStrArr, parseTime} from '@/utils'
   import validRules from '@/components/validRules'
 
   export default {
@@ -80,8 +111,7 @@
       }
     },
     filters: {
-      currency: currency,
-      money: money
+      currency: currency
     },
 
 
@@ -101,9 +131,8 @@
 
         // 字段验证规则 TODO:
         rules: {
-          paymentAmount: [
-            validRules.required,
-            validRules.number
+          accountId: [
+            validRules.required
           ]
         },
       }

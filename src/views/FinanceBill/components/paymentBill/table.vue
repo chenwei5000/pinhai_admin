@@ -28,7 +28,7 @@
       <el-form-item label="最晚付款时间">
         <el-date-picker
           size="mini"
-          v-model="searchParam.prepayTime.value"
+          v-model="searchParam.settlementBill_latestPaymentTime.value"
           format="yyyy-MM-dd"
           style="width: 120px"
           value-format="yyyy-MM-dd"
@@ -72,19 +72,18 @@
       @sort-change='handleSortChange'
       id="table"
     >
+      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
+      </el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
       <el-table-column prop="code" label="编号" width="130"></el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" win-width="120">
-      </el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="80">
         <template slot-scope="scope">
           <el-tag size="small"
                   :type="scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
-            ? 'success' : scope.row.status === 0
+            ? 'primary' : scope.row.status === 3
+            ? 'success' : scope.row.status === 2
             ? 'info' : ''"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
@@ -94,22 +93,26 @@
       <el-table-column prop="relevanceCode" label="采购单编码" width="130" v-if="false">
       </el-table-column>
 
+      <el-table-column prop="settlementBill.billingDate" label="结算日期" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="settlementBill.accountPeriod" label="账期" width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementBill.accountPeriod }} 天</span>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="creator.name" label="申请人" width="80">
       </el-table-column>
+
 
       <el-table-column prop="currency.name" label="付款货币" width="80">
       </el-table-column>
 
-      <el-table-column prop="prepayTime" label="最晚付款时间" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.prepayTime | parseTime('{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="settlementAmount" label="申请金额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
+      <el-table-column prop="settlementBill.procurementOrder.name" label="采购单" width="210">
       </el-table-column>
 
       <el-table-column prop="paymentAmount" label="实付金额" width="100">
@@ -118,8 +121,22 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+
+      <el-table-column prop="settlementBill.latestPaymentTime" label="最晚付款时间" width="100" fixed="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="settlementAmount" label="申请金额" width="100" fixed="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="90">
+      <el-table-column label="操作" v-if="hasOperation" width="90"  fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="scope.row.status == 1 && hasEdit" size="small" icon="el-icon-money" circle
@@ -228,11 +245,11 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/financeBills', // 资源URL
-        countUrl: '/financeBills/count', // 资源URL
-        relations: ["supplier", "currency", "creator"],  // 关联对象
+        url: '/procurementPaymentOrders', // 资源URL
+        countUrl: '/procurementPaymentOrders/count', // 资源URL
+        relations: ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"],  // 关联对象
         data: [],
-        phSort: {prop: "prepayTime", order: "asc"},
+        phSort: {prop: "settlementBill.latestPaymentTime", order: "asc"},
 
         // 表格加载效果
         loading: false,
@@ -243,7 +260,7 @@
 
         searchParam: {
           supplierId: {value: null, op: 'in', id: 'supplierId'},
-          prepayTime: {value: null, op: 'timeRange', id: 'prepayTime'},
+          settlementBill_latestPaymentTime: {value: null, op: 'timeRange', id: 'settlementBill_latestPaymentTime'},
           code: {value: null, op: 'bw', id: 'code'},
           status: {value: '1', op: 'in', id: 'status'}
         },
@@ -283,8 +300,8 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.prepayTime) {
-            this.searchParam.prepayTime.value = params.prepayTime;
+          if (params.settlementBill_latestPaymentTime) {
+            this.searchParam.settlementBill_latestPaymentTime.value = params.settlementBill_latestPaymentTime;
           }
           if (params.supplierId) {
             this.searchParam.supplierId.value = params.supplierId;
@@ -310,7 +327,7 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.statusSelectOptions = phEnumModel.getSelectOptions("FinanceBillStatus");
+        this.statusSelectOptions = phEnumModel.getSelectOptions("ProcurementPaymentOrderStatus");
         this.statusSelectOptions.unshift({label: '全部', value: null});
       },
 
@@ -352,7 +369,7 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.prepayTime.value = null;
+        this.searchParam.settlementBill_latestPaymentTime.value = null;
         this.searchParam.supplierId.value = null;
         this.searchParam.status.value = '1';
         this.searchParam.code.value = null;

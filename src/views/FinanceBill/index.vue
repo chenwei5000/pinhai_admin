@@ -17,12 +17,12 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <!--el-tab-pane name="paymentBill" lazy>
+          <el-tab-pane name="paymentBill" lazy>
             <span slot="label">
               <i class="el-icon-s-check"></i> 采购付款单
             </span>
             <keep-alive>
-              <phTab type="paymentBill" ref="paymentBill"/>
+              <paymentTab type="paymentBill" ref="paymentBill"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -45,11 +45,13 @@
 
 <script>
   import advanceTab from './components/advanceBill/tab'
+  import paymentTab from './components/paymentBill/tab'
 
   const actionFlag = 's='
   export default {
     components: {
-      advanceTab
+      advanceTab,
+      paymentTab
     },
 
     data() {

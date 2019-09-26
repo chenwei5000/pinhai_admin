@@ -24,7 +24,7 @@
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 发票文件</div>
-        <attachment ref="attachment" @invoiceRecognitionCB="invoiceRecognitionCB" :primary="primary"
+        <attachment ref="attachment" :primary="primary"
                     v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
@@ -128,105 +128,10 @@
         this.primaryComplete = false;
       },
 
-      onPayment() {
-        this.$refs.infoFrom.$refs.editObject.validate(valid => {
-            if (!valid) {
-              return false
-            }
-            let settlementBill = this.$refs.infoFrom.editObject;
-            let items = JSON.parse(JSON.stringify(this.$refs.itemTable.data));
-            let bills = JSON.parse(JSON.stringify(this.$refs.billTable.data));
-            let attachments = JSON.parse(JSON.stringify(this.$refs.attachment.attachments));
-            if (!items || items.length == 0) {
-              this.$message.error("请设置付款项目");
-              return false;
-            }
-            let payableAmount = 0;
-            items.forEach(r => {
-              payableAmount += r.pdAmount;
-            });
-            if (payableAmount < 0) {
-              this.$message.error("应付金额必须大于等于0");
-              return false;
-            }
-
-            if (!bills || bills.length == 0) {
-              this.$message.error("请设置发票信息");
-              return false;
-            }
-            if (!attachments || attachments.length == 0) {
-              this.$message.error("请上传电子版发票");
-              return false;
-            }
-            let order = {};
-            order.settlementBillId = settlementBill.id;
-            order.payableAmount = payableAmount;
-            order.collectionAccountId = settlementBill.accountId;
-            order.supplierId = settlementBill.supplierId;
-            order.currencyId = settlementBill.currencyId;
-
-            // 付款项明细
-            order.listPaymentDetail = items;
-
-            // 发票明细
-            order.listInvoice = [];
-            bills.forEach(r => {
-              r.type = 'PB';
-              order.listInvoice.push(r);
-            });
-
-            // 附件
-            order.listAttachment = [];
-            attachments.forEach(r => {
-              order.listAttachment.push({id: r.id});
-            });
-
-            this.savePaymentOrder(order);
-          }
-        );
-      },
-
-      savePaymentOrder(order) {
-        const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        this.global.axios.post('/procurementPaymentOrders', order)
-          .then(resp => {
-              let _newObject = resp.data;
-              loading.close();
-              this.$message.success('操作成功');
-              this.$emit("modifyCBEvent", _newObject);
-              this.closeDialog();
-            }
-          )
-          .catch(err => {
-            console.log(err);
-            loading.close();
-          })
-      },
-
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.$emit("modifyCBEvent", object);
-      }
-      ,
       /* 重新加载 */
       reloadCBEvent() {
         this.initData();
       },
-
-      invoiceRecognitionCB(_invoices) {
-        let invoices = JSON.parse(JSON.stringify(_invoices));
-        console.log(invoices);
-        invoices.forEach(r => {
-          this.$refs.billTable.addInvoice(r);
-        });
-      }
     }
   }
 </script>

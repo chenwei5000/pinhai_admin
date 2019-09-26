@@ -33,7 +33,7 @@
 
     data() {
       return {
-        url: "/attachments/invoices",
+        url: "/attachments/financeBill",
         relations: ["creator"],
         filters: [
           {"field": "relevanceId", "op": "eq", "data": this.primary.id}
@@ -117,12 +117,6 @@
 
   .el-form-item {
     //margin-bottom: 7px;
-  }
-
-  .ph-form {
-   /deep/ .el-upload {
-      display: none !important;
-    }
   }
 
 </style>
