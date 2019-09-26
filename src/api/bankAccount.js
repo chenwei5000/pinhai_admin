@@ -6,7 +6,7 @@ const bankAccountModel = {
 
   // 获取银行账户列表
   getBankAccounts: (pagesize = -1) => {
-    const path = '/bankAccounts?sort=accountName&order=asc';
+    const path = `/bankAccounts?sort=accountName&order=asc&relations=${JSON.stringify(["currency"])}`;
 
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
@@ -20,7 +20,7 @@ const bankAccountModel = {
         if ($res) {
           $res.forEach(obj => {
             _options.push({
-              label: obj.accountName,
+              label: obj.accountName + "-" + obj.currency.name,
               value: obj.id + ''
             });
           });

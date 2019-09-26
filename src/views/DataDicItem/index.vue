@@ -52,13 +52,14 @@
             {
               $type: 'input',
               $id: 'name',
-              label: '字典类型名',
+              label: '字典类型名称',
               $el: {
                 op: 'bw',
                 size:"mini",
                 placeholder: '请输入字典类型名称',
                 clearable: true,
                 maxlength: "40",
+                size: "mini",
                 "show-word-limit": true,
               }
             },
@@ -71,6 +72,7 @@
                 size:"mini",
                 placeholder: '请输入字典值名称',
                 clearable: true,
+                size: "mini",
                 maxlength: "40",
                 "show-word-limit": true,
               }

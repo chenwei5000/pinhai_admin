@@ -72,12 +72,13 @@
           ],
           //修改或新增
           form: [
-            phFormItems.datadic("materialName", "类型", '0', "material"),
+            phFormItems.datadic("materialName", "类型", '请选择', "material"),
             {
               $type: 'input',
               $id: 'name',
               label: '分类名称',
               $el: {
+                size:"mini",
                 placeholder: '请输入分类名称'
               },
               rules: [
@@ -89,6 +90,7 @@
               $id: 'userId',
               label: '采购负责人',
               $el: {
+                size:"mini",
                 placeholder: '请选择采购负责人,可筛选',
                 filterable: true
               },
@@ -102,6 +104,7 @@
               $id: 'harbourId',
               label: '港口',
               $el: {
+                size:"mini",
                 placeholder: '请选择港口,可筛选',
                 filterable: true
               },
@@ -116,6 +119,7 @@
               $id: 'safetyStockWeek',
               label: '安全库存(周)',
               $el: {
+                size:"mini",
                 placeholder: '分类下普通产品安全库存周数'
               },
               rules: [
@@ -127,6 +131,7 @@
               $id: 'vip1SafetyStockWeek',
               label: 'Vip1安全库存(周)',
               $el: {
+                size:"mini",
                 placeholder: '分类下热卖产品安全库存周数'
               },
               rules: [
@@ -138,6 +143,7 @@
               $id: 'vip2SafetyStockWeek',
               label: 'Vip2安全库存(周)',
               $el: {
+                size:"mini",
                 placeholder: '分类下爆款产品安全库存周数'
               },
               rules: [

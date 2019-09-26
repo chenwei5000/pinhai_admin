@@ -29,13 +29,20 @@
           },
           columns: [
             {type: 'selection'},
-            {prop: 'fullName', label: '全称', fixed: 'left', "min-width": 150},
+            {
+              prop: 'type', label: '类型',"min-width": 90,
+              formatter: row => (row.type == 1 ? '本公司' :
+                row.type == 2 ? '货代公司' :
+                row.type == 3 ? '物流公司' :
+                row.type == 4 ? '采购公司' :  row.type)
+            },
             {prop: 'abbreviation', label: '简称', "min-width": 100},
-            {prop: 'type', label: '类型',"min-width": 100},
-            {prop: 'address', label: '地址', "min-width": 100},
-            {prop: 'region', label: '区域', "min-width": 100},
+            {prop: 'fullName', label: '全称', "min-width": 200},
+            {prop: 'region', label: '管理区域', "min-width": 100},
+            {prop: 'taxNumber', label: '纳税人识别号', "min-width": 120},
             {prop: 'contact', label: '联系人', "min-width": 100},
             {prop: 'phone', label: '联系人电话', "min-width": 100},
+            {prop: 'address', label: '地址', "min-width": 200},
             phColumns.creator,
             phColumns.status,
             phColumns.id,
@@ -86,6 +93,14 @@
               ]
             },
             phFromItems.datadic("region", '管理区域', '', 'region'),
+            {
+              $type: 'input',
+              $id: 'taxNumber',
+              label: '纳税人识别号',
+              $el: {
+                placeholder: '请输入纳税人识别号'
+              },
+            },
             {
               $type: 'input',
               $id: 'contact',

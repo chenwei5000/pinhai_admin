@@ -191,7 +191,7 @@
         //数据
         url: this.type === 'unfinished' ? '/products/unfinishs' : '/products', // 资源URL
         countUrl: this.type === 'unfinished' ? '/products/countUnfinishs' : '/products/count', // 资源URL
-        relations: ["category", "supplier", "cartonSpec", "currency"],  // 关联对象
+        relations: ["category", "supplier", "cartonSpec", "currency","declareConfig"],  // 关联对象
         data: [],
         phSort: {prop: "skuCode", order: "asc"},
         loading: false,
@@ -543,12 +543,21 @@
 
         this.global.axios.get(url)
           .then(resp => {
+            let product = resp.data || {};
+            product.categoryId = product.categoryId + "";
+            product.cartonSpecId = product.cartonSpecId +"";
+            product.currencyId = product.currencyId +"";
+            product.supplierId = product.supplierId +"";
+            product.vipLevel = product.vipLevel +"";
+
+            console.log(product);
+
             let option = {
               title: '编辑产品',
               component: createFrom,
               _top_: '3vh',
-              _width_: '90%',
-              data: resp.data,
+              _width_: '80%',
+              data: product,
               callback: (val) => {
                 if (val) {
                   this.getList();

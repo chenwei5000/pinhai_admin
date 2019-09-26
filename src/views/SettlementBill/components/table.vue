@@ -121,7 +121,15 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="unpaidAmount" label="未付金额" width="100" fixed="right">
+      <el-table-column prop="unpaidApplyAmount" label="未申请金额" width="90" fixed="right">
+        <template slot-scope="scope">
+          <div style="text-align: right;">
+            {{ scope.row.unpaidApplyAmount, scope.row.currency.symbolLeft | currency }}
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="unpaidAmount" label="未付金额" width="90" fixed="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
             {{ scope.row.unpaidAmount, scope.row.currency.symbolLeft | currency }}
@@ -132,16 +140,16 @@
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          <el-button v-if="hasEdit" size="small" icon="el-icon-money" circle
+                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
+          <el-button v-if="hasView" type="primary" size="mini"
+                     id="ph-table-del" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)">
           </el-button>
         </template>
       </el-table-column>
@@ -166,8 +174,12 @@
     </el-pagination>
 
     <!--编辑对话框-->
-    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
-    </editDialog>
+    <viewDialog ref="viewDialog">
+    </viewDialog>
+
+    <!--查看对话框-->
+    <paymentDialog @modifyCBEvent="modifyCBEvent" ref="paymentDialog">
+    </paymentDialog>
 
   </div>
 
@@ -177,7 +189,8 @@
   import {mapGetters} from 'vuex'
   import {currency, parseTime} from '@/utils'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
+  import paymentDialog from './payment/dialog'
+  import viewDialog from './view/dialog'
   import supplierModel from '@/api/supplier'
 
   const valueSeparator = '~'
@@ -191,7 +204,8 @@
   export default {
 
     components: {
-      editDialog
+      paymentDialog,
+      viewDialog
     },
     props: {
       type: {
@@ -207,6 +221,16 @@
       ...mapGetters([
         'device', 'rolePower', 'rolePower'
       ]),
+
+      hasView() {
+        return true;
+      },
+      hasEdit() {
+        return true;
+      },
+      hasOperation() {
+        return this.hasView || this.hasEdit;
+      }
     },
     filters: {
       currency: currency
@@ -217,10 +241,6 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
         // 多选记录对象
         selected: [],
 
@@ -401,7 +421,7 @@
         var keys = Object.keys(amount);
         var str = '';
         for (var i = 0; i < keys.length; i++) {
-          str += currency(amount[keys[i]].price, keys[i]);
+          str += currency(amount[keys[i]].price, keys[i])  + ' ';
         }
 
         columns.forEach((column, index) => {
@@ -613,34 +633,13 @@
       /* 行编辑按钮 */
       onDefaultEdit(row) {
         // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
+        this.$refs.paymentDialog.openDialog(row.id);
       },
 
       /* 行删除按钮 */
-      onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.loading = true
-
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false
-                  this.$message.info("删除成功!");
-                  done()
-                  this.getList()
-                })
-                .catch(er => {
-                  this.loading = false
-                })
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
+      onDefaultView(row) {
+        // 弹窗
+        this.$refs.viewDialog.openDialog(row.id);
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */

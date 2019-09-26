@@ -60,6 +60,7 @@
                 placeholder: '请输入ID',
                 size:"mini",
                 maxlength: "100",
+                size: "mini",
                 "show-word-limit": true,
                 clearable: true
               }
@@ -73,6 +74,7 @@
                 size:"mini",
                 placeholder: '请输入资源标识',
                 maxlength: "20",
+                size: "mini",
                 "show-word-limit": true,
                 clearable: true
               }

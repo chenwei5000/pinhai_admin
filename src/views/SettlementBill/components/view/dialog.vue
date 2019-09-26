@@ -3,25 +3,6 @@
   <!-- 修改弹窗 TODO: title -->
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
              fullscreen>
-    <el-row
-      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
-
-      <el-button type="warning" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
-      </el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
-
-      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
-
-      <el-button type="primary" icon="el-icon-user-solid" v-if="false" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
-
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
-
-    </el-row>
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
@@ -32,30 +13,16 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购计划内容</div>
-        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
+        <div slot="title" class="title">2. 采购产品明细</div>
+        <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
-      </el-collapse-item>
-
-      <el-collapse-item name="person" style="margin-top: 10px">
-        <div slot="title" class="title">4. 指派采购负责人</div>
-        <person @reloadCBEvent="reloadCBEvent" ref="person" v-if="primaryComplete" :primary="primary"></person>
-      </el-collapse-item>
-
-      <el-collapse-item name="logs" style="margin-top: 10px">
-        <div slot="title" class="title">5. 日志</div>
-        <logs @reloadCBEvent="reloadCBEvent" ref="logs" :logs="logs" v-if="logComplete"></logs>
+      <el-collapse-item name="paymentsTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 相关付款单</div>
+        <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
       </el-collapse-item>
     </el-collapse>
 
-    <phStatus statusName="ProcurementPlanStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
-              :objStatus="primary.status"></phStatus>
-
-    <auditing ref="auditing" @saveAuditCBEvent="saveAuditCBEvent"></auditing>
   </el-dialog>
 
 </template>
@@ -64,22 +31,14 @@
 
   import {mapGetters} from 'vuex'
   import infoFrom from './form'
-  import itemTable from '../detail/table'
-  import attachment from './attachment'
-  import logs from './logs';
-  import person from './person'
-  import phStatus from '@/components/PhStatus'
-  import auditing from '@/components/PhAuditing'
+  import detailTable from './detailTable'
+  import paymentsTable from './paymentsTable'
 
   export default {
     components: {
       infoFrom,
-      itemTable,
-      attachment,
-      person,
-      phStatus,
-      auditing,
-      logs
+      detailTable,
+      paymentsTable
     },
     props: {},
     computed: {
@@ -100,7 +59,7 @@
         return true;
       },
       title() {
-        return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
+        return `结算单 [${this.primary.code}]`;
       }
     },
 
@@ -126,9 +85,10 @@
     methods: {
       initData() {
         if (this.primaryId) {
+          let relations = ["supplier", "currency", "procurementOrder"];
           //获取计划数据
           this.global.axios
-            .get(`/procurementPlans/${this.primaryId}`)
+            .get(`/settlementBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -137,32 +97,9 @@
             })
             .catch(err => {
             });
-
-          // 获取日志数据
-          let filters = [];
-          let logUrl = '/procurementPlanLogs';
-          let relations = ["creator"]
-
-          filters.push(
-            {
-              field: "procurementPlanId",
-              op: 'eq',
-              data: this.primaryId
-            })
-          logUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-          logUrl += "&sort=id&dir=desc";
-          logUrl += "&relations=" + JSON.stringify(relations);
-
-          this.global.axios
-            .get(logUrl)
-            .then(resp => {
-              let res = resp.data;
-              this.logs = res || [];
-              this.logComplete = true;
-              this.dialogVisible = true;
-            })
-            .catch(err => {
-            });
+        }
+        else {
+          this.$message.error("无效的结算单");
         }
       },
 
@@ -171,7 +108,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'attachment', 'person', 'logs'];
+        this.activeNames = ['infoFrom', 'itemTable', 'paymentsTable'];
       },
       closeDialog() {
         this.primary = {};
