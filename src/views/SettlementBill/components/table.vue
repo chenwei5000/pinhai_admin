@@ -143,7 +143,7 @@
       <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-money" circle
+          <el-button v-if="scope.row.status == 0 && hasEdit" size="small" icon="el-icon-money" circle
                      @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
