@@ -8,12 +8,12 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button slot="trigger" size="small">+ 添加附件</el-button>
+      <el-button slot="trigger" size="mini">+ 添加附件</el-button>
 
-      <el-button icon="el-icon-download" size="small" @click="downloadAmazonFeed">下载Amazon清单</el-button>
+      <el-button icon="el-icon-download" size="mini" @click="downloadAmazonFeed">下载Amazon清单</el-button>
 
       <el-dropdown @command="downloadAmazonPackageLabels">
-        <el-button icon="el-icon-download" size="small">下载Amazon箱贴</el-button>
+        <el-button icon="el-icon-download" size="mini">下载Amazon箱贴</el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="x1">一页一张</el-dropdown-item>
           <el-dropdown-item command="x6">一页六张</el-dropdown-item>
@@ -21,7 +21,7 @@
       </el-dropdown>
 
       <el-dropdown @command="downloadAmazonPalletLabels">
-        <el-button icon="el-icon-download" size="small">下载Amazon托贴</el-button>
+        <el-button icon="el-icon-download" size="mini">下载Amazon托贴</el-button>
         <el-dropdown-menu slot="dropdown" @click="downloadAmazonPalletLabels">
           <el-dropdown-item command="x1">一页一张</el-dropdown-item>
           <el-dropdown-item command="x6">一页六张</el-dropdown-item>

@@ -10,7 +10,7 @@
         {{item.user.name}}
       </el-tag>
 
-      <el-button class="button-new-tag" size="small" @click="openPersonDialog">+ 添加负责人</el-button>
+      <el-button class="button-new-tag" size="mini" @click="openPersonDialog">+ 添加负责人</el-button>
     </div>
 
     <phMembers ref="members" @saveCBEvent="saveCBEvent" title="选择负责人"></phMembers>

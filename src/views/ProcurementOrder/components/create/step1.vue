@@ -239,7 +239,7 @@
 
           <template slot-scope="scope">
 
-            <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+            <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                        @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
             </el-button>
 

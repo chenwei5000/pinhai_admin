@@ -9,7 +9,7 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" slot="trigger" size="small">+ 添加附件</el-button>
+      <el-button class="button-new-tag" slot="trigger" size="mini">+ 添加附件</el-button>
 
     </el-upload>
 

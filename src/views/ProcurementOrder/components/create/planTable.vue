@@ -69,7 +69,7 @@
 
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
-          <el-tag size="small"
+          <el-tag size="mini"
                   :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 0
             ? 'danger' : scope.row.status === 2
@@ -153,7 +153,7 @@
       <el-table-column label="操作" v-if="hasOperation" width="60" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-document-add" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-document-add" circle
                      @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 

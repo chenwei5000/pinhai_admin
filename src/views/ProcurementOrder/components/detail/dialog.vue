@@ -86,7 +86,7 @@
             <el-form-item label="装箱数" prop="numberOfCarton">
 
               <el-input-number v-model="detailItem.numberOfCarton"
-                               size="small"
+                               size="mini"
                                style="width: 200px;"
                                :precision="0"
                                :min="1"
@@ -105,7 +105,7 @@
           <el-col :md="10">
             <el-form-item label="采购箱数" prop="purchaseOrderCartonQty">
               <el-input-number v-model="detailItem.cartonQty"
-                               size="small"
+                               size="mini"
                                style="width: 200px;"
                                :precision="3"
                                :min="1"

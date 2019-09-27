@@ -7,19 +7,19 @@
 
       <el-col :md="18">
         <el-button type="primary" v-if="false" icon="el-icon-circle-plus" @click="onDefaultAdd"
-                   size="small">
+                   size="mini">
           新增
         </el-button>
 
         <el-button type="primary" icon="el-icon-circle-plus" @click="onDefaultSmart"
-                   size="small">
+                   size="mini">
           智能发柜
         </el-button>
 
       </el-col>
 
       <el-dropdown @command="onDefaultCommand" v-if="hasExportTpl || hasExport || hasImport">
-        <el-button type="primary" icon="el-icon-folder-opened" size="small">
+        <el-button type="primary" icon="el-icon-folder-opened" size="mini">
           导入导出<i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">

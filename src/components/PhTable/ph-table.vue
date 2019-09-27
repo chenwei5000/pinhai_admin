@@ -27,7 +27,7 @@
           closable
           style="margin-right:10px;"
           @close="handleTagClose(item)"
-          size="small"
+          size="mini"
           type='info'>
         <span
           style="color:#bbb"
