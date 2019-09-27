@@ -10,75 +10,73 @@
 
     <div class="ph-form">
       <!-- 编辑表单 TODO:-->
-           <el-form
-          ref="user"
-          :model="user"
-          :rules="loginRules"
-          auto-complete="on"
-          label-position="left"
-          v-loading="loading"
-          :inline-message="isInlineMessage"
-        >
-          <hr class="hr15">
-
-          <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
-            <el-form-item prop="oldPass" label="原始密码" >
+      <el-form
+        ref="user"
+        :model="user"
+        :rules="loginRules"
+        auto-complete="on"
+        label-position="left"
+        v-loading="loading"
+        :inline-message="isInlineMessage"
+      >
+        <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
+          <el-form-item prop="oldPass" label="原始密码">
               <span class="show-pwd" @click="showPwd">
                 <svg-icon :icon-class="passwordType === 'pass' ? 'eye' : 'eye-open'"/>
               </span>
-              <el-input
-                :key="passwordType"
-                ref="oldPass"
-                v-model="user.oldPass"
-                :type="passwordType"
-                :placeholder="$t('login.password')"
-                name="oldPass"
-                tabindex="2"
-                auto-complete="off"
-                @keyup.native="checkCapslock"
-                @blur="capsTooltip = false"
-                @keyup.enter.native="login"
-              />
-            </el-form-item>
-          </el-tooltip>
+            <el-input
+              :key="passwordType"
+              ref="oldPass"
+              v-model="user.oldPass"
+              :type="passwordType"
+              :placeholder="$t('login.password')"
+              name="oldPass"
+              tabindex="2"
+              auto-complete="off"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="login"
+            />
+          </el-form-item>
+        </el-tooltip>
 
-          <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
-            <el-form-item prop="newPass" label="新密码" >
-              <el-input
-                :key="passwordType"
-                ref="newPass"
-                v-model="user.newPass"
-                :type="passwordType"
-                :placeholder="$t('login.password')"
-                name="newPass"
-                tabindex="2"
-                auto-complete="off"
-                @keyup.native="checkCapslock"
-                @blur="capsTooltip = false"
-                @keyup.enter.native="login"
-              />
-            </el-form-item>
+        <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
+          <el-form-item prop="newPass" label="新密码">
+            <el-input
+              :key="passwordType"
+              ref="newPass"
+              v-model="user.newPass"
+              :type="passwordType"
+              :placeholder="$t('login.password')"
+              name="newPass"
+              tabindex="2"
+              auto-complete="off"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="login"
+            />
+          </el-form-item>
 
-          </el-tooltip>
+        </el-tooltip>
 
-          <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
-            <el-form-item prop="checkPass" label="确认密码">
-              <el-input
-                :key="passwordType"
-                ref="checkPass"
-                v-model="user.checkPass"
-                :type="passwordType"
-                :placeholder="$t('login.password')"
-                name="checkPass"
-                tabindex="2"
-                auto-complete="off"
-                @keyup.native="checkCapslock"
-                @blur="capsTooltip = false"
-                @keyup.enter.native="login"
-              />
-            </el-form-item>
-          </el-tooltip>
-        </el-form>
+        <el-tooltip v-model="capsTooltip" content="当前键盘为大写模式" placement="right" manual>
+          <el-form-item prop="checkPass" label="新密码确认">
+            <el-input
+              :key="passwordType"
+              ref="checkPass"
+              v-model="user.checkPass"
+              :type="passwordType"
+              :placeholder="$t('login.password')"
+              name="checkPass"
+              tabindex="2"
+              auto-complete="off"
+              @keyup.native="checkCapslock"
+              @blur="capsTooltip = false"
+              @keyup.enter.native="login"
+            />
+          </el-form-item>
+        </el-tooltip>
+      </el-form>
     </div>
 
     <div slot="footer" class="dialog-footer">
@@ -90,14 +88,12 @@
 </template>
 
 <script>
-  import validRules from '@/components/validRules'
   import global from '@/api/global.js'
 
 
   export default {
     components: {},
-    props: {
-    },
+    props: {},
     computed: {
       dialogTitle() {
         return "修改密码";
@@ -105,7 +101,7 @@
     },
 
     data() {
-        const validatePass = (rule, value, callback) => {
+      const validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
         } else {
@@ -132,7 +128,7 @@
         loading: false,
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
-         user: {
+        user: {
           oldPass: '',
           newPass: '',
           checkPass: ''
@@ -140,15 +136,15 @@
         loginRules: {
           oldPass: [
             {min: 6, message: '密码至少6个字符', trigger: 'blur'},
-            { validator: validatePass, trigger: 'blur' }
+            {validator: validatePass, trigger: 'blur'}
           ],
-           newPass: [
+          newPass: [
             {min: 6, message: '密码至少6个字符', trigger: 'blur'},
-            { validator: validatePass, trigger: 'blur' }
+            {validator: validatePass, trigger: 'blur'}
           ],
           checkPass: [
             {min: 6, message: '密码至少6个字符', trigger: 'blur'},
-            { validator: validatePass2, trigger: 'blur' }
+            {validator: validatePass2, trigger: 'blur'}
           ]
         },
         passwordType: 'password',
@@ -200,18 +196,18 @@
         }
       },
 
-       submitForm() {
+      submitForm() {
         this.$refs.user.validate((valid) => {
           if (valid) {
             var param = '?oldPass=' + this.user.oldPass + '&newPass=' + this.user.newPass;
-            this.loading=true;
+            this.loading = true;
             global.axios.put('users/mine/password' + param).then(resp => {
-              this.loading=false;
+              this.loading = false;
               this.$message({
                 message: '修改成功！',
                 type: 'success'
-                });
-              this.dialogVisible=false
+              });
+              this.dialogVisible = false
             })
               .catch(err => {
               })
