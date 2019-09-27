@@ -71,6 +71,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column
+        prop="note"
+        label="备注"
+        width="180">
+      </el-table-column>
+
     </el-table>
 
   </div>

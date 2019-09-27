@@ -38,6 +38,9 @@
         拒绝申请
       </el-button>
     </el-row>
+
+    <auditing ref="auditing" @saveAuditCBEvent="saveAuditCBEvent"></auditing>
+
   </el-dialog>
 
 </template>
@@ -48,12 +51,14 @@
   import infoFrom from './info'
   import paymentFrom from './form'
   import attachment from './attachment'
+  import auditing from '@/components/PhAuditing'
 
   export default {
     components: {
       infoFrom,
       attachment,
-      paymentFrom
+      paymentFrom,
+      auditing
     },
     props: {},
     computed: {
@@ -164,25 +169,35 @@
           })
       },
 
-      onRefuse(){
-        let paymentObject = JSON.parse(JSON.stringify(this.$refs.paymentFrom.editObject));
-        if(!paymentObject.note){
-          this.$message.error('拒绝申请,必须输入备注!');
-          return false;
+      onRefuse() {
+        this.$refs.auditing.openDialog('refuse');
+      },
+
+      saveAuditCBEvent(note) {
+        if (!note || note == ' ') {
+          this.$message.error("必须填写拒绝理由!");
+          return;
         }
 
-        this.$confirm('您确认要拒绝该付款申请吗？', '提示', {
+        this.$confirm("确认拒绝该付款申请吗?", '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
+
+              let paymentObject = JSON.parse(JSON.stringify(this.$refs.paymentFrom.editObject));
+              paymentObject.note = note;
+
               this.refusePaymentOrder(paymentObject);
+
               done();
             } else done()
           }
         }).catch(er => {
           /*取消*/
         })
+
       },
+
 
       refusePaymentOrder(order){
         const loading = this.$loading({
