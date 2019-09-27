@@ -143,8 +143,6 @@
        */
       initData() {
         this.loading = true;
-        console.log(this.primary);
-        console.log(1111);
         try {
           if (this.primary) {
             //获取计划数据

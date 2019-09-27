@@ -99,7 +99,6 @@
         this.param.warehouse = '';
       },
       onChange() {
-        console.log("内容是： ", this.param.category)
         let cateId = this.param.category;
         if (cateId != null) {
           this.loading = true;

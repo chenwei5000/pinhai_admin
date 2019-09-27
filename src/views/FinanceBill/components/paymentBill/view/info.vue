@@ -12,65 +12,82 @@
     >
 
       <el-row>
-        <el-col :md="8">
+        <el-col :md="6">
           <el-form-item label="供货商">
             <span style="font-size: 12px">{{this.editObject.supplier.name}}</span>
           </el-form-item>
         </el-col>
 
-        <el-col :md="8">
+        <el-col :md="6">
           <el-form-item label="采购单编码">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.code}}</span>
+            <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.code}}</span>
           </el-form-item>
         </el-col>
 
-        <el-col :md="8">
-          <el-form-item label="采购单名称">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.name}}</span>
+        <el-col :md="6">
+          <el-form-item label="采购单">
+            <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.name}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="6">
+          <el-form-item label="收货单编码">
+            <span style="font-size: 12px">{{this.editObject.settlementBill.warehouseOrderCode}}</span>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
-        <el-col :md="8">
-          <el-form-item label="结算方式">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.settlementMethodName}}</span>
+        <el-col :md="6">
+          <el-form-item label="结算日期">
+            <span style="font-size: 12px">{{this.editObject.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
           </el-form-item>
         </el-col>
 
-        <el-col :md="8">
+        <el-col :md="6">
+          <el-form-item label="最晚付款日期">
+            <span style="font-size: 12px">{{this.editObject.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}')}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="6">
+          <el-form-item label="帐期">
+            <span style="font-size: 12px">{{this.editObject.settlementBill.accountPeriod}}天</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="6">
           <el-form-item label="结算货币">
             <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
           </el-form-item>
         </el-col>
-
-        <el-col :md="8">
-          <el-form-item label="最晚付款日期">
-            <span style="font-size: 12px">{{this.editObject.prepayTime | parseTime('{y}-{m}-{d}')}}</span>
-          </el-form-item>
-        </el-col>
-
       </el-row>
 
       <el-row>
-        <el-col :md="8">
+
+        <el-col :md="6">
           <el-form-item label="申请金额">
-            <b style="font-size:12px; color:blue">{{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}</b>
+            <b style="font-size: 12px;color:blue;">{{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}</b>
           </el-form-item>
         </el-col>
 
-        <el-col :md="8">
-          <el-form-item label="采购单总额">
-            <span style="font-size: 12px">{{this.editObject.procurementOrderAmount, this.editObject.currency.symbolLeft | currency }}</span>
+        <el-col :md="6">
+          <el-form-item label="结算总额">
+            <b style="font-size: 12px;">{{this.editObject.settlementBill.settlementAmount, this.editObject.currency.symbolLeft | currency }}</b>
           </el-form-item>
         </el-col>
 
-        <el-col :md="8">
-          <el-form-item label="采购单已付金额">
-            <span style="font-size: 12px">{{this.editObject.procurementOrderPaymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
+        <el-col :md="6">
+          <el-form-item label="采购单预付款金额">
+            <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
 
+        <el-col :md="6">
+          <el-form-item label="已开票金额">
+            <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          </el-form-item>
+        </el-col>
       </el-row>
 
     </el-form>
@@ -81,7 +98,6 @@
 <script>
 
   import {currency, intArrToStrArr, parseTime} from '@/utils'
-  import validRules from '@/components/validRules'
 
   export default {
     components: {},
@@ -124,17 +140,11 @@
 
         initComplete: false,
 
-        accountSelectOptions: [],
-
         // 编辑对象 TODO
         editObject: {},
 
         // 字段验证规则 TODO:
-        rules: {
-          accountId: [
-            validRules.required
-          ]
-        },
+        rules: {},
       }
     },
 
@@ -156,11 +166,11 @@
         if (this.primary) {
           //获取计划数据
           this.editObject = JSON.parse(JSON.stringify(this.primary));
-          this.initComplete = true;
           this.loading = false;
+          this.initComplete = true;
         }
         else {
-          this.$message.error("无效的采购预付款单!");
+          this.$message.error("无效的采购计划!");
           this.loading = false;
         }
       },

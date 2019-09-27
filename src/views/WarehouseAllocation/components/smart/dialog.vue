@@ -265,7 +265,6 @@
             return false
           }
          this.detailItem.shippedQty = this.calShippedQty();
-         console.log("即将保存的对象 ", this.detailItem);
          this.$emit("modifyCBEvent", this.detailItem);
          this.closeDialog();
         })

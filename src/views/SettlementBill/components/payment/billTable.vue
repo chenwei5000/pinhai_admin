@@ -234,7 +234,6 @@
 
       addInvoice(invoice) {
         if (invoice) {
-          console.log(invoice);
           let addFlg = true;
           this.data.forEach(r => {
             if (r.invoiceNumber == invoice.InvoiceCode + invoice.InvoiceNum) {

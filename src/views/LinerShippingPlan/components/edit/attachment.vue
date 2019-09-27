@@ -164,7 +164,6 @@
       },
       // 下载托贴
       downloadAmazonPalletLabels(command) {
-        console.log(this.primary.shipmentId);
         if (!this.primary.shipmentId) {
           this.$message.error("必须优先设置FBA ID");
           return false;

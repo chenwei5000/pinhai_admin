@@ -313,7 +313,6 @@
 
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.numberOfCarton = data.numberOfCarton;
-              console.log(data);
               // 转字段
               this.detailItem.productName = data.name;
               if (data.cartonSpecId == -3) { //原料采购

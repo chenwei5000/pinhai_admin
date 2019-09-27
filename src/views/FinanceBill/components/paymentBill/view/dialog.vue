@@ -1,30 +1,52 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
-             fullscreen>
+  <el-dialog :title="title"
+             v-if="dialogVisible"
+             :visible.sync="dialogVisible"
+             class="ph-dialog"
+             @close='closeDialog'
+             fullscreen
+  >
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
 
-      <el-collapse-item name="infoFrom">
+      <el-collapse-item name="infoForm" style="margin-top: 10px">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
+        <infoForm ref="infoForm" :primary="primary" v-if="primaryComplete"></infoForm>
       </el-collapse-item>
 
-      <el-collapse-item name="itemTable" style="margin-top: 10px">
+      <el-collapse-item name="detailTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 采购产品明细</div>
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
-      <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
+
+      <el-collapse-item name="itemTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 付款项</div>
+        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="billTable" style="margin-top: 10px">
+        <div slot="title" class="title">4. 发票信息</div>
+        <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="attachment" style="margin-top: 10px">
+        <div slot="title" class="title">5. 发票文件</div>
+        <attachment ref="attachment" :primary="primary"
+                    v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">4. 相关预付款单</div>
+        <div slot="title" class="title">6. 相关预付款单</div>
         <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="orderTable" style="margin-top: 10px">
+        <div slot="title" class="title">7. 相关付款单</div>
+        <orderTable ref="orderTable" :primary="primary" v-if="primaryComplete"></orderTable>
       </el-collapse-item>
 
     </el-collapse>
@@ -36,17 +58,23 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import infoFrom from './form'
+  import infoForm from './info'
   import detailTable from './detailTable'
-  import attachment from './attachment'
   import paymentsTable from './paymentsTable'
+  import orderTable from './table'
+  import itemTable from '../../../../SettlementBill/components/view/paymentItemTable'
+  import billTable from '../../../../SettlementBill/components/view/paymentBillTable'
+  import attachment from '../../../../SettlementBill/components/view/paymentAttachment'
 
   export default {
     components: {
-      infoFrom,
-      detailTable,
+      infoForm,
+      itemTable,
+      billTable,
       attachment,
-      paymentsTable
+      detailTable,
+      paymentsTable,
+      orderTable,
     },
     props: {},
     computed: {
@@ -67,7 +95,7 @@
         return true;
       },
       title() {
-        return `预付款单 [${this.primary.code}]`;
+        return `采购付款单 [${this.primary.code}]`;
       }
     },
 
@@ -75,10 +103,9 @@
       return {
         primaryId: null,  //主ID
         primary: {}, //主对象
-        logs: [], //日志对象
         primaryComplete: false,
-        logComplete: false,
         dialogVisible: false, //Dialog 是否开启
+        confirmLoading: false,
         activeNames: [],   //折叠面板开启项
       }
     },
@@ -93,10 +120,10 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrderAmount"];
+          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"];
           //获取计划数据
           this.global.axios
-            .get(`/financeBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
+            .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -116,130 +143,19 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'paymentsTable'];
+        this.activeNames = ['infoForm', 'detailTable', 'itemTable', 'billTable', 'attachment', 'paymentsTable', 'orderTable'];
       },
       closeDialog() {
         this.primary = {};
         this.primaryId = null;
-        this.logs = [];
         this.dialogVisible = false;
         this.primaryComplete = false;
-        this.logComplete = false;
       },
 
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.$emit("modifyCBEvent", object);
-      },
       /* 重新加载 */
       reloadCBEvent() {
         this.initData();
       },
-
-      // 管理员修改状态
-      onStatus() {
-        this.$refs.phStatus.openDialog();
-      },
-      saveStatusCBEvent(status) {
-        const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        let url = `/procurementPlans/status/${this.primaryId}/${status}`;
-        this.global.axios.put(url)
-          .then(resp => {
-            this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
-            loading.close();
-            this.initData();
-            // 继续向父组件抛出事件 修改成功刷新列表
-            this.$emit("modifyCBEvent");
-          })
-          .catch(err => {
-            loading.close();
-          });
-      },
-
-      // 业务
-      business(title, bAction, message, note) {
-        this.$confirm(title, '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              const loading = this.$loading({
-                lock: true,
-                text: 'Loading',
-                spinner: 'el-icon-loading',
-                background: 'rgba(0, 0, 0, 0.7)'
-              });
-
-              let url = `/procurementPlans/${bAction}/${this.primaryId}`;
-              this.global.axios.put(url, note ? note : ' ')
-                .then(resp => {
-                  done();
-                  this.$message.info(message);
-                  loading.close();
-                  this.$refs.auditing.closeDialog();
-                  this.initData();
-                  // 继续向父组件抛出事件 修改成功刷新列表
-                  this.$emit("modifyCBEvent");
-                })
-                .catch(err => {
-                  loading.close();
-                });
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
-      },
-
-
-      // 提交审核
-      saveAuditCBEvent(note, type) {
-        //提交审核
-        if (type == 'commit') {
-          this.business('确认将该计划提交给上级审核吗?', 'commit', "提交成功,请耐心等待上级处理!", note);
-        }
-        //同意审核
-        else if (type == 'agree') {
-          this.business('确认同意该计划吗?', 'agree', "操作成功!", note);
-        }
-        //拒绝审核
-        else if (type == 'refuse') {
-          this.business('确认拒绝该计划吗?', 'refuse', "操作成功!", note);
-        }
-      },
-
-      onCommit() {
-        this.$refs.auditing.openDialog('commit');
-      },
-
-      onAgree() {
-        this.$refs.auditing.openDialog('agree');
-      },
-
-      onRefuse() {
-        this.$refs.auditing.openDialog('refuse');
-      },
-      //撤回
-      onWithdraw() {
-        this.business('确认撤回该计划吗?', 'withdraw', "操作成功!");
-      },
-      //交接
-      onHandover() {
-      },
-      //分享
-      onShare() {
-      },
-      //完成
-      onComplete() {
-      }
     }
   }
 </script>

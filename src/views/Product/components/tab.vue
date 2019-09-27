@@ -108,7 +108,6 @@
     },
     watch: {
       tableData(val) {
-        console.log("tableData", val);
       }
     },
 
@@ -129,7 +128,6 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        console.log("传给子类的编进", row)
         this.$refs.itemDialog.openDialog(row);
       },
 

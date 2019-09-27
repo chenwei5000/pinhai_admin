@@ -109,11 +109,7 @@
 
     created() {
     },
-    watch: {
-      tableData(val) {
-        console.log("tableData", val);
-      }
-    },
+    watch: {},
 
     mounted() {
       this.$nextTick(() => {

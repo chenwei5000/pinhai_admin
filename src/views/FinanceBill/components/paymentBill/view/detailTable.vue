@@ -110,7 +110,7 @@
           {
             field: "procurementOrderId",
             op: 'eq',
-            data: this.primary && this.primary.procurementOrder ? this.primary.procurementOrder.id : -1
+            data: this.primary && this.primary.settlementBill.procurementOrder ? this.primary.settlementBill.procurementOrder.id : -1
           }
         ],   //搜索对象
         relations: ["cartonSpec", "product", "product.category"],  // 关联对象

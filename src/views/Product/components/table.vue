@@ -550,8 +550,6 @@
             product.supplierId = product.supplierId +"";
             product.vipLevel = product.vipLevel +"";
 
-            console.log(product);
-
             let option = {
               title: '编辑产品',
               component: createFrom,

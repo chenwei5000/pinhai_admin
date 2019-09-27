@@ -24,7 +24,7 @@
 
       <el-table-column
         prop="code"
-        label="预付款单号"
+        label="付款单号"
         width="180">
       </el-table-column>
 
@@ -32,8 +32,8 @@
         <template slot-scope="scope">
           <el-tag size="small"
                   :type="scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
-            ? 'success' : scope.row.status === 0
+            ? 'primary' : scope.row.status === 3
+            ? 'success' : scope.row.status === 2
             ? 'info' : ''"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
@@ -41,10 +41,16 @@
       </el-table-column>
 
 
-      <el-table-column
-        prop="formatCreateTime"
-        label="申请日期"
-        width="180">
+      <el-table-column prop="settlementBill.billingDate" label="结算日期" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="settlementBill.accountPeriod" label="账期" width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementBill.accountPeriod }} 天</span>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -53,6 +59,12 @@
         width="180">
       </el-table-column>
 
+
+      <el-table-column prop="settlementBill.latestPaymentTime" label="最晚付款时间" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column
         prop="payableAmount"
@@ -69,6 +81,11 @@
         <template slot-scope="scope">
           {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, primary.currency.symbolLeft | currency}}
         </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="remark"
+        label="备注">
       </el-table-column>
 
     </el-table>
@@ -129,12 +146,16 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/financeBills",
+        url: "/procurementPaymentOrders",
         downloadUrl: "", //下载Url
         filters: [
-          {"field": "relevanceCode", "op": "eq", "data": this.primary.settlementBill.procurementOrder.code}
+          {
+            "field": "settlementBill_procurementOrderCode",
+            "op": "eq",
+            "data": this.primary.settlementBill.procurementOrder.code
+          }
         ],   //搜索对象
-        relations: ["creator"],  // 关联对象
+        relations: ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果

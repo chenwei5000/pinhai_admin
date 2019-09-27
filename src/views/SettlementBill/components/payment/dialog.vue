@@ -225,7 +225,6 @@
 
       invoiceRecognitionCB(_invoices) {
         let invoices = JSON.parse(JSON.stringify(_invoices));
-        console.log(invoices);
         invoices.forEach(r => {
           this.$refs.billTable.addInvoice(r);
         });
