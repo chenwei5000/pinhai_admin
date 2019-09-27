@@ -32,14 +32,14 @@ Vue.use(Router)
  * all roles can be accessed
  */
 export const constantRoutes = [{
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [{
-      path: '/redirect/:path*',
-      component: () => import('@/views/redirect/index')
-    }]
-  },
+  path: '/redirect',
+  component: Layout,
+  hidden: true,
+  children: [{
+    path: '/redirect/:path*',
+    component: () => import('@/views/redirect/index')
+  }]
+},
   {
     path: '/releaseLogs',
     component: () => import('../layout/components/Navbar/releaseLogs.vue'),
@@ -96,61 +96,61 @@ export const constantRoutes = [{
       }
     }]
   },
-  {
-    path: '/x`',
-    component: Layout,
-    name: 'documentation',
-    meta: {
-      title: '模版',
-      icon: 'documentation'
-    },
-    children: [{
-        path: 'table',
-        component: () => import('@/views/PhTpl/table'),
-        name: 'tableTpl',
-        meta: {
-          title: '表格模版'
-        }
-      },
-      {
-        path: 'form',
-        component: () => import('@/views/PhTpl/table'),
-        name: 'formTpl',
-        meta: {
-          title: '表单模版'
-        }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/guide/index'),
-      name: 'Guide',
-      meta: {
-        title: 'guide',
-        icon: 'guide',
-        noCache: true
-      }
-    }]
-  },
-  {
-    path: '/icon',
-    component: Layout,
-    children: [{
-      path: 'index',
-      component: () => import('@/views/icons/index'),
-      name: 'Icons',
-      meta: {
-        title: 'icons',
-        icon: 'icon',
-        noCache: true
-      }
-    }]
-  },
+  // {
+  //   path: '/x`',
+  //   component: Layout,
+  //   name: 'documentation',
+  //   meta: {
+  //     title: '模版',
+  //     icon: 'documentation'
+  //   },
+  //   children: [{
+  //       path: 'table',
+  //       component: () => import('@/views/PhTpl/table'),
+  //       name: 'tableTpl',
+  //       meta: {
+  //         title: '表格模版'
+  //       }
+  //     },
+  //     {
+  //       path: 'form',
+  //       component: () => import('@/views/PhTpl/table'),
+  //       name: 'formTpl',
+  //       meta: {
+  //         title: '表单模版'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/guide',
+  //   component: Layout,
+  //   redirect: '/guide/index',
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/guide/index'),
+  //     name: 'Guide',
+  //     meta: {
+  //       title: 'guide',
+  //       icon: 'guide',
+  //       noCache: true
+  //     }
+  //   }]
+  // },
+  // {
+  //   path: '/icon',
+  //   component: Layout,
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/icons/index'),
+  //     name: 'Icons',
+  //     meta: {
+  //       title: 'icons',
+  //       icon: 'icon',
+  //       noCache: true
+  //     }
+  //   }]
+  // },
   {
     path: '/procurementShippedOrder/print',
     component: () => import('@/views/ProcurementShippedOrder/print'),
