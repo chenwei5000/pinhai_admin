@@ -75,31 +75,6 @@
     >
     </tableToolBar>
 
-    <!--el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
-      <el-form-item>
-        <el-button v-if="hasNew" type="primary" size="small"
-                   @click="onDefaultNew" id="ph-table-add">新增
-        </el-button>
-
-        <self-loading-button v-for="(btn, i) in headerButtons"
-                             v-if="'show' in btn ? btn.show(selected) : true"
-                             :disabled="'disabled' in btn ? btn.disabled(selected) : false"
-                             :click="btn.atClick"
-                             :params="selected"
-                             :callback="getList"
-                             v-bind="btn"
-                             :key="i"
-                             size="small" id="ph-table-edit">{{btn.text}}
-        </self-loading-button>
-
-        <el-button v-if="hasSelect && hasDelete" type="danger" size="small"
-                   @click="onDefaultDelete($event)"
-                   :disabled="single ? (!selected.length || selected.length > 1) : !selected.length">删除
-        </el-button>
-
-      </el-form-item>
-    </el-form -->
-
     <!--表格-->
     <el-table
       ref="table"
@@ -107,6 +82,8 @@
       :data="data"
       :row-style="showRow"
       :max-height="tableMaxHeight"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
@@ -773,10 +750,6 @@
         phSort: null,
         defaultTableAttrs: {
           'style': "width: 100%",
-          //'cell-style': {padding: "2px 0", 'font-size': '13px'},
-          //'header-cell-style': {padding: "2px 0"},
-          "cell-class-name": "ph-cell",
-          "header-cell-class-name": "ph-cell-header",
           stripe: true,
           border: true,
           "highlight-current-row": true,
