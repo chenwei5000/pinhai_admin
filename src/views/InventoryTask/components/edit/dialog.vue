@@ -13,6 +13,8 @@
     <itemTable ref="itemTable" :primary="primary"></itemTable>
     <h4>附件</h4>
     <attachment ref="attachment" :primary="primary"></attachment>
+    <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent"></saveDialog>
+
   </el-dialog>
 
 </template>
@@ -20,11 +22,14 @@
 
   import itemTable from './detailTable'
   import attachment from './attachment'
+  import saveDialog from './saveDialog'
+
   export default {
 
     components: {
       itemTable,
       attachment,
+      saveDialog
     },
     props: {},
     computed: {
@@ -87,15 +92,8 @@
       //盘点完成
       onComplete() {
         // 明细对象
-       this.global.axios.put(`/inventoryTasks/receivedTask/${this.primary.id}`).then(resp => {
-         this.$message({
-           type: success,
-           message: "盘点成功"
-         }).catch(err => {
-
-         })
-       })
-
+        let details = this.$refs.itemTable.tableData;
+        this.$refs.saveDialog.openDialog(this.primary, details);
       },
     }
   }

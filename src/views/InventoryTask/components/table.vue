@@ -224,7 +224,7 @@
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      }
+      };
 
       // 搜索区块，根据url恢复功能
       // 恢复查询条件

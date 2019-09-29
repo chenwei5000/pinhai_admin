@@ -75,13 +75,12 @@
                            :precision="3"
                            :min="0"
                            :step="1"
-                           @change="onReceivedCheckedStock(scope.row)"
                            :max="1000000" label="请填实际库存">
           </el-input-number>
 
         </template>
       </el-table-column>
-      <!--<el-table-column prop="stockError" label="库存误差" width="90" fixed="right">-->
+      <!--<el-table-column prop="number" label="库存误差" width="90" fixed="right">-->
 
       <!--</el-table-column>-->
     </el-table>
@@ -216,7 +215,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'warehouseStock.qty' || column.property == 'checkedStock' || column.property == 'stockError') {
+          if (column.property == 'checkedStock' ) {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

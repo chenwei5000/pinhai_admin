@@ -38,7 +38,7 @@
       <!--</el-table-column>-->
 
       <el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>
-      <el-table-column prop="number" label="差量" min-width="110"></el-table-column>
+      <!--<el-table-column prop="number" label="差量" min-width="110"></el-table-column>-->
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -60,7 +60,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
     </itemDialog>
 
   </div>
@@ -112,7 +112,17 @@
     },
 
     mounted() {
+
+      //全屏，表格高度处理
+      window.onresize = () => {
+        this.getTableHeight();
+      };
+
+
       this.$nextTick(() => {
+        this.initData();
+        this.getTableHeight();
+        this.getList();
       })
     },
 
@@ -122,6 +132,72 @@
       initData() {
       },
 
+      // 获取表格的高度
+      getTableHeight() {
+        if (this.device !== 'mobile') {
+          //浏览器高度
+          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          //表格高度
+          let tableHeight = windowHeight;
+          tableHeight = tableHeight - 180;
+          this.tableMaxHeight = tableHeight;
+        }
+        else {
+          this.tableMaxHeight = 400;
+        }
+      },
+
+
+      /*获取列表*/
+      getList() {
+        let url = this.url + `/inventoryId/${this.primary.id}`;
+        let params = '';
+        if (!url) {
+          console.warn('url 为空, 不发送请求');
+          return
+        }
+        // 处理查询
+        if (this.filters && this.filters.length > 0) {
+          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
+        }
+        // 处理关联加载
+        if (this.relations && this.relations.length > 0) {
+          params += "&relations=" + JSON.stringify(this.relations);
+        }
+        // 请求开始
+        this.loading = true;
+
+        //获取数据
+        this.global.axios
+          .get(url + params)
+          .then(resp => {
+            let res = resp.data;
+            let data = res || [];
+
+            this.data = data;
+            this.search();
+            this.total = res.length || 0;
+            this.loading = false;
+            /**
+             * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
+             * @event update
+             */
+            this.$emit('update', data, res)
+          })
+          .catch(err => {
+            /**
+             * 请求数据失败，返回err对象
+             * @event error
+             */
+            this.$emit('error', err);
+            this.loading = false
+          })
+      },
+
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.getList();
+      },
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {

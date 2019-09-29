@@ -40,11 +40,8 @@
       <el-table-column prop="storageLocation.code" label="货位" width="100">DEFAULT</el-table-column>
       <el-table-column prop="price" label="价格" width="80"></el-table-column>
       <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>-->
-      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-      </el-table-column>
-      <!--<el-table-column prop="stockError" label="库存误差" width="90" fixed="right">-->
-
-      <!--</el-table-column>-->
+      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="120" > </el-table-column>
+      <!--<el-table-column prop="stockError" label="库存误差" width="90" fixed="right">--><!--</el-table-column>-->
     </el-table>
 
 
@@ -172,7 +169,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'warehouseStock.qty' || column.property == 'checkedStock' || column.property == 'stockError') {
+          if ( column.property == 'checkedStock') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

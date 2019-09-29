@@ -109,7 +109,8 @@
         newObject: {
           warehouseId: null,
           type: null,
-          comments: null
+          comments: null,
+
 
         },
         // 字段验证规则 TODO:
@@ -169,7 +170,7 @@
         });
 
         this.global.axios
-          .post("/inventories", this.newObject)
+          .post("/inventories", _order)
           .then(resp => {
             loading.close();
             this.$message.info("盘亏盘盈单创建成功");
