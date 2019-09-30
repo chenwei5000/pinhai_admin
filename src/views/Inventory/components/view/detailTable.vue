@@ -35,8 +35,8 @@
       <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件)" width="130">-->
       <!--</el-table-column>-->
 
-      <el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>
-      <!--<el-table-column prop="number" label="差量" min-width="110"></el-table-column>-->
+      <!--<el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>-->
+      <el-table-column prop="number" label="库存误差" min-width="110"></el-table-column>
     </el-table>
   </div>
 

@@ -47,9 +47,9 @@
         </el-row>
 
         <el-row>
-          <el-form-item label="实际库存" prop="checkedStock">
-            <el-input  v-model.trim="detailItem.checkedStock"
-                       style="width: 200px" placeholder="请填写实际库存" clearable>
+          <el-form-item label="库存误差" prop="number">
+            <el-input  v-model.trim="detailItem.number"
+                       style="width: 200px" placeholder="请填写库存误差" clearable>
             </el-input>
           </el-form-item>
         </el-row>
@@ -111,6 +111,7 @@
           storageLocationCode: null,
           price: null,
           checkedStock: null,
+          number: null,
         },
 
         // 字段验证规则 TODO:
