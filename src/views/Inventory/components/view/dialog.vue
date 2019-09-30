@@ -16,11 +16,6 @@
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px; padding-bottom: 5px;">
-        <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment" :primary="primary"></attachment>
-      </el-collapse-item>
-
     </el-collapse>
   </el-dialog>
 
@@ -29,18 +24,16 @@
 <script>
   import infoFrom from './form'
   import itemTable from './detailTable'
-  import attachment from './attachment'
 
   export default {
     components: {
       infoFrom,
       itemTable,
-      attachment
     },
     props: {},
     computed: {
       title() {
-        return '查看盘亏盘盈单  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatCreateTime +  ' ' + this.primary.type+"]";
+        return '[' + this.primary.warehouse.name + ' ' + this.primary.formatCreateTime +  ' ' + this.primary.type+"]";
       }
     },
 

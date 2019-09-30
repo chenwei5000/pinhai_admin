@@ -75,6 +75,7 @@
                            :precision="3"
                            :min="0"
                            :step="1"
+                           @change="onCheckedStock(scope.row)"
                            :max="1000000" label="请填实际库存">
           </el-input-number>
 
@@ -234,6 +235,23 @@
         });
 
         return sums;
+      },
+      onUpdateData(row){
+        //更新数据
+        row.skuCode = row.product.skuCode;
+        this.global.axios.put(`/inventoryTaskItems/${row.id}`, row).then(resp => {
+          this.$message({
+            type: "success",
+            message: "数据更新成功！"
+          })
+
+        }).catch(err => {
+          console.log("更新数据失败")
+        })
+      },
+
+      onCheckedStock(row) {
+        this.onUpdateData(row);
       },
 
       /*获取列表*/

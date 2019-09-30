@@ -31,8 +31,8 @@
       <el-table-column prop="productName" label="产品名" min-width="200">
       </el-table-column>
 
-      <el-table-column prop="storageLocation.name" label="货位" min-width="120">DEFAULT</el-table-column>
-      <el-table-column prop="productPrice" label="价格" min-width="80"></el-table-column>
+      <el-table-column prop="storageLocationCode" label="货位" min-width="120">DEFAULT</el-table-column>
+      <el-table-column prop="price" label="价格" min-width="80"></el-table-column>
 
       <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件)" width="130">-->
       <!--</el-table-column>-->
@@ -60,7 +60,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
     </itemDialog>
 
   </div>
@@ -120,9 +120,7 @@
 
 
       this.$nextTick(() => {
-        this.initData();
         this.getTableHeight();
-        this.getList();
       })
     },
 
@@ -147,57 +145,6 @@
         }
       },
 
-
-      /*获取列表*/
-      getList() {
-        let url = this.url + `/inventoryId/${this.primary.id}`;
-        let params = '';
-        if (!url) {
-          console.warn('url 为空, 不发送请求');
-          return
-        }
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
-        }
-        // 请求开始
-        this.loading = true;
-
-        //获取数据
-        this.global.axios
-          .get(url + params)
-          .then(resp => {
-            let res = resp.data;
-            let data = res || [];
-
-            this.data = data;
-            this.search();
-            this.total = res.length || 0;
-            this.loading = false;
-            /**
-             * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
-             * @event update
-             */
-            this.$emit('update', data, res)
-          })
-          .catch(err => {
-            /**
-             * 请求数据失败，返回err对象
-             * @event error
-             */
-            this.$emit('error', err);
-            this.loading = false
-          })
-      },
-
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.getList();
-      },
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {

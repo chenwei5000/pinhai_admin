@@ -40,10 +40,18 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="价格" prop="productPrice">
+            <el-form-item label="价格" prop="price">
               <span style="font-size: 12px">{{detailItem.price}}</span>
             </el-form-item>
           </el-col>
+        </el-row>
+
+        <el-row>
+          <el-form-item label="实际库存" prop="checkedStock">
+            <el-input  v-model.trim="detailItem.checkedStock"
+                       style="width: 200px" placeholder="请填写实际库存" clearable>
+            </el-input>
+          </el-form-item>
         </el-row>
       </el-form>
     </div>
@@ -102,6 +110,7 @@
           productName: null,
           storageLocationCode: null,
           price: null,
+          checkedStock: null,
         },
 
         // 字段验证规则 TODO:
@@ -220,32 +229,8 @@
           if (!valid) {
             return false
           }
-          console.log("detailsItme", this.detailItemId)
-          this.loading = true;
-          this.confirmLoading = true;
-          let method = 'post';
-          let url = this.url + '';
-          if (!this.detailItemId && this.detailItemId > 0) {
-            method = 'put';
-            url = `${this.url}/${this.detailItemId}`;
-          }
-
-          //转义字段
-          this.detailItem.inventoryId = this.primaryId;
-          let _object = JSON.parse(JSON.stringify(this.detailItem));
-
-          this.global.axios[method](url, _object)
-            .then(resp => {
-              this.$message.info("修改成功");
-              this.loading = false;
-              this.confirmLoading = false;
-              this.dialogVisible = false;
-              this.$emit("modifyCBEvent", resp.data);
-            })
-            .catch(err => {
-              this.loading = false;
-              this.confirmLoading = false;
-            })
+          this.$emit("modifyCBEvent", this.detailItem);
+          this.closeDialog();
         })
       }
     }

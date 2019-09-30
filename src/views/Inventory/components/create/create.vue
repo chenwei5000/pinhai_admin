@@ -26,7 +26,7 @@
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
                   :label="item.label"
-                  :value="item.value"
+                  :value='item.value'
                   :key="idx"
                 ></el-option>
               </el-select>
@@ -40,7 +40,7 @@
                 <el-option
                   v-for="(item , idx)  in typeSelection"
                   :label="item.label"
-                  :value="item.value"
+                  :value='item.value'
                   :key="idx"
                 ></el-option>
               </el-select>
@@ -138,7 +138,7 @@
         this.loading = true;
         // 加载选择框数据
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
-        this.typeSelection = phEnumModel.getSelectOptions('InventoryStatus');
+        this.typeSelection = phEnumModel.getSelectOptions('InventoryType');
         this.loading = false;
       },
       /********************* 操作按钮相关方法  ***************************/

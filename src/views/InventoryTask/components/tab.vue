@@ -25,7 +25,7 @@
             'field': 'status',
             op: 'in',
             data: 1
-          }
+        }
         }
         else if (this.type === 'complete') {
           return {

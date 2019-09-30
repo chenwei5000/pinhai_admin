@@ -24,14 +24,14 @@
           return {
             'field': 'type',
             op: 'eq',
-            data: 1
+            data: "iout"
           }
         }
         else if (this.type === 'inventorySurplus') {
           return {
             field: 'type',
             op: 'eq',
-            data: 2
+            data: "iin"
           }
         }
         else if (this.type === 'all') {

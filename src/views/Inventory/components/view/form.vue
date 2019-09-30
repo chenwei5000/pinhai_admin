@@ -60,16 +60,6 @@
       }
     },
     computed: {
-      hasEdit() {
-        // 控制按钮
-        if ([2].indexOf(this.primary.status) > -1) {
-          return false;
-        }
-        else {
-          return true;
-        }
-
-      },
     },
 
     data() {
