@@ -71,7 +71,13 @@
        * 初始化数据
        */
       initData() {
-        this.global.axios.get("/releaseLogs").then(resp => {
+        let filters = [{
+          field: 'status',
+          op: 'eq',
+          data: "1"
+        }]
+        let url = "/releaseLogs?filters= " + JSON.stringify({"groupOp": "AND", "rules": filters});
+        this.global.axios.get(url).then(resp => {
           this.logs = resp.data.reverse();
         })
       },
