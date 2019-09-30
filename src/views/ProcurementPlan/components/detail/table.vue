@@ -561,14 +561,12 @@
       onToolBarDownloadData() {
         //获取数据
         let downloadUrl = this.downloadUrl;
-
-
         import('@/vendor/Export2ExcelPinHai').then(excel => {
           this.loading = true;
           excel.export_json_url_to_excel_with_formulae({
             url: downloadUrl,
             excelField: excelConfig.excelField,
-            filename: 'test'
+            filename: `${this.primary.name}采购计划`
           });
           this.loading = false;
         })

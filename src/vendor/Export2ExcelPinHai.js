@@ -95,7 +95,6 @@ export function export_json_url_to_excel_with_formulae({
                                                          excelField = [], //字段配置
                                                          filename //导出文件名
                                                        } = {}) {
-  var ws_name = "SheetJS";
   var excel = new WorkBook();
   excelField = excelField || [];
   filename = filename || 'excel-list';
@@ -144,7 +143,7 @@ export function export_json_url_to_excel_with_formulae({
               let _obj = rowData;
 
               tmp.forEach(obj => {
-                if (_obj[obj]) {
+                if (_obj[obj] != null) {
                   _obj = _obj[obj];
                 } else {
                   _obj = '';
@@ -165,7 +164,6 @@ export function export_json_url_to_excel_with_formulae({
 
     excel.addSheet('Sheet1');
     excel.cahngeRef(`A1:${getLocation(excelField.length - 1, excelData.length + 1)}`);
-    console.log(excel);
     return excel.download(filename);
   })
     .catch(err => {
