@@ -1,7 +1,8 @@
 /* eslint-disable */
-require('script-loader!file-saver');
 import XLSX from 'xlsx'
 import global from '@/api/global'
+
+require('script-loader!file-saver');
 
 function generateArray(table) {
   var out = [];
@@ -39,7 +40,8 @@ function generateArray(table) {
             c: outRow.length + colspan - 1
           }
         });
-      };
+      }
+      ;
 
       //Handle Value
       outRow.push(cellValue !== "" ? cellValue : null);
@@ -95,6 +97,8 @@ function sheet_from_array_of_arrays(data, opts) {
         cell.v = datenum(cell.v);
       } else cell.t = 's';
 
+
+
       ws[cell_ref] = cell;
     }
   }
@@ -147,14 +151,14 @@ export function export_table_to_excel(id) {
 }
 
 export function export_json_to_excel({
-  multiHeader = [],
-  header,
-  data,
-  filename,
-  merges = [],
-  autoWidth = true,
-  bookType = 'xlsx'
-} = {}) {
+                                       multiHeader = [],
+                                       header,
+                                       data,
+                                       filename,
+                                       merges = [],
+                                       autoWidth = true,
+                                       bookType = 'xlsx'
+                                     } = {}) {
   /* original data */
   filename = filename || 'excel-list'
   data = [...data]
@@ -165,8 +169,7 @@ export function export_json_to_excel({
   }
 
   var ws_name = "SheetJS";
-  var wb = new Workbook(),
-    ws = sheet_from_array_of_arrays(data);
+  var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
 
   if (merges.length > 0) {
     if (!ws['!merges']) ws['!merges'] = [];
@@ -224,13 +227,13 @@ export function export_json_to_excel({
 
 //TODO: add By Tankai
 export function export_el_table_to_excel({
-  table, //表格对象
-  downloadUrl, //下载链接
-  filename, //导出文件名
-  noExportProps = [], //不需要导出的字段
-  tpl = false, //是否是模版
-  params,
-} = {}) {
+                                           table, //表格对象
+                                           downloadUrl, //下载链接
+                                           filename, //导出文件名
+                                           noExportProps = [], //不需要导出的字段
+                                           tpl = false, //是否是模版
+                                           params,
+                                         } = {}) {
 
   // 导出头部标题
   let tHeader = [];
@@ -301,3 +304,114 @@ export function export_el_table_to_excel({
       });
   }
 }
+
+
+//TODO: add By Tankai
+export function export_json_url_to_excel_with_formulae({
+                                                         url,  //下载链接
+                                                         excelField = [], //字段配置
+                                                         filename //导出文件名
+                                                       } = {}) {
+
+  var ws_name = "SheetJS";
+  var wb = new Workbook();
+  excelField = excelField || [];
+  filename = filename || 'excel-list';
+
+  // 写入标题
+  let header = [];
+  console.log(excelField);
+
+  excelField.forEach(r => {
+    // 去掉头尾 #
+    header.push(r.name.slice(1, -1));
+  });
+  wb.addFirstRow(header);
+
+  //let excelData = new ExcelDataClass(formatDataName);
+  //let excel = new WorkBook()
+  // 后天加载数据
+
+  let excelData = [];
+  global.axios.get(url)
+    .then(resp => {
+      console.log(resp);
+      let res = resp.data
+      excelData = res || []
+      excelData = excelData.map(v => excelField.map(j => {
+        let _val;
+        if (j.indexOf(".") > -1) {
+          let tmp = j.split(".");
+          let _obj = v;
+
+          tmp.forEach(obj => {
+            if (_obj[obj]) {
+              _obj = _obj[obj];
+            } else {
+              _obj = '';
+            }
+          });
+
+          _val = _obj;
+        } else {
+          _val = v[j];
+        }
+        return _val;
+      }));
+
+      console.log(excelData);
+    })
+    .catch(err => {
+
+    });
+
+
+  // // eslint-disable-next-line no-unused-vars
+  // let ROW = {
+  //   start: 1,
+  //   end: data.length + 1
+  // }
+  // for (let i = 0; i < data.length; i++) {
+  //   let row = i + 2;
+  //   for (let j = 0; j < firstRow.length; j++) {
+  //     const e = firstRow[j];
+  //     const name = e.name
+  //     let location = getLocation(excelData.findByName(name), row);
+  //     if (e.type === 'n' || e.type === 's') {
+  //       excel.writeCellWithValue(location, e.type, data[i][e.name.slice(1, -1)]);
+  //     } else {
+  //       // 匹配列名
+  //       let formulae = e.formulae
+  //       // console.log('e', e)
+  //       e.relation.forEach(source => {
+  //         let col = excelData.findByName(source);
+  //         let replaceStr = getLocation(col, row, e.hasRow);
+  //         formulae = replaceAll(formulae, source, replaceStr);
+  //       })
+  //       if (e.hasRow) {
+  //         // 匹配行号
+  //         let regexp = /#.*?#/g;
+  //         let allMatch = [...formulae.matchAll(regexp)];
+  //         allMatch.forEach(content => {
+  //           let rawContent = content[0]
+  //           // console.log('rawContent ', rawContent)
+  //           let evalContent = rawContent.slice(1, -1)
+  //           // eslint-disable-next-line no-eval
+  //           let value = eval(evalContent);
+  //           formulae = replaceAll(formulae, rawContent, `${value}`)
+  //         })
+  //       }
+  //
+  //       excel.writeCellWithFormulae(formulae, location);
+  //     }
+  //   }
+  // }
+  //
+  // // 更改 !ref
+  // excel.cahngeRef(`A1:${getLocation(firstRow.length - 1, data.length + 1)}`);
+  // excel.addSheet('Sheet1')
+  // return excel.download(filename)
+}
+
+
+
