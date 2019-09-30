@@ -15,7 +15,7 @@
       </el-col>
       <el-col :md="12">
         <el-form-item label="类型" prop="type">
-          <span style="font-size: 12px">{{editObject.type}}</span>
+          <span style="font-size: 12px">{{typeName}}</span>
         </el-form-item>
       </el-col>
 
@@ -60,6 +60,14 @@
       }
     },
     computed: {
+      typeName(){
+        if ( this.editObject.type == "iin"){
+          return "盘盈单";
+        }
+        if ( this.editObject.type == "iout"){
+          return "盘亏单";
+        }
+      }
     },
 
     data() {

@@ -12,7 +12,7 @@
               <i class="el-icon-circle-plus-outline"></i> 创建盘点任务
             </span>
             <keep-alive>
-              <phCreate @createCBEvent="createCBEvent"></phCreate>
+              <phCreate @createCBEvent="createCBEvent" ref= "create"></phCreate>
             </keep-alive>
           </el-tab-pane>
 
@@ -92,13 +92,11 @@
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },
+      
       /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
-      createCBEvent(objectId) {
-        if (objectId) {
-          if (this.$refs.editTable) {
-            this.$refs.editTable.onRefreshTable();
-          }
-        }
+      createCBEvent() {
+        console.log("type is ", type)
+       this.activeStatus = "inventorying";
       }
     },
 

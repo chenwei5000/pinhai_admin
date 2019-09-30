@@ -60,7 +60,7 @@
 
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onNext">
+            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
               生成盘点任务
             </el-button>
           </el-row>
@@ -153,10 +153,18 @@
           });
       },
 
+      clearData(){
+         this.newObject = {
+          limitTime: null,
+          warehouseId: null,
+          note: null,
+        }
+      },
+
       /********************* 操作按钮相关方法  ***************************/
       // 创建盘点明细  TODO:
 
-      onNext() {
+      onCreate() {
         this.$refs.create.validate(valid => {
           if (!valid) {
             return;
@@ -174,8 +182,8 @@
             .then(resp => {
               loading.close();
               this.$message.info("盘点任务创建成功");
-              this.$emit("modifyCBEvent", resp.data);
-
+              this.$emit("modifyCBEvent");
+              this.clearData();
             })
             .catch(err => {
               loading.close();

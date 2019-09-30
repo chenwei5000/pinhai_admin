@@ -72,7 +72,7 @@
         <el-col :md="24">
           <el-row type="flex" justify="center">
             <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
-              生成盘亏盘盈单
+              生成{{typeName}}
             </el-button>
           </el-row>
         </el-col>
@@ -93,6 +93,17 @@
     components: {itemTable},
     props: {},
     computed: {
+      typeName(){
+        if ( this.newObject.type == null ){
+          return "盘亏盘盈单";
+        }
+        if ( this.newObject.type == "iin"){
+          return "盘盈单";
+        }
+        if ( this.newObject.type == "iout"){
+          return "盘亏单";
+        }
+      }
     },
 
     data() {
@@ -160,7 +171,7 @@
 
       saveObject(detailItems) {
         let _order = JSON.parse(JSON.stringify(this.newObject));
-        _order.inventoryItems = detailItems;
+        _order.inventoryItemTOs = detailItems;
 
         const loading = this.$loading({
           lock: true,

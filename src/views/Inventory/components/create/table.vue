@@ -38,7 +38,7 @@
       <!--</el-table-column>-->
 
       <!--<el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>-->
-      <el-table-column prop="number" label="库存误差" min-width="110"></el-table-column>
+      <el-table-column prop="number" label="数量" min-width="110"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"

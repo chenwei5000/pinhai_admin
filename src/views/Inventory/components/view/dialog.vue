@@ -12,7 +12,9 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 盘亏盘盈明细</div>
+        <div slot="title" class="title">2. {{typeName}}明细
+
+        </div>
         <itemTable ref="itemTable" :primary="primary"></itemTable>
       </el-collapse-item>
 
@@ -33,7 +35,15 @@
     props: {},
     computed: {
       title() {
-        return '[' + this.primary.warehouse.name + ' ' + this.primary.formatCreateTime +  ' ' + this.primary.type+"]";
+        return '[' + this.primary.warehouse.name + ' ' + this.primary.formatCreateTime +  ' ' + this.typeName+"]";
+      },
+       typeName(){
+        if ( this.primary.type == "iin"){
+          return "盘盈单";
+        }
+        if ( this.primary.type == "iout"){
+          return "盘亏单";
+        }
       }
     },
 

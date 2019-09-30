@@ -47,9 +47,9 @@
         </el-row>
 
         <el-row>
-          <el-form-item label="库存误差" prop="number">
+          <el-form-item label="数量" prop="number">
             <el-input  v-model.trim="detailItem.number"
-                       style="width: 200px" placeholder="请填写库存误差" clearable>
+                       style="width: 200px" placeholder="请填写数量" clearable>
             </el-input>
           </el-form-item>
         </el-row>
