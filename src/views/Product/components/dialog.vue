@@ -36,7 +36,7 @@
           <el-col :md="14">
             <el-form-item label="数量" prop="qty">
               <el-input-number v-model="detailItem.qty"
-                               size="small"
+                               size="mini"
                                style="width: 200px;"
                                :precision="0"
                                :min="1"
@@ -56,7 +56,7 @@
           <el-col :md="10">
             <el-form-item label="损耗率" prop="attritionRate">
               <el-input-number v-model="detailItem.attritionRate"
-                               size="small"
+                               size="mini"
                                style="width: 200px;"
                                :precision="3"
                                :min="1"

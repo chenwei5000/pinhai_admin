@@ -18,7 +18,7 @@
         <search id="header-search" class="right-menu-item"/-->
 
         <!-- 刷新权限 -->
-        <Reload class="right-menu-item hover-effect" />
+        <Reload class="right-menu-item hover-effect"/>
 
 
         <!-- 错误信息列表 -->
@@ -33,12 +33,13 @@
         </el-tooltip -->
 
         <!-- 帮助 -->
-        <Help class="right-menu-item hover-effect" />
+        <Help class="right-menu-item hover-effect"/>
 
       </template>
 
       <!-- 用户登陆信息条 -->
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click" placement="top-start" @command="handleCommand">
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click" placement="top-start"
+                   @command="handleCommand">
         <div>
           <div class="avatar-wrapper">
             <img src="../../../assets/avatars/avatar.gif" class="user-avatar">
@@ -54,8 +55,8 @@
         <!--下拉菜单项 -->
         <el-dropdown-menu slot="dropdown">
 
-            <el-dropdown-item icon="el-ph-icon-cog" command="openPassDialog">修改密码</el-dropdown-item>
-            <el-dropdown-item icon="el-ph-icon-account" command="openPersonalMsgDialog">个人资料</el-dropdown-item>
+          <el-dropdown-item icon="el-ph-icon-cog" command="openPassDialog">修改密码</el-dropdown-item>
+          <el-dropdown-item icon="el-ph-icon-account" command="openPersonalMsgDialog">个人资料</el-dropdown-item>
           <router-link to="/releaseLogs" target="_blank">
             <el-dropdown-item icon="el-ph-icon-lightbulb" command="releaseLog">系统更新日志</el-dropdown-item>
           </router-link>
@@ -64,13 +65,13 @@
         </el-dropdown-menu>
       </el-dropdown>
 
-      <modifyPasswordDialog ref="modifyPasswordDialog">  </modifyPasswordDialog>
+      <modifyPasswordDialog ref="modifyPasswordDialog"></modifyPasswordDialog>
 
       <personalMsg ref="personalMsg"></personalMsg>
 
 
       <!-- 更多 -->
-      <More class="right-menu-item hover-effect" />
+      <More class="right-menu-item hover-effect"/>
 
     </div>
   </div>
@@ -111,10 +112,10 @@
       mine() {
         return this.$store.state.user.user;
       },
-    
+
       ...mapGetters([
         'sidebar',
-        'device','rolePower'
+        'device', 'rolePower'
       ])
     },
     methods: {
@@ -127,22 +128,22 @@
           await systemMode.logout();
           this.$router.push(`/login?redirect=${this.$route.fullPath}`)
         }
-        if (command == 'openPassDialog'){
-            this.openPassDialog();
+        if (command == 'openPassDialog') {
+          this.openPassDialog();
         }
-        if (command == 'openPersonalMsgDialog'){
-            this.openPersonalMsgDialog();
+        if (command == 'openPersonalMsgDialog') {
+          this.openPersonalMsgDialog();
         }
-      
-      },
-    //打开密码修改框
-    openPassDialog(){
-        this.$refs.modifyPasswordDialog.dialogVisible=true;
-    },
 
-    openPersonalMsgDialog(){
-        this.$refs.personalMsg.dialogVisible=true;
-    },
+      },
+      //打开密码修改框
+      openPassDialog() {
+        this.$refs.modifyPasswordDialog.dialogVisible = true;
+      },
+
+      openPersonalMsgDialog() {
+        this.$refs.personalMsg.dialogVisible = true;
+      },
     }
   }
 </script>

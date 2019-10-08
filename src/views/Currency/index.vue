@@ -50,12 +50,11 @@
               label: '代码',
               $el: {
                 op: 'bw',
-                placeholder: '请输入代码',
-                size:"mini",
-                style: 'height:25px',
+                size: "mini",
+                placeholder: '请输入名称',
                 clearable: true,
                 maxlength: "40",
-               c: true,
+                "show-word-limit": true,
               }
             },
             phSearchItems.status()

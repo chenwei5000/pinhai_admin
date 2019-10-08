@@ -50,6 +50,7 @@
               $el: {
                 op: 'eq',
                 size:"mini",
+                style: "width:130px",
                 placeholder: '请选择发货港口'
               }
             },
@@ -61,6 +62,7 @@
               $el: {
                 op: 'eq',
                 size:"mini",
+                style: "width:130px",
                 placeholder: '请选择物流方式'
               }
             },
@@ -72,6 +74,7 @@
               $el: {
                 op: 'eq',
                 size:"mini",
+                style: "width:130px",
                 placeholder: '请输入收货港口'
               }
             },

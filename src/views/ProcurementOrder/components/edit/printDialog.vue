@@ -463,7 +463,6 @@
           }
           let url = `${this.global.generateUrl("/pdfs/purchaseContract")}/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
           let form = this.$refs.detailItem.$el;
-          console.log(form);
           form.action = url;
           form.method = "POST";
           form.target = "_blank";

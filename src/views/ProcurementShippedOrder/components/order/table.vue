@@ -113,11 +113,11 @@
       <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-date" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-date" circle
                      @click="onDefaultEdit(scope.row)" type="primary">
           </el-button>
 
-          <el-button v-if="hasAdd" size="small" icon="el-icon-truck" circle
+          <el-button v-if="hasAdd" size="mini" icon="el-icon-truck" circle
                      @click="onDefaultAdd(scope.row)" type="success">
           </el-button>
 

@@ -27,7 +27,7 @@
     },
     computed: {
       uploadUrl() {
-        return `${this.global.generateUrl(this.url)}/uploadFiles/${-this.primary.id}?accessToken=${this.$store.state.user.token}`;
+        return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
       }
     },
 
@@ -117,6 +117,12 @@
 
   .el-form-item {
     //margin-bottom: 7px;
+  }
+
+  .ph-form {
+   /deep/ .el-upload {
+      display: none !important;
+    }
   }
 
 </style>

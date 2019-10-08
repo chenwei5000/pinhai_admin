@@ -58,7 +58,7 @@
           ],
           //  弹窗表单, 用于新增与修改
           form: [
-            phFromItems.datadicName("type", '公司类型','请选择', 'type'),
+            phFromItems.datadic("type", '公司类型','请选择', 'type'),
             {
               $type: 'input',
               $id: 'abbreviation',

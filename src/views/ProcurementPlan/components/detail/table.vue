@@ -182,7 +182,7 @@
                        width="120" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
@@ -209,6 +209,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
+  import excelConfig from './excelConfig'
 
   export default {
     components: {
@@ -290,9 +291,9 @@
           hasEdit: true,
           hasDelete: false,
           hasAdd: true,
-          hasExportTpl: true,
+          hasExportTpl: false,
           hasExport: true,
-          hasImport: false,
+          hasImport: true,
         }
       }
     },
@@ -555,33 +556,18 @@
 
       },
       onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
 
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
-            tpl: true,
-          })
-        })
       },
       onToolBarDownloadData() {
         //获取数据
-        let table = this.$refs.table;
         let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
+        import('@/vendor/Export2ExcelPinHai').then(excel => {
           this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
+          excel.export_json_url_to_excel_with_formulae({
+            url: downloadUrl,
+            excelField: excelConfig.excelField,
+            filename: `${this.primary.name}采购计划`
+          });
           this.loading = false;
         })
       },

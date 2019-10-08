@@ -24,7 +24,7 @@
         title: '安全库存配置列表',
         tableConfig: {
           url: '/safetyStockConfigs',
-          relations: ["creator","dataDicItem.type"],
+          relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },

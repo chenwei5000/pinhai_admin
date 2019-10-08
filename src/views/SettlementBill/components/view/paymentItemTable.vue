@@ -207,7 +207,6 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
-        console.log(this.tableData);
       },
 
       /*本地重置搜索*/

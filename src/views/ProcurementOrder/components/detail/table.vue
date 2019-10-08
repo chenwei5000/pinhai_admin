@@ -22,8 +22,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -106,8 +106,8 @@
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
 
       <el-table-column prop="procurementPlanItem.cartonQty" label="计划箱数" width="110"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货箱数" width="110"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货箱数" width="110"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="发货箱数" width="110"></el-table-column>
+      <el-table-column prop="receivedCartonQty" label="收货箱数" width="110"></el-table-column>
 
       <el-table-column prop="cartonQty" label="采购箱数" width="80"
                        fixed="right"></el-table-column>
@@ -137,7 +137,7 @@
 
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 

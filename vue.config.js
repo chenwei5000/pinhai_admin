@@ -61,6 +61,8 @@ module.exports = {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
+    config.externals({ './cptable': 'var cptable' })
+
     // set svg-sprite-loader
     config.module
       .rule('svg')

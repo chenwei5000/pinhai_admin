@@ -2,7 +2,7 @@
 <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
-  
+
 
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
@@ -19,11 +19,11 @@
       stripe
       border
       highlight-current-row
-      :max-height="tableMaxHeight"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+      :max-height="tableMaxHeight"
       :row-class-name="dangerClassName"
       cell-class-name="ph-cell"
       header-cell-class-name="ph-cell-header"
-      :data="tableData" 
+      :data="tableData"
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
@@ -291,7 +291,6 @@
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       openDialog(primaryId) {
-        console.log("IDyoumieyou", primaryId)
         this.primaryId = primaryId;
         this.dialogVisible = true;
         this.initData();
@@ -360,7 +359,7 @@
         let table = this.$refs.table;
         let params = '';
 
-        let downloadUrl = this.url 
+        let downloadUrl = this.url
 
         if (!downloadUrl) {
           console.warn('url 为空, 导出数据失败！')

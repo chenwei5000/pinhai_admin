@@ -69,7 +69,7 @@
             prop="address"
             label="状态">
             <template slot-scope="scope">
-              <el-tag size="small"
+              <el-tag size="mini"
                       :type="scope.row.status === 0 ? 'info' :
                       scope.row.status === 1 ? 'warning' : 'success' "
                       disable-transitions> {{ scope.row.status === 0 ? '已拒绝' : scope.row.status === 1 ? '未付款' : '已付款' }}
@@ -158,7 +158,7 @@
         <el-row>
           <el-col :md="24">
             <el-row type="flex" justify="center">
-              <el-button type="primary" style="margin-top: 10px" size="small" @click="onPayment">
+              <el-button type="primary" style="margin-top: 10px" size="mini" @click="onPayment">
                 申请
               </el-button>
             </el-row>

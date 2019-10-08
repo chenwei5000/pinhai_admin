@@ -151,9 +151,6 @@
           this.editObject = JSON.parse(JSON.stringify(this.primary));
           this.loading = false;
           this.initComplete = true;
-          console.log("11",this.editObject)
-
-
         }
         else {
           this.$message.error("无效!");

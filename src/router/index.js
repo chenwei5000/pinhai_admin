@@ -32,14 +32,14 @@ Vue.use(Router)
  * all roles can be accessed
  */
 export const constantRoutes = [{
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [{
-      path: '/redirect/:path*',
-      component: () => import('@/views/redirect/index')
-    }]
-  },
+  path: '/redirect',
+  component: Layout,
+  hidden: true,
+  children: [{
+    path: '/redirect/:path*',
+    component: () => import('@/views/Redirect/index')
+  }]
+},
   {
     path: '/releaseLogs',
     component: () => import('../layout/components/Navbar/releaseLogs.vue'),
@@ -47,17 +47,17 @@ export const constantRoutes = [{
   },
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
+    component: () => import('@/views/Login/index'),
     hidden: true
   },
   {
     path: '/register',
-    component: () => import('@/views/register/index'),
+    component: () => import('@/views/Register/index'),
     hidden: true
   },
   {
     path: '/forget',
-    component: () => import('@/views/forget/index'),
+    component: () => import('@/views/Forget/index'),
     hidden: true
   },
   {
@@ -67,17 +67,17 @@ export const constantRoutes = [{
   },
   {
     path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
+    component: () => import('@/views/Login/auth-redirect'),
     hidden: true
   },
   {
     path: '/404',
-    component: () => import('@/views/error-page/404'),
+    component: () => import('@/views/ErrorPage/404'),
     hidden: true
   },
   {
     path: '/401',
-    component: () => import('@/views/error-page/401'),
+    component: () => import('@/views/ErrorPage/401'),
     hidden: true
   },
   {
@@ -93,61 +93,6 @@ export const constantRoutes = [{
         icon: 'dashboard',
         noCache: true,
         affix: true
-      }
-    }]
-  },
-  {
-    path: '/x`',
-    component: Layout,
-    name: 'documentation',
-    meta: {
-      title: '模版',
-      icon: 'documentation'
-    },
-    children: [{
-        path: 'table',
-        component: () => import('@/views/PhTpl/table'),
-        name: 'tableTpl',
-        meta: {
-          title: '表格模版'
-        }
-      },
-      {
-        path: 'form',
-        component: () => import('@/views/PhTpl/table'),
-        name: 'formTpl',
-        meta: {
-          title: '表单模版'
-        }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/guide/index'),
-      name: 'Guide',
-      meta: {
-        title: 'guide',
-        icon: 'guide',
-        noCache: true
-      }
-    }]
-  },
-  {
-    path: '/icon',
-    component: Layout,
-    children: [{
-      path: 'index',
-      component: () => import('@/views/icons/index'),
-      name: 'Icons',
-      meta: {
-        title: 'icons',
-        icon: 'icon',
-        noCache: true
       }
     }]
   },

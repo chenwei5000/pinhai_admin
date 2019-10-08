@@ -4,13 +4,13 @@
     <div style="padding:10px">
       <div style="display:flex;align-items:center">
         <div>
-          <el-input placeholder="" v-model="value1" style="width:120px;" size="small">
+          <el-input placeholder="" v-model="value1" style="width:120px;" size="mini">
             <template slot="append">{{unit}}</template>
           </el-input>
         </div>
         <span style="padding:0 10px">至</span>
         <div>
-          <el-input placeholder="" v-model="value2" style="width:120px;" size="small">
+          <el-input placeholder="" v-model="value2" style="width:120px;" size="mini">
             <template slot="append">{{unit}}</template>
           </el-input>
         </div>

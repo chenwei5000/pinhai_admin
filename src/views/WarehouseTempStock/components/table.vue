@@ -17,8 +17,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -47,7 +47,7 @@
       <el-table-column label="操作" v-if="hasOperation" width="50" >
         <template slot-scope="scope">
           <a title="临时库存管理">
-              <el-button  v-if="hasView" size="small" icon="el-icon-view" circle
+              <el-button  v-if="hasView" size="mini" icon="el-icon-view" circle
                           @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
               </el-button>
           </a>
@@ -509,7 +509,6 @@
 
       /* 行删除按钮 */
       onDefaultDelete(row) {
-        console.log("删除了一行,ID wei : ", row.id)
        this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {

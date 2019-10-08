@@ -5,7 +5,7 @@
     <el-row class="table-tool" type="flex" justify="space-between">
       <el-col :md="18">
         <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
-                   size="small">
+                   size="mini">
           新增
         </el-button>
       </el-col>
@@ -38,7 +38,7 @@
                        width="120" fixed="right">
         <template slot-scope="scope">
 
-          <el-button size="small" icon="el-icon-edit" circle
+          <el-button size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
@@ -108,7 +108,6 @@
     },
     watch: {
       tableData(val) {
-        console.log("tableData", val);
       }
     },
 
@@ -129,7 +128,6 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        console.log("传给子类的编进", row)
         this.$refs.itemDialog.openDialog(row);
       },
 

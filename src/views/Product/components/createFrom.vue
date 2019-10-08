@@ -495,9 +495,6 @@
       this.currencySelectOptions = currencyModel.getSelectOptions();
       this.companyManagementSelectOptions = companyManagementModel.getSelectOptions();
       this.vipLevelSelectOptions = vipLevelSelectOptions;
-
-      console.log("xxxxx",this.newProduct);
-
     },
 
     mounted() {

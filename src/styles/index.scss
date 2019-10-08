@@ -227,13 +227,12 @@ aside {
     }
 
     /deep/ .ph-cell {
-      padding: 0 5px !important;
+      padding: 0 2px !important;
       font-size: 12px !important;
     }
     /deep/ .cell {
       line-height: 100% !important;
       padding: 2px !important;
-      min-height: 22px;
     }
 
     /deep/ .ph-cell-header {
@@ -245,6 +244,16 @@ aside {
     }
     /deep/ .el-table--medium th, .el-table--medium td{
       padding: 3px;
+    }
+    /deep/ .caret-wrapper{
+      height: 22px;
+      width: 14px;
+    }
+    /deep/ .sort-caret.ascending{
+      top: 0;
+    }
+    /deep/ .sort-caret.descending{
+      bottom: 0;
     }
   }
 

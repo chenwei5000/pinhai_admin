@@ -10,7 +10,7 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <el-button size="small" @click="closeDialog">取 消</el-button>
+      <el-button size="mini" @click="closeDialog">取 消</el-button>
 
     </el-row>
 

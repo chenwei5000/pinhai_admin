@@ -364,7 +364,6 @@
                 type: 'success'
                 });
               this.$router.push({path: '/login'});
-              console.log(resp)
             })
               .catch(err => {
               })

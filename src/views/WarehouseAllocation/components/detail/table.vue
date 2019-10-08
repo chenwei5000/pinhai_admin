@@ -10,8 +10,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -104,7 +104,7 @@
                        width="120" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 

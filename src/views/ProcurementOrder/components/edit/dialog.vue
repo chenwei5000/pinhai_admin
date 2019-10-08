@@ -230,7 +230,6 @@
          this.$refs.paymentDialog.openDialog(this.primary);
       },
       onPaymentCBEvent(obj){
-        console.log(obj);
         this.initData();
       },
 

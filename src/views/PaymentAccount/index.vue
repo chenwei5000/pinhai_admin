@@ -56,6 +56,7 @@
               $el: {
                 op: 'eq',
                 size:"mini",
+                filterable: true,
                 placeholder: '请选择公司'
               }
             },
