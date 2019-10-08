@@ -21,6 +21,15 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="创建时间">
+        <el-date-picker
+          size="mini"
+          v-model="searchParam.createTime.value"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
+      </el-form-item>
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
@@ -40,24 +49,11 @@
       :data="data"
       :max-height="tableMaxHeight"
       v-loading="loading"
-      @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="statusName" label="状态" width="100">
-        <template slot-scope="scope">
-          <el-tag size="mini"
-                  :type="scope.row.status === 0
-            ? 'warning' : scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
-            ? 'info' : 'success'"
-                  disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column prop="code" label="编码" width="140"></el-table-column>
       <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
-      <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
       <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
 
@@ -65,18 +61,10 @@
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
-          </el-button>
-
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="hasView" size="small" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,9 +87,6 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
-    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
-    </editDialog>
 
     <!--查看对话框-->
     <viewDialog ref="viewDialog" >
@@ -113,7 +98,6 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
   import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
   import warehouseModel from "../../../api/warehouse"
@@ -129,7 +113,6 @@
   export default {
 
     components: {
-      editDialog,
       viewDialog
     },
     props: {
@@ -147,29 +130,15 @@
         'device','rolePower','rolePower'
       ]),
 
-      hasEdit() {
-        if (this.type === 'inventorying') {
-          return true;
-        }
-        return false;
-      },
-
-      hasDelete() {
-        if (this.type === 'inventorying') {
-          return true;
-        }
-        return false;
-      },
-
       hasView() {
-        if (this.type === 'complete' || this.type === 'all') {
+        if (this.type === 'inventorySurplus' || this.type === 'inventoryLosses' ||this.type === 'all') {
           return true;
         }
         return false;
       },
 
       hasOperation() {
-        return this.hasView || this.hasEdit
+        return this.hasView
       }
     },
 
@@ -188,8 +157,8 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/inventoryTasks', // 资源URL
-        countUrl: '/inventoryTasks/count', // 资源URL
+        url: '/inventories', // 资源URL
+        countUrl: '/inventories/count', // 资源URL
         relations: ["creator","warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
@@ -202,6 +171,7 @@
 
         searchParam: {
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          createTime: {value: null, op: 'bw', id: 'createTime'},
         },
 
         //弹窗
@@ -224,7 +194,7 @@
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      };
+      }
 
       // 搜索区块，根据url恢复功能
       // 恢复查询条件
@@ -243,6 +213,9 @@
           if (params.warehouseId) {
             this.searchParam.warehouseId.value = params.warehouseId;
           }
+          if (params.createTime) {
+            this.searchParam.createTime.value = params.createTime;
+          }
         }
       }
 
@@ -257,7 +230,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryTaskStatus');
+        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryStatus');
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
 
       },
@@ -288,7 +261,7 @@
           if (!valid) {
             return
           }
-          this.page = 1
+          this.page = 1;
           this.getList(true);
         })
       },
@@ -297,13 +270,14 @@
       resetSearch() {
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
-        this.page = 1
+        this.page = 1;
 
         //TODO:根据实际情况调整
         this.searchParam.warehouseId.value = null;
+        this.searchParam.createTime.value = null;
 
         // 重置url
-        history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
+        history.replaceState(history.state, '', location.href.replace(queryPattern, ''));
 
         this.$nextTick(() => {
           this.getList()
@@ -463,16 +437,6 @@
         }
       },
 
-      /* 多选功能 */
-      handleSelectionChange(val) {
-        this.selected = val;
-
-        /**
-         * 多选启用时生效, 返回(selected)已选中行的数组
-         * @event selection-change
-         */
-        this.$emit('selection-change', val)
-      },
 
       /* 排序功能 */
       handleSortChange: function (column) {
@@ -510,11 +474,6 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 行编辑按钮 */
-      onDefaultEdit(row) {
-        // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
-      },
 
       /* 行查看按钮 */
       onDefaultView(row) {

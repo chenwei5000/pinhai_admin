@@ -23,7 +23,7 @@
         title: '出口计划历史',
         tableConfig: {
           url: '/linerShippingPlanItems/histories',
-          relations: ["cartonSpec", "linerShippingPlan", "product"],
+          relations: ["cartonSpec", "linerShippingPlan", "product", "linerShippingPlan.fromWarehouse"],
           hasNew: false,
           hasDelete: false,
           hasOperation: false,

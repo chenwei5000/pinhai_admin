@@ -21,15 +21,16 @@
                @submit.native.prevent
                v-loading="loading"
       >
-        <el-form-item label="本次盘点">
-          <span style="font-size: 12px">{{primary.allQty}}件</span>
+        <el-form-item label="本次应发：">
+          <span style="font-size: 12px">{{primary.allCartonQty}}箱, 合{{primary.allQty}}件</span>
         </el-form-item>
-        <el-form-item label="截止日期" prop="limitTime">
-          <el-date-picker
-            v-model="primary.limitTime"
-            format="yyyy-MM-dd"
-            type="date"
-            placeholder="截止日期"></el-date-picker>
+
+        <el-form-item label="编码：">
+          <span style="font-size: 12px">{{primary.code}}</span>
+        </el-form-item>
+
+        <el-form-item label="打托数量">
+          <el-input size="mini" v-model="primary.useTrayQty" style="width: 110px" placeholder="请输入打托数量"></el-input>
         </el-form-item>
 
       </el-form>
@@ -58,7 +59,7 @@
         'rolePower'
       ]),
       title() {
-        return '盘点确认';
+        return '确认发货';
       }
     },
 
@@ -71,8 +72,6 @@
         initComplete: false,
         confirmLoading: false,
         rules: {
-          receivedTime: [
-          ],
         },
       }
     },
@@ -92,11 +91,14 @@
       openDialog(primary, details) {
         this.initComplete = false;
         this.primary = primary;
-        this.primary.limitTime = new Date();
         this.details = details;
+        this.primary.useTrayQty = 0;
         this.primary.allQty = 0;
+        this.primary.allCartonQty = 0;
         this.details.forEach(r=>{
-          this.primary.allQty += r.checkedStock;
+          this.primary.useTrayQty = r.useTrayQty;
+          this.primary.allQty += r.shippedQty;
+          this.primary.allCartonQty += r.shippedCartonQty;
         });
 
         this.initData();
@@ -113,13 +115,13 @@
       onPaymentCBEvent(object) {
         this.$emit("paymentCBEvent", object);
       },
-
+      /* 打印合同 */
       onSave() {
         this.$refs.detailItem.validate(valid => {
           if (!valid) {
             return false
           }
-
+          let _object = this.primary;
 
           const loading = this.$loading({
             lock: true,
@@ -128,9 +130,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
 
-          this.global.axios.put(`/inventoryTasks/receivedTask/${this.primary.id}`)
+          this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("盘点完成");
+              this.$message.info("发货完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

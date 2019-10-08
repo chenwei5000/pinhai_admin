@@ -1,14 +1,15 @@
 <template>
   <div>
+
+
     <el-upload
       class="upload-demo"
       :action="uploadUrl"
       :on-preview="handlePreview"
-      :before-remove="beforeRemove"
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" size="mini">+ 添加附件</el-button>
+
     </el-upload>
 
   </div>
@@ -33,7 +34,7 @@
 
     data() {
       return {
-        url: "/attachments/inventoryTask",
+        url: "/attachments/linerShippingPlan",
         relations: ["creator"],
         filters: [
           {"field": "relevanceId", "op": "eq", "data": this.primary.id}
@@ -72,6 +73,7 @@
               let data = res || [];
               this.attachments = [];
               data.forEach(obj => {
+                ///attachments/linerShippingPlan/view/8a2328796ab95c3f016b027628f1002c?accessToken=NDAzRDREQ0Y3OEMzRTZDMzczMjZFOTU4NEExM0FGQUIsMg==
                 this.attachments.push({
                   id: obj.id,
                   name: obj.fileName,
@@ -86,7 +88,7 @@
 
       remove(file){
         if (this.primary) {
-          let url = `${this.global.generateUrl(this.url)}/${file.id}`;
+          let url = `${this.global.generateUrl(this.url)}/${file.id}?accessToken=${this.$store.state.user.token}`;
           this.global.axios
             .delete(url)
             .then(resp => {

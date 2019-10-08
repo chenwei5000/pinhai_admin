@@ -1,30 +1,49 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible"
-             :visible.sync="dialogVisible" style="padding-bottom: 40px"
-             class="ph-dialog" @close='closeDialog' fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
 
-    <itemTable ref="itemTable" :primary="primary"></itemTable>
-    <h4>附件</h4>
-    <attachment ref="attachment" :primary="primary"></attachment>
+    <!-- 折叠面板 -->
+    <el-collapse v-model="activeNames">
+
+      <el-collapse-item name="infoFrom">
+        <div slot="title" class="title">1. 基本信息</div>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
+      </el-collapse-item>
+
+      <el-collapse-item name="itemTable" style="margin-top: 10px">
+        <div slot="title" class="title">2. {{typeName}}明细
+
+        </div>
+        <itemTable ref="itemTable" :primary="primary"></itemTable>
+      </el-collapse-item>
+
+    </el-collapse>
   </el-dialog>
 
 </template>
+
 <script>
-
+  import infoFrom from './form'
   import itemTable from './detailTable'
-  import attachment from './attachment'
-  export default {
 
+  export default {
     components: {
+      infoFrom,
       itemTable,
-      attachment,
     },
     props: {},
     computed: {
       title() {
-        return '查看盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
+        return '[' + this.primary.warehouse.name + ' ' + this.primary.formatCreateTime +  ' ' + this.typeName+"]";
+      },
+       typeName(){
+        if ( this.primary.type == "iin"){
+          return "盘盈单";
+        }
+        if ( this.primary.type == "iout"){
+          return "盘亏单";
+        }
       }
     },
 
@@ -36,6 +55,7 @@
         activeNames: [], //折叠面板开启项
       }
     },
+
     created() {
     },
 
@@ -48,7 +68,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/inventoryTasks/${this.primaryId}?relations=${JSON.stringify(["warehouseStock","storageLocation","warehouse"])}`)
+            .get(`/inventories/${this.primaryId}?relations=${JSON.stringify(["warehouseStock","storageLocation","warehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -63,20 +83,13 @@
       openDialog(primaryId) {
         this.primaryId = primaryId;
         this.initData();
-        this.activeNames = ['infoFrom', 'itemTable'];
-      },
-      closeDialog() {
-        this.primaryId = null;
-        this.primary = {};
-        this.activeNames = [];
-        this.dialogVisible = false;
+        this.activeNames = ['infoFrom', 'itemTable', 'attachment'];
       },
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
-        this.closeDialog();
       },
     }
   }

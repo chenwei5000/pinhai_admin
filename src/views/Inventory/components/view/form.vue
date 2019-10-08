@@ -13,9 +13,21 @@
           <span style="font-size: 12px">{{editObject.code}}</span>
         </el-form-item>
       </el-col>
+      <el-col :md="12">
+        <el-form-item label="类型" prop="type">
+          <span style="font-size: 12px">{{typeName}}</span>
+        </el-form-item>
+      </el-col>
+
     </el-row>
 
     <el-row>
+      <el-col :md="12">
+        <el-form-item label="创建时间" prop="createTime">
+          <span style="font-size: 12px">{{editObject.formatCreateTime}}</span>
+        </el-form-item>
+      </el-col>
+
       <el-col :md="12">
         <el-form-item label="仓库" prop="warehouseId">
           <span style="font-size: 12px">{{editObject.warehouse.name}}</span>
@@ -24,16 +36,8 @@
     </el-row>
 
     <el-row>
-      <el-col :md="12">
-        <el-form-item label="截止日期" prop="limitTime">
-          <span style="font-size: 12px">{{editObject.formatLimitTime}}</span>
-        </el-form-item>
-      </el-col>
-    </el-row>
-
-    <el-row>
       <el-col :md="24">
-        <el-form-item label="备注" prop="remark">
+        <el-form-item label="备注" prop="comments">
           <div style="font-size: 12px" v-html="editObject.formatComments"></div>
         </el-form-item>
       </el-col>
@@ -56,16 +60,14 @@
       }
     },
     computed: {
-      hasEdit() {
-        // 控制按钮
-        if ([2].indexOf(this.primary.status) > -1) {
-          return false;
+      typeName(){
+        if ( this.editObject.type == "iin"){
+          return "盘盈单";
         }
-        else {
-          return true;
+        if ( this.editObject.type == "iout"){
+          return "盘亏单";
         }
-
-      },
+      }
     },
 
     data() {

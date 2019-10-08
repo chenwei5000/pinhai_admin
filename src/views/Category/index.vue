@@ -20,6 +20,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from '@/utils/permission'
 
 
   export default {
@@ -28,6 +29,15 @@
         title: '分类列表',
         tableConfig: {
           url: '/categories',
+          //权限控制
+          hasNew: checkPermission('CategoryResource_create'),
+          hasEdit: checkPermission('CategoryResource_update'),
+          hasDelete: checkPermission('CategoryResource_remove'),
+          hasView: checkPermission('CategoryResource_get'),
+          hasExportTpl: checkPermission('CategoryResource_export'),
+          hasExport: checkPermission('CategoryResource_export'),
+          hasImport: checkPermission('CategoryResource_import'),
+
           relations: ["creator", "user", "dataDicItem.type", "harbour"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
@@ -38,10 +48,7 @@
             {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 100},
             {prop: 'user.name', label: '采购负责人', width: 100},
-            {prop: 'harbour.name', label: '港口', width: 100},
-            {prop: 'safetyStockWeek', label: '安全库存(周)', width: 100, 'label-class-name': 'ph-header-small'},
-            {prop: 'vip1SafetyStockWeek', label: 'Vip1安全库存(周)', width: 120, 'label-class-name': 'ph-header-small'},
-            {prop: 'vip2SafetyStockWeek', label: 'Vip2安全库存(周)', width: 120, 'label-class-name': 'ph-header-small'},
+            {prop: 'harbour.name', label: '默认发货港口', width: 100},
             {
               prop: 'needMaterial',
               label: '产品必须设置原材料',
@@ -78,7 +85,7 @@
               $id: 'name',
               label: '分类名称',
               $el: {
-                size:"mini",
+                size: "mini",
                 placeholder: '请输入分类名称'
               },
               rules: [
@@ -90,7 +97,7 @@
               $id: 'userId',
               label: '采购负责人',
               $el: {
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择采购负责人,可筛选',
                 filterable: true
               },
@@ -102,9 +109,9 @@
             {
               $type: 'select',
               $id: 'harbourId',
-              label: '港口',
+              label: '默认发货港口',
               $el: {
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择港口,可筛选',
                 filterable: true
               },
@@ -114,42 +121,6 @@
               ]
             },
             phFormItems.yesOrNo('needMaterial', '产品必须设置原材料'),
-            {
-              $type: 'input',
-              $id: 'safetyStockWeek',
-              label: '安全库存(周)',
-              $el: {
-                size:"mini",
-                placeholder: '分类下普通产品安全库存周数'
-              },
-              rules: [
-                validRules.number
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'vip1SafetyStockWeek',
-              label: 'Vip1安全库存(周)',
-              $el: {
-                size:"mini",
-                placeholder: '分类下热卖产品安全库存周数'
-              },
-              rules: [
-                validRules.number
-              ]
-            },
-            {
-              $type: 'input',
-              $id: 'vip2SafetyStockWeek',
-              label: 'Vip2安全库存(周)',
-              $el: {
-                size:"mini",
-                placeholder: '分类下爆款产品安全库存周数'
-              },
-              rules: [
-                validRules.number
-              ]
-            },
             phFormItems.status()
           ],
           formAttrs: {

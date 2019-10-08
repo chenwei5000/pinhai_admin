@@ -9,31 +9,31 @@
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="create" lazy>
             <span slot="label">
-              <i class="el-icon-circle-plus-outline"></i> 创建盘点任务
+              <i class="el-icon-circle-plus-outline"></i> 创建盘亏盘盈单
             </span>
             <keep-alive>
-              <phCreate @createCBEvent="createCBEvent" ref= "create"></phCreate>
+              <create @createCBEvent="createCBEvent"></create>
             </keep-alive>
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="inventorying" lazy>
+          <el-tab-pane name="inventoryLosses" lazy>
             <span slot="label">
-              <i class="el-icon-s-check"></i> 待盘点
+              <i class="el-icon-s-check"></i> 盘亏单
             </span>
             <keep-alive>
-              <phTab type="inventorying"/>
+              <phTab type="inventoryLosses"/>
             </keep-alive>
           </el-tab-pane>
 
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="complete" lazy>
+          <el-tab-pane name="inventorySurplus" lazy>
             <span slot="label">
-              <i class="el-icon-s-claim"></i> 已盘点
+              <i class="el-icon-s-claim"></i> 盘盈单
             </span>
             <keep-alive>
-              <phTab type="complete"/>
+              <phTab type="inventorySurplus"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -57,7 +57,7 @@
 
 <script>
   import phTab from './components/tab'
-  import phCreate from './components/create'
+  import create from './components/create/create'
 
   const actionFlag = 's=';
 
@@ -65,18 +65,18 @@
 
     components: {
       phTab,
-      phCreate
+      create
     },
 
     data() {
       return {
         // TODO 页面标题
-        title: '盘点任务',
+        title: '盘亏盘盈单',
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'inventorying')
-          : 'inventorying',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'inventoryLosses')
+          : 'inventoryLosses',
       }
     },
 
@@ -88,15 +88,17 @@
       // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
         const queryFlag = '?s=';
-        const queryPath = '/m3/InventoryTask_index';
+        const queryPath = '/m3/Inventory_index';
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },
-      
       /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
-      createCBEvent() {
-        console.log("type is ", type)
-       this.activeStatus = "inventorying";
+      createCBEvent(objectId) {
+        if (objectId) {
+          if (this.$refs.editTable) {
+            this.$refs.editTable.onRefreshTable();
+          }
+        }
       }
     },
 

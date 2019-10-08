@@ -20,18 +20,18 @@
     computed: {
       // TODO: 设置默认的搜索条件
       filters() {
-        if (this.type === 'inventorying') {
+        if (this.type === 'inventoryLosses') {
           return {
-            'field': 'status',
-            op: 'in',
-            data: 1
+            'field': 'type',
+            op: 'eq',
+            data: "iout"
+          }
         }
-        }
-        else if (this.type === 'complete') {
+        else if (this.type === 'inventorySurplus') {
           return {
-            field: 'status',
-            op: 'in',
-            data: 2
+            field: 'type',
+            op: 'eq',
+            data: "iin"
           }
         }
         else if (this.type === 'all') {

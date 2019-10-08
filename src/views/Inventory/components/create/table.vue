@@ -5,7 +5,7 @@
     <el-row class="table-tool" type="flex" justify="space-between">
       <el-col :md="18">
         <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
-                   size="mini">
+                   size="small">
           新增
         </el-button>
       </el-col>
@@ -26,11 +26,19 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="materialSkuCode" label="原料SKU" sortable min-width="150" fixed="left"></el-table-column>
-      <el-table-column prop="materialName" label="原料名称" min-width="200">
+      <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
+
+      <el-table-column prop="productName" label="产品名" min-width="200">
       </el-table-column>
-      <el-table-column prop="qty" label="数量" min-width="120"></el-table-column>
-      <el-table-column prop="attritionRate" label="损耗率" min-width="80"></el-table-column>
+
+      <el-table-column prop="storageLocationCode" label="货位" min-width="120">DEFAULT</el-table-column>
+      <el-table-column prop="price" label="价格" min-width="80"></el-table-column>
+
+      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件)" width="130">-->
+      <!--</el-table-column>-->
+
+      <!--<el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>-->
+      <el-table-column prop="number" label="数量" min-width="110"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -38,7 +46,7 @@
                        width="120" fixed="right">
         <template slot-scope="scope">
 
-          <el-button size="mini" icon="el-icon-edit" circle
+          <el-button size="small" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
@@ -69,19 +77,11 @@
     components: {
       itemDialog
     },
-    props: {
-      productId: {
-        type: Number,
-        default: null
-      }
-    },
+    props: {},
     computed: {
       ...mapGetters([
         'device', 'rolePower'
       ]),
-      shippedQtyTitle() {
-        return `调拨${this.unit == '箱' ? '件' : this.unit}数`;
-      },
       hasAdd() {
         return true;
       }
@@ -100,7 +100,6 @@
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
         loading: false,
-        unit: "箱",
       }
     },
 
@@ -108,13 +107,20 @@
     },
     watch: {
       tableData(val) {
+        console.log("tableData", val);
       }
     },
 
     mounted() {
-      this.initData();
+
+      //全屏，表格高度处理
+      window.onresize = () => {
+        this.getTableHeight();
+      };
+
+
       this.$nextTick(() => {
-        this.initData();
+        this.getTableHeight();
       })
     },
 
@@ -122,7 +128,21 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
-        console.log("=====>",this.productId);
+      },
+
+      // 获取表格的高度
+      getTableHeight() {
+        if (this.device !== 'mobile') {
+          //浏览器高度
+          let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+          //表格高度
+          let tableHeight = windowHeight;
+          tableHeight = tableHeight - 180;
+          this.tableMaxHeight = tableHeight;
+        }
+        else {
+          this.tableMaxHeight = 400;
+        }
       },
 
       /********************* 操作按钮相关方法  ***************************/
@@ -131,9 +151,6 @@
         this.$refs.itemDialog.openDialog(row);
       },
 
-      onSmart(row) {
-        this.tableData[0].cartonSpecCode = "aaaa1";
-      },
       /* 行删除功能 */
       onDefaultDelete(index) {
         this.$confirm('确认删除吗', '提示', {
@@ -151,44 +168,20 @@
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
-        console.log("==>>", this.productId);
-
-        if (this.productId) {
-          object.productId = this.productId;
-          this.global.axios.post(`/productToMaterials`, object)
-            .then(resp => {
-              this.$message({type: 'success', message: '原料编辑成功'});
-              let flag = true; //是否存在此SKU的产品
-              this.tableData.forEach((item, index, arr) => {
-                if (item.materialSkuCode === object.materialSkuCode) {
-                  arr[index] = object;
-                  flag = false;
-                }
-              });
-              if (flag) {
-                this.tableData.push(object);
-              }
-              this.tableData.push({});
-              this.tableData.pop();
-            })
-            .catch(err => {
-
-            })
-        }
-        else {
-          let flag = true; //是否存在此SKU的产品
-          this.tableData.forEach((item, index, arr) => {
-            if (item.materialSkuCode === object.materialSkuCode) {
-              arr[index] = object;
-              flag = false;
-            }
-          });
-          if (flag) {
-            this.tableData.push(object);
+        let flag = true; //是否存在此SKU的产品
+        let idx = null;
+        let _tmp = JSON.parse(JSON.stringify(this.tableData));
+        this.tableData.forEach((item, index, arr) => {
+          if (item.skuCode === object.skuCode) {
+            arr[index] = object;
+            flag = false;
           }
-          this.tableData.push({});
-          this.tableData.pop();
+        });
+        if (flag) {
+          this.tableData.push(object);
         }
+        this.tableData.push({});
+        this.tableData.pop();
 
       },
 

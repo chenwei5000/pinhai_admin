@@ -6,23 +6,41 @@
              :model="newObject"
              status-icon
              inline
-             ref="create"
+             inline-message
+             ref="newObject"
              label-position="right"
              label-width="120px"
              v-loading="loading"
-             inline-message
     >
 
       <fieldset class="panel-heading">
 
+        <legend class="panel-title">盘亏盘盈单
+        </legend>
+
         <el-row>
-          <el-col :md="10">
+          <el-col :md="12">
             <el-form-item label="仓库" prop="warehouseId">
-              <el-select v-model="newObject.warehouseId" style="width: 220px">
+              <el-select v-model="newObject.warehouseId" style="width: 180px"
+                         filterable placeholder="请选择仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
                   :label="item.label"
-                  :value="item.value"
+                  :value='item.value'
+                  :key="idx"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="12">
+            <el-form-item label="类型" prop="type">
+              <el-select v-model="newObject.type" style="width: 180px"
+                         filterable placeholder="类型">
+                <el-option
+                  v-for="(item , idx)  in typeSelection"
+                  :label="item.label"
+                  :value='item.value'
                   :key="idx"
                 ></el-option>
               </el-select>
@@ -31,23 +49,10 @@
         </el-row>
 
         <el-row>
-          <el-col :md="14">
-            <el-form-item label="截止日期" prop="limitTime">
-              <el-date-picker
-                v-model="newObject.limitTime"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                type="date"
-                placeholder="截止日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
           <el-col :md="24">
-            <el-form-item label="备注" prop="note">
+            <el-form-item label="备注" prop="comments">
               <el-col :span="22">
-                <el-input type="textarea" v-model="newObject.note"
+                <el-input type="textarea" v-model="newObject.comments"
                           maxlength="500"
                           show-word-limit
                           rows="3"
@@ -58,29 +63,48 @@
           </el-col>
         </el-row>
 
+        <!-- 盘亏盘盈明细列表 -->
+        <itemTable
+          ref="itemTable"
+          @createCBEvent="createCBEvent"
+        ></itemTable>
+
         <el-col :md="24">
           <el-row type="flex" justify="center">
             <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
-              生成盘点任务
+              生成{{typeName}}
             </el-button>
           </el-row>
         </el-col>
 
       </fieldset>
     </el-form>
-
   </div>
 
 </template>
 
 <script>
   import warehouseModel from '@/api/warehouse'
+  import phEnumModel from '@/api/phEnum'
   import {intArrToStrArr} from '@/utils'
+  import itemTable from './table'
 
   export default {
-    components: {},
+    components: {itemTable},
     props: {},
-    computed: {},
+    computed: {
+      typeName(){
+        if ( this.newObject.type == null ){
+          return "盘亏盘盈单";
+        }
+        if ( this.newObject.type == "iin"){
+          return "盘盈单";
+        }
+        if ( this.newObject.type == "iout"){
+          return "盘亏单";
+        }
+      }
+    },
 
     data() {
       return {
@@ -91,19 +115,21 @@
 
         // 选择框 TODO:
         warehouseSelectOptions: [],
-
+        typeSelection: [],
         // 新对象  TODO:
         newObject: {
-          limitTime: null,
           warehouseId: null,
-          note: null,
+          type: null,
+          comments: null,
+
+
         },
         // 字段验证规则 TODO:
         rules: {
-          limitTime: [
+          warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
-          warehouseId: [
+          type: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },
@@ -122,73 +148,54 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
-        this.initWarehouseData();
-
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.typeSelection = phEnumModel.getSelectOptions('InventoryType');
         this.loading = false;
       },
-
-      // 初始化仓库数据
-      initWarehouseData(val = null) {
-        if (!val) {
-          return;
-        }
-        this.loading = true;
-        let url = "/warehouses/permissions";
-        url += +val.join(",");
-        this.global.axios.get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.warehouseSelectOptions = [];
-            res.forEach(r => {
-              this.warehouseSelectOptions.push({
-                label: r.name,
-                value: r.id + ''
-              });
-            });
-            this.loading = false;
-          })
-          .catch(err => {
-            this.loading = false;
-          });
-      },
-
-      clearData(){
-         this.newObject = {
-          limitTime: null,
-          warehouseId: null,
-          note: null,
-        }
-      },
-
       /********************* 操作按钮相关方法  ***************************/
-      // 创建盘点明细  TODO:
+      // 生成盘亏盘盈单 TODO:
 
       onCreate() {
-        this.$refs.create.validate(valid => {
+        this.$refs.newObject.validate(valid => {
           if (!valid) {
             return;
           }
-
-          const loading = this.$loading({
-            lock: true,
-            text: '处理中...',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          });
-
-          this.global.axios
-            .post("/inventoryTasks", this.newObject)
-            .then(resp => {
-              loading.close();
-              this.$message.info("盘点任务创建成功");
-              this.$emit("modifyCBEvent");
-              this.clearData();
-            })
-            .catch(err => {
-              loading.close();
-            });
+          let detailItems = this.$refs.itemTable.tableData;
+          if (!detailItems || detailItems.length == 0) {
+            this.$message.error("盘亏盘盈单内容不能为空!");
+            return;
+          }
+          this.saveObject(detailItems);
         });
+      },
+
+      saveObject(detailItems) {
+        let _order = JSON.parse(JSON.stringify(this.newObject));
+        _order.inventoryItemTOs = detailItems;
+
+        const loading = this.$loading({
+          lock: true,
+          text: '下单中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        this.global.axios
+          .post("/inventories", _order)
+          .then(resp => {
+            loading.close();
+            this.$message.info("盘亏盘盈单创建成功");
+            this.$emit("modifyCBEvent", resp.data);
+          })
+          .catch(err => {
+            loading.close();
+          })
+      },
+      /*
+       * 创建成功之后，将子组件发送的数据继续向上传递给父组件
+       */
+      createCBEvent(newObjectId) {
+        this.$emit("step1CBEvent", newObjectId);
       },
     }
   }
@@ -214,3 +221,4 @@
 
 
 </style>
+
