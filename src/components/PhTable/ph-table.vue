@@ -250,7 +250,6 @@
   import SelfLoadingButton from './self-loading-button.vue'
   import {mapGetters} from 'vuex'
   import {getObjectVal, parseTime} from '@/utils'
-
   // 过滤功能
   import editFilter from './Filters/edit.vue'
   import dateFilter from './Filters/date.vue'
@@ -335,10 +334,6 @@
        * 请求url, 如果为空, 则不会发送请求; 改变url, 则table会重新发送请求
        */
       url: {
-        type: String,
-        default: ''
-      },
-      resource: {
         type: String,
         default: ''
       },
