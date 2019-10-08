@@ -3,14 +3,28 @@
   <div class="ph-table">
 
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true" :model="searchParam"
-             ref="searchForm"
-             id="filter-form"
-             inline-message
+    <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
-      <el-form-item label="仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value"
+      <el-form-item label="调拨单编码">
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px"
+                  placeholder="请输入"></el-input>
+      </el-form-item>
+
+      <el-form-item label="发货仓库">
+        <el-select filterable v-model="searchParam.fromWarehouseId.value"
+                   size="mini"
+                   style="width: 100px" placeholder="请选择">
+          <el-option
+            v-for="(item,idx) in warehouseSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="收货仓库">
+        <el-select filterable v-model="searchParam.toWarehouseId.value"
                    size="mini"
                    style="width: 100px" placeholder="请选择">
           <el-option
@@ -22,8 +36,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
-        <el-button @click="resetSearch" size="mini">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
+        <el-button @click="resetSearch" size="small">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -44,39 +58,50 @@
       @sort-change='handleSortChange'
       id="table"
     >
+      <el-table-column prop="linerShippingPlan.formatEtdTime" label="发船日期" width="150"></el-table-column>
+
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
-          <el-tag size="mini"
-                  :type="scope.row.status === 0
-            ? 'warning' : scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
+          <el-tag size="small"
+                  :type="scope.row.status === 3
+            ? 'warning' : scope.row.status === 4
+            ? 'primary' : scope.row.status === 6
             ? 'info' : 'success'"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
-      <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
-      <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
+
+      <el-table-column prop="code" label="调拨单编码" width="120"></el-table-column>
+      <el-table-column prop="linerShippingPlan.code" label="货柜编号" min-width="60"></el-table-column>
+      <el-table-column prop="linerShippingPlan.shipmentId" label="FBA ID" min-width="100"></el-table-column>
+      <el-table-column prop="linerShippingPlan.portOfLoading" label="发船港口" min-width="100"></el-table-column>
+      <el-table-column prop="linerShippingPlan.categoryName" label="出口品类" min-width="200"></el-table-column>
+      <el-table-column prop="fromWarehouse.name" label="发货仓库" width="120"></el-table-column>
+      <el-table-column prop="toWarehouse.name" label="收货仓库" width="120"></el-table-column>
+      <el-table-column prop="linerShippingPlan.destinationFulfillmentCenterId" label="收货仓库标识" width="120"></el-table-column>
+      <el-table-column prop="linerShippingPlan.merchandiser" label="负责人" width="120"></el-table-column>
+      <el-table-column prop="linerShippingPlan" label="出口信息" width="120">
+        <template slot-scope="scope">
+            <span>
+              船运公司: {{ scope.row.linerShippingPlan.carrier}}<br>
+              货代公司: {{ scope.row.linerShippingPlan.forwardingCompany}}<br>
+            </span>
+        </template>
+      </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          <el-button v-if="hasEdit" size="small" icon="el-icon-receiving" circle
+                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="hasView" size="small" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.row)">
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -116,21 +141,23 @@
   import editDialog from './edit/dialog'
   import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
-  import warehouseModel from "../../../api/warehouse"
+  import phPercentage from '@/components/PhPercentage/index'
+  import warehouseModel from "../../../api/warehouse";
 
-  const valueSeparator = '~';
-  const valueSeparatorPattern = new RegExp(valueSeparator, 'g');
-  const paramSeparator = ',';
-  const equal = '=';
-  const equalPattern = /=/g;
-  const queryFlag = 'q=';
-  const queryPattern = new RegExp('q=.*' + paramSeparator);
+  const valueSeparator = '~'
+  const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
+  const paramSeparator = ','
+  const equal = '='
+  const equalPattern = /=/g
+  const queryFlag = 'q='
+  const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
 
     components: {
       editDialog,
-      viewDialog
+      viewDialog,
+      phPercentage
     },
     props: {
       type: {
@@ -144,30 +171,20 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower','rolePower'
+        'device', 'rolePower'
       ]),
-
       hasEdit() {
-        if (this.type === 'inventorying') {
+        if (this.type === 'shipped'|| this.type === 'executing') {
           return true;
         }
         return false;
       },
-
-      hasDelete() {
-        if (this.type === 'inventorying') {
-          return true;
-        }
-        return false;
-      },
-
       hasView() {
         if (this.type === 'complete' || this.type === 'all') {
           return true;
         }
         return false;
       },
-
       hasOperation() {
         return this.hasView || this.hasEdit
       }
@@ -177,6 +194,7 @@
       return {
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
+
         // 多选记录对象
         selected: [],
 
@@ -188,9 +206,9 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/inventoryTasks', // 资源URL
-        countUrl: '/inventoryTasks/count', // 资源URL
-        relations: ["creator","warehouse"],  // 关联对象
+        url: '/exportAllocations', // 资源URL
+        countUrl: '/exportAllocations/count', // 资源URL
+        relations: ["team", "linerShippingPlan","fromWarehouse", "toWarehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -201,7 +219,9 @@
         warehouseSelectOptions: [],
 
         searchParam: {
-          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          fromWarehouseId: {value: null, op: 'eq', id: 'fromWarehouseId'},
+          toWarehouseId: {value: null, op: 'eq', id: 'toWarehouseId'},
+          code: {value: null, op: 'bw', id: 'code'},
         },
 
         //弹窗
@@ -224,7 +244,7 @@
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      };
+      }
 
       // 搜索区块，根据url恢复功能
       // 恢复查询条件
@@ -240,8 +260,14 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
+          if (params.code) {
+            this.searchParam.code.value = params.code;
+          }
+          if (params.fromWarehouseId) {
+            this.searchParam.fromWarehouseId.value = params.fromWarehouseId;
+          }
+          if (params.toWarehouseId) {
+            this.searchParam.toWarehouseId.value = params.toWarehouseId;
           }
         }
       }
@@ -257,9 +283,8 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryTaskStatus');
+        this.statusSelectOptions = phEnumModel.getSelectOptions('LinerShippingPlanItemStatus');
         this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
-
       },
 
       // 获取表格的高度
@@ -270,10 +295,11 @@
           //表格高度
           let tableHeight = windowHeight;
           tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -300,7 +326,10 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.warehouseId.value = null;
+        this.searchParam.code.value = null;
+        this.searchParam.fromWarehouseId.value = null;
+        this.searchParam.toWarehouseId.value = null;
+
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -315,7 +344,7 @@
          * @event reset
          */
         this.$emit('reset')
-        //
+
         // this.$emit(
         //   'update:customQuery',
         //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
@@ -326,12 +355,30 @@
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
+        // 代码示例
+        // if (row.exemple === 0) {
+        //   return "0-普通"
+        // }
+        // else if (row.exemple === 1) {
+        //   return "1-热销"
+        //
+        // }
+        // else if (row.exemple === 2) {
+        //   return "2-爆款"
+        // }
+        // else {
+        //   return row.exemple;
+        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
+        // 代码示例 return 为css定义的样式 -row 结尾
+        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
+        //   return 'warning-row';
+        // }
         return '';
       },
 
@@ -409,13 +456,13 @@
         }
 
         // 请求开始
-        this.loading = true;
+        this.loading = true
 
         //获取数据
         this.global.axios
           .get(countUrl + params)
           .then(resp => {
-            let res = resp.data;
+            let res = resp.data
             this.total = res || 0
           })
           .catch(err => {
@@ -425,10 +472,10 @@
         this.global.axios
           .get(url + params)
           .then(resp => {
-            let res = resp.data;
-            let data = res || [];
-            this.data = data;
-            this.loading = false;
+            let res = resp.data
+            let data = res || []
+            this.data = data
+            this.loading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -440,23 +487,23 @@
              * 请求数据失败，返回err对象
              * @event error
              */
-            this.$emit('error', err);
+            this.$emit('error', err)
             this.loading = false
-          });
+          })
 
         // 存储query记录, 便于后面恢复
         if (shouldStoreQuery > 0) {
 
-          let newUrl = '';
+          let newUrl = ''
           let searchQuery = queryFlag + (searchParams)
             .replace(/&/g, paramSeparator)
-            .replace(equalPattern, valueSeparator) + paramSeparator;
+            .replace(equalPattern, valueSeparator) + paramSeparator
 
           // 非第一次查询
           if (location.href.indexOf(queryFlag) > -1) {
             newUrl = location.href.replace(queryPattern, searchQuery)
           } else {
-            let search = location.href.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`;
+            let search = location.href.indexOf('?') > -1 ? `&${searchQuery}` : `?${searchQuery}`
             newUrl = location.origin + location.pathname + location.search + location.hash + search
           }
           history.pushState(history.state, 'ph-table search', newUrl)
@@ -465,7 +512,7 @@
 
       /* 多选功能 */
       handleSelectionChange(val) {
-        this.selected = val;
+        this.selected = val
 
         /**
          * 多选启用时生效, 返回(selected)已选中行的数组
@@ -490,8 +537,8 @@
         if (this.size === val) {
           return
         }
-        this.page = 1;
-        this.size = val;
+        this.page = 1
+        this.size = val
         this.getList(true)
       },
 
@@ -500,7 +547,7 @@
         if (this.page === val) {
           return
         }
-        this.page = val;
+        this.page = val
         this.getList(true)
       },
 
@@ -518,35 +565,7 @@
 
       /* 行查看按钮 */
       onDefaultView(row) {
-        // 弹窗
         this.$refs.viewDialog.openDialog(row.id);
-      },
-
-      /* 行删除按钮 */
-      onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.loading = true;
-
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false;
-                  this.$message.info("删除成功!");
-                  done();
-                  this.getList()
-                })
-                .catch(er => {
-                  this.loading = false
-                })
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
@@ -557,11 +576,33 @@
   }
 </script>
 
-
 <style type="text/less" lang="scss" scoped>
+
+  .el-table {
+    /deep/ .ph-header-small {
+      font-size: 12px !important;
+    }
+    /deep/ tr.warning-row {
+      background: rgb(233, 233, 235) !important;
+    }
+
+    /deep/ tr.warning-row td {
+      background: rgb(233, 233, 235) !important;
+    }
+
+    /deep/ tr.danger-row {
+      background: rgb(253, 226, 226) !important;
+    }
+
+    /deep/ tr.danger-row td {
+      background: rgb(253, 226, 226) !important;
+    }
+  }
+
   .el-form-item__content {
     /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 220px !important;
+      width: 230px !important;
     }
   }
 </style>
+

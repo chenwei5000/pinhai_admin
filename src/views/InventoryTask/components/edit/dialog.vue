@@ -14,15 +14,16 @@
     <h4>附件</h4>
     <attachment ref="attachment" :primary="primary"></attachment>
     <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent"></saveDialog>
+
   </el-dialog>
 
 </template>
-
 <script>
 
   import itemTable from './detailTable'
   import attachment from './attachment'
   import saveDialog from './saveDialog'
+
   export default {
 
     components: {
@@ -88,15 +89,12 @@
         this.closeDialog();
       },
 
-      //收货完成
+      //盘点完成
       onComplete() {
         // 明细对象
         let details = this.$refs.itemTable.tableData;
         this.$refs.saveDialog.openDialog(this.primary, details);
       },
-      onAll() {
-        this.$refs.itemTable.onAll();
-      }
     }
   }
 </script>

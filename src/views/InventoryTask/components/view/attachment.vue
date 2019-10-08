@@ -29,7 +29,7 @@
         url: "/attachments/inventoryTask",
         relations: ["creator"],
         filters: [
-          {"field": "inventoryTaskId", "op": "eq", "data": this.primary.id}
+          {"field": "relevanceId", "op": "eq", "data": this.primary.id}
         ],
         attachments: []
       }
