@@ -30,7 +30,7 @@
       <el-row>
         <el-col>
           <el-form-item label="公司名称" prop="companyName">
-            <el-input v-model="editObject.companyName"
+            <el-input v-model="editObject.company.fullName"
                       show-word-limit
                       style="width: 420px;" placeholder="请填写公司名称" clearable></el-input>
           </el-form-item>
@@ -38,19 +38,9 @@
       </el-row>
 
       <el-row>
-          <el-col >
-          <el-form-item label="所在城市" prop="city">
-            <el-input v-model="editObject.city"
-                      show-word-limit
-                      placeholder="请填写所在城市" clearable></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
         <el-col >
           <el-form-item label="地址" prop="address">
-            <el-input v-model="editObject.address"
+            <el-input v-model="editObject.company.address"
                       show-word-limit
                       style="width: 420px;" placeholder="请填写地址" clearable></el-input>
           </el-form-item>
@@ -60,7 +50,7 @@
       <el-row>
         <el-col >
           <el-form-item label="管理区域" prop="region">
-            <el-input v-model="editObject.region"
+            <el-input v-model="editObject.company.region"
                       show-word-limit
                       placeholder="请填写管理区域" clearable></el-input>
           </el-form-item>
@@ -70,7 +60,7 @@
       <el-row>
         <el-col>
           <el-form-item label="联系人" prop="linkman">
-            <el-input v-model="editObject.linkman"
+            <el-input v-model="editObject.company.contact"
                       show-word-limit
                       placeholder="请填写联系人" clearable></el-input>
           </el-form-item>
@@ -80,7 +70,7 @@
       <el-row>
         <el-col>
           <el-form-item label="联系电话" prop="tel">
-            <el-input v-model="editObject.tel"
+            <el-input v-model="editObject.company.phone"
                       show-word-limit
                       placeholder="请填写联系电话" clearable></el-input>
           </el-form-item>
@@ -139,6 +129,7 @@
         // 编辑对象 TODO
         editObject: {},
         url: '/suppliers',
+        relations: ["company"],
         primaryId: '',
 
         // 字段验证规则 TODO:
@@ -163,7 +154,11 @@
       initData() {
         this.loading = true;
         this.initComplete = false;
-        this.global.axios.get(`${this.url}/${this.primaryId}`).then(resp => {
+        let params = "";
+         if (this.relations && this.relations.length > 0) {
+          params += "?relations=" + JSON.stringify(this.relations);
+        }
+        this.global.axios.get(`${this.url}/${this.primaryId}` + params).then(resp => {
             this.editObject = JSON.parse(JSON.stringify(resp.data));
             this.loading = false;
             this.initComplete = true;
