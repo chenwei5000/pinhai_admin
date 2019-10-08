@@ -33,7 +33,7 @@
           hasNew: checkPermission('CategoryResource_create'),
           hasEdit: checkPermission('CategoryResource_update'),
           hasDelete: checkPermission('CategoryResource_remove'),
-          hasView: checkPermission('CategoryResource_get'),
+          //hasView: checkPermission('CategoryResource_get'),
           hasExportTpl: checkPermission('CategoryResource_export'),
           hasExport: checkPermission('CategoryResource_export'),
           hasImport: checkPermission('CategoryResource_import'),
