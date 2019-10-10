@@ -26,6 +26,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
 
@@ -37,6 +38,15 @@
 
         title: '原材料管理', // 页面标题
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('MaterialResource_create'),
+          hasEdit: checkPermission('MaterialResource_update'),
+          hasDelete: checkPermission('MaterialResource_remove'),
+          // hasView: checkPermission('MaterialResource_get'),
+          hasExportTpl: checkPermission('MaterialResource_export'),
+          hasExport: checkPermission('MaterialResource_export'),
+          hasImport: checkPermission('MaterialResource_import'),
+
           url: '/materials', // 资源URL
           relations: ["supplier", "currency", "category"],
 

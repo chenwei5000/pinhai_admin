@@ -17,12 +17,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '国家列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CountryResource_create'),
+          hasEdit: checkPermission('CountryResource_update'),
+          hasDelete: checkPermission('CountryResource_remove'),
+          // hasView: checkPermission('CountryResource_get'),
+          hasExportTpl: checkPermission('CountryResource_export'),
+          hasExport: checkPermission('CountryResource_export'),
+          hasImport: checkPermission('CountryResource_import'),
+
           url: '/countries',
           relations: ["creator"],
           tableAttrs: {

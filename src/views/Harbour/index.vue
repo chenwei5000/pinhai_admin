@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '港口列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('HarbourResource_create'),
+          hasEdit: checkPermission('HarbourResource_update'),
+          hasDelete: checkPermission('HarbourResource_remove'),
+          // hasView: checkPermission('HarbourResource_get'),
+          hasExportTpl: checkPermission('HarbourResource_export'),
+          hasExport: checkPermission('HarbourResource_export'),
+          hasImport: checkPermission('HarbourResource_import'),
+
           url: '/harbours',
           relations: ["creator"],
           tableAttrs: {

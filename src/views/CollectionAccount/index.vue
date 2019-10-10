@@ -19,6 +19,7 @@
   import phFromItems from '../../components/phFromItems'
   import bankAccountModel from "../../api/bankAccount";
   import companyManagementModel from "../../api/companyManagement";
+  import {checkPermission} from "../../utils/permission";
 
 
   export default {
@@ -26,6 +27,15 @@
       return {
         title: '收款账户',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CollectionAccountResource_create'),
+          hasEdit: checkPermission('CollectionAccountResource_update'),
+          hasDelete: checkPermission('CollectionAccountResource_remove'),
+          // hasView: checkPermission('CollectionAccountResource_get'),
+          hasExportTpl: checkPermission('CollectionAccountResource_export'),
+          hasExport: checkPermission('CollectionAccountResource_export'),
+          hasImport: checkPermission('CollectionAccountResource_import'),
+
           url: '/collectionAccounts',
           relations: ["creator","bankAccount","companyManagement",],
           tableAttrs: {

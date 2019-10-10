@@ -47,6 +47,7 @@
 <script>
   import phColumns from '../../components/phColumns'
   import categoryModel from '../../api/category'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
@@ -60,6 +61,15 @@
         warehouses: [],
         // warehouseModel.getSelectDomesticOptions(),
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('SafetyStockResource_create'),
+          hasEdit: checkPermission('SafetyStockResource_update'),
+          hasDelete: checkPermission('SafetyStockResource_remove'),
+          // hasView: checkPermission('SafetyStockResource_get'),
+          hasExportTpl: checkPermission('SafetyStockResource_export'),
+          hasExport: checkPermission('SafetyStockResource_export'),
+          hasImport: checkPermission('SafetyStockResource_import'),
+
           url: null,
           relations: ["safetyStocks"],
           hasNew: false,

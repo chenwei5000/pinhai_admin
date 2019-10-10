@@ -17,12 +17,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '部门管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('DepartmentResource_create'),
+          hasEdit: checkPermission('DepartmentResource_update'),
+          hasDelete: checkPermission('DepartmentResource_remove'),
+          // hasView: checkPermission('DepartmentResource_get'),
+          hasExportTpl: checkPermission('DepartmentResource_export'),
+          hasExport: checkPermission('DepartmentResource_export'),
+          hasImport: checkPermission('DepartmentResource_import'),
+
           url: '/departments',
           relations: ["creator", "user"],
           tableAttrs: {
@@ -33,9 +43,7 @@
           maxUploadCount: 10, //提交数量
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '部门列表',
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
+
 
           columns: [
             {type: 'selection'},

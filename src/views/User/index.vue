@@ -20,12 +20,22 @@
   import positionModel from '@/api/position'
   import userModel from '@/api/user'
   import validRules from '../../components/validRules'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '用户管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('UserResource_create'),
+          hasEdit: checkPermission('UserResource_update'),
+          hasDelete: checkPermission('UserResource_remove'),
+          // hasView: checkPermission('UserResource_get'),
+          hasExportTpl: checkPermission('UserResource_export'),
+          hasExport: checkPermission('UserResource_export'),
+          hasImport: checkPermission('UserResource_import'),
+
           url: '/users',
           relations: ["creator", "department", "position", "parent"],
           tableAttrs: {

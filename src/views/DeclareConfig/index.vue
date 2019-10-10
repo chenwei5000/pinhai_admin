@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '报关配置',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('DeclareConfigResource_create'),
+          hasEdit: checkPermission('DeclareConfigResource_update'),
+          hasDelete: checkPermission('DeclareConfigResource_remove'),
+          // hasView: checkPermission('DeclareConfigResource_get'),
+          hasExportTpl: checkPermission('DeclareConfigResource_export'),
+          hasExport: checkPermission('DeclareConfigResource_export'),
+          hasImport: checkPermission('DeclareConfigResource_import'),
+
           url: '/declareConfigs',
           relations: ["creator"],
           tableAttrs: {

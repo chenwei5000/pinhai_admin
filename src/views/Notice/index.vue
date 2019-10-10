@@ -18,12 +18,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '消息管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('NoticeResource_create'),
+          hasEdit: checkPermission('NoticeResource_update'),
+          hasDelete: checkPermission('NoticeResource_remove'),
+           // hasView: checkPermission('NoticeResource_get'),
+          hasExportTpl: checkPermission('NoticeResource_export'),
+          hasExport: checkPermission('NoticeResource_export'),
+          hasImport: checkPermission('NoticeResource_import'),
+
           url: '/notices',
           relations: ["sender"],
           tableAttrs: {
@@ -42,7 +52,7 @@
           ],
           // 搜索
           searchForm: [
-          
+
           ]
         }
       }

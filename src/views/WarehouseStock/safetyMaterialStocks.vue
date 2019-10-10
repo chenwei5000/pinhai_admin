@@ -62,6 +62,7 @@
   import qs from 'qs'
   import categoryModel from '../../api/category'
 import warehouseModel from '../../api/warehouse';
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
@@ -77,6 +78,15 @@ import warehouseModel from '../../api/warehouse';
         // warehouseModel.getSelectDomesticOptions(),
         materialWarehouses: warehouseModel.getSelectMaterialOptions(),
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('MaterialResource_create'),
+          hasEdit: checkPermission('MaterialResource_update'),
+          hasDelete: checkPermission('MaterialResource_remove'),
+          // hasView: checkPermission('MaterialResource_get'),
+          hasExportTpl: checkPermission('MaterialResource_export'),
+          hasExport: checkPermission('MaterialResource_export'),
+          hasImport: checkPermission('MaterialResource_import'),
+
           url: null,
           relations: ["safetyStocks"],
           hasNew: false,

@@ -18,12 +18,22 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
   import currencyModel from "../../api/currency";
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '银行账户',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('BankAccountResource_create'),
+          hasEdit: checkPermission('BankAccountResource_update'),
+          hasDelete: checkPermission('BankAccountResource_remove'),
+          // hasView: checkPermission('BankAccountResource_get'),
+          hasExportTpl: checkPermission('BankAccountResource_export'),
+          hasExport: checkPermission('BankAccountResource_export'),
+          hasImport: checkPermission('BankAccountResource_import'),
+
           url: '/bankAccounts',
           relations: ["creator","currency"],
           tableAttrs: {

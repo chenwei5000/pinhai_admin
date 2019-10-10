@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
+        title: '语言管理',
         tableConfig: {
-          title: '语言列表',
+          //权限控制
+          hasNew: checkPermission('LanguageResource_create'),
+          hasEdit: checkPermission('LanguageResource_update'),
+          hasDelete: checkPermission('LanguageResource_remove'),
+          // hasView: checkPermission('LanguageResource_get'),
+          hasExportTpl: checkPermission('LanguageResource_export'),
+          hasExport: checkPermission('LanguageResource_export'),
+          hasImport: checkPermission('LanguageResource_import'),
+
           url: '/languages',
           relations: ["creator"],
           tableAttrs: {
