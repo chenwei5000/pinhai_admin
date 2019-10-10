@@ -39,7 +39,7 @@
 
           columns: [
             {type: 'selection'},
-            {prop: 'allName', label: '部门所属', fixed: 'left', "min-width": 300},
+            {prop: 'allName', label: '部门', fixed: 'left', "min-width": 300},
             {prop: 'name', label: '名称', "min-width": 100},
             {prop: 'user.name', label: '负责人', "min-width": 100},
             phColumns.creator,
