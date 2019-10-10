@@ -11,15 +11,14 @@ import 'nprogress/nprogress.css' // progress bar style
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
 // 白名单,这个里面的请求，不进行权限验证
-const whiteList = ['/login', '/auth-redirect','/register', '/forget', '/reset-password']
+const whiteList = ['/login', '/auth-redirect', '/register', '/forget', '/reset-password']
 
-let hasPermission = (roles, permissionRoles) => {
+let hasPermission = (to) => {
+  if (to.matched.length === 0) {  //如果未匹配到路由
+    return false;
+  }
 
-  //if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
-  //if (!permissionRoles) return true
-  //return roles.some(role => permissionRoles.indexOf(role) >= 0)
   return true;
-
 }
 
 
@@ -51,15 +50,20 @@ router.beforeEach(async (to, from, next) => {
     // 登陆成功自动跳转首页
     if (to.path === '/login') {
 
-      if (hasPermission()) {
+      if (hasPermission(to)) {
         next({path: '/'});
+      }
+      else {
+        next({path: '/401'});
       }
 
       NProgress.done();
     } else {
-
-      if (hasPermission()) {
+      if (hasPermission(to)) {
         next();
+      }
+      else {
+        next({path: '/401'});
       }
     }
   }
@@ -89,16 +93,23 @@ router.beforeEach(async (to, from, next) => {
       await router.addRoutes(accessRoutes);
       //菜单权限更新完成,重新进一次当前路由
 
-      if (hasPermission()) {
+      if (hasPermission(to)) {
         next({...to, replace: true});
+      }
+      else {
+        next({path: '/401'});
       }
     }
     else {
-      if (hasPermission()) {
+      if (hasPermission(to)) {
         next();
+      }
+      else {
+        next({path: '/401'});
       }
     }
   }
+
 });
 
 router.afterEach(() => {
