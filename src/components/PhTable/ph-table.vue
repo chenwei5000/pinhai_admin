@@ -439,13 +439,6 @@
         default: false
       },
       /**
-       * 是否有操作列
-       */
-      hasOperation: {
-        type: Boolean,
-        default: true
-      },
-      /**
        * 操作列的自定义按钮, 渲染的是element-ui的button, 支持包括style在内的以下属性:
        * {type: '', text: '', atClick: row => Promise.resolve(), show: row => return true时显示 }
        * 点击事件 row参数 表示当前行数据, 需要返回Promise, 默认点击后会刷新table, resolve(false) 则不刷新
@@ -805,11 +798,14 @@
 
     computed: {
       ...mapGetters([
-        'device','rolePower'
+        'device', 'rolePower'
       ]),
 
       phTableAttrs() {
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
+      },
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
       }
     },
 
@@ -1539,7 +1535,7 @@
           promiseArr.push(this.uploadPromise(resData[i]));
           if (promiseArr.length >= this.maxUploadCount) {
             await Promise.all(promiseArr).then(obj => {
-              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i+1) + "]条";
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
               promiseArr = [];
             });
             promiseArr = [];
