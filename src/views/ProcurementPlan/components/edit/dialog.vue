@@ -4,13 +4,14 @@
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
              fullscreen>
     <el-row
-      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-      <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">提交审核</el-button>
-      <el-button type="success" icon="el-icon-success" v-if="primary.status == 0" @click="onAgree">同意</el-button>
-      <el-button type="warning" icon="el-icon-error" v-if="primary.status == 0" @click="onRefuse">不同意</el-button>
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;" v-if="primaryComplete" >
+      <el-button type="primary" icon="el-icon-s-check" v-if="hasCommit" @click="onCommit">提交审核</el-button>
+      <el-button type="success" icon="el-icon-success" v-if="hasAgree" @click="onAgree">同意</el-button>
+      <el-button type="warning" icon="el-icon-error" v-if="hasRefuse" @click="onRefuse">不同意</el-button>
 
-      <el-button type="warning" icon="el-icon-refresh-left" v-if="primary.status != 1" @click="onWithdraw">撤回
+      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回
       </el-button>
+
       <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
       <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
@@ -70,6 +71,7 @@
   import person from './person'
   import phStatus from '@/components/PhStatus'
   import auditing from '@/components/PhAuditing'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {
@@ -88,17 +90,59 @@
         'rolePower'
       ]),
 
+      hasCommit() {
+        if (this.primary.status != 1) {
+          return false;
+        }
+        if (!checkPermission('ProcurementPlanResource_commit')) {
+          return false;
+        }
+        return true;
+      },
+
+      hasAgree() {
+        if (this.primary.status !== 0) {
+          return false;
+        }
+        if (!checkPermission('ProcurementPlanResource_agree')) {
+          return false;
+        }
+        return true;
+      },
+
+      hasRefuse() {
+        if (this.primary.status !== 0) {
+          return false;
+        }
+        if (!checkPermission('ProcurementPlanResource_refuse')) {
+          return false;
+        }
+        return true;
+      },
+
+      hasWithdraw() {
+        if (this.primary.status === 1) {
+          return false;
+        }
+        if (!checkPermission('ProcurementPlanResource_withdraw')) {
+          return false;
+        }
+        return true;
+      },
+
       hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
+        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1 && checkPermission('ProcurementPlanResource_complete')) {
           return true;
         }
         else {
           return false;
         }
       },
+
       hasAdmin() {
-        return true;
+        return checkPermission('ProcurementPlanResource_updateStatus');
       },
+
       title() {
         return '编辑采购计划 [' + this.primary.name + '] -- (' + this.primary.statusName + "状态)";
       }

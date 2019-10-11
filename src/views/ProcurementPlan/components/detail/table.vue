@@ -37,11 +37,10 @@
 
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
-      v-bind="toolbarConfig"
+      :hasExport="hasExport"
+      :hasImport="hasImport"
+      :hasAdd="hasAdd"
       @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
-      @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
       @onToolBarImportData="onToolBarImportData"
     >
@@ -210,6 +209,7 @@
   import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
   import excelConfig from './excelConfig'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {
@@ -227,6 +227,41 @@
         'device',
         'rolePower'
       ]),
+
+      hasExport() {
+        return checkPermission('ProcurementPlanItemResource_export');
+      },
+
+      hasImport() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementPlanItemResource_import');
+      },
+      hasAdd() {
+        //return false;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementPlanItemResource_create');
+      },
+
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
+      hasEdit() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementPlanItemResource_update');
+      },
+      hasDelete() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementPlanItemResource_remove');
+      },
+
       hasExecute() {
         if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return true;
@@ -242,6 +277,7 @@
 
     data() {
       return {
+        maxUploadCount: 20,
         // 选择项
         statusSelectOptions: [],
         prioritySelectOptions: [],
@@ -251,12 +287,6 @@
 
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         // 多选记录对象
         selected: [],
@@ -285,16 +315,6 @@
 
         // 记录修改的那一行
         row: {},
-
-        // 表格工具条配置
-        toolbarConfig: {
-          hasEdit: true,
-          hasDelete: false,
-          hasAdd: true,
-          hasExportTpl: false,
-          hasExport: true,
-          hasImport: true,
-        }
       }
     },
 
@@ -325,13 +345,6 @@
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
-        }
-
-        // 控制按钮
-        if ([0, 8].indexOf(this.primary.status) > -1) {
-          this.hasDelete = false;
-          this.toolbarConfig.hasAdd = false;
-          this.toolbarConfig.hasImport = false;
         }
       },
 
@@ -512,6 +525,11 @@
 
 
       /********************* 操作按钮相关方法  ***************************/
+      /* 行添加功能 */
+      onToolBarAdd() {
+        this.$refs.itemDialog.openDialog();
+      },
+
       /* 行修改功能 */
       onDefaultEdit(row) {
         this.$refs.itemDialog.openDialog(row.id);
@@ -546,18 +564,6 @@
       },
 
       /********************* 工具条按钮  ***************************/
-      onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
-      },
-      onToolBarEdit() {
-
-      },
-      onToolBarDelete() {
-
-      },
-      onToolBarDownloadTpl() {
-
-      },
       onToolBarDownloadData() {
         //获取数据
         let downloadUrl = this.downloadUrl;
@@ -571,8 +577,70 @@
           this.loading = false;
         })
       },
-      onToolBarImportData() {
 
+      uploadPromise(res) {
+        let url = this.url + '';
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      async onToolBarImportData(excelData) {
+
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.procurementPlanId = this.primary.id;
+          _res.skuCode = obj["SKU编码"];
+          _res.cartonQty = obj["采购箱数"];
+          _res.cartonSpecCode = obj["箱规"];
+          _res.numberOfCarton = obj["装箱数"];
+          _res.sevenSalesCount = obj["7日销量(件)"];
+          _res.safetyStockWeek = obj["备货周数"];
+          _res.unfinishedPlanQty = obj["国内在途(箱)"];
+          _res.amazonTotalStock = obj["在途加亚马逊库存(件)"];
+          _res.domesticStockQty = obj["国内库存(箱)"];
+          _res.demandedQty =
+          resData.push(_res);
+        });
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.info("导入成功");
+        this.getList();
       }
     }
   }

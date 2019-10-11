@@ -3,6 +3,7 @@ let excelField = [
   {'attrName': 'product.name', 'type': 's', 'name': '#产品名#'},
   {'attrName': 'product.category.name', 'type': 's', 'name': '#分类#'},
   {'attrName': 'product.vipLevel', 'type': 'n', 'name': '#Vip级别#'},
+  {'attrName': 'product.fnSku', 'type': 's', 'name': '#FNSKU#'},
   {'attrName': 'cartonSpecCode', 'type': 's', 'name': '#箱规#'},
   {'attrName': 'numberOfCarton', 'type': 'n', 'name': '#装箱数#'},
   {'attrName': 'sevenSalesCount', 'type': 'n', 'name': '#7日销量(件)#'},

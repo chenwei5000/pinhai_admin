@@ -254,6 +254,7 @@
   import merchantModel from '@/api/merchant'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {},
@@ -265,14 +266,17 @@
     },
     computed: {
       hasEdit() {
+
         // 控制按钮
         if ([0, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
-        else {
-          return true;
+        if(!checkPermission('ProcurementPlanResource_update')){
+          return false;
         }
+        return true;
       },
+
       hasCategory() {
         if (this.editObject.categoryId == null || this.editObject.categoryId.length == 0) {
           return true;

@@ -101,9 +101,9 @@
             </el-form-item>
           </el-col>
 
-          <el-col :md="14" v-if="this.detailItemId">
+          <el-col :md="14">
             <el-form-item label="可售周数" prop="saleWeek">
-              <el-input v-model.trim="detailItem.saleWeek" readonly
+              <el-input v-model.trim="detailItem.saleWeek"
                         style="width: 200px" placeholder="可售周数，自动计算" clearable></el-input>
               <el-tooltip class="item" effect="light" content="采购的产品可以销售的周数" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -113,10 +113,10 @@
 
         </el-row>
 
-        <el-row v-if="this.detailItemId">
+        <el-row>
           <el-col :md="10">
             <el-form-item label="7日销量(件)" prop="sevenSalesCount">
-              <el-input v-model.trim="detailItem.sevenSalesCount" readonly
+              <el-input v-model.trim="detailItem.sevenSalesCount"
                         style="width: 200px" placeholder="请填写7日销量，件数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="7日销售件数, 不能修改。可以去销售设置中调整。" placement="right">
@@ -141,10 +141,10 @@
 
         </el-row>
 
-        <el-row v-if="this.detailItemId">
+        <el-row>
           <el-col :md="10">
             <el-form-item label="国内库存(箱)" prop="domesticStockQty">
-              <el-input v-model.trim="detailItem.domesticStockQty" readonly
+              <el-input v-model.trim="detailItem.domesticStockQty"
                         style="width: 200px" placeholder="国内库存，箱数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="国内仓库库存箱数，不能修改" placement="right">
@@ -156,7 +156,7 @@
 
           <el-col :md="14">
             <el-form-item label="国内在途(箱)" prop="unfinishedPlanQty">
-              <el-input v-model.trim="detailItem.unfinishedPlanQty" readonly
+              <el-input v-model.trim="detailItem.unfinishedPlanQty"
                         style="width: 200px" placeholder="国内在途，箱数" clearable></el-input>
               <el-tooltip class="item" effect="light" content="未完成采购计划箱数" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
