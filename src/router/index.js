@@ -116,8 +116,7 @@ export const constantRoutes = [{
     path: '/allocationReceived/print',
     component: () => import('@/views/AllocationReceived/print'),
     hidden: true
-  },
-
+  }
 ]
 
 /**
