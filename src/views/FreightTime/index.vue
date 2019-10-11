@@ -18,12 +18,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
-        title: '分类列表',
+        title: '货运时间配置',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('FreightTimeResource_create'),
+          hasEdit: checkPermission('FreightTimeResource_update'),
+          hasDelete: checkPermission('FreightTimeResource_remove'),
+          // hasView: checkPermission('FreightTimeResource_get'),
+          hasExportTpl: checkPermission('FreightTimeResource_export'),
+          hasExport: checkPermission('FreightTimeResource_export'),
+          hasImport: checkPermission('FreightTimeResource_import'),
+
           url: '/freightTimes',
           relations: ["sourceHarbour", "shippingMethod", "destinationHarbour"],
           tableAttrs: {

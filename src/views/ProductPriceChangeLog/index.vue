@@ -21,6 +21,7 @@
 
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
+  import {checkPermission} from "../../utils/permission";
 
 
 
@@ -30,6 +31,15 @@
         title: '产品价格历史',
 
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('ProdcutPriceChangeLogResource_create'),
+          hasEdit: checkPermission('ProdcutPriceChangeLogResource_update'),
+          hasDelete: checkPermission('ProdcutPriceChangeLogResource_remove'),
+          // hasView: checkPermission('ProdcutPriceChangeLogResource_get'),
+          hasExportTpl: checkPermission('ProdcutPriceChangeLogResource_export'),
+          hasExport: checkPermission('ProdcutPriceChangeLogResource_export'),
+          hasImport: checkPermission('ProdcutPriceChangeLogResource_import'),
+
           url: '/productPriceChangeLogs',
           relations: ["operator", "product","action","procurementOrder","oldCurrency","newCurrency"],
           hasNew: false,

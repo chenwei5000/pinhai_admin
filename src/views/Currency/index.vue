@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '货币管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CurrencyResource_create'),
+          hasEdit: checkPermission('CurrencyResource_update'),
+          hasDelete: checkPermission('CurrencyResource_remove'),
+          // hasView: checkPermission('CurrencyResource_get'),
+          hasExportTpl: checkPermission('CurrencyResource_export'),
+          hasExport: checkPermission('CurrencyResource_export'),
+          hasImport: checkPermission('CurrencyResource_import'),
+
           url: '/currencies',
           tableAttrs: {
             "row-class-name": this.statusClassName

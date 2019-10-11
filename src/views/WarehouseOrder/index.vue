@@ -17,6 +17,7 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
   import warehouseModel from '../../api/warehouse'
+  import {checkPermission} from "../../utils/permission";
 
 
   export default {
@@ -24,6 +25,15 @@
       return {
         title: '出入库记录',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('WarehouseOrderResource_create'),
+          hasEdit: checkPermission('WarehouseOrderResource_update'),
+          hasDelete: checkPermission('WarehouseOrderResource_remove'),
+          // hasView: checkPermission('WarehouseOrderResource_get'),
+          hasExportTpl: checkPermission('WarehouseOrderResource_export'),
+          hasExport: checkPermission('WarehouseOrderResource_export'),
+          hasImport: checkPermission('WarehouseOrderResource_import'),
+
           url: '/warehouseOrders',
           relations: ["product", "warehouse", "cartonSpec", "storageLocation", "currency"],
           tableAttrs: {

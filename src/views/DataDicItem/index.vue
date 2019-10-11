@@ -17,12 +17,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '数据字典',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('DataDicItemResource_create'),
+          hasEdit: checkPermission('DataDicItemResource_update'),
+          hasDelete: checkPermission('DataDicItemResource_remove'),
+          // hasView: checkPermission('DataDicItemResource_get'),
+          hasExportTpl: checkPermission('DataDicItemResource_export'),
+          hasExport: checkPermission('DataDicItemResource_export'),
+          hasImport: checkPermission('DataDicItemResource_import'),
+
           url: '/dataDicItems',
           tableAttrs: {
             "row-class-name": this.statusClassName

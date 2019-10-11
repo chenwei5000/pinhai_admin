@@ -18,12 +18,22 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
   import userModel from '../../api/user'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '仓库管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('WarehouseResource_create'),
+          hasEdit: checkPermission('WarehouseResource_update'),
+          hasDelete: checkPermission('WarehouseResource_remove'),
+          // hasView: checkPermission('WarehouseResource_get'),
+          hasExportTpl: checkPermission('WarehouseResource_export'),
+          hasExport: checkPermission('WarehouseResource_export'),
+          hasImport: checkPermission('WarehouseResource_import'),
+
           url: '/warehouses',
           relations: ["supplier", "creator", "leader"],
           tableAttrs: {

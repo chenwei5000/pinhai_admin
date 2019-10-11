@@ -18,12 +18,23 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from '@/utils/permission'
+
 
   export default {
     data() {
       return {
         title: '包装材料列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CartonSpecResource_create'),
+          hasEdit: checkPermission('CartonSpecResource_update'),
+          hasDelete: checkPermission('CartonSpecResource_remove'),
+          // hasView: checkPermission('CartonSpecResource_get'),
+          hasExportTpl: checkPermission('CartonSpecResource_export'),
+          hasExport: checkPermission('CartonSpecResource_export'),
+          hasImport: checkPermission('CartonSpecResource_import'),
+
           url: '/cartonSpecs',
           relations: ["creator", "category"],
           tableAttrs: {

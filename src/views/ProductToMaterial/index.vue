@@ -17,12 +17,22 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
   import {parseTime} from '@/utils'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '原料产品关系',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('ProductToMaterialResource_create'),
+          hasEdit: checkPermission('ProductToMaterialResource_update'),
+          hasDelete: checkPermission('ProductToMaterialResource_remove'),
+          // hasView: checkPermission('ProductToMaterialResource_get'),
+          hasExportTpl: checkPermission('ProductToMaterialResource_export'),
+          hasExport: checkPermission('ProductToMaterialResource_export'),
+          hasImport: checkPermission('ProductToMaterialResource_import'),
+
           url: '/productToMaterials',
           relations: ["creator", "product", "product.category", "material"],
           tableAttrs: {
@@ -32,8 +42,7 @@
           //工具按钮
           maxUploadCount: 20, //提交数量
           exportFileName: '原料产品关系',
-          hasExport: true,
-          hasImport: true,
+
 
           columns: [
             {type: 'selection'},

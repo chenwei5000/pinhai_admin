@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '菜单列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('MenuResource_create'),
+          hasEdit: checkPermission('MenuResource_update'),
+          hasDelete: checkPermission('MenuResource_remove'),
+          // hasView: checkPermission('MenuResource_get'),
+          hasExportTpl: checkPermission('MenuResource_export'),
+          hasExport: checkPermission('MenuResource_export'),
+          hasImport: checkPermission('MenuResource_import'),
+
           url: '/menus',
           relations: ["creator"],
           tableAttrs: {

@@ -17,12 +17,22 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
   import countryModel from '../../api/country'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '渠道管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('MerchantResource_create'),
+          hasEdit: checkPermission('MerchantResource_update'),
+          hasDelete: checkPermission('MerchantResource_remove'),
+          // hasView: checkPermission('MerchantResource_get'),
+          hasExportTpl: checkPermission('MerchantResource_export'),
+          hasExport: checkPermission('MerchantResource_export'),
+          hasImport: checkPermission('MerchantResource_import'),
+
           url: '/merchants',
           relations: ["country"],
           hasDelete: true,

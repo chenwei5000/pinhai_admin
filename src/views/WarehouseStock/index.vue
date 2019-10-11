@@ -17,18 +17,25 @@
 
 <script>
   import phSearchItems from '../../components/phSearchItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '仓库库存', // 页面标题
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('WarehouseStockResource_create'),
+          hasEdit: checkPermission('WarehouseStockResource_update'),
+          hasDelete: checkPermission('WarehouseStockResource_remove'),
+          // hasView: checkPermission('WarehouseStockResource_get'),
+          hasExportTpl: checkPermission('WarehouseStockResource_export'),
+          hasExport: checkPermission('WarehouseStockResource_export'),
+          hasImport: checkPermission('WarehouseStockResource_import'),
+
           url: '/warehouseStocks/stocks', // 资源URL
           relations: ["warehouse"],//关联数据字典
-          hasNew: false,
-          hasEdit: false,
           hasView: false,
-          hasDelete: false,
           hasOperation: false,
 
           //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes

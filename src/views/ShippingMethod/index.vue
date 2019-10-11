@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '物流方式列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('ShippingMethodResource_create'),
+          hasEdit: checkPermission('ShippingMethodResource_update'),
+          hasDelete: checkPermission('ShippingMethodResource_remove'),
+          // hasView: checkPermission('ShippingMethodResource_get'),
+          hasExportTpl: checkPermission('ShippingMethodResource_export'),
+          hasExport: checkPermission('ShippingMethodResource_export'),
+          hasImport: checkPermission('ShippingMethodResource_import'),
+
           url: '/shippingMethods',
           relations: ["creator"],
           tableAttrs: {

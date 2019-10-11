@@ -16,12 +16,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '职位管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('PositionResource_create'),
+          hasEdit: checkPermission('PositionResource_update'),
+          hasDelete: checkPermission('PositionResource_remove'),
+          hasView: checkPermission('PositionResource_get'),
+          hasExportTpl: checkPermission('PositionResource_export'),
+          hasExport: checkPermission('PositionResource_export'),
+          hasImport: checkPermission('PositionResource_import'),
+
           url: '/positions',
           relations: ["creator"],
           tableAttrs: {
@@ -30,9 +40,7 @@
           maxUploadCount: 1, //导出一次提交一个请求
           tplNoExportProps: ['操作', '修改时间', 'ID', '创建人', '状态'],
           exportFileName: '职位列表',
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
+
 
           columns: [
             {type: 'selection'},
