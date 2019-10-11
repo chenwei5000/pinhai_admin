@@ -1459,6 +1459,7 @@
         let downloadUrl = this.downloadUrl;
         downloadUrl = downloadUrl.replace(/pageSize=\d*/, 'pageSize=-1');
         downloadUrl = downloadUrl.replace(/currentPage=\d*/, 'currentPage=1');
+
         import('@/vendor/Export2Excel').then(excel => {
           this.loading = true;
           excel.export_el_table_to_excel({

@@ -98,7 +98,6 @@ function sheet_from_array_of_arrays(data, opts) {
       } else cell.t = 's';
 
 
-
       ws[cell_ref] = cell;
     }
   }
@@ -266,7 +265,7 @@ export function export_el_table_to_excel({
   } else {
     //获取数据
     global.axios
-      .get(downloadUrl + params)
+      .get(downloadUrl + (params ? params : ''))
       .then(resp => {
         let res = resp.data
         data = res || []
