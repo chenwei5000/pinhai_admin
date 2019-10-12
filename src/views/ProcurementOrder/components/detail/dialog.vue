@@ -113,7 +113,7 @@
                                :max="1000000" label="采购箱数">
               </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="采购箱数,支持3位小树。" placement="right">
+              <el-tooltip class="item" effect="light" content="采购箱数,支持3位小数。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
