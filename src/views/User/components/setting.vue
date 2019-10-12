@@ -1,6 +1,9 @@
 <template>
 
-  <el-dialog :title="title" class="ph-dialog" :visible.sync="dialogVisible" v-if="dialogVisible" fullscreen>
+  <el-dialog :title="title" class="ph-dialog"
+             :visible.sync="dialogVisible"
+             @close='closeDialog'
+             v-if="dialogVisible" fullscreen>
     <div class="custom-tree-container">
 
       <el-input
@@ -26,8 +29,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="save">保 存</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" size="small" @click="save">保 存</el-button>
+      <el-button size="small" @click="closeDialog">取 消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -164,6 +167,14 @@
         goal[0].children.push(supplier);
         this.setDefault(id);
         this.list = goal;
+      },
+      closeDialog() {
+        this.dialogVisible = false;
+        this.loading = false;
+        this.title = "";
+        this.userId = 0;
+        this.list = [];
+        this.filterText = [];
       },
       save() {
         let data = this.$refs.tree.getCheckedNodes();
