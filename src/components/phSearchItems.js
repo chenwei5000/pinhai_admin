@@ -124,7 +124,7 @@ const phSearchItems = {
 
   // 状态搜索
   status: () => {
-    
+
     let _options = phEnumModel.getSelectOptions('Status');
     _options.unshift({label: '全部', value: null});
 

@@ -27,7 +27,7 @@
           hasNew: checkPermission('PositionResource_create'),
           hasEdit: checkPermission('PositionResource_update'),
           hasDelete: checkPermission('PositionResource_remove'),
-          hasView: checkPermission('PositionResource_get'),
+          //hasView: checkPermission('PositionResource_get'),
           hasExportTpl: checkPermission('PositionResource_export'),
           hasExport: checkPermission('PositionResource_export'),
           hasImport: checkPermission('PositionResource_import'),
