@@ -128,6 +128,7 @@ const phSearchItems = {
       $type: 'select',
       $id: 'status',
       label: '状态',
+      $default: '1',
       $el: {
         op: 'eq',
         size: 'mini',
@@ -180,6 +181,7 @@ const phSearchItems = {
         op: 'eq',
         filterable: true,
         size: "mini",
+        style: 'width:120px',
         placeholder: '请选择' + label
       },
       $options: datadicModel.getSelectOptions(type)

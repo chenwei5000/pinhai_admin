@@ -67,7 +67,7 @@
                 placeholder: '请输入名称',
                 clearable: true,
                 maxlength: "40",
-                size:"mini",
+                size: "mini",
                 style: "width:120px;",
                 "show-word-limit": true,
               }
@@ -78,7 +78,7 @@
               label: '编码',
               $el: {
                 op: 'bw',
-                size:"mini",
+                size: "mini",
                 placeholder: '请输入编码',
                 style: "width:120px;",
                 clearable: true
@@ -86,20 +86,21 @@
             },
             phSearchItems.datadic('warehouse', '类型', 'type'),
             {
-            $type: 'select',
-            $id: 'leaderId',
-            label: '负责人',
-            $el: {
-              op: 'eq',
-              placeholder: '请输入负责人',
-              style: "width:120px;",
-              filterable: true,
-              size:"mini",
-              maxlength: "40",
-              "show-word-limit": true,
+              $type: 'select',
+              $id: 'leaderId',
+              label: '负责人',
+              $el: {
+                op: 'eq',
+                placeholder: '请输入负责人',
+                style: "width:120px;",
+                filterable: true,
+                size: "mini",
+                maxlength: "40",
+                "show-word-limit": true,
+              },
+              $options: userModel.getSelectOptions
             },
-          $options: userModel.getSelectOptions
-          },
+            phSearchItems.status()
           ],
           //  弹窗表单, 用于新增与修改
           form: [
@@ -140,7 +141,7 @@
               },
               $options: supplierModel.getSelectOptions(),
             },
-             {
+            {
               $type: 'select',
               $id: 'leaderId',
               label: '负责人',

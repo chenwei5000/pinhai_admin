@@ -617,7 +617,6 @@
           _res.unfinishedPlanQty = obj["国内在途(箱)"];
           _res.amazonTotalStock = obj["在途加亚马逊库存(件)"];
           _res.domesticStockQty = obj["国内库存(箱)"];
-          _res.demandedQty =
           resData.push(_res);
         });
 

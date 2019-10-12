@@ -344,6 +344,11 @@
         type: String,
         default: '/count'
       },
+
+      importMethod: {
+        type: String,
+        default: 'post'
+      },
       maxUploadCount: {
         type: Number,
         default: 1
@@ -1473,8 +1478,11 @@
       },
 
       uploadPromise(res) {
-        let url = this.url + '';
-        return this.global.axios.post(url, res)
+        let url = this.url;
+        if(this.importMethod != "post"){
+          url = `${url}/${res.id}`;
+        }
+        return this.global.axios[this.importMethod](url, res)
           .then(resp => {
           })
           .catch(err => {
