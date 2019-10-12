@@ -124,6 +124,10 @@ const phSearchItems = {
 
   // 状态搜索
   status: () => {
+    
+    let _options = phEnumModel.getSelectOptions('Status');
+    _options.unshift({label: '全部', value: null});
+
     return {
       $type: 'select',
       $id: 'status',
@@ -135,7 +139,7 @@ const phSearchItems = {
         style: 'width:120px',
         placeholder: '请选择状态'
       },
-      $options: phEnumModel.getSelectOptions('Status')
+      $options: _options
     }
   },
 
