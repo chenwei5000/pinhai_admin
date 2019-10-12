@@ -110,7 +110,16 @@
         //   this.setDefault(id)
         //   return
         // }
-        let url = `/actions`;
+
+        let url = `/actions?filters=${JSON.stringify({
+          "groupOp": "AND",
+          "rules": [{
+            field: "status",
+            op: 'eq',
+            data: 1
+          }]
+        })}&sort=name&dir=desc`;
+
         this.global.axios.get(url).then(data => {
           let goal = [
             {
