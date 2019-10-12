@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog :title="title" :visible.sync="dialogVisible" v-if="dialogVisible" fullscreen>
+  <el-dialog :title="title" class="ph-dialog" :visible.sync="dialogVisible" v-if="dialogVisible" fullscreen>
     <div class="custom-tree-container">
 
       <el-input
@@ -8,7 +8,7 @@
         v-model="filterText">
       </el-input>
 
-      <div class="block" style="height: 585px;">
+      <div class="block" style="height: 460px;">
         <el-scrollbar style="height: 100%">
           <el-tree
             ref="tree"
@@ -56,7 +56,12 @@
     methods: {
       save() {
         let data = this.$refs.tree.getCheckedNodes()
-        this.loading = true
+        let loading = this.$loading({
+          lock: true,
+          text: '保存中...',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         let postData = []
 
         for(let i = 0; i < data.length; i++) {
@@ -70,7 +75,7 @@
           if(data.status == 200) {
             this.$message.info('操作成功！')
           }
-          this.loading = false
+          loading.close();
         })
       },
       setDefault(id) {
@@ -118,7 +123,7 @@
             op: 'eq',
             data: 1
           }]
-        })}&sort=name&dir=desc`;
+        })}&sort=title&dir=desc`;
 
         this.global.axios.get(url).then(data => {
           let goal = [

@@ -190,10 +190,18 @@
           >
             {{btn.text}}
           </self-loading-button>
+
           <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
+
+          <el-button v-if="hasSetting" type="warning" size="mini"
+                     id="ph-table-setting" icon="el-icon-setting" circle
+                     @click="onDefaultSetting(scope.row)">
+          </el-button>
+
+
         </template>
       </el-table-column>
 
@@ -508,6 +516,11 @@
       hasDelete: {
         type: Boolean,
         default: true
+      },
+
+      hasSetting: {
+        type: Boolean,
+        default: false
       },
       /**
        * 某行数据是否可以删除, 返回true表示可以, 控制的是单选时单行的删除按钮
@@ -1371,6 +1384,12 @@
           /*取消*/
         })
       },
+
+      onDefaultSetting(row) {
+        this.$emit("onSetting", row);
+        return false;
+      },
+
       // 树形table相关
       // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/components/TreeTable
       tree2Array(data, expandAll, parent = null, level = null) {

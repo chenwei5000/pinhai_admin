@@ -4,10 +4,15 @@
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
+          @onSetting="onSetting"
         >
         </ph-table>
       </div>
     </div>
+
+    <setting ref="setting">
+    </setting>
+
   </div>
 </template>
 
@@ -21,8 +26,13 @@
   import userModel from '@/api/user'
   import validRules from '../../components/validRules'
   import {checkPermission} from "../../utils/permission";
+  import setting from './components/setting'
 
   export default {
+    components: {
+      setting
+    },
+
     data() {
       return {
         title: '用户管理',
@@ -48,6 +58,8 @@
           hasExportTpl: true,
           hasExport: true,
           hasImport: true,
+          hasSetting: true,
+          operationAttrs: {width: '120', fixed: 'right'},
 
           columns: [
             {type: 'selection'},
@@ -106,7 +118,7 @@
               label: '账号',
               $el: {
                 op: 'bw',
-                size:"mini",
+                size: "mini",
                 placeholder: '请输入账号',
                 clearable: true,
                 maxlength: "40",
@@ -120,7 +132,7 @@
               label: '状态',
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择状态'
               },
               $options: phEnumModel.getSelectOptions('UserStatus')
@@ -177,8 +189,7 @@
                 placeholder: '请选择用户职位',
                 filterable: true,
               },
-              rules: [
-              ],
+              rules: [],
               $options: positionModel.getSelectOptions()
             },
             {
@@ -189,8 +200,7 @@
                 placeholder: '请选择用户的上级领导',
                 filterable: true,
               },
-              rules: [
-              ],
+              rules: [],
               $options: userModel.getSelectOptions(),
             },
             {
@@ -234,8 +244,8 @@
         }
       }
     },
-    computed: {}
-    ,
+
+    computed: {},
 
     methods: {
       // 状态样式
@@ -246,10 +256,11 @@
         else {
           return 'warning-row';
         }
+      },
+      onSetting(row) {
+        this.$refs.setting.openDiaLog(row.id, row.name);
       }
-      ,
-    }
-    ,
+    },
 
     // 观察data中的值发送变化后，调用
     watch: {}

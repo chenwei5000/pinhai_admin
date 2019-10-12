@@ -55,7 +55,7 @@
       <el-table-column prop="formatLastModified" label="修改时间" width="150" fixed="left"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="150" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="130" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
