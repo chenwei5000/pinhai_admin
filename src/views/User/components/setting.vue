@@ -4,252 +4,66 @@
              :visible.sync="dialogVisible"
              @close='closeDialog'
              v-if="dialogVisible" fullscreen>
-    <div class="custom-tree-container">
 
-      <el-input
-        placeholder="输入关键字进行过滤"
-        v-model="filterText">
-      </el-input>
 
-      <div class="block" style="height: 450px;">
-        <el-scrollbar style="height: 100%">
-          <el-tree
-            ref="tree"
-            :data="list"
-            show-checkbox
-            node-key="id"
-            :default-expand-all="true"
-            :expand-on-click-node="false"
-            :check-on-click-node="true"
-            v-loading="loading"
-            :filter-node-method="filterNode"
-          ></el-tree>
-        </el-scrollbar>
-      </div>
-    </div>
+    <!-- 表格 -->
+    <el-tabs v-model="activeStatus" type="border-card">
+      <el-tab-pane name="role" lazy v-if="dialogVisible">
+          <span slot="label" >
+            <i class="el-ph-icon-check-circle"></i> 角色
+          </span>
+        <keep-alive>
+          <role :userId="userId" v-if="userId"/>
+        </keep-alive>
+      </el-tab-pane>
 
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" size="small" @click="save">保 存</el-button>
-      <el-button size="small" @click="closeDialog">取 消</el-button>
-    </div>
+      <el-tab-pane name="dataAuth" lazy v-if="dialogVisible">
+          <span slot="label" >
+            <i class="el-ph-icon-check-circle"></i> 数据权限
+          </span>
+        <keep-alive>
+          <dataAuth :userId="userId" v-if="userId"/>
+        </keep-alive>
+      </el-tab-pane>
+
+    </el-tabs>
+
   </el-dialog>
 </template>
 
 <script>
   // loading 组件
+  import dataAuth from './dataAuth';
+  import role from './role';
 
   export default {
+
+    components: {
+      dataAuth,
+      role
+    },
+
     props: {},
 
     data() {
       return {
         title: "",
-        userId: 0,
-        list: [],
+        activeStatus: 'role',
         dialogVisible: false,
-        loading: false,
-        filterText: '',
+        userId: 0
       };
-    },
-    watch: {
-      filterText(val) {
-        this.$refs.tree.filter(val);
-      }
     },
     methods: {
       openDiaLog(id, name) {
         this.userId = id
-        this.title = `${name} 数据权限管理`
+        this.title = `${name} 权限管理`;
         this.dialogVisible = true;
-        this.loading = true;
-
-        let goal = [
-          {
-            // id: "0-root",
-            label: "权限",
-            children: []
-          }
-        ];
-
-        let base = {
-          label: "基础",
-          children: [
-            {id: "-1#ADMIN", label: "管理员"},
-            {id: "-1#PRICE", label: "采购价"},
-            {id: "-1#SUPPLIERINFO", label: "供货商信息"}
-          ]
-        }
-        goal[0].children.push(base);
-
-        // 获取分类信息
-        let url = `/categories/permissions?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [{
-            field: "status",
-            op: 'eq',
-            data: 1
-          }]
-        })}&sort=name&dir=asc`;
-
-        let category = {
-          label: "分类",
-          children: [{id: `-1#CATEGORY`, label: "全部"}]
-        }
-        this.global.axios.get(url).then(data => {
-          data.data.forEach(res => {
-            category.children.push({id: `${res.id}#CATEGORY`, label: res.name});
-          })
-        });
-        goal[0].children.push(category);
-
-        // 获取原料分类信息
-        url = `/categories/permissionMaterials?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [{
-            field: "status",
-            op: 'eq',
-            data: 1
-          }]
-        })}&sort=name&dir=asc`;
-
-        let mCategory = {
-          label: "原料分类",
-          children: []
-        }
-        this.global.axios.get(url).then(data => {
-          data.data.forEach(res => {
-            mCategory.children.push({id: `${res.id}#CATEGORY`, label: res.name});
-          })
-        });
-        goal[0].children.push(mCategory);
-
-        // 获取仓库信息
-        url = `/warehouses?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [{
-            field: "status",
-            op: 'eq',
-            data: 1
-          }]
-        })}&sort=name&dir=asc`;
-
-        let warehouse = {
-          label: "仓库",
-          children: [{id: `-1#WAREHOUSE`, label: "全部"}]
-        }
-        this.global.axios.get(url).then(data => {
-          data.data.forEach(res => {
-            warehouse.children.push({id: `${res.id}#WAREHOUSE`, label: res.name});
-          })
-        });
-        goal[0].children.push(warehouse);
-
-        // 获取供货商信息
-        url = `/suppliers?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [{
-            field: "status",
-            op: 'eq',
-            data: 1
-          }]
-        })}&sort=name&dir=asc`;
-
-        let supplier = {
-          label: "供货商",
-          children: [{id: `-1#SUPPLIER`, label: "全部"}]
-        }
-
-        this.global.axios.get(url).then(data => {
-          data.data.forEach(res => {
-            supplier.children.push({id: `${res.id}#SUPPLIER`, label: res.name});
-          })
-        });
-        goal[0].children.push(supplier);
-        this.setDefault(id);
-        this.list = goal;
       },
       closeDialog() {
         this.dialogVisible = false;
-        this.loading = false;
         this.title = "";
         this.userId = 0;
-        this.list = [];
-        this.filterText = [];
       },
-      save() {
-        let data = this.$refs.tree.getCheckedNodes();
-
-        let loading = this.$loading({
-          lock: true,
-          text: '保存中...',
-          spinner: 'el-icon-upload',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        let postData = []
-
-        for (let i = 0; i < data.length; i++) {
-          const e = data[i];
-          if (e.id) {
-            let val = e.id.split("#");
-            let temp = {}
-            temp.targetId = val[0];
-            temp.targetType = val[1];
-            postData.push(temp);
-          }
-        }
-
-        let url = `/dataAuthorities/importData/${this.userId}`
-        this.global.axios.post(url, postData).then(data => {
-          if (data.status == 200) {
-            this.$message.info('操作成功！')
-          }
-          loading.close();
-        })
-      },
-
-      setDefault(id) {
-        let url = `/dataAuthorities?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [
-            {
-              field: "userId",
-              op: 'in',
-              data: id
-            },
-            {
-              field: "targetType",
-              op: 'in',
-              data: "ADMIN,CATEGORY,WAREHOUSE,SUPPLIER,PRICE,SUPPLIERINFO"
-            }
-          ]
-        })}`;
-
-        this.global.axios.get(url).then(data => {
-          let selected = [];
-          if (data.status == 200) {
-            let list = data.data;
-            for (let i = 0; i < list.length; i++) {
-              const e = list[i];
-              let selectedId = e.targetId + "#" + e.targetType;
-
-              let temp = {
-                id: selectedId
-              };
-              selected.push(temp);
-            }
-            this.$refs.tree.setCheckedNodes(selected);
-            this.loading = false;
-          }
-        });
-      },
-
-      filterNode(value, data) {
-        if (!value) return true;
-        return data.label.indexOf(value) !== -1;
-      }
-    },
-    mounted() {
     }
   };
 </script>
