@@ -213,7 +213,7 @@
             },
             {
               $type: 'input',
-              $id: 'password',
+              $id: 'passwordText',
               label: '用户密码',
               $el: {
                 placeholder: '请输入用户密码,不输入不修改'
