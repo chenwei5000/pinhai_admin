@@ -13,15 +13,14 @@ NProgress.configure({showSpinner: false}) // NProgress Configuration
 // 白名单,这个里面的请求，不进行权限验证
 const whiteList = ['/login', '/auth-redirect', '/register', '/forget', '/reset-password']
 
-
 router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start();
 
-  let list = store.getters.enums;
-  if (list == null) {
-    await store.dispatch('app/loadEnums');
-  }
+  // let list = store.getters.enums;
+  // if (list == null) {
+  //   await store.dispatch('app/loadEnums');
+  // }
 
   // set page title TODO:
   // document.title = getPageTitle(to.meta.title)
