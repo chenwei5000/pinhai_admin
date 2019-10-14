@@ -125,8 +125,8 @@
 
       async handleCommand(command) {
         if (command == 'logout') {
+          this.$router.push(`/login?redirect=${this.$route.fullPath}`);
           await systemMode.logout();
-          this.$router.push(`/login?redirect=${this.$route.fullPath}`)
         }
         if (command == 'openPassDialog') {
           this.openPassDialog();

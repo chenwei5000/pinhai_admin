@@ -17,10 +17,15 @@ router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start();
 
-  // let list = store.getters.enums;
-  // if (list == null) {
-  //   await store.dispatch('app/loadEnums');
-  // }
+  if(to.path == '/login'){
+    next()
+    return;
+  }
+
+  let list = store.getters.enums;
+  if (list == null) {
+    await store.dispatch('app/loadEnums');
+  }
 
   // set page title TODO:
   // document.title = getPageTitle(to.meta.title)
