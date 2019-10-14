@@ -62,7 +62,7 @@
 
           <el-col :md="8">
             <el-form-item label="收货仓库" prop="warehouseId">
-              <el-select v-model="editObject.warehouseId"
+              <el-select v-model="editObject.warehouseId" size="mini"
                          filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -80,7 +80,7 @@
 
           <el-col :md="8">
             <el-form-item label="名称" prop="name">
-              <el-input v-model.trim="editObject.name"
+              <el-input v-model.trim="editObject.name" size="mini"
                         maxlength="100"
                         show-word-limit
                         style="width: 200px" placeholder="请填写名称" clearable></el-input>
@@ -97,7 +97,7 @@
         <el-row>
           <el-col :md="8">
             <el-form-item label="结算方式" prop="settlementMethod">
-              <el-select v-model="editObject.settlementMethod"
+              <el-select v-model="editObject.settlementMethod" size="mini"
                          filterable placeholder="请选择结算方式">
                 <el-option
                   v-for="(item , idx)  in settlementMethodSelectOptions"
@@ -115,7 +115,7 @@
 
           <el-col :md="8">
             <el-form-item label="结算货币" prop="currencyId">
-              <el-select v-model="editObject.currencyId"
+              <el-select v-model="editObject.currencyId" size="mini"
                          filterable placeholder="请选择结算货币">
                 <el-option
                   v-for="(item , idx)  in currencySelectOptions"
@@ -133,7 +133,7 @@
 
           <el-col :md="8">
             <el-form-item label="帐期" prop="accountPeriod">
-              <el-input-number v-model="editObject.accountPeriod"
+              <el-input-number v-model="editObject.accountPeriod" size="mini"
                                style="width: 155px"
                                :min="1"
                                :step="1"
@@ -152,7 +152,7 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
+            <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
               保存基本信息
             </el-button>
           </el-row>

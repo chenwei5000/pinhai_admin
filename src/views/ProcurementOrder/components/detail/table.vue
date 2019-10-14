@@ -8,11 +8,11 @@
              @submit.native.prevent>
 
       <el-form-item label="SKU">
-        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+        <el-input v-model="searchParam.skuCode" size="mini" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status" placeholder="请选择状态">
+        <el-select filterable v-model="searchParam.status" size="mini" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"

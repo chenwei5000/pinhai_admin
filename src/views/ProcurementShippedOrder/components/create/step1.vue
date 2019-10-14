@@ -77,7 +77,7 @@
               <el-form-item label="备注" prop="note">
                 <el-col :span="22">
                   <el-input type="textarea" v-model="editObject.remark"
-                            maxlength="500"
+                            maxlength="200"
                             show-word-limit
                             rows="3"
                             cols="80"
@@ -484,7 +484,7 @@
 
           this.confirmLoading = true;
           let msg = '';
-          this.tableData.forEach(r => {
+          this.data.forEach(r => {
 
             // 产品无装箱数
             if (!r.numberOfCarton) {
@@ -561,6 +561,12 @@
             _details.push(_detail);
           }
         });
+       if(_details.length === 0){
+         this.$message.error('本次发货箱数总数不能为0');
+         return;
+       }
+
+
         _order.shippedOrderItems = _details;
 
         const loading = this.$loading({
