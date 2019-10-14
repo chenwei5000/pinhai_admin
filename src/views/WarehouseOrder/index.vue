@@ -30,9 +30,7 @@
           hasEdit: checkPermission('WarehouseOrderResource_update'),
           hasDelete: checkPermission('WarehouseOrderResource_remove'),
           // hasView: checkPermission('WarehouseOrderResource_get'),
-          hasExportTpl: checkPermission('WarehouseOrderResource_export'),
           hasExport: checkPermission('WarehouseOrderResource_export'),
-          hasImport: checkPermission('WarehouseOrderResource_import'),
 
           url: '/warehouseOrders',
           relations: ["product", "warehouse", "cartonSpec", "storageLocation", "currency"],
