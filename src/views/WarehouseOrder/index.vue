@@ -59,6 +59,8 @@
             {prop: 'currency.name', label: '结算货币', 'min-width': 100},
             {prop: 'price', label: '采购价', 'min-width': 100},
             {prop: 'amount', label: '总金额', 'min-width': 100},
+            // {prop: 'createTime', label: '创建时间', 'min-width': 100},
+            phColumns.createTime
             // phColumns.status,
             // phColumns.lastModified
           ],
@@ -128,6 +130,40 @@
                 placeholder: '请选择类型'
               }
             },
+            {
+              $type:'date-picker',
+              $id:'createTime',
+              label: '创建时间',
+              $el: {
+                style:'width:200px',
+                op: 'timeRange',
+                size:"mini",
+                placeholder: '开始日期',
+                size:'mini',
+                format:'yyyy-MM-dd',
+                'value-format':'yyyy-MM-dd',
+                type:'daterange',
+                'range-separator':'-',
+                'start-placeholder':'开始日期',
+                'end-placeholder':'结束日期'
+              }
+            }
+
+
+
+            /* <el-form-item label="期望交货日期">
+           <el-date-picker
+           size="mini"
+           v-model="searchParam.limitTime.value"
+           format="yyyy-MM-dd"
+           value-format="yyyy-MM-dd"
+           type="daterange"
+           range-separator="-"
+           start-placeholder="开始日期"
+           end-placeholder="结束日期">
+             </el-date-picker>
+
+             </el-form-item>*/
           ],
           //修改或新增
           form: [

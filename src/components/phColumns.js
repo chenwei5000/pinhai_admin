@@ -36,7 +36,22 @@ const phColumns = {
         return row.lastModified;
       }
     }
+  },
+
+  createTime: {
+    prop: 'createTime',
+    label: '创建时间',
+    width: 140,
+    formatter: row => {
+      try {
+        return parseTime(row.createTime, '{y}-{m}-{d} {h}:{i}:{s}');
+      }
+      catch (e) {
+        return row.createTime;
+      }
+    }
   }
+
 
 }
 
