@@ -13,7 +13,7 @@
       <el-form :rules="rules" :model="detailItem" status-icon inline
                ref="detailItem" label-position="right"
                label-width="120px"
-               v-loading="loading"
+               v-loading="loading" size="mini"
       >
         <el-row>
           <el-col :md="10">
@@ -225,8 +225,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="primary" @click="onSave" :loading="confirmLoading" size="mini">保 存</el-button>
+      <el-button @click="closeDialog" size="mini">取 消</el-button>
     </div>
 
 
