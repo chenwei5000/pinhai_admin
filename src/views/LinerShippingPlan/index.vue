@@ -67,7 +67,7 @@
                 </el-form-item>
 
                 <el-form-item label="分类">
-                  <el-select v-model="searchParam.category.value" style="width: 120px"
+                  <el-select size="mini" v-model="searchParam.categoryName.value" style="width: 120px"
                              filterable
                              placeholder="请选择分类">
                     <el-option
@@ -222,7 +222,7 @@
           portOfLoading: {value: null, op: 'eq', id: 'portOfLoading'},
           shipmentId: {value: null, op: 'eq', id: 'shipmentId'},
           destinationFulfillmentCenterId: {value: null, op: 'eq', id: 'destinationFulfillmentCenterId'},
-          category: {value: null, op: 'bw', id: 'category'},
+          categoryName: {value: null, op: 'bw', id: 'categoryName'},
           boxNumber: {value: null, op: 'eq', id: 'boxNumber'},
           ladingBillNumber: {value: null, op: 'eq', id: 'ladingBillNumber'},
         },
@@ -260,8 +260,8 @@
             this.searchParam.destinationFulfillmentCenterId.value = params.destinationFulfillmentCenterId;
             this.searchFlg = true;
           }
-          if (params.category) {
-            this.searchParam.category.value = params.category;
+          if (params.categoryName) {
+            this.searchParam.categoryName.value = params.categoryName;
             this.searchFlg = true;
           }
           if (params.boxNumber) {
@@ -446,7 +446,7 @@
         this.searchParam.portOfLoading.value = null;
         this.searchParam.shipmentId.value = null;
         this.searchParam.destinationFulfillmentCenterId.value = null;
-        this.searchParam.category.value = null;
+        this.searchParam.categoryName.value = null;
         this.searchParam.boxNumber.value = null;
         this.searchParam.ladingBillNumber.value = null;
 
