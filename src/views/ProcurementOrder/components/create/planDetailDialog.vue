@@ -284,9 +284,14 @@
 
           this.supplierSelectOptions.forEach(r => {
             if (r.value == this.detailItem.supplierId + '') {
-              this.detailItem.supplierName = r.label;
-              if(!this.detailItem.product.supplier){
-                this.detailItem.product.supplier = {name: r.label, id: this.detailItem.supplierId};
+
+              this.detailItem.supplierName = r.label
+              if(this.detailItem.product.supplier != null){
+                this.detailItem.product.supplier = {
+                  name: r.label,
+                  id: this.detailItem.supplierId
+                };
+
               }
             }
           });
@@ -295,6 +300,7 @@
               this.detailItem.cartonSpecCode = r.label;
             }
           });
+
 
           this.$emit("modifyDetailCBEvent", this.detailItem);
           this.loading = false;
