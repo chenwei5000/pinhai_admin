@@ -3,7 +3,7 @@
   <el-dialog :title="dialogTitle"
              append-to-body
              v-if="dialogVisible"
-             width="80%"
+             width="60%"
              top="10vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
