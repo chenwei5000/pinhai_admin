@@ -50,7 +50,7 @@
             {prop: 'code', label: '批次码', 'min-width': 130},
             {prop: 'allocationCode', label: '调拨单', 'min-width': 130},
             {prop: 'typeName', label: '类型', 'min-width': 100},
-            {prop: 'storageLocation.code', label: '存放货位', 'min-width': 100},
+            /*{prop: 'storageLocation.code', label: '存放货位', 'min-width': 100},*/
             {prop: 'product.skuCode', label: 'SKU编码', 'min-width': 100},
             {prop: 'product.name', label: '产品名', 'min-width': 120},
             {prop: 'numberOfCarton', label: '装箱数', 'min-width': 100},
