@@ -793,6 +793,7 @@
             _detail.cartonQty = r.purchaseOrderCartonQty;
             _detail.skuCode = r.product.skuCode;
             _detail.price = r.product.price;
+            _detail.supplierId=_order.supplierId;
             _details.push(_detail);
           }
         });
