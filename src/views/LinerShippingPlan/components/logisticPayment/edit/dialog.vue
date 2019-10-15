@@ -20,7 +20,7 @@
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 付款项</div>
-        <itemTable ref="itemTable" :primary="primary" :selCurrency="selCurrency" v-if="primaryComplete"></itemTable>
+        <itemTable ref="itemTable" @modifyCBEvent="modifyCBEvent"  :primary="primary" :selCurrency="selCurrency" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">

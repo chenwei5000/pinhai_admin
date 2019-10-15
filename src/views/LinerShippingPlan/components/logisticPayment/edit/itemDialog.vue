@@ -212,11 +212,20 @@
 
           this.loading = true;
           this.confirmLoading = true;
+          let method = 'post';
+          let url = `/logisticPaymentBillDetails`;
 
-          let url = `/logisticPaymentBillDetails/${this.detailItem.id}`
-          this.global.axios.put(url, this.detailItem)
+          if(this.detailItem.id){
+            method = 'put';
+            let url = `/logisticPaymentBillDetails/${this.detailItem.id}`;
+          }
+          else{
+            this.detailItem.logisticPaymentBillId = this.primary.id;
+          }
+
+          this.global.axios[method](url, this.detailItem)
             .then(resp => {
-              this.$message({type: 'success', message: '编辑成功'});
+              this.$message({type: 'success', message: '操作成功'});
               let obj = resp.data;
               // 回传消息
               this.$emit("modifyCBEvent", this.detailItem);

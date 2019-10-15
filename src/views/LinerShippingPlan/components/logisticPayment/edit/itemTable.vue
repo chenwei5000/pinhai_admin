@@ -296,6 +296,7 @@
                   this.confirmLoading = false;
                   this.loading = false;
                   this.initData();
+                  this.$emit("modifyCBEvent");
                 })
                 .catch(err => {
                   this.confirmLoading = false;
@@ -312,6 +313,7 @@
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         this.initData();
+        this.$emit("modifyCBEvent", object);
       },
 
       /********************* 工具条按钮  ***************************/
