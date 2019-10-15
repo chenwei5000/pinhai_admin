@@ -5,7 +5,7 @@
 
     <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
-             @submit.native.prevent>
+             @submit.native.prevent >
 
       <el-form-item label="SKU">
         <el-input v-model="searchParam.skuCode" size="mini" placeholder="请输入SKU" clearable></el-input>
@@ -40,7 +40,9 @@
       :hasExport="hasExport"
       :hasImport="hasImport"
       :hasAdd="hasAdd"
+      :hasDelete="hasDelete"
       @onToolBarAdd="onToolBarAdd"
+      @onToolBarDelete="onToolBarDelete"
       @onToolBarDownloadData="onToolBarDownloadData"
       @onToolBarImportData="onToolBarImportData"
     >
@@ -65,6 +67,12 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
+
+      <el-table-column
+        type="selection"
+        width="50">
+      </el-table-column>
+
       <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
@@ -245,6 +253,7 @@
         }
         return checkPermission('ProcurementPlanItemResource_create');
       },
+
 
       hasOperation() {
         return this.hasEdit || this.hasDelete;
@@ -533,6 +542,33 @@
       /* 行修改功能 */
       onDefaultEdit(row) {
         this.$refs.itemDialog.openDialog(row.id);
+      },
+
+      onToolBarDelete() {
+          let ids = [];
+          this.selected.forEach(data => {
+            ids.push(data.id);
+          });
+
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+
+              let url = `${this.url}/${ids.join(",")}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+              })
+                .catch(err => {
+                })
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
 
       /* 行删除功能 */

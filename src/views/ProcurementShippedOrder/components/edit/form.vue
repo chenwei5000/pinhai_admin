@@ -61,41 +61,29 @@
 
     <el-row>
       <el-col :md="10">
-        <el-form-item label="物流单号" prop="trackNumber">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
-          <el-input v-else v-model="editObject.trackNumber"
-                    show-word-limit
-                    style="width: 220px"  size="mini" placeholder="请填写单号" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="物流单号" prop="trackNumber">
+          <span   style="font-size: 12px">{{editObject.trackNumber}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="物流公司" prop="channel">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
-          <el-input v-else v-model="editObject.channel"
-                    style="width: 220px"  size="mini" placeholder="请填写公司" clearable></el-input>
+        <el-form-item  v-if="!hasEdit" label="物流公司" prop="channel">
+          <span  style="font-size: 12px">{{editObject.channel}}</span>
         </el-form-item>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :md="10">
-        <el-form-item label="车牌" prop="plateNumber">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.plateNumber}}</span>
-
-          <el-input v-else v-model="editObject.plateNumber"
-                    show-word-limit
-                    style="width: 220px"  size="mini" placeholder="请填写车牌" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="车牌" prop="plateNumber">
+          <span   style="font-size: 12px">{{editObject.plateNumber}}</span>
         </el-form-item>
+
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="联系人" prop="linkman">
-
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
-
-          <el-input v-else v-model="editObject.linkman"
-                    style="width: 220px" size="mini" placeholder="请填写联系人" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="联系人" prop="linkman">
+          <span   style="font-size: 12px">{{editObject.linkman}}</span>
         </el-form-item>
       </el-col>
     </el-row>
@@ -103,11 +91,8 @@
     <el-row>
 
       <el-col :md="10">
-        <el-form-item label="电话" prop="tel">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
-
-          <el-input v-else v-model="editObject.tel"
-                    style="width: 220px"  size="mini" placeholder="请填写电话" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="电话" prop="tel">
+          <span  style="font-size: 12px">{{editObject.linkman}}</span>
         </el-form-item>
       </el-col>
 

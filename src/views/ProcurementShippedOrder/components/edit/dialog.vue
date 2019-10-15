@@ -209,6 +209,7 @@
         this.$refs.shippedDialog.openDialog(this.primary);
       },
       onShippedCBEvent(object) {
+        this.primaryComplete=false;
         this.initData();
       },
 
