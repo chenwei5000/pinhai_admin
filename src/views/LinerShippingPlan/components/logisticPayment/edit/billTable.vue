@@ -32,22 +32,19 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
+      <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
       </el-table-column>
 
-      <el-table-column prop="pdNumber" label="数量" width="150">
+      <el-table-column prop="invoiceTime" label="开票日期" width="150">
       </el-table-column>
 
-      <el-table-column prop="pdPrice" label="单价" width="150">
+      <el-table-column prop="price" label="发票金额" width="150">
         <template slot-scope="scope">
-          {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="pdAmount" label="金额" width="150">
-        <template slot-scope="scope">
-          {{scope.row.pdAmount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
-        </template>
+      <el-table-column prop="company" label="公司" min-width="150">
       </el-table-column>
 
       <!--默认操作列-->
@@ -81,7 +78,8 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import itemDialog from './itemDialog'
+  import itemDialog from './billDialog'
+  import moment from 'moment'
 
   export default {
     components: {
@@ -129,7 +127,6 @@
 
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
-        financeBills: [], // 采购预付款单
 
         // 表格加载效果
         loading: false,
@@ -163,56 +160,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-
-        //类型、数量、单价、总金额、备注
-        this.data.push({
-          pdNumber: 1,
-          pdPrice: this.primary.unpaidApplyAmount,
-          pdRemarks: '购买产品的费用',
-          financeBillId: null,
-          pdAmount: this.primary.unpaidApplyAmount
-        });
-
-        let all_url = "/financeBills";
-        let filters = [
-          {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode ? this.primary.procurementOrderCode : -1},
-          {"field": "status", "op": "eq", "data": 2},
-        ]
-        all_url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        all_url += "&sort=id&dir=asc";
-
-        this.global.axios
-          .get(all_url)
-          .then(resp => {
-            let res = resp.data || [];
-            res.forEach(bill => {
-              let use_url = `/paymentDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
-              this.global.axios
-                .get(use_url)
-                .then(res => {
-                  let amount = res.data || 0;
-                  this.data.push({
-                    pdNumber: 1,
-                    financeBillId: bill.id,
-                    pdPrice: -(bill.paymentAmount + amount),
-                    pdRemarks: `预付款单[${bill.code}]冲销`,
-                    pdAmount: -(bill.paymentAmount + amount),
-                  });
-                })
-                .catch(err => {
-                  this.data.push({
-                    pdNumber: 1,
-                    financeBillId: bill.id,
-                    pdPrice: -(bill.paymentAmount),
-                    pdRemarks: `预付款单[${bill.code}]冲销`,
-                    pdAmount: -(bill.paymentAmount),
-                  });
-                });
-            });
-          })
-          .catch(err => {
-          });
-
         this.search();
         this.loading = false;
       },
@@ -237,7 +184,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'pdNumber') {
+          if (column.property == 'phNumber') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -253,7 +200,7 @@
             }
           }
 
-          if (column.property == 'pdAmount') {
+          if (column.property == 'pdAmount' || column.property == 'pdPrice') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -285,11 +232,31 @@
         this.search();
       },
 
+      addInvoice(invoice) {
+        if (invoice) {
+          let addFlg = true;
+          this.data.forEach(r => {
+            if (r.invoiceNumber == invoice.InvoiceCode + invoice.InvoiceNum) {
+              addFlg = false;
+            }
+          });
+
+          if (addFlg) {
+            this.data.push({
+              invoiceNumber: invoice.InvoiceCode + invoice.InvoiceNum,
+              invoiceTime: moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD"),
+              price: invoice.AmountInFiguers,
+              company: invoice.SellerName + ":" + invoice.SellerRegisterNum
+            });
+          }
+          this.search();
+        }
+      },
 
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row, this.primary.currency);
+        this.$refs.itemDialog.openDialog(row);
       },
 
       /* 行删除功能 */
@@ -301,7 +268,7 @@
               let idx = null;
 
               this.data.forEach((item, index) => {
-                  if (item.pdRemarks === row.pdRemarks) {
+                  if (item.invoiceNumber === row.invoiceNumber) {
                     idx = index;
                     return;
                   }
@@ -322,8 +289,9 @@
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         let addFlg = true;
+
         this.data.forEach((item, index, arr) => {
-          if (item.pdRemarks == object.pdRemarks) {
+          if (item.invoiceNumber == object.invoiceNumber) {
             arr[index] = object;
             addFlg = false;
           }
@@ -339,7 +307,7 @@
 
       /********************* 工具条按钮  ***************************/
       onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null, this.primary.currency);
+        this.$refs.itemDialog.openDialog(null);
       },
       onToolBarEdit() {
 

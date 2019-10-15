@@ -32,21 +32,21 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
+      <el-table-column prop="remarks" label="付款项目" min-width="150">
       </el-table-column>
 
-      <el-table-column prop="pdNumber" label="数量" width="150">
+      <el-table-column prop="number" label="数量" width="150">
       </el-table-column>
 
-      <el-table-column prop="pdPrice" label="单价" width="150">
+      <el-table-column prop="price" label="单价" width="150">
         <template slot-scope="scope">
-          {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.price, selCurrency ? selCurrency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="pdAmount" label="金额" width="150">
+      <el-table-column prop="amount" label="金额" width="150">
         <template slot-scope="scope">
-          {{scope.row.pdAmount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.amount, selCurrency ? selCurrency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
@@ -92,6 +92,10 @@
       primary: {
         type: [Object],
         default: null
+      },
+      selCurrency: {
+        type: [Object],
+        default: null
       }
     },
     computed: {
@@ -114,7 +118,6 @@
 
     data() {
       return {
-
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
 
@@ -166,52 +169,11 @@
 
         //类型、数量、单价、总金额、备注
         this.data.push({
-          pdNumber: 1,
-          pdPrice: this.primary.unpaidApplyAmount,
-          pdRemarks: '购买产品的费用',
-          financeBillId: null,
-          pdAmount: this.primary.unpaidApplyAmount
+          number: 1,
+          price: null,
+          remarks: '物流费用',
+          amount: null
         });
-
-        let all_url = "/financeBills";
-        let filters = [
-          {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode ? this.primary.procurementOrderCode : -1},
-          {"field": "status", "op": "eq", "data": 2},
-        ]
-        all_url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        all_url += "&sort=id&dir=asc";
-
-        this.global.axios
-          .get(all_url)
-          .then(resp => {
-            let res = resp.data || [];
-            res.forEach(bill => {
-              let use_url = `/paymentDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
-              this.global.axios
-                .get(use_url)
-                .then(res => {
-                  let amount = res.data || 0;
-                  this.data.push({
-                    pdNumber: 1,
-                    financeBillId: bill.id,
-                    pdPrice: -(bill.paymentAmount + amount),
-                    pdRemarks: `预付款单[${bill.code}]冲销`,
-                    pdAmount: -(bill.paymentAmount + amount),
-                  });
-                })
-                .catch(err => {
-                  this.data.push({
-                    pdNumber: 1,
-                    financeBillId: bill.id,
-                    pdPrice: -(bill.paymentAmount),
-                    pdRemarks: `预付款单[${bill.code}]冲销`,
-                    pdAmount: -(bill.paymentAmount),
-                  });
-                });
-            });
-          })
-          .catch(err => {
-          });
 
         this.search();
         this.loading = false;
@@ -229,7 +191,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'costManagementTitle') {
+          if (column.property == 'remarks') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -237,7 +199,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'pdNumber') {
+          if (column.property == 'number') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -253,7 +215,7 @@
             }
           }
 
-          if (column.property == 'pdAmount') {
+          if (column.property == 'amount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -264,7 +226,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index], this.primary.currency.symbolLeft);
+              sums[index] = currency(sums[index], this.selCurrency.symbolLeft);
             } else {
               sums[index] = 'N/A';
             }
@@ -289,7 +251,7 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row, this.primary.currency);
+        this.$refs.itemDialog.openDialog(row, this.selCurrency);
       },
 
       /* 行删除功能 */
@@ -339,7 +301,7 @@
 
       /********************* 工具条按钮  ***************************/
       onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null, this.primary.currency);
+        this.$refs.itemDialog.openDialog(null, this.selCurrency);
       },
       onToolBarEdit() {
 

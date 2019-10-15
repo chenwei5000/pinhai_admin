@@ -32,7 +32,7 @@
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="ship" class="fontColor" lazy>
             <span slot="label">
-              <i class="el-icon-ship"></i> 物流信息
+              <i class="el-icon-truck"></i> 物流信息
             </span>
             <keep-alive>
               <shipFrom @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></shipFrom>
@@ -50,6 +50,17 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改 -->
+          <el-tab-pane name="logisticPayment" lazy>
+            <span slot="label">
+              <i class="el-icon-money"></i> 物流付款
+            </span>
+            <keep-alive>
+              <logisticPayment @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></logisticPayment>
+            </keep-alive>
+          </el-tab-pane>
+
+
+          <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="executing" lazy>
             <span slot="label">
               <i class="el-icon-s-custom"></i> 指派负责人
@@ -58,6 +69,7 @@
               <person @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></person>
             </keep-alive>
           </el-tab-pane>
+
 
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="complete" lazy>
@@ -81,7 +93,7 @@
   import person from './person';
   import attachment from './attachment';
   import detail from './table';
-
+  import logisticPayment from '../logisticPayment/table'
   import planModel from "@/api/linerShippingPlan";
 
   export default {
@@ -92,7 +104,8 @@
       shipFrom,
       person,
       attachment,
-      detail
+      detail,
+      logisticPayment
     },
 
     computed: {
