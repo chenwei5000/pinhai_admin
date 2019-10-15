@@ -148,22 +148,6 @@
                 'end-placeholder':'结束日期'
               }
             }
-
-
-
-            /* <el-form-item label="期望交货日期">
-           <el-date-picker
-           size="mini"
-           v-model="searchParam.limitTime.value"
-           format="yyyy-MM-dd"
-           value-format="yyyy-MM-dd"
-           type="daterange"
-           range-separator="-"
-           start-placeholder="开始日期"
-           end-placeholder="结束日期">
-             </el-date-picker>
-
-             </el-form-item>*/
           ],
           //修改或新增
           form: [
