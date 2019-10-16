@@ -369,7 +369,7 @@
         }
 
         // 处理查询
-        let filters = [];
+        let filters = this.filters;
         Object.keys(this.searchParam).filter(k => {
           return this.searchParam[k] && this.searchParam[k].value !== ''
             && this.searchParam[k].value !== null && this.searchParam[k].value !== undefined
