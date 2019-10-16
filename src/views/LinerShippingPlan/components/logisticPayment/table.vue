@@ -103,6 +103,14 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="invoicedAmount" label="开票金额" width="90">
+        <template slot-scope="scope">
+          <div style="text-align: right;">
+            {{ scope.row.invoicedAmount, (scope.row.currency? scope.row.currency.symbolLeft : '')  | currency }}
+          </div>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="paymentAmount" label="已付金额" width="90">
         <template slot-scope="scope">
           <div style="text-align: right;">

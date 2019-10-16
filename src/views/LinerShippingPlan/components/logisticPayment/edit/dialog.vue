@@ -31,7 +31,7 @@
 
       <el-collapse-item name="billTable" style="margin-top: 10px">
         <div slot="title" class="title">4. 发票信息</div>
-        <billTable ref="billTable" :primary="primary"
+        <billTable ref="billTable" :primary="primary" @modifyCBEvent="modifyCBEvent"
                    :selCurrency="selCurrency" v-if="primaryComplete"></billTable>
       </el-collapse-item>
 

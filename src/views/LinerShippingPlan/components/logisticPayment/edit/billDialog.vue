@@ -99,7 +99,6 @@
 
 <script>
   import validRules from '@/components/validRules'
-  import moment from 'moment'
 
   export default {
     components: {},
@@ -199,14 +198,37 @@
           if (!valid) {
             return false
           }
+
           this.loading = true;
           this.confirmLoading = true;
-          let object = JSON.parse(JSON.stringify(this.detailItem));
-          object.invoiceTime = moment(object.invoiceTime).format("YYYY-MM-DD")
-          this.$emit("modifyCBEvent", object);
-          this.confirmLoading = false;
-          this.dialogVisible = false;
-          this.closeDialog();
+          let method = 'post';
+          let url = `/invoices`;
+          this.detailItem.type = 'SH';
+
+          if (this.detailItem.id) {
+            method = 'put';
+            url = `/invoices/${this.detailItem.id}`;
+          }
+          else {
+            this.detailItem.paymentOrderId = this.primary.id;
+          }
+          console.log(url);
+
+          this.global.axios[method](url, this.detailItem)
+            .then(resp => {
+              this.$message({type: 'success', message: '操作成功'});
+              let obj = resp.data;
+              // 回传消息
+              this.$emit("modifyCBEvent", this.detailItem);
+              this.confirmLoading = false;
+              this.loading = false;
+              this.closeDialog();
+            })
+            .catch(err => {
+              this.confirmLoading = false;
+              this.loading = false;
+              this.closeDialog();
+            })
         })
       }
     }

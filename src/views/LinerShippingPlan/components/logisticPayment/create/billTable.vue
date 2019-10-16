@@ -169,14 +169,13 @@
       dangerClassName({row, rowIndex}) {
         return '';
       },
-
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'costManagementTitle') {
+          if (column.property == 'invoiceNumber') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -184,23 +183,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'phNumber') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-          if (column.property == 'pdAmount' || column.property == 'pdPrice') {
+          if (column.property == 'price') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -216,9 +199,7 @@
               sums[index] = 'N/A';
             }
           }
-        });
-
-        return sums;
+        })
       },
 
       /********************* 搜索相关方法  ***************************/

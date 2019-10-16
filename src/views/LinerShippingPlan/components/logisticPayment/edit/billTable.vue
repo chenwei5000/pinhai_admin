@@ -36,6 +36,9 @@
       </el-table-column>
 
       <el-table-column prop="invoiceTime" label="开票日期" width="150">
+        <template slot-scope="scope">
+          <span>{{ scope.row.invoiceTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
       </el-table-column>
 
       <el-table-column prop="price" label="发票金额" width="150">
@@ -76,7 +79,7 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency} from '@/utils'
+  import {currency, parseTime} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './billDialog'
   import moment from 'moment'
@@ -205,7 +208,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'costManagementTitle') {
+          if (column.property == 'invoiceNumber') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -213,23 +216,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'phNumber') {
-            const values = data.map(item => Number(item[column.property]));
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                  return prev + curr;
-                } else {
-                  return prev;
-                }
-              }, 0);
-            } else {
-              sums[index] = 'N/A';
-            }
-          }
-
-          if (column.property == 'pdAmount' || column.property == 'pdPrice') {
+          if (column.property == 'price') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -294,18 +281,21 @@
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              let idx = null;
-
-              this.data.forEach((item, index) => {
-                  if (item.invoiceNumber === row.invoiceNumber) {
-                    idx = index;
-                    return;
-                  }
-                }
-              );
-              this.date = this.data.splice(idx, 1);
-              this.search();
-
+              this.loading = true;
+              this.confirmLoading = true;
+              let url = `/invoices/${row.id}`
+              this.global.axios.delete(url)
+                .then(resp => {
+                  this.$message({type: 'success', message: '删除成功'});
+                  this.confirmLoading = false;
+                  this.loading = false;
+                  this.initData();
+                  this.$emit("modifyCBEvent");
+                })
+                .catch(err => {
+                  this.confirmLoading = false;
+                  this.loading = false;
+                })
               done();
             } else done()
           }
@@ -317,21 +307,8 @@
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
-        let addFlg = true;
-
-        this.data.forEach((item, index, arr) => {
-          if (item.invoiceNumber == object.invoiceNumber) {
-            arr[index] = object;
-            addFlg = false;
-          }
-        });
-
-        if (addFlg) {
-          this.data.push(object);
-        }
-        this.data.push({});
-        this.data.pop();
-        this.search();
+        this.initData();
+        this.$emit("modifyCBEvent", object);
       },
 
       /********************* 工具条按钮  ***************************/

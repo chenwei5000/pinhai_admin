@@ -217,7 +217,7 @@
 
           if(this.detailItem.id){
             method = 'put';
-            let url = `/logisticPaymentBillDetails/${this.detailItem.id}`;
+            url = `/logisticPaymentBillDetails/${this.detailItem.id}`;
           }
           else{
             this.detailItem.logisticPaymentBillId = this.primary.id;
