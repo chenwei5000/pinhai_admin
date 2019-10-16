@@ -1,4 +1,4 @@
-import {parseTime} from '@/utils'
+import {currency,parseTime} from '@/utils'
 import phEnumModel from '../api/phEnum'
 
 const phColumns = {
@@ -37,6 +37,34 @@ const phColumns = {
         }
       });
       return _label;
+    }
+  },
+
+  price: {
+    prop: 'price',
+    label: '采购价',
+    width: 100,
+    formatter: row => {
+      try {
+        return  currency(row.price,row.currency.symbolLeft,2) ;
+      }
+      catch (e) {
+        return row.price;
+      }
+    }
+  },
+
+  amount: {
+    prop: 'amount',
+    label: '总金额',
+    width: 100,
+    formatter: row => {
+      try {
+        return  currency(row.amount,row.currency.symbolLeft,2) ;
+      }
+      catch (e) {
+        return row.price;
+      }
     }
   },
   lastModified: {

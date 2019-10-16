@@ -54,8 +54,10 @@
             {prop: 'cartonQty', label: '箱数', 'min-width': 100},
             {prop: 'qty', label: '件数', 'min-width': 100},
             {prop: 'currency.name', label: '结算货币', 'min-width': 100},
-            {prop: 'price', label: '采购价', 'min-width': 100},
-            {prop: 'amount', label: '总金额', 'min-width': 100},
+          /*  {prop: 'price', label: '采购价', 'min-width': 100},*/
+            phColumns.price,
+            phColumns.amount,
+            /*{prop: 'amount', label: '总金额', 'min-width': 100},*/
             // {prop: 'createTime', label: '创建时间', 'min-width': 100},
             phColumns.jobStatus,
             phColumns.createTime
