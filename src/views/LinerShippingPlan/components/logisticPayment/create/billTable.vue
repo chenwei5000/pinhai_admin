@@ -173,6 +173,7 @@
       dangerClassName({row, rowIndex}) {
         return '';
       },
+
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
@@ -203,7 +204,9 @@
               sums[index] = 'N/A';
             }
           }
-        })
+        });
+
+        return sums;
       },
 
       /********************* 搜索相关方法  ***************************/
