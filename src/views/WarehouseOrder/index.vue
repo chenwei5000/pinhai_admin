@@ -18,7 +18,7 @@
   import phFromItems from '../../components/phFromItems'
   import warehouseModel from '../../api/warehouse'
   import {checkPermission} from "../../utils/permission";
-
+  import phEnumModel from '../../api/phEnum'
 
   export default {
     data() {
@@ -42,7 +42,6 @@
           hasDelete: false,
           //列表
           columns: [
-            {type: 'selection'},
             phColumns.id,
             {prop: 'warehouse.name', label: '收货仓库', 'min-width': 90},
             {prop: 'code', label: '批次码', 'min-width': 130},
@@ -58,6 +57,7 @@
             {prop: 'price', label: '采购价', 'min-width': 100},
             {prop: 'amount', label: '总金额', 'min-width': 100},
             // {prop: 'createTime', label: '创建时间', 'min-width': 100},
+            phColumns.jobStatus,
             phColumns.createTime
             // phColumns.status,
             // phColumns.lastModified
@@ -71,6 +71,7 @@
               $options: warehouseModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                filterable: true,
                 size:"mini",
                 placeholder: '请选择收货仓库'
               }
@@ -96,31 +97,31 @@
               }
             },
             {
-              $type: 'select',
-              $id: 'type',
-              label: '类型',
-              $options: [{
-                label: '采购入库',
-                value: 'pin'
-              }, {
-                label: '加工入库',
-                value: 'min'
-              }, {
-                label: '出口',
-                value: 'eout'
-              }, {
-                label: '调拨入库',
-                value: 'ain'
-              }, {
-                label: '调拨出库',
-                value: 'aout'
-              }, {
-                label: '盘点入库',
-                value: 'iin'
-              }, {
-                label: '盘点出库',
-                value: 'iout'
-              }
+                $type: 'select',
+                $id: 'type',
+                label: '类型',
+                $options: [{
+                  label: '采购入库',
+                  value: 'pin'
+                }, {
+                  label: '加工入库',
+                  value: 'min'
+                }, {
+                  label: '出口',
+                  value: 'eout'
+                }, {
+                  label: '调拨入库',
+                  value: 'ain'
+                }, {
+                  label: '调拨出库',
+                  value: 'aout'
+                }, {
+                  label: '盘点入库',
+                  value: 'iin'
+                }, {
+                  label: '盘点出库',
+                  value: 'iout'
+                }
               ],
               $el: {
                 op: 'eq',
@@ -145,8 +146,21 @@
                 'start-placeholder':'开始日期',
                 'end-placeholder':'结束日期'
               }
-            }
-          ],
+            },
+            {
+              $type: 'select',
+              $id: 'jobStatus',
+              label: '结算状态',
+              $options: phEnumModel.getSelectOptions("WarehouseOrderJobStatus"),
+              $el: {
+                op: 'eq',
+                size:"mini",
+                placeholder: '请选择类型'
+              }
+            },
+
+
+    ],
           //修改或新增
           form: [
             //
@@ -157,12 +171,7 @@
     computed: {},
     methods: {
       statusClassName({row}) {
-        if (row.status && row.status !== 0) {
           return '';
-        }
-        else {
-          return 'warning-row';
-        }
       },
     },
     watch: {}

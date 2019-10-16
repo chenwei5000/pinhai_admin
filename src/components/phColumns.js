@@ -23,7 +23,22 @@ const phColumns = {
       return _label;
     }
   },
-
+  jobStatus: {
+    prop: 'jobStatus',
+    label: '结算状态',
+    width: 80,
+    formatter: row => {
+      let _status = phEnumModel.getSelectOptions("WarehouseOrderJobStatus");
+      let _label = '';
+      _status.forEach(s => {
+        if (s.value === row.jobStatus + '') {
+          _label = s.label;
+          return;
+        }
+      });
+      return _label;
+    }
+  },
   lastModified: {
     prop: 'lastModified',
     label: '修改时间',
