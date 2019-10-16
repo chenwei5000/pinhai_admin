@@ -29,7 +29,7 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'invoiceTime', order: 'ascending'}"
       id="table"
     >
       <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
@@ -40,7 +40,7 @@
 
       <el-table-column prop="price" label="发票金额" width="150">
         <template slot-scope="scope">
-          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.price, selCurrency ? selCurrency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
@@ -88,6 +88,10 @@
     },
     props: {
       primary: {
+        type: [Object],
+        default: null
+      },
+      selCurrency: {
         type: [Object],
         default: null
       }
@@ -194,7 +198,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index], this.primary.currency.symbolLeft);
+              sums[index] = currency(sums[index], this.selCurrency.symbolLeft);
             } else {
               sums[index] = 'N/A';
             }

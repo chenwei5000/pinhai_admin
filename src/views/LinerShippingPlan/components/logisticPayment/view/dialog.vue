@@ -31,7 +31,8 @@
 
       <el-collapse-item name="billTable" style="margin-top: 10px">
         <div slot="title" class="title">4. 发票信息</div>
-        <billTable ref="billTable" @modifyCBEvent="modifyCBEvent"  :primary="primary" :selCurrency="selCurrency" v-if="primaryComplete"></billTable>
+        <billTable ref="billTable" :primary="primary" @modifyCBEvent="modifyCBEvent"
+                   :selCurrency="selCurrency" v-if="primaryComplete"></billTable>
       </el-collapse-item>
 
     </el-collapse>
@@ -66,20 +67,8 @@
         'device',
         'rolePower'
       ]),
-
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
-      hasAdmin() {
-        return true;
-      },
       title() {
-        return `申请物流付款-编号[${this.plan.code}], 开船时间[${this.plan.formatEtdTime}], 发货港口[${this.plan.portOfLoading}]`;
+        return `查看物流付款-编号[${this.plan.code}], 开船时间[${this.plan.formatEtdTime}], 发货港口[${this.plan.portOfLoading}]`;
       }
     },
 
@@ -108,7 +97,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["companyManagement", "currency"];
+          let relations = ["companyManagement", "currency", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency"];
           //获取计划数据
           this.global.axios
             .get(`/logisticPaymentBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)

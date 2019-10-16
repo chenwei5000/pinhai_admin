@@ -29,7 +29,7 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'invoiceTime', order: 'ascending'}"
       id="table"
     >
       <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
@@ -258,12 +258,36 @@
           });
 
           if (addFlg) {
-            this.data.push({
-              invoiceNumber: invoice.InvoiceCode + invoice.InvoiceNum,
-              invoiceTime: moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD"),
-              price: invoice.AmountInFiguers,
-              company: invoice.SellerName + ":" + invoice.SellerRegisterNum
-            });
+            let method = 'post';
+            let url = `/invoices`;
+
+            let detailItem = {};
+            detailItem.type = 'SH';
+            detailItem.paymentOrderId = this.primary.id;
+            detailItem.invoiceNumber = invoice.InvoiceCode + invoice.InvoiceNum;
+            detailItem.invoiceTime = moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD");
+            detailItem.price = invoice.AmountInFiguers;
+            detailItem.company = invoice.SellerName + ":" + invoice.SellerRegisterNum;
+
+            this.global.axios[method](url, detailItem)
+              .then(resp => {
+                this.$message({type: 'success', message: '操作成功'});
+                let obj = resp.data;
+                // 回传消息
+                this.$emit("modifyCBEvent", detailItem);
+                this.initData();
+                this.confirmLoading = false;
+                this.loading = false;
+                this.closeDialog();
+              })
+              .catch(err => {
+                this.confirmLoading = false;
+                this.loading = false;
+                this.initData();
+                this.closeDialog();
+              })
+
+            this.data.push({});
           }
           this.search();
         }

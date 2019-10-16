@@ -212,8 +212,6 @@
           else {
             this.detailItem.paymentOrderId = this.primary.id;
           }
-          console.log(url);
-
           this.global.axios[method](url, this.detailItem)
             .then(resp => {
               this.$message({type: 'success', message: '操作成功'});

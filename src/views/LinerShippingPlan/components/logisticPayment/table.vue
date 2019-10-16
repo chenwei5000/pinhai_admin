@@ -138,14 +138,17 @@
                        width="100">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
+          <el-button v-if="hasView(scope.row)" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
+          <el-button v-if="hasEdit(scope.row)" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
+          <el-button v-if="hasDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-
           </el-button>
         </template>
       </el-table-column>
@@ -179,6 +182,10 @@
     <editPaymentDialog @modifyCBEvent="modifyCBEvent" ref="editPaymentDialog" :plan="primary">
     </editPaymentDialog>
 
+    <!-- 查看明细对话框 -->
+    <viewPaymentDialog ref="viewPaymentDialog" :plan="primary">
+    </viewPaymentDialog>
+
   </div>
 
 </template>
@@ -190,12 +197,14 @@
   import tableToolBar from './toolBar'
   import createPaymentDialog from './create/dialog'
   import editPaymentDialog from './edit/dialog'
+  import viewPaymentDialog from './view/dialog'
 
   export default {
     components: {
       tableToolBar,
       createPaymentDialog,
-      editPaymentDialog
+      editPaymentDialog,
+      viewPaymentDialog
     },
     props: {
       primary: {
@@ -208,14 +217,6 @@
         'device',
         'rolePower'
       ]),
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
     },
     filters: {
       currency: currency
@@ -232,8 +233,6 @@
         //操作按钮控制
         hasOperation: true,
         hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         // 多选记录对象
         selected: [],
@@ -283,6 +282,26 @@
     },
 
     methods: {
+      /********************* 权限  *****************************/
+      hasView(row){
+        if(row.status == 1){
+          return false;
+        }
+        return true;
+      },
+      hasEdit(row){
+        if(row.status != 1){
+          return false;
+        }
+        return true;
+      },
+      hasDelete(row){
+        if(row.status != 1){
+          return false;
+        }
+        return true;
+      },
+
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
@@ -475,6 +494,10 @@
       /* 行修改功能 */
       onDefaultEdit(row) {
         this.$refs.editPaymentDialog.openDialog(row.id);
+      },
+      /* 行查看功能 */
+      onDefaultView(row) {
+        this.$refs.viewPaymentDialog.openDialog(row.id);
       },
 
       /* 行删除功能 */
