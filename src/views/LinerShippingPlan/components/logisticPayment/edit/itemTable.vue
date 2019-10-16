@@ -184,24 +184,14 @@
           .then(resp => {
             let res = resp.data;
             this.data = res || [];
-            console.log(this.data);
             this.search();
+            this.loading = false;
             this.primaryComplete = true;
           })
           .catch(err => {
+            this.loading = false;
+            this.primaryComplete = true;
           });
-
-        //类型、数量、单价、总金额、备注
-        this.data.push({
-          number: 1,
-          price: null,
-          remarks: '物流费用',
-          financeBillId: null,
-          amount: null
-        });
-
-        this.search();
-        this.loading = false;
       },
 
       /********************* 表格相关方法  ***************************/

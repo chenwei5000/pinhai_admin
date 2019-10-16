@@ -126,7 +126,7 @@
         this.loading = true;
         if(this.primary){
 
-          let url = "/paymentDetails";
+          let url = "/procurementPaymentOrderDetails";
           let filters = [
             {"field": "procurementPaymentOrderId", "op": "eq", "data": this.primary.id}
           ]

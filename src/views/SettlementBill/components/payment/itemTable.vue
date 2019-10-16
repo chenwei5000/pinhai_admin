@@ -186,7 +186,7 @@
           .then(resp => {
             let res = resp.data || [];
             res.forEach(bill => {
-              let use_url = `/paymentDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
+              let use_url = `/procurementPaymentOrderDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
               this.global.axios
                 .get(use_url)
                 .then(res => {

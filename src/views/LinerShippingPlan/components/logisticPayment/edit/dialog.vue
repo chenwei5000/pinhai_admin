@@ -173,14 +173,14 @@
               return false;
             }
 
-            if (!bills || bills.length == 0) {
-              this.$message.error("请设置发票信息");
-              return false;
-            }
-            if (!attachments || attachments.length == 0) {
-              this.$message.error("请上传电子版发票");
-              return false;
-            }
+            // if (!bills || bills.length == 0) {
+            //   this.$message.error("请设置发票信息");
+            //   return false;
+            // }
+            // if (!attachments || attachments.length == 0) {
+            //   this.$message.error("请上传电子版发票");
+            //   return false;
+            // }
 
             order.linerShippingPlanId = this.plan.id;
             order.payableAmount = payableAmount;

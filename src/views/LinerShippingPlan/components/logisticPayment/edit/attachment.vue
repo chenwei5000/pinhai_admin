@@ -31,7 +31,7 @@
     },
     computed: {
       uploadUrl() {
-        return `${this.global.generateUrl(this.url)}/uploadFiles/${-this.primary.linerShippingPlan.id}?accessToken=${this.$store.state.user.token}`;
+        return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
       }
     },
 
@@ -40,7 +40,7 @@
         url: "/attachments/logisticPaymentBills",
         relations: ["creator"],
         filters: [
-          {"field": "relevanceId", "op": "eq", "data": -this.primary.linerShippingPlan.id}
+          {"field": "relevanceId", "op": "eq", "data": this.primary.id}
         ],
         attachments: [],
         invoices: [],

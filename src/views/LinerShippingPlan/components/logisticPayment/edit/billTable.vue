@@ -127,6 +127,21 @@
 
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
+        filters: [
+          {
+            field: "paymentOrderId",
+            op: 'eq',
+            data: this.primary ? this.primary.id : -1
+          },
+
+          {
+            field: "type",
+            op: 'eq',
+            data: 'SH'
+          }
+
+        ],   //搜索对象
+        relations: [],  // 关联对象
 
         // 表格加载效果
         loading: false,
@@ -159,9 +174,23 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
+
         this.loading = true;
-        this.search();
-        this.loading = false;
+        //获取计划数据
+        this.global.axios
+          .get(`/invoices?filters=${JSON.stringify({
+            "groupOp": "AND",
+            "rules": this.filters
+          })}&relations=${JSON.stringify(this.relations)}`)
+          .then(resp => {
+            let res = resp.data;
+            this.data = res || [];
+            this.search();
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       },
 
       /********************* 表格相关方法  ***************************/
