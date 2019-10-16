@@ -40,7 +40,7 @@
           },
 
           //工具按钮
-          maxUploadCount: 10, //提交数量
+          maxUploadCount: 1, //提交数量
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '部门列表',
 
