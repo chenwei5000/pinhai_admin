@@ -27,7 +27,7 @@
       <el-row>
         <el-col :md="8">
             <el-form-item label="发货仓库" prop="fromWarehouseId">
-              <el-select v-model="newObject.fromWarehouseId" style="width: 180px"
+              <el-select  size="mini" v-model="newObject.fromWarehouseId" style="width: 180px"
                         filterable placeholder="请选择发货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -41,7 +41,7 @@
 
           <el-col :md="8">
             <el-form-item label="收货仓库" prop="toWarehouseId">
-              <el-select v-model="newObject.toWarehouseId" style="width: 180px"
+              <el-select  size="mini" v-model="newObject.toWarehouseId" style="width: 180px"
                         filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -56,6 +56,7 @@
           <el-col :md="8">
             <el-form-item label="预计发货时间" prop="expectTime">
               <el-date-picker
+                size="mini"
                 v-model="newObject.expectTime"
                 style="width: 180px"
                 format="yyyy-MM-dd"
@@ -172,7 +173,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        this.global.axios.post('/warehouseAllocations', _order) 
+        this.global.axios.post('/warehouseAllocations', _order)
           .then(resp => {
             let _newObject = resp.data;
             this.$message({type: 'success', message: '操作成功'});
@@ -190,7 +191,7 @@
       createCBEvent(newObjectId) {
         this.$emit("step1CBEvent", newObjectId);
       },
-      
+
     }
   }
 </script>

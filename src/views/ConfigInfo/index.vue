@@ -19,18 +19,17 @@
       <el-form-item label="安全库存(周)" prop="safetyStockWeek">
         <el-input v-model="configInfo.safetyStockWeek" ></el-input>
       </el-form-item>
-      <el-form-item label="Vip1安全库存(周)" prop="vip1SafetyStockWeek"> 
+      <el-form-item label="Vip1安全库存(周)" prop="vip1SafetyStockWeek">
         <el-input v-model="configInfo.vip1SafetyStockWeek"  ></el-input>
       </el-form-item>
       <el-form-item label="Vip2安全库存(周)" prop="vip2SafetyStockWeek">
         <el-input v-model="configInfo.vip2SafetyStockWeek" ></el-input>
       </el-form-item>
        <el-form-item label="排除Amazon货柜" prop="desc">
-        <el-input type="textarea" v-model="configInfo.invalidShipment" rows="3"></el-input> 
+        <el-input type="textarea" v-model="configInfo.invalidShipment" rows="3"></el-input>
        </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button>取消</el-button>
       </el-form-item>
 </el-form>
   </div>
@@ -111,7 +110,7 @@
               })
             }
           })
-          
+
         }
     },
     watch: {

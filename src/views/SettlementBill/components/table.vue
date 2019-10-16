@@ -14,6 +14,11 @@
                   placeholder="请输入编码"></el-input>
       </el-form-item>
 
+      <el-form-item label="收货单编码">
+        <el-input size="mini" clearable v-model="searchParam.warehouseOrderCode.value" style="width: 150px"
+                  placeholder="请输入收货单编码"></el-input>
+      </el-form-item>
+
       <el-form-item label="供货商">
         <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
                    placeholder="请选择供货商">
@@ -68,7 +73,7 @@
 
       </el-table-column>
 
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="编码" width="140"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
@@ -268,6 +273,7 @@
           supplierId: {value: null, op: 'in', id: 'supplierId'},
           latestPaymentTime: {value: null, op: 'timeRange', id: 'latestPaymentTime'},
           code: {value: null, op: 'bw', id: 'code'},
+          warehouseOrderCode: {value: null, op: 'bw', id: 'warehouseOrderCode'},
         },
 
         //弹窗
@@ -313,6 +319,9 @@
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
+          }
+          if (params.warehouseOrderCode) {
+            this.searchParam.warehouseOrderCode.value = params.warehouseOrderCode;
           }
         }
       }
@@ -372,6 +381,7 @@
         this.searchParam.latestPaymentTime.value = null;
         this.searchParam.supplierId.value = null;
         this.searchParam.code.value = null;
+        this.searchParam.warehouseOrderCode.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
