@@ -168,12 +168,12 @@
         this.loading = true;
 
         //类型、数量、单价、总金额、备注
-        this.data.push({
-          number: 1,
-          price: null,
-          remarks: '物流费用',
-          amount: null
-        });
+        // this.data.push({
+        //   number: 1,
+        //   price: null,
+        //   remarks: '物流费用',
+        //   amount: null
+        // });
 
         this.search();
         this.loading = false;
