@@ -118,8 +118,8 @@
         return true;
       },
       hasWithdraw() {
-        if ([2, 3, 4, 5].indexOf(this.primary.status) <= -1) {
-          return false;
+        if ([2, 3, 4, 5].indexOf(this.primary.status) > -1) {
+          return true;
         }
         if (!checkPermission('ProcurementOrderResource_withdraw')) {
           return false;

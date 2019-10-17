@@ -76,6 +76,7 @@
           hasDelete: false,
           hasOperation: false,
           hasPagination: false,
+          hasExport: true,
           countUrl: "",
           tableAttrs: {
             "row-class-name": this.statusClassName,
