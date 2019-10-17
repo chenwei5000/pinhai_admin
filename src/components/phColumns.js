@@ -83,6 +83,7 @@ const phColumns = {
 
   createTime: {
     prop: 'createTime',
+    sortable:'custom',
     label: '创建时间',
     width: 140,
     formatter: row => {

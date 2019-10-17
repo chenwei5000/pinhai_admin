@@ -40,6 +40,7 @@
           hasOperation: false,
           hasNew: false,
           hasDelete: false,
+          'default-sort' : "{prop: 'createTime', order: 'descending'}",
           //列表
           columns: [
             phColumns.id,
