@@ -35,13 +35,11 @@
 
           url: '/merchants',
           relations: ["country"],
-          hasDelete: true,
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           //列表
           columns: [
-            {type: 'selection'},
             {prop: 'code', label: '编码', 'min-width': 100},
             {prop: 'typeName', label: '类型', 'min-width': 100},
             {prop: 'name', label: '名称', 'min-width': 100},

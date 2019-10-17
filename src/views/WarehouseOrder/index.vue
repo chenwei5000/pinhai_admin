@@ -12,10 +12,7 @@
 </template>
 
 <script>
-  import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
-  import phSearchItems from '../../components/phSearchItems'
-  import phFromItems from '../../components/phFromItems'
   import warehouseModel from '../../api/warehouse'
   import {checkPermission} from "../../utils/permission";
   import phEnumModel from '../../api/phEnum'
@@ -75,7 +72,7 @@
               $el: {
                 op: 'eq',
                 filterable: true,
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择收货仓库'
               }
             },
@@ -85,7 +82,7 @@
               label: '批次码',
               $el: {
                 op: 'bw',
-                size:"mini",
+                size: "mini",
                 placeholder: '请输入批次码'
               }
             },
@@ -95,59 +92,37 @@
               label: '调拨单',
               $el: {
                 op: 'bw',
-                size:"mini",
+                size: "mini",
                 placeholder: '请输入调拨单编码'
               }
             },
             {
-                $type: 'select',
-                $id: 'type',
-                label: '类型',
-                $options: [{
-                  label: '采购入库',
-                  value: 'pin'
-                }, {
-                  label: '加工入库',
-                  value: 'min'
-                }, {
-                  label: '出口',
-                  value: 'eout'
-                }, {
-                  label: '调拨入库',
-                  value: 'ain'
-                }, {
-                  label: '调拨出库',
-                  value: 'aout'
-                }, {
-                  label: '盘点入库',
-                  value: 'iin'
-                }, {
-                  label: '盘点出库',
-                  value: 'iout'
-                }
-              ],
+              $type: 'select',
+              $id: 'type',
+              label: '类型',
+              $options: phEnumModel.getSelectOptions("WarehouseOrderType"),
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择类型'
               }
             },
             {
-              $type:'date-picker',
-              $id:'createTime',
+              $type: 'date-picker',
+              $id: 'createTime',
               label: '创建时间',
               $el: {
-                style:'width:200px',
+                style: 'width:200px',
                 op: 'timeRange',
-                size:"mini",
+                size: "mini",
                 placeholder: '开始日期',
-                size:'mini',
-                format:'yyyy-MM-dd',
-                'value-format':'yyyy-MM-dd',
-                type:'daterange',
-                'range-separator':'-',
-                'start-placeholder':'开始日期',
-                'end-placeholder':'结束日期'
+                size: 'mini',
+                format: 'yyyy-MM-dd',
+                'value-format': 'yyyy-MM-dd',
+                type: 'daterange',
+                'range-separator': '-',
+                'start-placeholder': '开始日期',
+                'end-placeholder': '结束日期'
               }
             },
             {
@@ -157,13 +132,13 @@
               $options: phEnumModel.getSelectOptions("WarehouseOrderJobStatus"),
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择类型'
               }
             },
 
 
-    ],
+          ],
           //修改或新增
           form: [
             //

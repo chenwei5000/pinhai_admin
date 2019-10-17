@@ -50,6 +50,18 @@
     >
 
       <el-table-column prop="skuCode" sortable="custom" label="SKU" min-width="150" fixed="left"></el-table-column>
+
+      <el-table-column prop="imgUrl" label="图片" width="40" >
+        <template slot-scope="scope" v-if="scope.row.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.imgUrl"
+            :preview-src-list="[scope.row.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="name" label="名称" min-width="250"></el-table-column>
       <el-table-column prop="category.name" label="分类" width="80"></el-table-column>
       <el-table-column prop="groupName" v-if="unfinishedHide" label="款式" width="80"></el-table-column>
