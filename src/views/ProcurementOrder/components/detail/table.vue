@@ -29,11 +29,12 @@
 
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
-      v-bind="toolbarConfig"
+      :hasExport="hasExport"
+      :hasImport="hasImport"
+      :hasAdd="hasAdd"
+      :hasDelete="hasDelete"
       @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
       @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
       @onToolBarImportData="onToolBarImportData"
     >
@@ -131,10 +132,9 @@
 
 
       <!--默认操作列-->
-      <el-table-column label="操作"
+      <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
                        width="120" fixed="right">
-
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -144,10 +144,8 @@
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-
           </el-button>
         </template>
-
       </el-table-column>
     </el-table>
 
@@ -165,6 +163,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -182,6 +181,41 @@
         'device',
         'rolePower'
       ]),
+      hasExport() {
+        return checkPermission('ProcurementOrderItemResource_export');
+      },
+
+      hasImport() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_import');
+      },
+      hasAdd() {
+        //return false;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_create');
+      },
+
+
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
+      hasEdit() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_update');
+      },
+      hasDelete() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_remove');
+      },
+
       hasExecute() {
         if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return true;
@@ -191,6 +225,7 @@
         }
       },
     },
+
     filters: {
       currency: currency
     },
@@ -206,12 +241,6 @@
 
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         // 多选记录对象
         selected: [],
@@ -238,16 +267,6 @@
 
         // 记录修改的那一行
         row: {},
-
-        // 表格工具条配置
-        toolbarConfig: {
-          hasEdit: true,
-          hasDelete: false,
-          hasAdd: true,
-          hasExportTpl: false,
-          hasExport: false,
-          hasImport: false,
-        }
       }
     },
 

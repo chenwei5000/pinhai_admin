@@ -7,7 +7,7 @@
         <el-tabs v-model="activeStatus" type="border-card" @tab-click="handleTabClick">
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="create" lazy>
+          <el-tab-pane name="create" lazy v-if="hasNew">
             <span slot="label">
               <i class="el-icon-circle-plus-outline"></i> 待下单
             </span>
@@ -77,6 +77,7 @@
 <script>
   import phTab from './components/tab'
   import planTable from './components/create/planTable'
+  import {checkPermission} from "../../utils/permission";
 
   const actionFlag = 's='
 
@@ -99,6 +100,9 @@
     },
 
     computed: {
+      hasNew(){
+        return checkPermission('ProcurementOrderResource_create');
+      },
       // TODO: 设置默认的搜索条件
       filters() {
         // 待下单、部分下单的采购计划

@@ -155,7 +155,7 @@
           </el-button>
 
           <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"

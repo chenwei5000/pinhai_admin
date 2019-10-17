@@ -29,7 +29,7 @@
         <el-input type="textarea" v-model="configInfo.invalidShipment" rows="3"></el-input>
        </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button  v-if="hasEdit" type="primary" @click="onSubmit">保存</el-button>
       </el-form-item>
 </el-form>
   </div>
@@ -41,6 +41,7 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
    import global from '../../api/global.js'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
@@ -91,7 +92,14 @@
          this.configInfo = res.data;
       })
     },
-    computed: {},
+    computed: {
+        hasEdit(){
+          if(!checkPermission('ConfigInfoResource_update')){
+            return false;
+          }
+          return true;
+      },
+    },
     methods: {
         onSubmit: function(){
           this.loading=true

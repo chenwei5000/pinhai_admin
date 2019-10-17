@@ -149,6 +149,10 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
+
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
@@ -190,6 +194,7 @@
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
+  import {checkPermission} from "../../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -220,6 +225,20 @@
         'device', 'rolePower', 'rolePower'
       ]),
 
+      //操作按钮控制
+      hasOperation(){
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView(){
+        return !this.hasEdit;
+      },
+      hasEdit(){
+        return checkPermission('ProcurementOrderResource_update');
+      },
+      hasDelete(){
+        return checkPermission('ProcurementOrderResource_remove');
+      },
+
       // 显示进度条
       hasCompleteness() {
         if (this.type === 'editing') {
@@ -247,10 +266,7 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
+
         // 多选记录对象
         selected: [],
 
