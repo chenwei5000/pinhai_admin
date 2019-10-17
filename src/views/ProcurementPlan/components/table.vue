@@ -154,6 +154,10 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
@@ -223,13 +227,15 @@
         'device','rolePower','rolePower'
       ]),
 
-
       //操作按钮控制
       hasOperation(){
-        return this.hasEdit || this.hasDelete
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView(){
+        return !this.hasEdit;
       },
       hasEdit(){
-        return true;
+        return checkPermission('ProcurementPlanResource_update');
       },
       hasDelete(){
         return checkPermission('ProcurementPlanResource_remove');

@@ -266,7 +266,6 @@
     },
     computed: {
       hasEdit() {
-
         // 控制按钮
         if ([0, 8].indexOf(this.primary.status) > -1) {
           return false;
