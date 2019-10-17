@@ -225,7 +225,6 @@
           if (!valid) {
             return false
           }
-          console.log("detailsItme", this.detailItemId)
           this.loading = true;
           this.confirmLoading = true;
           let method = 'post';

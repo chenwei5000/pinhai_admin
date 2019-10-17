@@ -92,10 +92,9 @@
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },
-      
+
       /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
       createCBEvent() {
-        console.log("type is ", type)
        this.activeStatus = "inventorying";
       }
     },

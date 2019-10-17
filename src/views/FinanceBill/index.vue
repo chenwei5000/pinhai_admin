@@ -27,14 +27,14 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <!--el-tab-pane name="logisticsBill" lazy>
+          <el-tab-pane name="logisticsBill" lazy>
             <span slot="label">
               <i class="el-icon-money"></i> 物流付款单
             </span>
             <keep-alive>
-              <phTab type="logisticsBill" ref="logisticsBill"/>
+              <logisticTab type="logisticBill" ref="logisticBill"/>
             </keep-alive>
-          </el-tab-pane-->
+          </el-tab-pane>
 
         </el-tabs>
       </div>
@@ -46,12 +46,14 @@
 <script>
   import advanceTab from './components/advanceBill/tab'
   import paymentTab from './components/paymentBill/tab'
+  import logisticTab from './components/logisticPaymentBill/tab'
 
   const actionFlag = 's='
   export default {
     components: {
       advanceTab,
-      paymentTab
+      paymentTab,
+      logisticTab
     },
 
     data() {
