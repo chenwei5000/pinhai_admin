@@ -10,11 +10,13 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px" placeholder="请输入编码"></el-input>
+        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px"
+                  placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" clearable v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" clearable v-model="searchParam.name.value" style="width: 110px"
+                  placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="期望交货日期">
@@ -102,7 +104,8 @@
 
       <el-table-column prop="categoryName" label="分类" min-width="150">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
             <div v-html="scope.row.categoryName"></div>
             <span slot="reference">{{
               scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
@@ -117,7 +120,8 @@
 
       <el-table-column prop="name" label="名称" min-width="250">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 27">
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.name && scope.row.name.length > 27">
             <div v-html="scope.row.name"></div>
             <span slot="reference">{{
               scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
@@ -224,26 +228,27 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower','rolePower'
+        'device', 'rolePower', 'rolePower'
       ]),
 
       //操作按钮控制
-      hasOperation(){
+      hasOperation() {
         return this.hasEdit || this.hasDelete || this.hasView;
       },
-      hasView(){
+      hasView() {
         return !this.hasEdit;
       },
-      hasEdit(){
+      hasEdit() {
         return checkPermission('ProcurementPlanResource_update');
       },
-      hasDelete:{
-        get(){
-          return checkPermission('ProcurementPlanResource_remove');
-        },
-        set(newValue){
-          return newValue;
+      hasDelete() {
+        if(!checkPermission('ProcurementPlanResource_remove')){
+          return false;
         }
+        if (this.type === 'auditing' || this.type === 'executing' || this.type === 'complete') {
+          return false;
+        }
+        return true;
       },
 
       // 显示进度条
@@ -370,21 +375,6 @@
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
 
-        if (this.type === 'editing') {
-        }
-        //待审核 无删除
-        else if (this.type === 'auditing') {
-          this.hasDelete = false;
-        }
-        //执行中 无删除
-        else if (this.type === 'executing') {
-          this.hasDelete = false;
-        }//完成 无删除
-        else if (this.type === 'complete') {
-          this.hasDelete = false;
-        }
-        else if (this.type === 'all') {
-        }
       },
 
       // 获取表格的高度
