@@ -8,6 +8,7 @@
       :on-preview="handlePreview"
       :on-success="handleSuccess"
       :before-remove="beforeRemove"
+      :closeable="hasEdit"
       multiple
       :file-list="attachments">
 
@@ -18,6 +19,7 @@
 
 <script>
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -28,6 +30,9 @@
       }
     },
     computed: {
+      hasEdit(){
+        return checkPermission('ProcurementReceivedOrderResource_update');
+      },
       uploadUrl() {
         return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
       }

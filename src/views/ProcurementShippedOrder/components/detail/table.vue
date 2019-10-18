@@ -18,6 +18,7 @@
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
+      :hasAdd="hasAdd"
       @onToolBarAdd="onToolBarAdd"
       @onToolBarEdit="onToolBarEdit"
       @onToolBarDelete="onToolBarDelete"
@@ -101,19 +102,20 @@
       </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation"
-                       no-export="true"
-                       width="120" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
+
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-
           </el-button>
         </template>
       </el-table-column>
@@ -132,6 +134,7 @@
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './dialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -145,6 +148,32 @@
       }
     },
     computed: {
+      hasAdd() {
+        //return false;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementShippedOrderItemResource_create');
+      },
+      //操作按钮控制
+      hasOperation(){
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView(){
+        return !this.hasEdit;
+      },
+      hasEdit(){
+        return checkPermission('ProcurementShippedOrderResource_update');
+      },
+      hasDelete:{
+        get(){
+          return checkPermission('ProcurementShippedOrderResource_remove');
+        },
+        set(newValue){
+          return newValue;
+        }
+      },
+
       ...mapGetters([
         'device', 'rolePower'
       ]),
@@ -170,12 +199,6 @@
 
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         unit: "箱",
 
