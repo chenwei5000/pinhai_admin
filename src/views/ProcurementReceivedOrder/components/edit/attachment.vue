@@ -7,6 +7,8 @@
       :action="uploadUrl"
       :on-preview="handlePreview"
       :on-success="handleSuccess"
+      :before-remove="beforeRemove"
+      :closeable="hasEdit"
       multiple
       :file-list="attachments">
 
@@ -17,6 +19,7 @@
 
 <script>
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -27,6 +30,9 @@
       }
     },
     computed: {
+      hasEdit(){
+        return checkPermission('ProcurementReceivedOrderResource_update');
+      },
       uploadUrl() {
         return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
       }
@@ -111,6 +117,10 @@
       },
       // 删除
       beforeRemove(file, fileList) {
+        if(this.hasEdit == false){
+          this.$message.error("无删除权限!");
+          return false;
+        }
         return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {

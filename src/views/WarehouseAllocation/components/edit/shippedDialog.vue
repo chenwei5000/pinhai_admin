@@ -174,7 +174,22 @@
           toWarehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
+          tel: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          linkman: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          channel: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
           expectTime: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          plateNumber: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          trackNumber: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },

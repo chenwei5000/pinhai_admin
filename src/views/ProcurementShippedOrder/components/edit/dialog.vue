@@ -58,6 +58,7 @@
   import person from './person'
   import shippedDialog from './shippedDialog'
   import phStatus from '@/components/PhStatus'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -72,6 +73,9 @@
     computed: {
       hasExecute() {
         if ([3, 4].indexOf(this.primary.status) > -1) {
+          if (!checkPermission('ProcurementShippedOrderResource_print')) {
+            return false;
+          }
           return true;
         }
         else {
@@ -79,19 +83,30 @@
         }
       },
       hasAdmin() {
-        return true;
+        return checkPermission('ProcurementShippedOrderResource_updateStatus');
       },
 
       hasWithdraw() {
         if ([4].indexOf(this.primary.status) > -1) {
+          if (!checkPermission('ProcurementShippedOrderResource_withdraw')) {
+            return false;
+          }
           return true;
         }
         else {
           return false;
         }
       },
-      hasShipped() {
-        return this.primary.status == 3;
+      hasShipped(){
+        if (this.primary.status == 3 ){
+          if (!checkPermission('ProcurementShippedOrderResource_shippedOrder')) {
+            return false;
+          }
+          return true;
+        }
+        else {
+          return false;
+        }
       },
       title() {
         let action = "";
