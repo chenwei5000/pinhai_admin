@@ -61,7 +61,6 @@
         :hasImport="hasImport"
         :hasAdd="hasAdd"
         :hasDelete="hasDelete"
-        hasExportTpl="false"
         @onToolBarAdd="onToolBarAdd"
         @onToolBarDownloadTpl="onToolBarDownloadTpl"
         @onToolBarDownloadData="onToolBarDownloadData"
@@ -173,6 +172,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import {checkPermission} from "@/utils/permission";
   import editDialog from './editDialog';
+  import moment from 'moment';
 
 
   export default {
@@ -222,6 +222,7 @@
         url: "/supplierStocks", // 资源URL
         downloadUrl: '',
         primaryId: '',
+        primaryName: '',
         statusSelectOptions: [],
         cartonspecSelectOptions: [],
         hasQtySelectOptions: [{label: '全部', value: null}, {label: '有库存', value: 1}, {label: '无库存', value: 2}],
@@ -396,6 +397,7 @@
       /*本地搜索*/
       openDialog(primaryId, primaryName) {
         this.primaryId = primaryId;
+        this.primaryName = primaryName;
         this.title = `供货商${primaryName}库存管理`;
         this.dialogVisible = true;
         this.initData();
@@ -469,14 +471,13 @@
         this.search();
       },
 
-
       modifyCBEvent(row) {
         //更新数据
         row.id = null;
         this.loading = true;
         this.global.axios.post(this.url, row)
           .then(resp => {
-            this.initData();
+            this.getList();
             this.$message({
               type: "success",
               message: "数据更新成功！"
@@ -493,17 +494,10 @@
         this.$refs.editDialog.openDialog(row.id, row.supplierId);
       },
 
-      uploadPromise(res) {
-        return this.global.axios.post(this.url, res)
-          .then(resp => {
-          })
-          .catch(err => {
-          })
-      },
-
       onToolBarAdd() {
         this.$refs.editDialog.openDialog(null, this.primaryId);
       },
+
       onToolBarDownloadTpl() {
         //获取数据
         let table = this.$refs.table;
@@ -518,6 +512,7 @@
           })
         })
       },
+
       onToolBarDownloadData() {
         //获取数据
         let table = this.$refs.table;
@@ -542,13 +537,14 @@
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "供货商库存",
-            noExportProps: ['更新人', '更新时间'],
+            filename: `供货商${this.primaryName}库存-${moment(new Date()).format("YYYY-MM-DD")}`,
+            noExportProps: ['更新人', '图片', '状态', '更新时间', '库存件数'],
             params: params
           })
           this.loading = false;
         })
       },
+
       async onToolBarImportData(excelData) {
         if (!excelData) {
           this.$message.error("导入失败!");
@@ -574,10 +570,8 @@
         });
 
         // 导入数据
-        let promiseArr = [];
         let resData = [];
-
-        // 创建提交列表
+        // 整理数据
         excelData.results.forEach(obj => {
           let _res = {};
           excelData.header.forEach(_head => {
@@ -600,26 +594,18 @@
           });
           resData.push(_res);
         });
-        for (var i = 0; i < resData.length; i++) {
-          //TODO 后台需要判断supplierId
-          resData[i].supplierId = this.primaryId;
-          promiseArr.push(this.uploadPromise(resData[i]));
-          if (promiseArr.length >= this.maxUploadCount) {
-            await Promise.all(promiseArr).then(obj => {
-              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
-              promiseArr = [];
-            });
-            promiseArr = [];
-          }
-        }
-        if (promiseArr.length > 0) {
-          await Promise.all(promiseArr).then(obj => {
-            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
-          });
-        }
-        loading.close();
-        this.$message.info("导入成功");
-        this.getList();
+
+        this.global.axios.post(`/supplierStocks/importStock/${this.primaryId}`, resData)
+          .then(resp => {
+            this.$message.info("导入成功");
+            loading.close();
+            this.getList();
+          })
+          .catch(err => {
+            loading.close();
+            this.getList();
+          })
+
       }
     }
   }

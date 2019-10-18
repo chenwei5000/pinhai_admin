@@ -3,7 +3,7 @@
              append-to-body
              v-if="dialogVisible"
              class="ph-dialog"
-             width="70%"
+             width="80%"
              top="15vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
@@ -13,7 +13,9 @@
       <el-form :rules="rules" :model="detailItem" status-icon inline
                ref="detailItem" label-position="right"
                label-width="120px"
+               inline-message
                v-loading="loading"
+
       >
         <el-row>
           <el-col :md="10">
@@ -150,6 +152,15 @@
         // 字段验证规则 TODO:
         rules: {
           skuCode: [
+            validRules.required
+          ],
+          cartonQty: [
+            validRules.required
+          ],
+          numberOfCarton: [
+            validRules.required
+          ],
+          cartonSpecId: [
             validRules.required
           ],
         },
