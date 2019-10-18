@@ -119,16 +119,20 @@
       },
       hasWithdraw() {
         if ([2, 3, 4, 5].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        if (!checkPermission('ProcurementOrderResource_withdraw')) {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
+        }else {
           return false;
         }
-        return true;
       },
       hasExecute() {
-        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1 && checkPermission('ProcurementOrderResource_complete')) {
-          return true;
+        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1 ) {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
         }
         else {
           return false;
