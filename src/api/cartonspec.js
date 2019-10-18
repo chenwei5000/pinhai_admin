@@ -33,6 +33,28 @@ const cartonspecModel = {
     return _options;
   },
 
+  getSelectIntegerOptions() {
+    let _options = [];
+
+    const _loadData = async function () {
+      let list = store.getters.cartonSpecs;
+      if (list == null) {
+        list = await store.dispatch('app/loadCartonSpecs');
+      }
+      if (list) {
+        list.forEach(obj => {
+          _options.push({
+            label: `[${obj.groupCode}]${obj.code}`,
+            value: obj.id
+          });
+        });
+      }
+    }
+
+    _loadData();
+    return _options;
+  },
+
 }
 
 export default cartonspecModel;

@@ -31,7 +31,6 @@
     <tableToolBar
       v-bind="toolbarConfig"
       @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
       @onToolBarDelete="onToolBarDelete"
       @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
@@ -113,6 +112,7 @@
       </el-table-column>
 
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
 
       <el-table-column prop="procurementPlanItem.cartonQty" label="计划箱数" width="110"></el-table-column>
