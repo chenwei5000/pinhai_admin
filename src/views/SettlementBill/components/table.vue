@@ -197,6 +197,7 @@
   import paymentDialog from './payment/dialog'
   import viewDialog from './view/dialog'
   import supplierModel from '@/api/supplier'
+  import {checkPermission} from "@/utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -231,7 +232,7 @@
         return true;
       },
       hasEdit() {
-        return true;
+        return checkPermission('SettlementBillResource_update');
       },
       hasOperation() {
         return this.hasView || this.hasEdit;

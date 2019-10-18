@@ -29,7 +29,6 @@
           hasEdit: checkPermission('WarehouseStockResource_update'),
           hasDelete: checkPermission('WarehouseStockResource_remove'),
           // hasView: checkPermission('WarehouseStockResource_get'),
-          hasExportTpl: checkPermission('WarehouseStockResource_export'),
           hasExport: checkPermission('WarehouseStockResource_export'),
           hasImport: checkPermission('WarehouseStockResource_import'),
 

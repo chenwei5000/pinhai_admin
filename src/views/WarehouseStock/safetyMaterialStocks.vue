@@ -123,7 +123,7 @@ import warehouseModel from '../../api/warehouse';
           let cateId = this.param.category;
           if( cateId != null){
              this.loading = true;
-             let url = "/warehouses/category/productStock";
+             let url = "/warehouses/category/";
              url += "?cateId=" + cateId.join(",");
              this.global.axios.get(url)
               .then(resp => {

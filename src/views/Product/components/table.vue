@@ -103,6 +103,11 @@
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
+
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
+
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
@@ -140,6 +145,8 @@
   import qs from 'qs'
   import categoryModel from '@/api/category'
   import createFrom from './createFrom'
+  import {checkPermission} from "@/utils/permission";
+
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -179,7 +186,26 @@
         else {
           return true;
         }
-      }
+      },
+
+      hasOperation(){
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView(){
+        return !this.hasEdit;
+      },
+      hasEdit(){
+        return checkPermission('ProductResource_update');
+      },
+      hasDelete: {
+        get(){
+          return checkPermission('ProductResource_remove');
+        },
+        set(newValue){
+          return newValue;
+        }
+      },
+
     },
 
     data() {
@@ -188,9 +214,6 @@
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
         //操作
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
         selected: [],
 
         //分页
@@ -558,15 +581,13 @@
             let product = resp.data || {};
             product.categoryId = product.categoryId + "";
             product.cartonSpecId = product.cartonSpecId +"";
-            product.currencyId = product.currencyId +"";
             product.supplierId = product.supplierId +"";
             product.vipLevel = product.vipLevel +"";
-
             let option = {
               title: '编辑产品',
               component: createFrom,
               _top_: '3vh',
-              _width_: '80%',
+              _width_: '70%',
               data: product,
               callback: (val) => {
                 if (val) {
