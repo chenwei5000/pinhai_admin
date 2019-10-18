@@ -5,12 +5,13 @@
         :key="item.userId"
         v-for="item in primary.dataAuthories"
         closable
+              :closable="hasEdit"
         :disable-transitions="false"
         @close="handleRemove(item)">
         {{item.user.name}}
       </el-tag>
 
-      <el-button class="button-new-tag" size="mini" @click="openPersonDialog">+ 添加仓库负责人</el-button>
+      <el-button class="button-new-tag" size="mini" @click="openPersonDialog" v-if="hasEdit">+ 添加仓库负责人</el-button>
     </div>
 
     <phMembers ref="members" @saveCBEvent="saveCBEvent" title="选择负责人"></phMembers>
@@ -20,6 +21,7 @@
 <script>
   import {intArrToStrArr} from '@/utils'
   import phMembers from '@/components/PhMembers'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -31,7 +33,11 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      hasEdit(){
+        return checkPermission('ProcurementShippedOrderResource_update');
+      }
+    },
 
     data() {
       return {

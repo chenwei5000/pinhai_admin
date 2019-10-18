@@ -49,6 +49,7 @@
   import dateDialog from './dateDialog'
 
   import {currency, intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -69,6 +70,9 @@
       ]),
       hasExecute() {
         if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1) {
+          if (!checkPermission('ProcurementOrderResource_confirmDate')) {
+            return false;
+          }
           return true;
         }
         else {

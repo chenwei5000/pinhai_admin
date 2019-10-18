@@ -219,6 +219,7 @@
   import warehouseModel from '@/api/warehouse'
   import supplierModel from '@/api/supplier'
   import planDetailDialog from './planDetailDialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -235,10 +236,10 @@
     },
     computed: {
       hasEdit() {
-        return true;
+        return checkPermission('ProcurementShippedOrderItemResource_create');
       },
       hasDelete() {
-        return true;
+        return checkPermission('ProcurementShippedOrderItemResource_remove');
       }
     },
     watch: {},
