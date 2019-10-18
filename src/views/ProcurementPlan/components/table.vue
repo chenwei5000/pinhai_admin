@@ -155,7 +155,7 @@
           </el-button>
 
           <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
@@ -237,8 +237,13 @@
       hasEdit(){
         return checkPermission('ProcurementPlanResource_update');
       },
-      hasDelete(){
-        return checkPermission('ProcurementPlanResource_remove');
+      hasDelete:{
+        get(){
+          return checkPermission('ProcurementPlanResource_remove');
+        },
+        set(newValue){
+          return newValue;
+        }
       },
 
       // 显示进度条

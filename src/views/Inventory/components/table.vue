@@ -52,10 +52,10 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
-      <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
+      <el-table-column prop="code" label="编码" min-width="140"></el-table-column>
+      <el-table-column prop="warehouse.name" label="仓库" min-width="100"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" min-width="80"></el-table-column>
+      <el-table-column prop="formatCreateTime" label="创建时间" min-width="150"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">

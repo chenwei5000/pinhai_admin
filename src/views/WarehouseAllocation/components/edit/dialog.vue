@@ -13,6 +13,7 @@
       <router-link target="_blank" :to="'/warehouseAllocation/print?id='+primary.id" v-if="hasExecute" >
       <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印调拨单</el-button>
       </router-link>
+      <el-button type="primary" @click="closeDialog">取 消</el-button>
 
       <!-- <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button> -->
 
@@ -58,6 +59,7 @@
   import person from './person'
   import shippedDialog from './shippedDialog'
   import phStatus from '@/components/PhStatus'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -72,6 +74,9 @@
     computed: {
       hasExecute() {
         if ([3, 4].indexOf(this.primary.status) > -1) {
+          if (!checkPermission('WarehouseAllocationResource_print')) {
+            return false;
+          }
           return true;
         }
         else {
@@ -79,7 +84,7 @@
         }
       },
       hasAdmin(){
-        return true;
+        return checkPermission('WarehouseAllocationResource_updateStatus');
       },
 
       hasWithdraw(){
@@ -91,7 +96,15 @@
         }
       },
       hasShipped(){
-        return this.primary.status == 3 || this.primary.status == 1;
+        if (this.primary.status == 3 || this.primary.status == 1){
+          if (!checkPermission('WarehouseAllocationResource_shippedOrder')) {
+            return false;
+          }
+          return true;
+        }
+        else {
+          return false;
+        }
       },
       title() {
         let action = "";

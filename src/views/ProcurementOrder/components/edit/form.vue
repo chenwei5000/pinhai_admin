@@ -152,7 +152,7 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
+            <el-button v-if="hasEdit" type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSave">
               保存基本信息
             </el-button>
           </el-row>
@@ -169,6 +169,7 @@
   import {intArrToStrArr} from '@/utils'
   import phEnumModel from '@/api/phEnum'
   import currencyModel from '@/api/currency'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -184,9 +185,10 @@
         if ([0, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
-        else {
-          return true;
+        if(!checkPermission('ProcurementOrderResource_update')){
+          return false;
         }
+        return true;
       },
       hasCategory() {
         if (this.editObject.categoryId == null || this.editObject.categoryId.length == 0) {

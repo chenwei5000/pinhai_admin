@@ -207,7 +207,6 @@
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-
           </el-button>
         </template>
       </el-table-column>

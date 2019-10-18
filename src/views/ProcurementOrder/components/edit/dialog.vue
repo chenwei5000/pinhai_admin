@@ -5,7 +5,7 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-    <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">发布</el-button>
+    <el-button type="primary" icon="el-icon-s-check" v-if="hasRelease" @click="onCommit">发布</el-button>
       <!--el-button type="success" icon="el-icon-success" v-if="primary.status == 2" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 2" @click="onRefuse">不同意</el-button-->
 
@@ -85,6 +85,7 @@
   import printDialog from './printDialog'
 
   import {currency, intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -107,25 +108,40 @@
         'device',
         'rolePower'
       ]),
+      hasRelease(){
+        if (this.primary.status !== 1) {
+          return false;
+        }
+        if (!checkPermission('ProcurementOrderResource_commit')) {
+          return false;
+        }
+        return true;
+      },
       hasWithdraw() {
         if ([2, 3, 4, 5].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
+        }else {
           return false;
         }
       },
       hasExecute() {
-        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1) {
-          return true;
+        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1 ) {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
         }
         else {
           return false;
         }
       },
       hasAdmin() {
-        return true;
-      },
+        return checkPermission('ProcurementOrderResource_updateStatus');
+        },
+
       title() {
         return '编辑采购单 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }

@@ -9,10 +9,11 @@
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
       <router-link target="_blank" :to="'/allocationReceived/print?id='+primary.id">
-        <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
+        <el-button v-if="hasPrint" type="primary" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
       </router-link>
 
-      <el-button type="success" icon="el-icon-s-claim" @click="onComplete">确认收货</el-button>
+      <el-button v-if="hasReceived" type="success" icon="el-icon-s-claim" @click="onComplete">确认收货</el-button>
+      <el-button type="primary" @click="closeDialog">取 消</el-button>
     </el-row>
 
     <itemTable ref="itemTable" :primary="primary"></itemTable>
@@ -27,6 +28,7 @@
   import itemTable from './detailTable'
   import attachment from './attachment'
   import saveDialog from './saveDialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -36,6 +38,12 @@
     },
     props: {},
     computed: {
+      hasPrint(){
+        return checkPermission('AllocationReceivedResource_print');
+      },
+      hasReceived(){
+        return checkPermission('AllocationReceivedResource_received')
+      },
       title() {
         return '调拨入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
