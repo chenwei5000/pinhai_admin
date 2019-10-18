@@ -129,11 +129,15 @@
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary">
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
-                     icon="el-icon-delete" circle
+                     id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
         </template>
@@ -174,6 +178,7 @@
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
   import warehouseModel from '../../../api/warehouse';
+  import {checkPermission} from "../../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -204,16 +209,22 @@
         'device', 'rolePower'
       ]),
 
-      hasDelete() {
-        return true;
-      },
-
-      hasEdit() {
-        return true;
-      },
-
       hasOperation() {
-        return this.hasDelete || this.hasEdit;
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView() {
+        return !this.hasEdit;
+      },
+      hasEdit() {
+        return checkPermission('WarehouseAllocationResource_update');
+      },
+      hasDelete: {
+        get() {
+          return checkPermission('WarehouseAllocationResource_remove');
+        },
+        set(newValue) {
+          return newValue;
+        }
       }
     },
 

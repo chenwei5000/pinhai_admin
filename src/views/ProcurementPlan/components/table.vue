@@ -237,8 +237,13 @@
       hasEdit(){
         return checkPermission('ProcurementPlanResource_update');
       },
-      hasDelete(){
-        return checkPermission('ProcurementPlanResource_remove');
+      hasDelete:{
+        get(){
+          return checkPermission('ProcurementPlanResource_remove');
+        },
+        set(newValue){
+          return newValue;
+        }
       },
 
       // 显示进度条

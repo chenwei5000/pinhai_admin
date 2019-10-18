@@ -142,7 +142,7 @@
     <el-row v-if="hasEdit">
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
+          <el-button v-if="hasEdit" type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
             保存基本信息
           </el-button>
         </el-row>
@@ -157,6 +157,7 @@
 
   import warehouseModel from '@/api/warehouse'
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -168,11 +169,14 @@
     },
     computed: {
       hasEdit() {
-        if ([1, 3].indexOf(this.primary.status) != -1) {
-          return true;
+        if ([1, 3].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        if(!checkPermission('WarehouseAllocationResource_update')){
+          return false;
         }
         else {
-          return false;
+          return true;
         }
       }
     },
@@ -229,7 +233,7 @@
 
           //转化仓库
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
-          this.editObject.fromWarehouseId = this.editObject.fromWarehouseId + ''; 
+          this.editObject.fromWarehouseId = this.editObject.fromWarehouseId + '';
           this.editObject.toWarehouseId = this.editObject.toWarehouseId + '';
 
           this.loading = false;
