@@ -14,7 +14,6 @@
 <script>
   import validRules from '../../components/validRules'
   import phColumns from '../../components/phColumns'
-  import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
   import countryModel from '../../api/country'
   import {checkPermission} from "../../utils/permission";
@@ -35,13 +34,11 @@
 
           url: '/merchants',
           relations: ["country"],
-          hasDelete: true,
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           //列表
           columns: [
-            {type: 'selection'},
             {prop: 'code', label: '编码', 'min-width': 100},
             {prop: 'typeName', label: '类型', 'min-width': 100},
             {prop: 'name', label: '名称', 'min-width': 100},
@@ -52,8 +49,7 @@
             phColumns.status,
           ],
           //搜索
-          searchForm: [
-          ],
+          searchForm: [],
           form: [
             {
               $type: 'input',
@@ -71,8 +67,8 @@
               $id: 'type',
               label: '类型',
               $options: [{
-                  label: '亚马逊平台',
-                  value: "Amazon"
+                label: '亚马逊平台',
+                value: "Amazon"
               }],
               $el: {
                 placeholder: '请输入类型'
@@ -89,7 +85,7 @@
                 validRules.required,
               ]
             },
-             {
+            {
               $type: 'select',
               $id: 'countryId',
               label: '国家',
@@ -101,7 +97,7 @@
                 validRules.required,
               ]
             },
-             {
+            {
               $type: 'input',
               $id: 'address',
               label: '地址',
@@ -109,7 +105,7 @@
                 placeholder: '请输入地址'
               },
             },
-              {
+            {
               $type: 'input',
               $id: 'linkman',
               label: '联系人',
@@ -117,7 +113,7 @@
                 placeholder: '请输入联系人'
               },
             },
-              {
+            {
               $type: 'input',
               $id: 'tel',
               label: '联系电话',

@@ -103,7 +103,7 @@
 
         // 表格工具条配置
         toolbarConfig: {
-          hasExportTpl: true,
+          hasExportTpl: false,
           hasExport: true,
           hasImport: false,
           hasAdd: false,

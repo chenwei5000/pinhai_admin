@@ -88,7 +88,7 @@
       </el-row>
       <el-row>
         <el-col :md="24">
-          <el-form-item label="备注" prop="remark">
+          <el-form-item label="申请说明" prop="remark">
             <el-input type="textarea" v-model="editObject.remark"
                       maxlength="200"
                       show-word-limit

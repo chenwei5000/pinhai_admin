@@ -73,7 +73,17 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
+      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
+        </template>
+      </el-table-column>
+
 
       <el-table-column prop="statusName" label="状态" width="90">
         <template slot-scope="scope">
@@ -104,12 +114,14 @@
       </el-table-column>
 
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
 
       <el-table-column prop="procurementPlanItem.cartonQty" label="计划箱数" width="110"></el-table-column>
       <el-table-column prop="shippedCartonQty" label="发货箱数" width="110"></el-table-column>
       <el-table-column prop="receivedCartonQty" label="收货箱数" width="110"></el-table-column>
 
+      <el-table-column prop="id" label="ID" width="80"></el-table-column>
       <el-table-column prop="cartonQty" label="采购箱数" width="80"
                        fixed="right"></el-table-column>
 

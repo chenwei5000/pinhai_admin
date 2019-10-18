@@ -11,53 +11,13 @@
              inline-message
     >
 
-      <el-row>
-        <el-col :md="12">
-          <el-form-item label="收款账户" prop="collectionAccountId">
-            <el-select filterable
-                       v-model="editObject.collectionAccountId"
-                       style="width: 300px"
-                       size="mini"
-                       placeholder="请选择供应商收款帐号">
-              <el-option
-                v-for="(item,idx) in collectionAccountSelectOptions"
-                :label="item.bankAccount.accountName + '-'
-                + item.bankAccount.currency.name + '-'
-                + item.bankAccount.openingBank + '-' + item.bankAccount.accountCard " :value="item.id"
-                :key="idx"
-              ></el-option>
-            </el-select>
-
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="12">
-          <el-form-item label="付款账户" prop="paymentAccountId">
-            <el-select filterable
-                       v-model="editObject.paymentAccountId"
-                       style="width: 300px"
-                       size="mini"
-                       placeholder="请选择供应商收款帐号">
-              <el-option
-                v-for="(item,idx) in paymentAccountSelectOptions"
-                :label="item.bankAccount.accountName + '-'
-                + item.bankAccount.currency.name + '-'
-                + item.bankAccount.openingBank + '-' + item.bankAccount.accountCard " :value="item.id"
-                :key="idx"
-              ></el-option>
-            </el-select>
-
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
+      <el-row v-if="editObject.status == 2">
         <el-col :md="12">
           <el-form-item label="本次实付金额" prop="paymentAmount">
 
-            <el-input v-model.trim="editObject.paymentAmount"
-                      size="mini"
-                      style="width: 200px" placeholder="本次实付金额" clearable></el-input>
+              <span style="font-size: 12px;color:blue;" v-if="editObject.paymentAmount">
+                {{editObject.paymentAmount, editObject.currency.symbolLeft | currency}}
+              </span>
 
           </el-form-item>
         </el-col>
@@ -71,37 +31,23 @@
         </el-col>
       </el-row>
 
-      <el-row>
-        <el-col :md="12">
-          <el-form-item label="实际付款时间" prop="paymentAmountTime">
-
-            <el-date-picker
-              size="mini"
-              v-model="editObject.paymentAmountTime"
-              format="yyyy-MM-dd"
-              style="width: 200px"
-              value-format="yyyy-MM-dd"
-              type="date"
-              placeholder="请选择实际付款时间">
-            </el-date-picker>
-
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="12">
-          <el-form-item label="银行流水号" prop="flowNo">
-
-            <el-input v-model.trim="editObject.flowNo"
-                      size="mini"
-                      style="width: 200px" placeholder="银行流水号" clearable></el-input>
-
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="12">
+      <el-row v-if="editObject.status == 2">
+        <el-col :md="24">
           <el-form-item label="付款说明">
-            <el-input v-model="editObject.remark" type="textarea"
-                      :autosize="{minRows: 2, maxRows: 2}" style="width: 300px"></el-input>
+            <span style="font-size: 12px">{{editObject.note}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row v-if="editObject.status == 0">
+        <el-col :md="24">
+          <el-form-item label="拒绝付款">
+            <span style="font-size: 12px;color:red;">拒绝付款</span>
+          </el-form-item>
+        </el-col>
+        <el-col :md="24">
+          <el-form-item label="拒绝原因">
+            <span style="font-size: 12px">{{editObject.note}}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -216,7 +162,7 @@
           this.loading = false;
         }
         else {
-          this.$message.error("无效的采购付款单!");
+          this.$message.error("无效的物流付款单!");
           this.loading = false;
         }
       },
@@ -227,7 +173,7 @@
           {
             field: "companyManagementId",
             op: 'eq',
-            data: this.editObject.supplier ? this.editObject.supplier.companyId : -1
+            data: this.editObject.companyManagementId ? this.editObject.companyManagementId : -1
           }
         ];
         let relations = ["bankAccount", "companyManagement", "bankAccount.currency"];
@@ -304,4 +250,3 @@
   }
 
 </style>
-

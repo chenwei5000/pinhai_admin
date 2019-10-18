@@ -44,7 +44,7 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="statusName" label="状态" width="80">
+      <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 0
@@ -69,7 +69,7 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="hasView(scope.row)" size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
@@ -117,6 +117,7 @@
   import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
   import warehouseModel from "../../../api/warehouse"
+  import {checkPermission} from "@/utils/permission";
 
   const valueSeparator = '~';
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g');
@@ -149,24 +150,19 @@
 
       hasEdit() {
         if (this.type === 'inventorying') {
-          return true;
+          return checkPermission('InventoryTaskResource_update') ? true : false;
         }
         return false;
       },
 
       hasDelete() {
         if (this.type === 'inventorying') {
-          return true;
+          return checkPermission('InventoryTaskResource_remove') ? true : false;
         }
         return false;
       },
 
-      hasView() {
-        if (this.type === 'complete' || this.type === 'all') {
-          return true;
-        }
-        return false;
-      },
+
 
       hasOperation() {
         return this.hasView || this.hasEdit
@@ -279,6 +275,16 @@
         else {
           this.tableMaxHeight = 400;
         }
+      },
+
+      hasView(row) {
+        if (this.type === 'complete' || this.type === 'all') {
+          if ( row.status == 1){
+            return false;
+          }
+          return true;
+        }
+        return false;
       },
 
       /********************* 搜索相关方法  ***************************/

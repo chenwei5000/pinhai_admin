@@ -61,8 +61,8 @@
       </el-table-column>
 
 
-      <el-table-column prop="product.imgUrl" label="图片" width="60">
-        <template slot-scope="scope">
+      <el-table-column prop="product.imgUrl" label="图片" width="40">
+        <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
             style="width: 30px; height: 30px;margin-top: 5px"

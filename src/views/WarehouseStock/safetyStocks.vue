@@ -67,7 +67,7 @@
           hasDelete: checkPermission('SafetyStockResource_remove'),
           // hasView: checkPermission('SafetyStockResource_get'),
           hasExportTpl: checkPermission('SafetyStockResource_export'),
-          hasExport: checkPermission('SafetyStockResource_export'),
+          hasExport: true,
           hasImport: checkPermission('SafetyStockResource_import'),
 
           url: null,
@@ -106,8 +106,8 @@
     computed: {},
     methods: {
       resetSearch() {
-        this.param.category = '';
-        this.param.warehouse = '';
+        this.param.category = null;
+        this.param.warehouse = null;
       },
       onChange() {
         let cateId = this.param.category;
@@ -149,7 +149,14 @@
       search() {
         this.$refs.searchForm.validate(valid => {
           if (valid) {
-            this.tableConfig.url = `/stocks/safetyStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}`
+            this.tableConfig.url = "/stocks/safetyStocks?category=";
+            if(this.param.category != null){
+              this.tableConfig.url += this.param.category.join(",");
+            }
+            this.tableConfig.url += "&warehouse=";
+            if(this.param.warehouse != null){
+              this.tableConfig.url += this.param.warehouse.join(",");
+            }
             this.$refs.table1.getList();
           }
         })

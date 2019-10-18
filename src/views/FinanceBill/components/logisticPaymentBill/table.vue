@@ -10,13 +10,13 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px"
+        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 140px"
                   placeholder="请输入编码"></el-input>
       </el-form-item>
 
-      <el-form-item label="供货商">
-        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
-                   placeholder="请选择供货商">
+      <el-form-item label="收款公司">
+        <el-select size="mini" filterable v-model="searchParam.companyManagementId.value" style="width: 120px"
+                   placeholder="收款公司">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -40,7 +40,7 @@
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status.value" size="mini" style="width: 120px" placeholder="请选择状态">
+        <el-select filterable v-model="searchParam.status.value" size="mini" style="width: 100px" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
@@ -72,12 +72,11 @@
       @sort-change='handleSortChange'
       id="table"
     >
-
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
-      <el-table-column prop="code" label="编号" width="130"></el-table-column>
-
-      <el-table-column prop="supplier.name" label="供货商" win-width="120">
+      <el-table-column prop="companyManagement.abbreviation" label="收款公司" min-width="120" fixed="left">
       </el-table-column>
+
+      <el-table-column prop="code" label="编号" min-width="130"></el-table-column>
+
 
       <el-table-column prop="statusName" label="状态" width="80">
         <template slot-scope="scope">
@@ -91,25 +90,24 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="relevanceCode" label="采购单编码" width="130" v-if="false">
-      </el-table-column>
-
       <el-table-column prop="creator.name" label="申请人" width="80">
       </el-table-column>
 
+      <el-table-column prop="applicationTime" label="申请日期" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.applicationTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="linerShippingPlanId" label="货柜信息" min-width="180">
+        <template slot-scope="scope">
+          <span>
+          {{scope.row.linerShippingPlan.formatEtdTime}}{{scope.row.linerShippingPlan.portOfLoading}}-{{scope.row.linerShippingPlan.code}}
+          </span>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="currency.name" label="付款货币" width="80">
-      </el-table-column>
-
-      <el-table-column prop="latestPaymentTime" label="最晚付款时间" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="settlementAmount" label="申请金额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
       </el-table-column>
 
       <el-table-column prop="paymentAmount" label="实付金额" width="100">
@@ -117,16 +115,34 @@
           <span>{{ scope.row.paymentAmount, scope.row.currency.symbolLeft | currency }}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="paymentAmountTime" label="付款日期" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.paymentAmountTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+
+      <el-table-column prop="latestPaymentTime" label="最晚付款时间" width="100" fixed="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="settlementAmount" label="申请金额" width="100" fixed="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="90">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
         <template slot-scope="scope">
-
           <el-button v-if="scope.row.status == 1 && hasEdit" size="mini" icon="el-icon-money" circle
                      @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" type="primary" size="mini"
+          <el-button v-if="scope.row.status != 1 && hasView" type="primary" size="mini"
                      id="ph-table-del" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)">
           </el-button>
@@ -170,8 +186,9 @@
   import qs from 'qs'
   import paymentDialog from './payment/dialog'
   import viewDialog from './view/dialog'
-  import supplierModel from '@/api/supplier'
+  import companyManagementModel from '@/api/companyManagement'
   import phEnumModel from '@/api/phEnum'
+  import {checkPermission} from "@/utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -199,10 +216,10 @@
       ]),
 
       hasView() {
-        return true;
+        return checkPermission('LogisticPaymentBillDetailResource_get');
       },
       hasEdit() {
-        return true;
+        return checkPermission('LogisticPaymentBillResource_create');
       },
       hasOperation() {
         return this.hasView || this.hasEdit;
@@ -230,7 +247,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/logisticPaymentBills', // 资源URL
         countUrl: '/logisticPaymentBills/count', // 资源URL
-        relations: ["supplier", "currency", "creator"],  // 关联对象
+        relations: ["companyManagement", "linerShippingPlan", "currency", "creator"],  // 关联对象
         data: [],
         phSort: {prop: "latestPaymentTime", order: "asc"},
 
@@ -242,7 +259,7 @@
         statusSelectOptions: [],
 
         searchParam: {
-          supplierId: {value: null, op: 'in', id: 'supplierId'},
+          companyManagementId: {value: null, op: 'in', id: 'companyManagementId'},
           latestPaymentTime: {value: null, op: 'timeRange', id: 'latestPaymentTime'},
           code: {value: null, op: 'bw', id: 'code'},
           status: {value: '1', op: 'in', id: 'status'}
@@ -286,8 +303,8 @@
           if (params.latestPaymentTime) {
             this.searchParam.latestPaymentTime.value = params.latestPaymentTime;
           }
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
+          if (params.companyManagementId) {
+            this.searchParam.companyManagementId.value = params.companyManagementId;
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
@@ -309,7 +326,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.supplierSelectOptions = supplierModel.getSelectOptions();
+        this.supplierSelectOptions = companyManagementModel.getSelectOptions();
         this.statusSelectOptions = phEnumModel.getSelectOptions("LogisticPaymentStatus");
         this.statusSelectOptions.unshift({label: '全部', value: null});
       },
@@ -353,7 +370,7 @@
 
         //TODO:根据实际情况调整
         this.searchParam.latestPaymentTime.value = null;
-        this.searchParam.supplierId.value = null;
+        this.searchParam.companyManagementId.value = null;
         this.searchParam.status.value = '1';
         this.searchParam.code.value = null;
 

@@ -13,42 +13,45 @@
 
       <el-row>
         <el-col :md="8">
-          <el-form-item label="供货商">
-            <span style="font-size: 12px">{{this.editObject.supplier.name}}</span>
+          <el-form-item label="收款公司">
+            <span style="font-size: 12px">{{this.editObject.companyManagement.abbreviation}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="采购单编码">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.code}}</span>
+          <el-form-item label="货柜信息">
+            <span style="font-size: 12px">
+            {{this.editObject.linerShippingPlan.formatEtdTime}}{{this.editObject.linerShippingPlan.portOfLoading}}-{{this.editObject.linerShippingPlan.code}}
+            </span>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="采购单名称">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.name}}</span>
+          <el-form-item label="船运公司">
+            <span style="font-size: 12px">{{this.editObject.linerShippingPlan.carrier}}</span>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :md="8">
-          <el-form-item label="结算方式">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.settlementMethodName}}</span>
+          <el-form-item label="货代公司">
+            <span style="font-size: 12px">{{this.editObject.linerShippingPlan.forwardingCompany}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="结算货币">
-            <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
+          <el-form-item label="提单号">
+            <span style="font-size: 12px">{{this.editObject.linerShippingPlan.ladingBillNumber}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="最晚付款日期">
-            <span style="font-size: 12px">{{this.editObject.prepayTime | parseTime('{y}-{m}-{d}')}}</span>
+          <el-form-item label="FBA ID">
+            <span style="font-size: 12px">{{this.editObject.linerShippingPlan.shipmentId}}</span>
           </el-form-item>
         </el-col>
+
 
       </el-row>
 
@@ -60,17 +63,25 @@
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="采购单总额">
-            <span style="font-size: 12px">{{this.editObject.procurementOrderAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="付款货币">
+            <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="8">
-          <el-form-item label="采购单已付金额">
-            <span style="font-size: 12px">{{this.editObject.procurementOrderPaymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="最晚付款日期">
+            <span style="font-size: 12px">{{this.editObject.latestPaymentTime | parseTime('{y}-{m}-{d}')}}</span>
           </el-form-item>
         </el-col>
 
+      </el-row>
+
+      <el-row>
+        <el-col :md="24">
+          <el-form-item label="申请说明" prop="remark">
+            <span style="font-size: 12px" v-html="editObject.formatRemark"></span>
+          </el-form-item>
+        </el-col>
       </el-row>
 
     </el-form>

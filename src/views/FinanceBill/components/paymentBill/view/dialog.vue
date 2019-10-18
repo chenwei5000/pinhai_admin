@@ -49,6 +49,11 @@
         <orderTable ref="orderTable" :primary="primary" v-if="primaryComplete"></orderTable>
       </el-collapse-item>
 
+      <el-collapse-item name="paymentInfo" style="margin-top: 10px" v-if="primary.status != 1 ">
+        <div slot="title" class="title">8. 付款信息</div>
+        <paymentInfo ref="paymentInfo" :primary="primary" v-if="primaryComplete"></paymentInfo>
+      </el-collapse-item>
+
     </el-collapse>
 
   </el-dialog>
@@ -65,6 +70,7 @@
   import itemTable from '../../../../SettlementBill/components/view/paymentItemTable'
   import billTable from '../../../../SettlementBill/components/view/paymentBillTable'
   import attachment from '../../../../SettlementBill/components/view/paymentAttachment'
+  import paymentInfo from './paymentInfo'
 
   export default {
     components: {
@@ -75,6 +81,7 @@
       detailTable,
       paymentsTable,
       orderTable,
+      paymentInfo
     },
     props: {},
     computed: {
@@ -120,7 +127,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"];
+          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
           //获取计划数据
           this.global.axios
             .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)
@@ -143,7 +150,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoForm', 'detailTable', 'itemTable', 'billTable', 'attachment', 'paymentsTable', 'orderTable'];
+        this.activeNames = ['infoForm', 'detailTable', 'itemTable', 'billTable', 'attachment', 'paymentsTable', 'orderTable', 'paymentInfo'];
       },
       closeDialog() {
         this.primary = {};

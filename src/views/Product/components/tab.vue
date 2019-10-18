@@ -39,12 +39,12 @@
         <template slot-scope="scope">
 
           <el-button size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit" v-if="hasEdit">
           </el-button>
 
           <el-button type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
-                     @click="onDefaultDelete(scope.$index)">
+                     @click="onDefaultDelete(scope.$index)" v-if="hasDelete">
 
           </el-button>
         </template>
@@ -64,6 +64,7 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import itemDialog from './dialog'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {
@@ -82,9 +83,18 @@
       shippedQtyTitle() {
         return `调拨${this.unit == '箱' ? '件' : this.unit}数`;
       },
+      hasOperation(){
+        return this.hasEdit || this.hasDelete;
+      },
       hasAdd() {
-        return true;
-      }
+        return checkPermission('ProductResource_update') && checkPermission('MaterialResource_create');
+      },
+      hasEdit(){
+        return checkPermission('ProductResource_update') && checkPermission('MaterialResource_update');
+      },
+      hasDelete(){
+        return checkPermission('ProductResource_update') && checkPermission('MaterialResource_remove');
+      },
     },
     filters: {},
 
@@ -96,7 +106,6 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
         //操作按钮控制
-        hasOperation: true,
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
         loading: false,
