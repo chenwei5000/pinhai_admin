@@ -62,7 +62,7 @@
       <el-table-column prop="formatCreateTime" label="创建时间" min-width="150"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" min-width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle

@@ -33,7 +33,7 @@
             </keep-alive>
           </el-tab-pane>
 
-          <el-tab-pane name="create" lazy>
+          <el-tab-pane name="create" lazy v-if="hasNew">
             <span slot="label" style="color: #409EFF;">
               <i class="el-ph-icon-plus-circle"></i> 添加商品
             </span>
@@ -52,7 +52,7 @@
 <script>
   import tabPane from './components/TabPane'
   import createFrom from './components/createFrom'
-
+  import {checkPermission} from "@/utils/permission";
   const statusFlag = 's='
 
   export default {
@@ -70,7 +70,11 @@
     // computed属性，属于持续变化跟踪。在computed属性定义的时候，这个computed属性就与给它赋值的变量绑定了。
     // 改变这个赋值变量，computed属性值会随之改变。
     // 主要用于用过其它第三变量，间接跟页面进行数据交互时使用。
-    computed: {},
+    computed: {
+      hasNew(){
+         return checkPermission('ProductResource_create');
+      }
+    },
 
     // 各种相关方法定义
     methods: {

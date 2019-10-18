@@ -11,7 +11,7 @@
           <el-col :span="6">
           <el-form-item label="状态" size="mini" prop="status">
             <el-radio-group v-model.number="newProduct.status">
-              <el-radio-button label="1">开启</el-radio-button>
+              <el-radio-button label="1" >开启</el-radio-button>
               <el-radio-button label="0">关闭</el-radio-button>
             </el-radio-group>
           </el-form-item>
@@ -38,13 +38,15 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="SKU" size="mini" prop="skuCode">
+              <span style="font-size: 12px" v-if="!hasEdit">{{ newProduct.skuCode }}</span>
               <el-input v-model="newProduct.skuCode" placeholder="使用全英文,空格用-号代替。如:gym-104"
-                        style="width: 250px" size="mini"></el-input>
+                        style="width: 250px" size="mini" v-else></el-input>
             </el-form-item>
           </el-col>
           <el-col :md="15">
             <el-form-item label="名称" size="mini" prop="name">
-              <el-input v-model="newProduct.name" placeholder="请输入产品名称" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit" >{{ newProduct.name }}</span>
+              <el-input v-model="newProduct.name" placeholder="请输入产品名称" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -52,23 +54,21 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="分类" size="mini" prop="categoryId">
-              <el-col :span="20">
-                <el-select filterable v-model="newProduct.categoryId" placeholder="请选择分类,可筛选" style="width: 200px">
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.category.name}}</span>
+                <el-select filterable v-model="newProduct.categoryId" placeholder="请选择分类,可筛选" style="width: 200px" v-else>
                   <el-option
                     v-for="(item,idx) in categorySelectOptions"
                     :label="item.label" :value="item.value"
                     :key="idx"
                   ></el-option>
                 </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-button type="primary" @click="openNewCategoryDialog" icon="el-icon-circle-plus"></el-button>
-              </el-col>
+                <el-button type="primary" @click="openNewCategoryDialog" icon="el-icon-circle-plus" v-if="hasEdit"></el-button>
             </el-form-item>
           </el-col>
           <el-col :md="15">
             <el-form-item label="款式" size="mini">
-              <el-input v-model="newProduct.groupName" placeholder="请输入产品款式" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{ newProduct.groupName }}</span>
+              <el-input v-model="newProduct.groupName" placeholder="请输入产品款式" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -76,25 +76,23 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="箱规" size="mini" prop="cartonSpecId">
-              <el-col :span="20">
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.cartonSpec.code}}</span>
                 <el-select filterable v-model="newProduct.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
-                           style="width: 200px">
+                           style="width: 200px" v-else>
                   <el-option
                     v-for="(item,idx) in cartonspecSelectOptions"
                     :label="item.label" :value="item.value"
                     :key="idx"
                   ></el-option>
                 </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-button type="primary" @click="openNewCartonspecDialog" icon="el-icon-circle-plus"></el-button>
-              </el-col>
+                <el-button type="primary" @click="openNewCartonspecDialog" icon="el-icon-circle-plus" v-if="hasEdit"></el-button>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="装箱数" size="mini" prop="numberOfCarton">
-              <el-input v-model="newProduct.numberOfCarton" placeholder="一箱有多少个产品" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.numberOfCarton}}</span>
+              <el-input v-model="newProduct.numberOfCarton" placeholder="一箱有多少个产品" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -103,13 +101,15 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="型号" size="mini">
-              <el-input v-model="newProduct.model" placeholder="请输入产品型号" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.model}}</span>
+              <el-input v-model="newProduct.model" placeholder="请输入产品型号" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="颜色" size="mini">
-              <el-input v-model="newProduct.color" placeholder="请输入产品颜色" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.color}}</span>
+              <el-input v-model="newProduct.color" placeholder="请输入产品颜色" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -117,25 +117,21 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="净重(Kg)" size="mini" prop="grossWeight">
-              <el-input v-model="newProduct.grossWeight" placeholder="单个商品的净重(不包括外箱重量)" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.grossWeight}}</span>
+              <el-input v-model="newProduct.grossWeight" placeholder="单个商品的净重(不包括外箱重量)" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="体积(Cm³ )" size="mini">
-              <el-col :span="6">
-                <el-input v-model="newProduct.length" placeholder="长(Cm)" style="width: 90px" size="mini"></el-input>
-              </el-col>
-              <el-col :span="3">
-                <div>x</div>
-              </el-col>
-              <el-col :span="6">
-                <el-input v-model="newProduct.width" placeholder="宽(Cm)" style="width: 90px" size="mini"></el-input>
-              </el-col>
-              <el-col :span="3"> x</el-col>
-              <el-col :span="6">
-                <el-input v-model="newProduct.height" placeholder="高(Cm)" style="width: 90px" size="mini"></el-input>
-              </el-col>
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.length}}</span>
+                <el-input v-model="newProduct.length" placeholder="长(Cm)" style="width: 90px" size="mini" v-else></el-input>
+                <span>x</span>
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.width}}</span>
+                <el-input v-model="newProduct.width" placeholder="宽(Cm)" style="width: 90px" size="mini" v-else></el-input>
+                <span>x</span>
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.height}}</span>
+                <el-input v-model="newProduct.height" placeholder="高(Cm)" style="width: 90px" size="mini" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -146,25 +142,23 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="供货商" size="mini" prop="supplierId">
-              <el-col :span="20">
-                <el-select filterable v-model="newProduct.supplierId" placeholder="请选择供货商,可筛选" style="width: 200px">
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.supplier.name}}</span>
+                <el-select filterable v-model="newProduct.supplierId" placeholder="请选择供货商,可筛选" style="width: 200px" v-else>
                   <el-option
                     v-for="(item,idx) in supplierSelectOptions"
                     :label="item.label" :value="item.value"
                     :key="idx"
                   ></el-option>
                 </el-select>
-              </el-col>
-              <el-col :span="4">
                 <el-button type="primary" @click="openNewCompanyManagementDialog"
-                           icon="el-icon-circle-plus"></el-button>
-              </el-col>
+                           icon="el-icon-circle-plus" v-if="hasEdit"></el-button>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="交期(天)" size="mini">
-              <el-input v-model="newProduct.leadDay" placeholder="请输入产品交期" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.leadDay}}</span>
+              <el-input v-model="newProduct.leadDay" placeholder="请输入产品交期" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -172,7 +166,8 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="结算货币" size="mini" prop="currencyId">
-              <el-select v-model="newProduct.currencyId" placeholder="请选择结算货币" style="width: 250px">
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.currencyId}}</span>
+              <el-select v-model="newProduct.currencyId" placeholder="请选择结算货币" style="width: 250px" v-else>
                 <el-option
                   v-for="(item,idx) in currencySelectOptions"
                   :label="item.label" :value="item.value"
@@ -184,7 +179,8 @@
 
           <el-col :md="15">
             <el-form-item label="采购价" size="mini" prop="price">
-              <el-input v-model="newProduct.price" placeholder="请输入产品采购价格" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.price}}</span>
+              <el-input v-model="newProduct.price" placeholder="请输入产品采购价格" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -195,26 +191,24 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="HSCode" size="mini" prop="declareConfigId">
-              <el-col :span="20">
+                <span style="font-size: 12px" v-if="!hasEdit">{{[newProduct.declareConfigId]}}</span>
                 <el-select filterable v-model="newProduct.declareConfigId" placeholder="请选择报关码,可筛选"
-                           style="width: 200px">
+                           style="width: 200px" v-else>
                   <el-option
                     v-for="(item,idx) in declareConfigSelectOptions"
                     :label="item.label" :value="item.value"
                     :key="idx"
                   ></el-option>
                 </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-button type="primary" @click="openNewDeclareConfigDialog" icon="el-icon-circle-plus"></el-button>
-              </el-col>
+                <el-button type="primary" @click="openNewDeclareConfigDialog" icon="el-icon-circle-plus" v-if="hasEdit"></el-button>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="出口享惠类型" size="mini">
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.preferentialDuties}}</span>
               <el-input v-model="newProduct.preferentialDuties" placeholder="请输入报关出口享惠类型"
-                        style="width: 300px"></el-input>
+                        style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -222,13 +216,15 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="品牌" size="mini">
-              <el-input v-model="newProduct.brand" placeholder="请输入报关品牌" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.brand}}</span>
+              <el-input v-model="newProduct.brand" placeholder="请输入报关品牌" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="品牌类型" size="mini">
-              <el-input v-model="newProduct.brandType" placeholder="请输入报关品牌类型" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.brandType}}</span>
+              <el-input v-model="newProduct.brandType" placeholder="请输入报关品牌类型" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -236,26 +232,24 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="材质" size="mini">
-              <el-input v-model="newProduct.texture" placeholder="请输入报关材质" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.texture}}</span>
+              <el-input v-model="newProduct.texture" placeholder="请输入报关材质" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="包装尺寸(Cm³) " size="mini">
-              <el-col :span="6">
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.declareLength}}</span>
                 <el-input v-model="newProduct.declareLength" placeholder="长(Cm)" style="width: 90px"
-                          size="mini"></el-input>
-              </el-col>
-              <el-col :span="3"> x</el-col>
-              <el-col :span="6">
+                          size="mini" v-else></el-input>
+                <span>x</span>
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.declareWidth}}</span>
                 <el-input v-model="newProduct.declareWidth" placeholder="宽(Cm)" style="width: 90px"
-                          size="mini"></el-input>
-              </el-col>
-              <el-col :span="3"> x</el-col>
-              <el-col :span="6">
+                          size="mini" v-else></el-input>
+                <span>x</span>
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.declareHeight}}</span>
                 <el-input v-model="newProduct.declareHeight" placeholder="高(Cm)" style="width: 90px"
-                          size="mini"></el-input>
-              </el-col>
+                          size="mini" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -263,13 +257,15 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="用途" size="mini">
-              <el-input v-model="newProduct.purpose" placeholder="请输入报关用途" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.purpose}}</span>
+              <el-input v-model="newProduct.purpose" placeholder="请输入报关用途" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
             <el-col :md="15">
               <el-form-item label="产地" size="mini">
-                <el-input v-model="newProduct.origin" placeholder="请输入报关产地" style="width: 300px"></el-input>
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.origin}}</span>
+                <el-input v-model="newProduct.origin" placeholder="请输入报关产地" style="width: 300px" v-else></el-input>
               </el-form-item>
             </el-col>
         </el-row>
@@ -277,13 +273,15 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="开票单位" size="mini">
-              <el-input v-model="newProduct.invoiceUnit" placeholder="请输入报关开票单位（箱/件）" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.invoiceUnit}}</span>
+              <el-input v-model="newProduct.invoiceUnit" placeholder="请输入报关开票单位（箱/件）" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="开票抬头" size="mini">
-              <el-input v-model="newProduct.invoiceTitle" placeholder="请输入报关开票抬头" style="width: 300px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.invoiceTitle}}</span>
+              <el-input v-model="newProduct.invoiceTitle" placeholder="请输入报关开票抬头" style="width: 300px" v-else></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -295,13 +293,15 @@
         <el-row>
           <el-col :md="9">
             <el-form-item label="FNSKU" size="mini">
-              <el-input v-model="newProduct.fnSku" placeholder="请输入产品FNSKU" style="width: 250px"></el-input>
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.fnSku}}</span>
+              <el-input v-model="newProduct.fnSku" placeholder="请输入产品FNSKU" style="width: 250px" v-else></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="15">
             <el-form-item label="Vip级别" size="mini">
-              <el-select v-model="newProduct.vipLevel" placeholder="请输入产品Vip级别" style="width: 200px">
+              <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.vipLevel}}</span>
+              <el-select v-model="newProduct.vipLevel" placeholder="请输入产品Vip级别" style="width: 200px" v-else>
                 <el-option
                   v-for="(item,idx) in vipLevelSelectOptions"
                   :label="item.label" :value="item.value"
@@ -329,6 +329,7 @@
         <legend class="panel-title">备注</legend>
         <el-col :md="24">
         <el-form-item>
+          
           <el-input v-model="newProduct.comment" type="textarea"
                     :autosize="{minRows: 6, maxRows: 10}" style="width: 900px"></el-input>
         </el-form-item>
@@ -339,7 +340,6 @@
         <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreateProduct">立即创建
         </el-button>
       </el-row>
-
     </el-form>
 
     <!--div style="height: 300px;position: fixed;right: 10px;top: 80px;">
@@ -371,6 +371,8 @@
 
   import itemTable from './tab'
   import declareConfigModel from "../../../api/declareConfig";
+  import {checkPermission} from "@/utils/permission";
+
 
   const vipLevelSelectOptions = [
     {
@@ -405,7 +407,11 @@
           op: 'eq',
           data: this.init_data.id != null ? this.init_data.id + "" : -1
         }]
-      }
+      },
+
+      hasEdit(){
+        return checkPermission('ProductResource_update');
+      },
     },
 
     data() {
