@@ -30,7 +30,8 @@
           hasDelete: checkPermission('WarehouseStockResource_remove'),
           // hasView: checkPermission('WarehouseStockResource_get'),
           hasExport: checkPermission('WarehouseStockResource_export'),
-          hasImport: checkPermission('WarehouseStockResource_import'),
+          hasImport: false,
+          hasExportTpl: false,
 
           url: '/warehouseStocks/stocks', // 资源URL
           relations: ["warehouse"],//关联数据字典
