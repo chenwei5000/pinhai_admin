@@ -47,7 +47,7 @@
       </el-row>
       <el-row>
         <el-col :md="24">
-          <el-form-item label="备注" prop="remark">
+          <el-form-item label="申请说明" prop="remark">
             <span style="font-size: 12px" v-html="editObject.formatRemark"></span>
           </el-form-item>
         </el-col>

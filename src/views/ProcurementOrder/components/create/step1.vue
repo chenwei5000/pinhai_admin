@@ -184,6 +184,17 @@
           </template>
         </el-table-column>
 
+        <el-table-column prop="product.imgUrl" label="图片" width="40" >
+          <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+            <el-image
+              :z-index="10000"
+              style="width: 30px; height: 30px;margin-top: 5px"
+              :src="scope.row.product.imgUrl"
+              :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+            </el-image>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="product.supplier.name" label="供货商" width="100"></el-table-column>
 
         <el-table-column prop="productName" label="名称" width="200">

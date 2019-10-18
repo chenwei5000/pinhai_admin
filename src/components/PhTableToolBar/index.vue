@@ -1,5 +1,5 @@
 <template>
-  <el-row class="table-tool" type="flex" justify="space-between">
+  <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd || hasEdit || hasDelete || hasExport || hasExportTpl || hasImport ">
 
     <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleUpload">
 

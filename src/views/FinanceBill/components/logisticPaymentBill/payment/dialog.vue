@@ -4,10 +4,9 @@
   <el-dialog :title="title"
              v-if="dialogVisible"
              :visible.sync="dialogVisible"
-             width="70%"
-             top="1vh"
              class="ph-dialog"
              @close='closeDialog'
+             fullscreen
   >
 
     <!-- 折叠面板 -->
@@ -18,15 +17,26 @@
         <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
 
+      <el-collapse-item name="itemTable" style="margin-top: 10px">
+        <div slot="title" class="title">2. 付款项</div>
+        <itemTable ref="itemTable" :primary="primary" :selCurrency="primary.currency" v-if="primaryComplete"></itemTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="billTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 发票信息</div>
+        <billTable ref="billTable" :primary="primary" :selCurrency="primary.currency" v-if="primaryComplete"></billTable>
+      </el-collapse-item>
+
       <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">2. 附件</div>
+        <div slot="title" class="title">4. 发票文件</div>
         <attachment ref="attachment" :primary="primary"
                     v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
-      <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 付款</div>
-        <paymentFrom ref="paymentFrom" :primary="primary" v-if="primaryComplete"></paymentFrom>
+      <el-collapse-item name="paymentFrom" style="margin-top: 10px">
+        <div slot="title" class="title">5. 确认付款</div>
+        <paymentFrom ref="paymentFrom" :primary="primary"
+                     v-if="primaryComplete"></paymentFrom>
       </el-collapse-item>
     </el-collapse>
 
@@ -50,14 +60,18 @@
   import {mapGetters} from 'vuex'
   import infoFrom from './info'
   import paymentFrom from './form'
-  import attachment from './attachment'
+  import billTable from '../../../../LinerShippingPlan/components/logisticPayment/view/billTable'
+  import itemTable from '../../../../LinerShippingPlan/components/logisticPayment/view/itemTable'
+  import attachment from '../../../../LinerShippingPlan/components/logisticPayment/view/attachment'
   import auditing from '@/components/PhAuditing'
 
   export default {
     components: {
       infoFrom,
-      attachment,
+      itemTable,
+      billTable,
       paymentFrom,
+      attachment,
       auditing
     },
     props: {},
@@ -79,7 +93,7 @@
         return true;
       },
       title() {
-        return `预付款单 [${this.primary.code}]`;
+        return `物流付款单 [${this.primary.code}]`;
       }
     },
 
@@ -104,10 +118,10 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrderAmount"];
+          let relations = ["companyManagement", "linerShippingPlan", "currency", "creator", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency"];
           //获取计划数据
           this.global.axios
-            .get(`/financeBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
+            .get(`/logisticPaymentBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -118,7 +132,7 @@
             });
         }
         else {
-          this.$message.error("无效的采购预付款单");
+          this.$message.error("无效的物流付款单");
         }
       },
 
@@ -127,7 +141,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment', 'paymentFrom'];
       },
       closeDialog() {
         this.primary = {};
@@ -154,7 +168,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        this.global.axios.put(`/financeBills/payment/${order.id}`, order)
+        this.global.axios.put(`/logisticPaymentBills/checkPass/${order.id}`, order)
           .then(resp => {
               let _newObject = resp.data;
               loading.close();
@@ -185,7 +199,7 @@
             if (action == 'confirm') {
 
               let paymentObject = JSON.parse(JSON.stringify(this.$refs.paymentFrom.editObject));
-              paymentObject.note = note;
+              paymentObject.approvalContent = note;
 
               this.refusePaymentOrder(paymentObject);
 
@@ -207,7 +221,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        this.global.axios.put(`/financeBills/refuse/${order.id}`, order)
+        this.global.axios.put(`/logisticPaymentBills/checkRefuse/${order.id}`, order)
           .then(resp => {
               let _newObject = resp.data;
               loading.close();

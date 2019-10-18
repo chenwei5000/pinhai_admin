@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -29,6 +27,7 @@
           hasPagination: false,
           relations: [""],
           hasDelete: false,
+          hasEdit: false,
           hasOperation: false,
           hasNew: false,
           tableAttrs: {
@@ -36,8 +35,6 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
-            phColumns.id,
             {prop: 'shipmentId', label: 'Shipment ID', 'min-width': 100},
             {prop: 'shipmentStatus', label: '状态', 'min-width': 100},
             {prop: 'shipmentName', label: '名称', 'min-width': 100},
@@ -48,7 +45,7 @@
              //
           ],
           form: [
-            
+
           ]
         }
       }
@@ -56,12 +53,7 @@
     computed: {},
     methods: {
       statusClassName({row}) {
-        if (row.status && row.status !== 0) {
-          return '';
-        }
-        else {
-          return 'warning-row';
-        }
+        return '';
       },
     },
     watch: {}

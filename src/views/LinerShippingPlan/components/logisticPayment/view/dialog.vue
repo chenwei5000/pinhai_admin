@@ -35,6 +35,13 @@
                    :selCurrency="selCurrency" v-if="primaryComplete"></billTable>
       </el-collapse-item>
 
+      <el-collapse-item name="paymentFrom" style="margin-top: 10px">
+        <div slot="title" class="title">5. 付款信息</div>
+        <paymentInfo ref="paymentFrom" :primary="primary"
+                     v-if="primaryComplete"></paymentInfo>
+      </el-collapse-item>
+
+
     </el-collapse>
 
   </el-dialog>
@@ -48,13 +55,15 @@
   import itemTable from './itemTable'
   import billTable from './billTable'
   import attachment from './attachment'
+  import paymentInfo from '../../../../FinanceBill/components/logisticPaymentBill/view/paymentInfo'
 
   export default {
     components: {
       infoFrom,
       itemTable,
       billTable,
-      attachment
+      attachment,
+      paymentInfo
     },
     props: {
       plan: {
@@ -124,7 +133,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment', 'paymentFrom'];
       },
       closeDialog() {
         this.primary = {};

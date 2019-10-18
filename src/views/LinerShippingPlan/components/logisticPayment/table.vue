@@ -61,9 +61,9 @@
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 0
-            ? 'primary' : scope.row.status === 1
-            ? 'success' : scope.row.status === 2
-            ? 'info' : ''"
+            ? 'info' : scope.row.status === 1
+            ? 'primary' : scope.row.status === 2
+            ? 'success' : ''"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
@@ -119,9 +119,9 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="remark" label="申请说明" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+          <el-popover placement="top-start" title="申请说明" width="250" trigger="hover"
                       v-if="scope.row.remark && scope.row.remark.length > 10">
             <div v-html="scope.row.formatRemark"></div>
             <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>

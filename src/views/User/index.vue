@@ -45,6 +45,7 @@
           hasExportTpl: checkPermission('UserResource_export'),
           hasExport: checkPermission('UserResource_export'),
           hasImport: checkPermission('UserResource_import'),
+          hasSetting: checkPermission('DataAuthorityResource_importData'),
 
           url: '/users',
           relations: ["creator", "department", "position", "parent"],
@@ -55,10 +56,6 @@
 
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '用户列表',
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
-          hasSetting: true,
           operationAttrs: {width: '120', fixed: 'right'},
 
           columns: [

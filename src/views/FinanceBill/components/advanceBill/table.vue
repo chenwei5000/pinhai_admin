@@ -172,6 +172,7 @@
   import viewDialog from './view/dialog'
   import supplierModel from '@/api/supplier'
   import phEnumModel from '@/api/phEnum'
+  import {checkPermission} from "@/utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -199,10 +200,10 @@
       ]),
 
       hasView() {
-        return true;
+        return checkPermission('FinanceBillResource_get');
       },
       hasEdit() {
-        return true;
+        return checkPermission('FinanceBillResource_payment');
       },
       hasOperation() {
         return this.hasView || this.hasEdit;
