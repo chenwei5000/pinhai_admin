@@ -21,23 +21,73 @@
                @submit.native.prevent
                v-loading="loading"
       >
-        <el-form-item label="本次到货">
-          <span style="font-size: 12px">{{primary.allCartonQty}}箱, 合{{primary.allQty}}件</span>
-        </el-form-item>
-        <el-form-item label="收货日期" prop="receivedTime">
-          <el-date-picker
-            v-model="primary.receivedTime"
-            format="yyyy-MM-dd"
-            type="date"
-            placeholder="收货日期"></el-date-picker>
-        </el-form-item>
+
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="发船时间">
+              <span style="font-size: 12px">{{primary.formatEtdTime}} - {{primary.code}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
+            <el-form-item label="品类">
+              <span style="font-size: 12px">{{primary.categoryName}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="物流类型">
+              <span style="font-size: 12px">{{primary.type}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
+            <el-form-item label="发货港口">
+              <span style="font-size: 12px">{{primary.portOfLoading}}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="FBA ID" prop="shipmentId">
+              <el-input size="mini" v-model="primary.shipmentId" style="width: 150px"
+                        placeholder="请输入FBA ID"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
+            <el-form-item label="Reference ID" prop="referenceId">
+              <el-input size="mini" v-model="primary.referenceId" style="width: 150px"
+                        placeholder="请输入Reference ID"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="24">
+            <el-form-item label="备注" prop="detail">
+              <el-col :span="22">
+                <el-input type="textarea" v-model="primary.detail"
+                          maxlength="300"
+                          show-word-limit
+                          rows="3"
+                          cols="80"
+                          show-word-limit></el-input>
+              </el-col>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
       </el-form>
     </div>
 
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">确认</el-button>
-      <el-button @click="closeDialog" size="mini" >关 闭</el-button>
+      <el-button @click="closeDialog" size="mini">关 闭</el-button>
     </div>
 
   </el-dialog>
@@ -58,22 +108,24 @@
         'rolePower'
       ]),
       title() {
-        return '确认收货';
+        return '确认发货';
       }
     },
 
     data() {
       return {
         primary: {}, //主对象
-        details: {}, //明细对象
         dialogVisible: false, //Dialog 是否开启
         loading: false,
         initComplete: false,
         confirmLoading: false,
         rules: {
-          receivedTime: [
-            {required: true, message: '收货日期必须输入', trigger: 'blur'}
+          shipmentId: [
+            {required: true, message: "必填", trigger: "blur"}
           ],
+          referenceId: [
+            {required: true, message: "必填", trigger: "blur"}
+          ]
         },
       }
     },
@@ -87,28 +139,30 @@
     },
     methods: {
       initData() {
+        if (this.primary.id) {
+          this.loading = true;
+          let url = `/linerShippingPlans/${this.primary.id}`;
+          this.global.axios.get(url)
+            .then(data => {
+              this.primary = data.data || {};
+              this.loading = false;
+            })
+            .catch(err => {
+              this.loading = false;
+            })
+        }
       },
 
       /* 开启弹出编辑框 需要传主键ID */
       openDialog(primary, details) {
         this.initComplete = false;
         this.primary = primary;
-        this.primary.receivedTime = new Date();
-        this.details = details;
-        this.primary.allQty = 0;
-        this.primary.allCartonQty = 0;
-        this.details.forEach(r=>{
-          this.primary.allQty += r.receivedQty;
-          this.primary.allCartonQty += r.receivedCartonQty;
-        });
-
         this.initData();
         this.dialogVisible = true;
         this.initComplete = true;
       },
       closeDialog() {
         this.primary = {};
-        this.details = {};
         this.dialogVisible = false;
       },
 
@@ -122,13 +176,7 @@
           if (!valid) {
             return false
           }
-          let _object = {};
-          _object.receivedTime = this.primary.receivedTime;
-          let _details = [];
-          this.details.forEach(r=>{
-            _details.push({id: r.id, receivedCartonQty: r.receivedCartonQty, receivedNote: r.receivedNote});
-          });
-          _object.receivedOrderItems = _details;
+          let _object = this.primary;
 
           const loading = this.$loading({
             lock: true,
@@ -137,9 +185,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
 
-          this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primary.id}`, _object)
+          this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("收货完成");
+              this.$message.info("发货完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();
