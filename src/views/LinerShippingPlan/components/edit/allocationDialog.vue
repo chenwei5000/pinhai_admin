@@ -54,14 +54,14 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="FBA ID" prop="shipmentId">
-              <el-input size="mini" v-model="primary.shipmentId" style="width: 150px"
+              <el-input size="mini" v-model="primary.shipmentId" style="width: 130px"
                         placeholder="请输入FBA ID"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
             <el-form-item label="Reference ID" prop="referenceId">
-              <el-input size="mini" v-model="primary.referenceId" style="width: 150px"
+              <el-input size="mini" v-model="primary.referenceId" style="width: 130px"
                         placeholder="请输入Reference ID"></el-input>
             </el-form-item>
           </el-col>
@@ -176,7 +176,13 @@
           if (!valid) {
             return false
           }
-          let _object = this.primary;
+          let _object = {
+            id: this.primary.id,
+            shipmentId: this.primary.shipmentId,
+            referenceId: this.primary.referenceId,
+            detail: this.primary.detail
+          };
+
 
           const loading = this.$loading({
             lock: true,
@@ -185,9 +191,9 @@
             background: 'rgba(0, 0, 0, 0.7)'
           });
 
-          this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primary.id}`, _object)
+          this.global.axios.put(`/linerShippingPlans/postPlan/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("发货完成");
+              this.$message.info("执行调拨成功!");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

@@ -16,11 +16,6 @@
           智能发柜
         </el-button>
 
-        <el-button type="warning" icon="el-icon-truck" @click="onCompleteAllocation"
-                   size="mini">
-          执行调拨
-        </el-button>
-
       </el-col>
 
       <el-dropdown @command="onDefaultCommand" v-if="hasExportTpl || hasExport || hasImport">
@@ -43,11 +38,6 @@
       @smartEvent="smartEvent"
     ></smartDialog>
 
-    <allocationDialog
-      ref="allocationDialog"
-    >
-    </allocationDialog>
-
 
   </div>
 </template>
@@ -55,7 +45,6 @@
 <script>
   import XLSX from 'xlsx';
   import smartDialog from '../smart/dialog';
-  import allocationDialog from './allocationDialog';
 
   export default {
     props: {
@@ -65,8 +54,7 @@
       }
     },
     components: {
-      smartDialog,
-      allocationDialog
+      smartDialog
     },
     computed: {
       hasExportTpl(){
@@ -86,9 +74,6 @@
     methods: {
       onDefaultSmart(){
         this.$refs.smart.openDialog(this.primary);
-      },
-      onCompleteAllocation(){
-        this.$refs.allocationDialog.openDialog(this.primary);
       },
       smartEvent(obj){
         this.$emit("modifyCBEvent");
