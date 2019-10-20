@@ -75,7 +75,7 @@
         this.$refs.smart.openDialog(this.primary);
       },
       smartEvent(obj){
-
+        this.$emit("modifyCBEvent");
       },
       onDefaultAdd() {
       },

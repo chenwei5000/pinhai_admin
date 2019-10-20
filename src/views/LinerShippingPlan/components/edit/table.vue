@@ -35,7 +35,7 @@
     </el-form>
 
     <!-- 表格工具条 添加、导入、导出等 -->
-    <tableToolBar :primary="primary" >
+    <tableToolBar :primary="primary" @modifyCBEvent="modifyCBEvent">
     </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->

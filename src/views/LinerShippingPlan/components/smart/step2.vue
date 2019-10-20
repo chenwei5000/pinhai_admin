@@ -38,7 +38,8 @@
 
       <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100">
         <template slot-scope="scope">
-          <el-popover v-if="scope.row.domesticStockCartonQty > 0 " placement="top-start" title="国内库存(箱)" width="250" trigger="hover">
+          <el-popover v-if="scope.row.domesticStockCartonQty > 0 " placement="top-start" title="国内库存(箱)" width="250"
+                      trigger="hover">
             <div v-html="br(scope.row.domesticStocks)"></div>
             <span slot="reference">{{ scope.row.domesticStockCartonQty }}</span>
           </el-popover>
@@ -72,13 +73,17 @@
           <el-input-number v-model="scope.row.replenishmentCartonQty"
                            size="mini"
                            style="width: 120px;margin: 3px 0;"
-                           :precision="0"
+                           :precision="3"
                            :min="0"
                            :step="1"
                            @change="onReceivedCartonQty(scope.row)"
                            :max="1000000" label="请填本次应补箱数">
           </el-input-number>
         </template>
+      </el-table-column>
+
+      <el-table-column prop="replenishmentQty" sortable label="应补件数"
+                       width="100" fixed="right" align="center">
       </el-table-column>
 
       <el-table-column prop="boxVolume" label="体积(m³)" width="100" fixed="right" align="center">
@@ -114,6 +119,7 @@
         <el-row type="flex" justify="center">
           <el-button type="primary" style="margin-top: 15px"
                      size="mini"
+                     @click="toPlanItem"
                      :loading="confirmLoading">
             转出口计划明细
           </el-button>
@@ -400,19 +406,24 @@
 
       /********************* 操作按钮相关方法  ***************************/
       /* 行删除功能 */
+      // 删除功能， 本地删除
       onDefaultDelete(row) {
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              let url = `${this.url}/${row.id}`;
-              this.global.axios.delete(url).then(resp => {
-                this.$message({type: 'success', message: '删除成功'});
-                let obj = resp.data;
-                this.getList();
-              })
-                .catch(err => {
-                })
+              let idx = null;
+
+              this.data.forEach((item, index) => {
+                  if (item.skuCode === row.skuCode) {
+                    idx = index;
+                    return;
+                  }
+                }
+              );
+              this.date = this.data.splice(idx, 1);
+              this.search();
+
               done();
             } else done()
           }
@@ -422,13 +433,52 @@
       },
 
       onReceivedCartonQty(row) {
-        //row.receivedQty = (row.receivedCartonQty * row.numberOfCarton).toFixed(0);
+        row.replenishmentQty = (row.replenishmentCartonQty * row.numberOfCarton).toFixed(0);
+        row.boxVolume = (row.replenishmentCartonQty * row.cartonSpecVolume).toFixed(3);
+      },
+
+      //转出口计划明细
+      toPlanItem() {
+        let loading = this.$loading({
+          lock: true,
+          text: '保存中...',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        let postData = [];
+        this.tableData.forEach(row => {
+          postData.push({
+            productId: row.productId,
+            skuCode: row.skuCode,
+            cartonSpecId: row.cartonSpecId,
+            cartonSpecName: row.cartonSpecCode,
+            numberOfCarton: row.numberOfCarton,
+            sevenSalesCount: row.sevenAmendQty,
+            logisticsWeek: row.logisticsWeek,
+            safetyWeek: row.safetyWeek,
+            inStockQty: row.inStockQty,
+            validateStockQty: row.validateStockQty,
+            domesticStockQty: row.domesticStockQty,
+            cartonQty: row.replenishmentCartonQty
+          });
+        });
+
+        let url = `/linerShippingPlanItems/importData/${this.primary.id}`
+        this.global.axios.post(url, postData)
+          .then(data => {
+            this.$message.info('操作成功！');
+            loading.close();
+            this.$emit("step2CBEvent", 3);
+
+          })
+          .catch(error => {
+            loading.close();
+          })
       },
 
       onBack() {
         this.$emit("step2CBEvent", 0);
       }
-
     }
   }
 </script>
