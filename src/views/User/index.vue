@@ -56,7 +56,7 @@
 
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '用户列表',
-          operationAttrs: {width: '120', fixed: 'right'},
+          operationAttrs: {width: '130', fixed: 'right'},
 
           columns: [
             {type: 'selection'},

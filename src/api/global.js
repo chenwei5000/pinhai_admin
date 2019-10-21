@@ -108,6 +108,7 @@ axios.interceptors.response.use(data => {
     if (err.response.data) {
       console.log(err.response)
       Message.error({
+        dangerouslyUseHTMLString:true,
         message: '[' + (err.response.data.code ? err.response.data.code : err.response.status) + ']'
         + (err.response.data.description ? err.response.data.description.replace(/\n/g, '<br/>')
           : err.response.data.message)
