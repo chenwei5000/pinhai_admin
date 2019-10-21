@@ -21,15 +21,6 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="创建时间">
-        <el-date-picker
-          size="mini"
-          v-model="searchParam.createTime.value"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
-      </el-form-item>
-
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>

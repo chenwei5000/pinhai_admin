@@ -79,7 +79,10 @@
     },
     computed: {
       dialogTitle() {
-          return "添加";
+        if (this.detailItemId == null){
+         return "添加盘点明细"
+        }
+        return "修改盘点明细"
       },
       hasAdd() {
         return (this.detailItemId == null);

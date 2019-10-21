@@ -17,7 +17,7 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="仓库" prop="warehouseId">
+            <el-form-item label="仓库" prop="warehouseId" size="mini">
               <el-select v-model="newObject.warehouseId" style="width: 220px">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -32,7 +32,7 @@
 
         <el-row>
           <el-col :md="14">
-            <el-form-item label="截止日期" prop="limitTime">
+            <el-form-item label="截止日期" prop="limitTime" size="mini">
               <el-date-picker
                 v-model="newObject.limitTime"
                 format="yyyy-MM-dd"

@@ -20,7 +20,7 @@
 
         <el-row>
           <el-col :md="12">
-            <el-form-item label="仓库" prop="warehouseId">
+            <el-form-item label="仓库" prop="warehouseId" size="mini">
               <el-select v-model="newObject.warehouseId" style="width: 180px"
                          filterable placeholder="请选择仓库">
                 <el-option
@@ -34,7 +34,7 @@
           </el-col>
 
           <el-col :md="12">
-            <el-form-item label="类型" prop="type">
+            <el-form-item label="类型" prop="type" size="mini">
               <el-select v-model="newObject.type" style="width: 180px"
                          filterable placeholder="类型">
                 <el-option
