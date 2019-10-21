@@ -27,8 +27,8 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="状态">
-        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
+      <el-form-item label="状态" v-if="hasStatus">
+        <el-select v-if="hasSearch" size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
@@ -243,7 +243,19 @@
           return newValue;
         }
       },
-
+      hasSearch(){
+        if (this.type === 'all' || this.type === 'executing') {
+          return true;
+        }
+      },
+      hasStatus(){
+        if (this.type === 'complete' || this.type === 'editing') {
+          return false;
+        }
+        if (this.type === 'all' || this.type === 'executing') {
+          return true;
+        }
+      },
       // 显示进度条
       hasCompleteness() {
         if (this.type === 'editing') {
