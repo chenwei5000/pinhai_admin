@@ -142,7 +142,7 @@
     <el-row v-if="hasEdit">
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button v-if="hasEdit" type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
+          <el-button v-if="hasEdit" type="primary" size="mini"  style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
             保存基本信息
           </el-button>
         </el-row>

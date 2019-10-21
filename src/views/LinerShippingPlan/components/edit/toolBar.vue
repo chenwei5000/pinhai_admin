@@ -38,12 +38,13 @@
       @smartEvent="smartEvent"
     ></smartDialog>
 
+
   </div>
 </template>
 
 <script>
-  import XLSX from 'xlsx'
-  import smartDialog from '../smart/dialog'
+  import XLSX from 'xlsx';
+  import smartDialog from '../smart/dialog';
 
   export default {
     props: {
@@ -75,7 +76,7 @@
         this.$refs.smart.openDialog(this.primary);
       },
       smartEvent(obj){
-
+        this.$emit("modifyCBEvent");
       },
       onDefaultAdd() {
       },

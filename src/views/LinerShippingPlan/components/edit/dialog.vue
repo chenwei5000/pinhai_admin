@@ -10,6 +10,11 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
+      <el-button type="primary" icon="el-icon-truck" @click="onCompleteAllocation"
+                 size="mini">
+        发布计划
+      </el-button>
+
       <el-button size="mini" @click="closeDialog">取 消</el-button>
 
     </el-row>
@@ -84,6 +89,11 @@
         </el-tabs>
       </div>
     </div>
+
+
+    <allocationDialog ref="allocationDialog">
+    </allocationDialog>
+
   </el-dialog>
 </template>
 
@@ -95,6 +105,7 @@
   import detail from './table';
   import logisticPayment from '../logisticPayment/table'
   import planModel from "@/api/linerShippingPlan";
+  import allocationDialog from './allocationDialog';
 
   export default {
     props: {},
@@ -105,7 +116,8 @@
       person,
       attachment,
       detail,
-      logisticPayment
+      logisticPayment,
+      allocationDialog
     },
 
     computed: {
@@ -210,7 +222,11 @@
         this.$emit("modifiedInfoCBEvent", obj);
         let title = planModel.generateEventTitle(obj);
         this.$emit("editCalendarEvent", obj, title);
-      }
+      },
+
+      onCompleteAllocation(){
+        this.$refs.allocationDialog.openDialog(this.primary);
+      },
     }
   };
 </script>

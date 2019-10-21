@@ -32,8 +32,8 @@
     </el-form>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">确 认</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">确 认</el-button>
+      <el-button @click="dialogVisible = false" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>

@@ -7,7 +7,7 @@
             label-width="120px"
             v-loading="loading"
     >
-      <el-row>  
+      <el-row>
         <el-col >
           <el-form-item label="编码" prop="code">
             <el-input v-model="editObject.code"
@@ -90,7 +90,7 @@
       <el-row >
         <el-col>
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
+            <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSave">
               保存基本信息
             </el-button>
           </el-row>
@@ -110,7 +110,7 @@
   export default {
     components: {},
     props: {
-    
+
     },
     computed: {
       hasEdit() {

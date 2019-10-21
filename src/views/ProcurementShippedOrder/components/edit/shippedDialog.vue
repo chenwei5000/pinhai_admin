@@ -124,8 +124,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">发 货</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">发 货</el-button>
+      <el-button @click="closeDialog" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>
