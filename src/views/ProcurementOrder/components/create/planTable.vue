@@ -31,17 +31,6 @@
 
       </el-form-item>
 
-      <el-form-item label="状态">
-        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
-          <el-option
-            v-for="(item,idx) in statusSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>

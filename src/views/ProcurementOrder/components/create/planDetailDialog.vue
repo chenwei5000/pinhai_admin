@@ -38,7 +38,7 @@
 
         <el-row>
           <el-col :md="8">
-            <el-form-item label="供货商" prop="supplierId">
+            <el-form-item label="供货商" prop="supplierId" size="mini">
 
               <el-select filterable
                          v-model="detailItem.supplierId"
@@ -57,7 +57,7 @@
           </el-col>
 
           <el-col :md="8">
-            <el-form-item label="箱规" prop="cartonSpecId">
+            <el-form-item label="箱规" prop="cartonSpecId" size="mini">
 
               <el-select filterable
                          v-model="detailItem.cartonSpecId"
@@ -76,7 +76,7 @@
           </el-col>
 
           <el-col :md="8">
-            <el-form-item label="装箱数" prop="numberOfCarton">
+            <el-form-item label="装箱数" prop="numberOfCarton" size="mini">
 
               <el-input-number v-model="detailItem.numberOfCarton"
                                :precision="0"
@@ -96,7 +96,7 @@
 
         <el-row>
           <el-col :md="8">
-            <el-form-item label="采购单价" prop="price">
+            <el-form-item label="采购单价" prop="price" size="mini">
 
               <el-input-number v-model="detailItem.product.price"
                                :precision="2"
@@ -113,7 +113,7 @@
           </el-col>
 
           <el-col :md="8">
-            <el-form-item label="采购箱数" prop="purchaseOrderCartonQty">
+            <el-form-item label="采购箱数" prop="purchaseOrderCartonQty" size="mini">
 
               <el-input-number v-model="detailItem.purchaseOrderCartonQty"
                                style="width: 175px;"
@@ -175,12 +175,7 @@
         return this.calAmount();
       },
       dialogTitle() {
-        if (this.detailItemId == null) {
-          return "添加采购计划明细";
-        }
-        else {
-          return "修改采购计划明细";
-        }
+          return "修改采购单明细";
       },
       hasEdit() {
         return true;
