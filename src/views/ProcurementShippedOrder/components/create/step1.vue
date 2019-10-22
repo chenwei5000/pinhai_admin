@@ -22,7 +22,7 @@
 
           <el-row>
             <el-col :md="10">
-              <el-form-item label="名称" prop="name">
+              <el-form-item label="名称" prop="name" size="mini">
                 <el-input v-model.trim="editObject.name"
                           maxlength="100"
                           show-word-limit
@@ -31,7 +31,7 @@
             </el-col>
 
             <el-col :md="14">
-              <el-form-item label="预计发货时间" prop="expectTime">
+              <el-form-item label="预计发货时间" prop="expectTime" size="mini">
                 <el-date-picker
                   v-model="editObject.expectTime"
                   format="yyyy-MM-dd"
@@ -43,7 +43,7 @@
 
           <el-row>
             <el-col :md="10">
-              <el-form-item label="发货厂商" prop="supplierId">
+              <el-form-item label="发货厂商" prop="supplierId" size="mini">
                 <el-select v-model="editObject.supplierId"
                            style="width: 220px"
                            filterable placeholder="请选择">
@@ -58,7 +58,7 @@
             </el-col>
 
             <el-col :md="14">
-              <el-form-item label="收货仓库" prop="warehouseId">
+              <el-form-item label="收货仓库" prop="warehouseId" size="mini">
                 <el-select v-model="editObject.warehouseId" style="width: 220px"
                            filterable placeholder="请选择收货仓库">
                   <el-option

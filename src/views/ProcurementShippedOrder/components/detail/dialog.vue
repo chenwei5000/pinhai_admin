@@ -17,7 +17,7 @@
       >
         <el-row>
           <el-col :md="10">
-            <el-form-item label="SKU" prop="skuCode">
+            <el-form-item label="SKU" prop="skuCode" size="mini">
               <span v-if="!hasAdd" style="font-size: 12px">{{detailItem.skuCode}}</span>
 
               <el-input v-else v-model.trim="detailItem.skuCode"
@@ -32,7 +32,7 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="产品名" prop="productName">
+            <el-form-item label="产品名" prop="productName"  size="mini">
               <span style="font-size: 12px">{{detailItem.productName}}</span>
             </el-form-item>
           </el-col>
@@ -41,7 +41,7 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="箱规" prop="cartonSpecId">
+            <el-form-item label="箱规" prop="cartonSpecId"  size="mini">
 
               <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
                          style="width: 200px">

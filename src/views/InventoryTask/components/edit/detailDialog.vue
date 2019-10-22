@@ -17,7 +17,7 @@
       >
         <el-row>
           <el-col :md="10">
-            <el-form-item label="SKU" prop="skuCode">
+            <el-form-item label="SKU" prop="skuCode" size="mini">
               <el-input  v-model.trim="detailItem.skuCode"
                         style="width: 200px" placeholder="请填写SKU" clearable>
               </el-input>
@@ -25,7 +25,7 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="产品名" prop="productName">
+            <el-form-item label="产品名" prop="productName" size="mini">
               <span style="font-size: 12px">{{detailItem.productName}}</span>
             </el-form-item>
           </el-col>
@@ -34,13 +34,13 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="货位" prop="storageLocation">
+            <el-form-item label="货位" prop="storageLocation" size="mini">
               <span style="font-size: 12px">DEFAULT</span>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="价格" prop="productPrice">
+            <el-form-item label="价格" prop="productPrice" size="mini">
               <span style="font-size: 12px">{{detailItem.price}}</span>
             </el-form-item>
           </el-col>
