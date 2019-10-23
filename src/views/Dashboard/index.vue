@@ -37,6 +37,14 @@
           </span>
         <keep-alive>
           <component is="documentaryDashboard"/>
+
+      <el-tab-pane name="purchasesDashboard" lazy>
+          <span slot="label" style="color: #F56C6C;">
+            <i class="el-icon-shopping-cart-full"></i> 采购
+          </span>
+        <keep-alive>
+          <component is="purchasesDashboard"/>
+
         </keep-alive>
       </el-tab-pane>
 
@@ -53,10 +61,13 @@
   import editorDashboard from './editor'
   import salesDashboard from './sales'
   import documentaryDashboard from './documentary'
+  import purchasesDashboard from './purchases'
+
 
   export default {
     name: 'Dashboard',
-    components: {adminDashboard, editorDashboard, salesDashboard, documentaryDashboard},
+    components: {adminDashboard, editorDashboard, salesDashboard, documentaryDashboard, purchasesDashboard},
+
     data() {
       return {
         activeStatus: 'documentaryDashboard'
