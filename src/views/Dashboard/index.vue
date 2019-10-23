@@ -31,6 +31,15 @@
         </keep-alive>
       </el-tab-pane>
 
+      <el-tab-pane name="documentaryDashboard" lazy>
+          <span slot="label" style="color: #F56C6C;">
+            <i class="el-ph-icon-exclamation-circle"></i> 跟单
+          </span>
+        <keep-alive>
+          <component is="documentaryDashboard"/>
+        </keep-alive>
+      </el-tab-pane>
+
 
     </el-tabs>
 
@@ -43,13 +52,14 @@
   import adminDashboard from './admin'
   import editorDashboard from './editor'
   import salesDashboard from './sales'
+  import documentaryDashboard from './documentary'
 
   export default {
     name: 'Dashboard',
-    components: {adminDashboard, editorDashboard, salesDashboard},
+    components: {adminDashboard, editorDashboard, salesDashboard, documentaryDashboard},
     data() {
       return {
-        activeStatus: 'salesDashboard'
+        activeStatus: 'documentaryDashboard'
       }
     },
     computed: {
