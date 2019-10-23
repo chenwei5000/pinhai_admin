@@ -14,6 +14,12 @@
                  size="mini">
         删除
       </el-button>
+
+      <el-button v-if="hasReload" type="warning" icon="el-icon-refresh-left" @click="onDefaultReload"
+                 size="mini">
+        重新获取系统数据
+      </el-button>
+
     </el-col>
 
     <el-dropdown @command="onDefaultCommand" v-if="hasExportTpl || hasExport || hasImport">
@@ -64,6 +70,11 @@
         type: Boolean,
         default: false
       },
+      hasReload:{
+        type: Boolean,
+        default: false
+      }
+
     },
     mounted() {
       this.$nextTick(() => {
@@ -78,6 +89,9 @@
       },
       onDefaultDelete() {
         this.$emit("onToolBarDelete");
+      },
+      onDefaultReload(){
+        this.$emit("onToolBarReload");
       },
       onDefaultCommand(command) {
         if (command == 'downloadTpl') {

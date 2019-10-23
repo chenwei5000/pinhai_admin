@@ -11,6 +11,11 @@
           新增
         </el-button>
 
+        <el-button v-if="hasDelete" type="danger" icon="el-icon-error" @click="onDefaultDelete"
+                   size="mini">
+          删除
+        </el-button>
+
         <el-button type="primary" v-if="hasAdd" icon="el-icon-circle-plus" @click="onDefaultSmart"
                    size="mini">
           智能发柜
@@ -85,15 +90,6 @@
       smartDialog
     },
     computed: {
-      hasExportTpl() {
-        return false;
-      },
-      hasExport() {
-        return true;
-      },
-      hasImport() {
-        return true;
-      }
     },
     mounted() {
       this.$nextTick(() => {

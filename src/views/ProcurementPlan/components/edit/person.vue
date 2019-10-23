@@ -34,7 +34,14 @@
     },
     computed: {
       hasEdit(){
-        return checkPermission('ProcurementPlanResource_update');
+        // 控制按钮
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        if(!checkPermission('ProcurementPlanResource_update')){
+          return false;
+        }
+        return true;
       }
     },
 
