@@ -48,7 +48,8 @@
         </keep-alive>
       </el-tab-pane>
 
-
+        </keep-alive>
+      </el-tab-pane>
     </el-tabs>
 
   </div>

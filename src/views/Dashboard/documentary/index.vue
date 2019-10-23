@@ -5,7 +5,8 @@
               style="padding-right:8px;margin-bottom:30px;">
 
         <panel-group @handleSetLineChartData="handleSetLineChartData" :mine="mine"/>
-        <operate-group @handleSetLineChartData="handleSetLineChartData" :mine="mine"/>
+        <operate-group @handleSetLineChartData="handleSetLineChartDat
+        a" :mine="mine"/>
 
         <el-card class="box-card" style="margin-top:10px;">
           <div slot="header" class="clearfix">
