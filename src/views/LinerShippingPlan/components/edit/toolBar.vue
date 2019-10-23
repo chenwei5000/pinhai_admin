@@ -6,12 +6,12 @@
              @change="handleUpload">
 
       <el-col :md="18">
-        <el-button type="primary" v-if="false" icon="el-icon-circle-plus" @click="onDefaultAdd"
+        <el-button type="primary" v-if="hasAdd" icon="el-icon-circle-plus" @click="onDefaultAdd"
                    size="mini">
           新增
         </el-button>
 
-        <el-button type="primary" icon="el-icon-circle-plus" @click="onDefaultSmart"
+        <el-button type="primary" v-if="hasAdd" icon="el-icon-circle-plus" @click="onDefaultSmart"
                    size="mini">
           智能发柜
         </el-button>
@@ -51,19 +51,47 @@
       primary: {
         type: [Object],
         default: null
-      }
+      },
+      uploadUrl: {
+        type: String,
+        default: null
+      },
+      hasAdd: {
+        type: Boolean,
+        default: false
+      },
+      hasEdit: {
+        type: Boolean,
+        default: false
+      },
+      hasDelete: {
+        type: Boolean,
+        default: false
+      },
+      hasExport: {
+        type: Boolean,
+        default: false
+      },
+      hasExportTpl: {
+        type: Boolean,
+        default: false
+      },
+      hasImport: {
+        type: Boolean,
+        default: false
+      },
     },
     components: {
       smartDialog
     },
     computed: {
-      hasExportTpl(){
+      hasExportTpl() {
+        return false;
+      },
+      hasExport() {
         return true;
       },
-      hasExport(){
-        return true;
-      },
-      hasImport(){
+      hasImport() {
         return true;
       }
     },
@@ -72,13 +100,22 @@
       })
     },
     methods: {
-      onDefaultSmart(){
+      /*只能发柜*/
+      onDefaultSmart() {
         this.$refs.smart.openDialog(this.primary);
       },
-      smartEvent(obj){
+      smartEvent(obj) {
         this.$emit("modifyCBEvent");
       },
+
       onDefaultAdd() {
+        this.$emit("onToolBarAdd");
+      },
+      onDefaultEdit() {
+        this.$emit("onToolBarEdit");
+      },
+      onDefaultDelete() {
+        this.$emit("onToolBarDelete");
       },
       onDefaultCommand(command) {
         if (command == 'downloadTpl') {
@@ -145,7 +182,6 @@
       isExcel(file) {
         return /\.(xlsx|xls|csv)$/.test(file.name)
       }
-
     }
   }
 

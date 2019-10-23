@@ -4,7 +4,7 @@
 
     <el-tabs v-model="activeStatus" type="border-card">
 
-      <el-tab-pane name="adminDashboard" lazy>
+      <el-tab-pane name="adminDashboard" lazy v-if="false">
           <span slot="label" style="color: #67C23A;">
             <i class="el-ph-icon-check-circle"></i> 管理员
           </span>
@@ -13,7 +13,7 @@
         </keep-alive>
       </el-tab-pane>
 
-      <el-tab-pane name="editorDashboard" lazy>
+      <el-tab-pane name="editorDashboard" lazy v-if="false">
           <span slot="label">
             <i class="el-ph-icon-times-circle"></i> 普通
           </span>
@@ -23,7 +23,7 @@
       </el-tab-pane>
 
       <el-tab-pane name="salesDashboard" lazy>
-          <span slot="label" style="color: #F56C6C;">
+          <span slot="label" style="color: #67C23A;">
             <i class="el-ph-icon-exclamation-circle"></i> 销售
           </span>
         <keep-alive>
@@ -32,7 +32,7 @@
       </el-tab-pane>
 
       <el-tab-pane name="purchasesDashboard" lazy>
-          <span slot="label" style="color: #F56C6C;">
+          <span slot="label" style="color: #67C23A;">
             <i class="el-icon-shopping-cart-full"></i> 采购
           </span>
         <keep-alive>
@@ -41,7 +41,7 @@
       </el-tab-pane>
 
       <el-tab-pane name="documentaryDashboard" lazy>
-          <span slot="label" style="color: #F56C6C;">
+          <span slot="label" style="color: #67C23A;">
             <i class="el-ph-icon-exclamation-circle"></i> 跟单
           </span>
         <keep-alive>
@@ -69,7 +69,7 @@
     components: {adminDashboard, editorDashboard, salesDashboard, purchasesDashboard, documentaryDashboard},
     data() {
       return {
-        activeStatus: 'documentaryDashboard'
+        activeStatus: 'purchasesDashboard'
       }
     },
     computed: {

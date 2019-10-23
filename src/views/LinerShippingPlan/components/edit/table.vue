@@ -35,7 +35,18 @@
     </el-form>
 
     <!-- 表格工具条 添加、导入、导出等 -->
-    <tableToolBar :primary="primary" @modifyCBEvent="modifyCBEvent">
+    <tableToolBar :primary="primary"
+
+                  :hasExport="hasExport"
+                  :hasImport="hasImport"
+                  :hasAdd="hasAdd"
+                  :hasDelete="hasDelete"
+                  @onToolBarAdd="onToolBarAdd"
+                  @onToolBarDelete="onToolBarDelete"
+                  @onToolBarDownloadData="onToolBarDownloadData"
+                  @onToolBarImportData="onToolBarImportData"
+
+                  @modifyCBEvent="modifyCBEvent">
     </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
