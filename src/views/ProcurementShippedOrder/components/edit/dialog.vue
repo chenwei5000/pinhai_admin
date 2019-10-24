@@ -7,15 +7,15 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" @click="onShipped">执行发货</el-button>
+      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" size="small" @click="onWithdraw">撤回</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="small"  @click="onShipped">执行发货</el-button>
 
       <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute">
-        <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印发货单</el-button>
+        <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" size="small"  @click="onPrint">打印发货单</el-button>
       </router-link>
 
-      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" size="small"  @click="onStatus">修改状态</el-button>
+      <el-button type="primary" @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
 
     <!-- 折叠面板 -->
@@ -226,6 +226,7 @@
       onShippedCBEvent(object) {
         this.primaryComplete=false;
         this.initData();
+        this.$emit("modifyCBEvent");
       },
 
       // 管理员修改状态

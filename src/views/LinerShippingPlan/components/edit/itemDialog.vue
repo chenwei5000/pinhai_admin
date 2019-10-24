@@ -3,7 +3,7 @@
   <el-dialog :title="dialogTitle"
              append-to-body
              v-if="dialogVisible"
-             width="70%"
+             width="85%"
              top="10vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
@@ -18,18 +18,59 @@
       >
         <el-row>
           <el-col :md="10">
+            <el-form-item label="销售渠道" prop="merchantId">
+              <el-select v-model="detailItem.merchantId"
+                         style="width: 200px"
+                         filterable
+                         size="mini"
+                         placeholder="请选择销售渠道">
+                <el-option
+                  v-for="(item , idx)  in merchantSelectOptions"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="idx"
+                ></el-option>
+              </el-select>
+
+              <el-tooltip class="item" effect="light" content="以选定的销售渠道（销售店铺）的销售情况为发柜依据。" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+
+
+          <el-col :md="14">
+            <el-form-item label="销售覆盖时间" prop="soldOutTime">
+              <el-date-picker
+                v-model="detailItem.soldOutTime"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                type="date"
+                style="width: 200px"
+                size="mini"
+                placeholder="销售覆盖时间"></el-date-picker>
+
+              <el-tooltip class="item" effect="light" content="产品预期的销售截止日期" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+              <span v-if="detailItem.soldOutTime" style="font-size: 12px;">距离开船日{{soldOutTimeWeek}}周</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="10">
             <el-form-item label="SKU" prop="skuCode">
               <el-input v-model.trim="detailItem.skuCode"
                         maxlength="50"
                         show-word-limit
-                        style="width: 160px" placeholder="请填写SKU" clearable></el-input>
+                        style="width: 200px" placeholder="请填写SKU" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
           </el-col>
-
           <el-col :md="14">
             <el-form-item label="出口箱数" prop="cartonQty">
 
@@ -37,7 +78,7 @@
                                :precision="3"
                                :min="0"
                                :step="1"
-                               style="width: 160px"
+                               style="width: 200px"
                                @change="onQtyChange"
                                :max="100000" label="采购箱数">
 
@@ -56,7 +97,7 @@
 
               <el-select filterable
                          v-model="detailItem.cartonSpecId"
-                         style="width: 160px"
+                         style="width: 200px"
                          placeholder="外箱包装材料规格,可筛选">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
@@ -70,13 +111,12 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-
           <el-col :md="14">
             <el-form-item label="装箱数" prop="numberOfCarton">
 
               <el-input v-model.trim="detailItem.numberOfCarton"
                         @change="onQtyChange"
-                        style="width: 160px" placeholder="请填写装箱数" clearable></el-input>
+                        style="width: 200px" placeholder="请填写装箱数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="一箱有多少个产品.不输入使用产品上默认的装箱数" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -85,33 +125,11 @@
           </el-col>
         </el-row>
 
-
-        <el-row>
-          <el-col :md="24">
-
-            <el-form-item label="销售覆盖时间" prop="soldOutTime">
-              <el-date-picker
-                v-model="detailItem.soldOutTime"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                type="date"
-                style="width: 160px"
-                size="mini"
-                placeholder="销售覆盖时间"></el-date-picker>
-
-              <el-tooltip class="item" effect="light" content="产品预期的销售截止日期" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-              <span v-if="detailItem.soldOutTime" style="font-size: 12px;">距离开船日{{detailItem.soldOutTimeWeek}}周</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
         <el-row>
           <el-col :md="10">
             <el-form-item label="7日销量（件)" prop="sevenSalesCount">
               <el-input v-model.trim="detailItem.sevenSalesCount"
-                        style="width: 160px" placeholder="请填写7日销量，件数" clearable></el-input>
+                        style="width: 200px" placeholder="请填写7日销量，件数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="7日销售件数, 不能修改。可以去销售设置中调整。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -124,7 +142,7 @@
             <el-form-item label="亚马逊库存(件)" prop="inStockQty">
 
               <el-input v-model.trim="detailItem.inStockQty"
-                        style="width: 160px" placeholder="亚马逊库存件数" readonly clearable></el-input>
+                        style="width: 200px" placeholder="亚马逊库存件数" readonly clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="亚马逊在仓库的库存件数，不能修改" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -138,7 +156,7 @@
           <el-col :md="10">
             <el-form-item label="有效库存(件)" prop="validateStockQty">
               <el-input v-model.trim="detailItem.validateStockQty"
-                        style="width: 160px" placeholder="有效库存件数" clearable></el-input>
+                        style="width: 200px" placeholder="有效库存件数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="预计货柜到亚马逊时，仓库中能销售的库存数量" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -150,7 +168,7 @@
           <el-col :md="14">
             <el-form-item label="国内库存(箱)" prop="domesticStockCartonQty">
               <el-input v-model.trim="detailItem.domesticStockCartonQty"
-                        style="width: 160px" placeholder="国内库存，箱数" clearable></el-input>
+                        style="width: 200px" placeholder="国内库存，箱数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="国内仓库库存箱数，不能修改" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -159,6 +177,14 @@
             </el-form-item>
           </el-col>
 
+        </el-row>
+
+        <el-row>
+          <el-col :md="24" v-if="detailItem.domesticStocksStr">
+            <el-form-item label="国内库存明细(箱)">
+              <div style="font-size: 12px" v-html="br(detailItem.domesticStocksStr)"></div>
+            </el-form-item>
+          </el-col>
         </el-row>
 
       </el-form>
@@ -182,9 +208,11 @@
 </template>
 
 <script>
+  import {currency, parseLineBreak} from '@/utils'
   import cartonspecModel from '@/api/cartonspec'
-  import phEnumModel from '@/api/phEnum'
   import validRules from '@/components/validRules'
+  import merchantModel from '@/api/merchant'
+  import moment from 'moment';
 
   export default {
     components: {},
@@ -201,6 +229,16 @@
         }
         else {
           return "修改出口计划明细";
+        }
+      },
+
+      soldOutTimeWeek() {
+        if (this.detailItem.soldOutTime && this.primary.etdTime) {
+          let soldOutTime = new Date(this.detailItem.soldOutTime);
+          return (parseInt((soldOutTime - this.primary.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
+        }
+        else {
+          return false
         }
       },
       hasEdit() {
@@ -224,7 +262,7 @@
         confirmLoading: false,
 
         // 资源URL
-        url: "/procurementPlanItems",
+        url: "/linerShippingPlanItems",
         relations: ["product"],  // 关联对象
         //明细对象ID
         detailItemId: null,
@@ -232,10 +270,13 @@
         detailItem: {},
 
         cartonspecSelectOptions: [],
-        prioritySelectOptions: [],
+        merchantSelectOptions: [],
 
         // 字段验证规则 TODO:
         rules: {
+          merchantId: [
+            validRules.required
+          ],
           skuCode: [
             validRules.required
           ],
@@ -270,15 +311,16 @@
     },
 
     methods: {
+      br(text) {
+        return parseLineBreak(text);
+      },
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         //获取数据
         // 箱规
         this.cartonspecSelectOptions = cartonspecModel.getSelectOptions();
-
-        // 优先级
-        this.prioritySelectOptions = phEnumModel.getSelectOptions('Priority');
+        this.merchantSelectOptions = merchantModel.getSelectOptions();
 
         // 明细数据
         if (this.detailItemId) {
@@ -295,24 +337,22 @@
               this.detailItem = data
               // 转字段
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.priority = data.priority + '';
-
-              this.loading = false
+              //console.log(this.detailItem.soldOutTime);
+              this.detailItem.soldOutTime =
+                  this.detailItem.soldOutTime ? moment(this.detailItem.soldOutTime).format("YYYY-MM-DD") : null;
+              this.loading = false;
             })
         }
         else {
           // 设置添加默认值
           this.detailItem = {
             skuCode: '',
-            priorityNote: '',
             cartonSpecId: null,
-            priority: '2',
-            safetyStockWeek: 10,
             numberOfCarton: null,
             cartonQty: 0,
             qty: 0,
             soldOutTime: null,
-            procurementPlanId: this.primary.id
+            linerShippingPlanId: this.primary.id
           }
 
         }
@@ -331,31 +371,19 @@
         this.detailItemId = null;
         this.detailItem = null;
         this.cartonspecSelectOptions = [];
-        this.prioritySelectOptions = [];
       },
 
       onQtyChange(val) {
         if (this.detailItem) {
-          //可售周数 = （亚马逊总库存 + 国内库存 + 未完成采购计划数 + 应备货件数） /（7日销量修正）
-          let amazonTotalStock = this.detailItem.amazonTotalStock || 0;
-          let domesticStockCartonQty = this.detailItem.domesticStockCartonQty || 0;
-          let unfinishedPlanCartonQty = this.detailItem.unfinishedPlanCartonQty || 0;
           let numberOfCarton = this.detailItem.numberOfCarton || 1;
-          let total = amazonTotalStock + (domesticStockCartonQty * numberOfCarton)
-            + (unfinishedPlanCartonQty * numberOfCarton) + (val * numberOfCarton);
-
-          if (this.detailItem.sevenSalesCount) {
-            this.detailItem.saleWeek = (total / this.detailItem.sevenSalesCount).toFixed(1);
-          }
-
           this.detailItem.qty = (this.detailItem.cartonQty * numberOfCarton).toFixed(0);
         }
       },
       onLoadProduct() {
-        if (!this.detailItem.skuCode) {
-          this.$message.error("请输入产品SKU");
-        }
-        else {
+        this.$refs.detailItem.validate(valid => {
+          if (!valid) {
+            return false
+          }
           this.loading = true;
           this.confirmLoading = true;
           let url = `/products/sku/${this.detailItem.skuCode}`;
@@ -364,18 +392,15 @@
             .then(resp => {
               let res = resp.data;
               let data = res || {};
-
               // 转字段
               this.detailItem.product = data;
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.numberOfCarton = data.numberOfCarton;
-
-              console.log(this.primary);
-
               try {
-                url = `/amazonStocks/shippings/${this.primary.merchantId}`;
-                url += "?warehouse=" + this.primary.fromWarehouseId  //出货仓库
+                url = `/amazonStocks/shippings/${this.detailItem.merchantId}`;
+                url += "?warehouse=" + this.primary.domesticStockWarehouses  //出货仓库
                   + "&pids=" + data.id    //产品
+                  + "&category=" + data.categoryId //分类
                   + "&etdTime=" + this.primary.formatEtdTime      //发柜时间
                   + "&shipmentType=" + this.primary.type    //物流类型
                   + "&portOfLoading=" + this.primary.portOfLoading  //出货港口
@@ -384,24 +409,14 @@
                 if (this.primary.groupName) {
                   url += "&group=" + this.primary.groupName.join(",");  //销售覆盖时间
                 }
-                if (this.primary.vip0SoldOutTime) {
-                  url += "&vip0SoldOutTime=" + this.primary.vip0SoldOutTime;  //销售覆盖时间
+                if (this.detailItem.soldOutTime) {
+                  url += "&vip0SoldOutTime=" + this.detailItem.soldOutTime;  //销售覆盖时间
+                  url += "&vip1SoldOutTime=" + this.detailItem.soldOutTime;  //销售覆盖时间
+                  url += "&vip2SoldOutTime=" + this.detailItem.soldOutTime;  //销售覆盖时间
                 }
-                if (this.primary.vip1SoldOutTime) {
-                  url += "&vip1SoldOutTime=" + this.primary.vip1SoldOutTime;  //销售覆盖时间
-                }
-                if (this.primary.vip2SoldOutTime) {
-                  url += "&vip2SoldOutTime=" + this.primary.vip2SoldOutTime;  //销售覆盖时间
-                }
-                if (this.primary.exclude) {
-                  url += "&exclude=" + this.primary.exclude;  //销售覆盖时间
-                }
-              }catch (e) {
+              } catch (e) {
                 console.log(e);
               }
-
-              console.log(url);
-
 
               this.global.axios
                 .get(url)
@@ -410,13 +425,18 @@
                   let data = res || [];
                   data.forEach(row => {
                     if (row.skuCode == this.detailItem.skuCode) {
-                      this.detailItem.cartonQty = row.replenishmentCartonPlanQty;
-                      this.detailItem.safetyStockWeek = row.safetyWeek;
-                      this.detailItem.saleWeek = row.saleWeek;
+                      this.detailItem.cartonQty = row.replenishmentCartonQty;
+                      this.detailItem.safetyWeek = row.safetyWeek;
+                      this.detailItem.logisticsWeek = row.logisticsWeek;
                       this.detailItem.sevenSalesCount = row.sevenAmendQty;
-                      this.detailItem.amazonTotalStock = row.totalQty;
+                      this.detailItem.inStockQty = row.inStockQty;
+                      this.detailItem.validateStockQty = row.validateStockQty;
+                      this.detailItem.domesticStockQty = row.domesticStockQty;
                       this.detailItem.domesticStockCartonQty = row.domesticStockCartonQty;
                       this.detailItem.unfinishedPlanCartonQty = row.unfinishedPlanCartonQty;
+                      this.detailItem.domesticStocks = JSON.stringify(row.warehouseStocks);
+                      this.detailItem.domesticStocksStr = row.domesticStocks;
+                      this.detailItem.qty = (this.detailItem.cartonQty * this.detailItem.numberOfCarton).toFixed(0);
                     }
                   });
                   this.loading = false;
@@ -429,8 +449,7 @@
             })
             .catch(err => {
             });
-
-        }
+        })
       },
 
       // 保存
@@ -447,11 +466,9 @@
             method = 'put';
             url = `${this.url}/${this.detailItemId}`;
           }
-
           //转义字段
           let _object = JSON.parse(JSON.stringify(this.detailItem));
-          _object.unfinishedPlanQty = null;
-          _object.domesticStockQty = null;
+          _object.linerShippingPlanId = this.primary.id;
 
           this.global.axios[method](url, _object)
             .then(resp => {

@@ -108,6 +108,7 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="product.vipLevel" label="Vip级别" width="80"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" width="130"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
       <el-table-column prop="product.name" label="名称" width="200">
@@ -121,6 +122,32 @@
       <el-table-column prop="numberOfPallets" label="托盘装箱数" width="130"></el-table-column>
       <el-table-column prop="nwoneCartonSpecWeight" label="单箱净重(Kg)" width="130"></el-table-column>
       <el-table-column prop="gwoneCartonSpecWeight" label="单箱毛重(Kg)" width="130"></el-table-column>
+
+      <el-table-column prop="sevenSalesCount" label="7日销量（件)" width="100"></el-table-column>
+      <el-table-column prop="soldOutTime" label="销售覆盖时间" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.soldOutTime | parseTime('{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="logisticsWeek" label="运输周数" width="100"></el-table-column>
+      <el-table-column prop="safetyWeek" label="销售周数" width="100"></el-table-column>
+      <el-table-column prop="coverageWeek" label="覆盖周数" width="100"></el-table-column>
+      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
+      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100"></el-table-column>
+      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110"></el-table-column>
+      <el-table-column prop="validateStockQty" label="有效库存(件)" width="100"></el-table-column>
+
+
+      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100">
+      </el-table-column>
+
+
+      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" >
+        <template slot-scope="scope">
+          <span>{{ scope.row.domesticStocks ? JSON.parse(scope.row.domesticStocks)[item.id] : ''}}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
       <el-table-column prop="cartonQty" label="应发箱数" width="90"
@@ -179,7 +206,7 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency} from '@/utils'
+  import {currency,parseTime} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './itemDialog'
   import {checkPermission} from "@/utils/permission";
@@ -255,6 +282,7 @@
 
         // 多选记录对象
         selected: [],
+        warehouses: [],
 
         //数据 TODO: 根据实际情况调整
         url: "/linerShippingPlanItems", // 资源URL
@@ -297,6 +325,27 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
+        let warehouses = [];
+
+        if (this.primary.domesticStockWarehouses.indexOf(-99) !== false ) {
+          warehouses.push({id: -99, name: '供货商(箱)'})
+        }
+
+        let url = `/warehouses?filters=${JSON.stringify({
+          "groupOp": "AND",
+          "rules": [{
+            field: "id",
+            op: 'in',
+            data: this.primary.domesticStockWarehouses
+          }]
+        })}&sort=id&dir=asc`;
+
+        this.global.axios.get(url).then(data => {
+          data.data.forEach(res => {
+            warehouses.push({id: res.id, name: `${res.name}(箱)`})
+          })
+          this.warehouses = warehouses;
+        });
       },
 
       // 获取表格的高度
