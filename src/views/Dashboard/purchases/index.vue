@@ -49,7 +49,7 @@
       expectedData: [130, 140, 141, 142, 145, 150, 160],
       actualData: [120, 82, 91, 154, 162, 140, 130]
     }
-  }
+  };
 
   const merchantOptions = [
     {
@@ -89,15 +89,10 @@
     },
     data() {
       return {
-        categorySelectOptions: [],
-        //mine: {merchantId: '8a23287966dc9acb0166dca2574c0000', categoryId: '1', week: '20'},
         lineChartData: lineChartData.newVisitis
       }
     },
     created() {
-      this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
-      this.merchantSelectOptions = merchantOptions;
-      this.weekSelectOptions = weekSelectOptions;
     },
     methods: {
       initData(){
