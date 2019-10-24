@@ -1,5 +1,6 @@
 <template>
-  <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd || hasEdit || hasDelete || hasExport || hasExportTpl || hasImport ">
+  <el-row class="table-tool" type="flex" justify="space-between"
+          v-if="hasAdd || hasEdit || hasDelete || hasExport || hasExportTpl || hasImport ">
 
     <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleUpload">
 
@@ -13,6 +14,11 @@
       <el-button v-if="hasDelete" type="danger" icon="el-icon-error" @click="onDefaultDelete"
                  size="mini">
         删除
+      </el-button>
+
+      <el-button v-if="hasSmart" type="primary"  icon="el-icon-circle-plus" @click="onDefaultSmart"
+                 size="mini">
+        智能发柜
       </el-button>
 
       <el-button v-if="hasReload" type="warning" icon="el-icon-refresh-left" @click="onDefaultReload"
@@ -70,7 +76,11 @@
         type: Boolean,
         default: false
       },
-      hasReload:{
+      hasReload: {
+        type: Boolean,
+        default: false
+      },
+      hasSmart: {
         type: Boolean,
         default: false
       }
@@ -90,8 +100,11 @@
       onDefaultDelete() {
         this.$emit("onToolBarDelete");
       },
-      onDefaultReload(){
+      onDefaultReload() {
         this.$emit("onToolBarReload");
+      },
+      onDefaultSmart(){
+        this.$emit("onToolBarSmart");
       },
       onDefaultCommand(command) {
         if (command == 'downloadTpl') {

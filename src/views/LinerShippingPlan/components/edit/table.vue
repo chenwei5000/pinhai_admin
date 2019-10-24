@@ -35,17 +35,22 @@
     </el-form>
 
     <!-- 表格工具条 添加、导入、导出等 -->
-    <tableToolBar :primary="primary"
-                  :hasExport="hasExport"
-                  :hasImport="hasImport"
-                  :hasAdd="hasAdd"
-                  :hasDelete="hasDelete"
-                  @onToolBarAdd="onToolBarAdd"
-                  @onToolBarDelete="onToolBarDelete"
-                  @onToolBarDownloadData="onToolBarDownloadData"
-                  @onToolBarImportData="onToolBarImportData"
-                  @modifyCBEvent="modifyCBEvent">
+    <tableToolBar
+      :hasExport="hasExport"
+      :hasImport="hasImport"
+      :hasAdd="hasAdd"
+      :hasDelete="hasDelete"
+      :hasReload="hasReload"
+      :hasSmart="hasSmart"
+      @onToolBarAdd="onToolBarAdd"
+      @onToolBarDelete="onToolBarDelete"
+      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarImportData="onToolBarImportData"
+      @onToolBarReload="onToolBarReload"
+      @onToolBarSmart="onToolBarSmart"
+    >
     </tableToolBar>
+
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -77,7 +82,7 @@
       </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40">
-        <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
             style="width: 30px; height: 30px;margin-top: 5px"
@@ -161,6 +166,12 @@
     <!-- 编辑明细对话框 -->
     <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
     </itemDialog>
+
+    <smartDialog
+      ref="smart"
+      @smartEvent="smartEvent"
+    ></smartDialog>
+
   </div>
 
 </template>
@@ -169,14 +180,16 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
-  import tableToolBar from './toolBar'
+  import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './itemDialog'
   import {checkPermission} from "@/utils/permission";
+  import smartDialog from '../smart/dialog';
 
   export default {
     components: {
       tableToolBar,
-      itemDialog
+      itemDialog,
+      smartDialog
     },
     props: {
       primary: {
@@ -192,14 +205,22 @@
       hasExport() {
         return checkPermission('LinerShippingPlanItemResource_export');
       },
+
+      hasReload() {
+        return this.hasAdd && this.hasEdit;
+      },
+
+      hasSmart() {
+        return this.hasAdd && this.hasImport;
+      },
       hasImport() {
-        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+        if ([6, 7, 8, 9, 10, 11].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('LinerShippingPlanItemResource_import');
       },
       hasAdd() {
-        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+        if ([6, 7, 8, 9, 10, 11].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('LinerShippingPlanItemResource_create');
@@ -208,13 +229,13 @@
         return this.hasEdit || this.hasDelete;
       },
       hasEdit() {
-        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+        if ([6, 7, 8, 9, 10, 11].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('LinerShippingPlanItemResource_update');
       },
       hasDelete() {
-        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+        if ([6, 7, 8, 9, 10, 11].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('LinerShippingPlanItemResource_remove');
@@ -520,11 +541,18 @@
         this.$refs.itemDialog.openDialog(null);
       },
       onToolBarEdit() {
-
       },
       onToolBarDelete() {
-
       },
+      onToolBarReload() {
+      },
+      onToolBarSmart() {
+        this.$refs.smart.openDialog(this.primary);
+      },
+      smartEvent(obj) {
+        this.getList();
+      },
+
       onToolBarDownloadTpl() {
         //获取数据
         let table = this.$refs.table;
