@@ -128,12 +128,12 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="亚马逊含在途(件)" prop="amazonTotalStock">
+            <el-form-item label="亚马逊含在途(箱)" prop="amazonTotalStock">
 
               <el-input v-model.trim="detailItem.amazonTotalStock"
                         style="width: 160px" readonly clearable></el-input>
 
-              <el-tooltip class="item" effect="light" content="亚马逊含在途库存件数，不能修改" placement="right">
+              <el-tooltip class="item" effect="light" content="亚马逊含在途库存箱数，不能修改" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
 
@@ -144,8 +144,8 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="国内库存(箱)" prop="domesticStockCartonQty">
-              <el-input v-model.trim="detailItem.domesticStockCartonQty"
+            <el-form-item label="国内库存(箱)" prop="domesticStockQty">
+              <el-input v-model.trim="detailItem.domesticStockQty"
                         style="width: 160px" placeholder="国内库存，箱数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="国内仓库库存箱数，不能修改" placement="right">
@@ -156,8 +156,8 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="国内在途(箱)" prop="unfinishedPlanCartonQty">
-              <el-input v-model.trim="detailItem.unfinishedPlanCartonQty"
+            <el-form-item label="国内在途(箱)" prop="unfinishedPlanQty">
+              <el-input v-model.trim="detailItem.unfinishedPlanQty"
                         style="width: 160px" placeholder="国内在途，箱数" clearable></el-input>
               <el-tooltip class="item" effect="light" content="未完成采购计划箱数" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -226,7 +226,6 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="warning" @click="onLoadProduct" size="mini" :loading="confirmLoading">获取产品信息</el-button>
       <el-button type="primary" @click="onSave" :loading="confirmLoading" size="mini">保 存</el-button>
       <el-button @click="closeDialog" size="mini">取 消</el-button>
     </div>
@@ -309,10 +308,10 @@
           amazonTotalStock: [
             validRules.number
           ],
-          domesticStockCartonQty: [
+          domesticStockQty: [
             validRules.number
           ],
-          unfinishedPlanCartonQty: [
+          unfinishedPlanQty: [
             validRules.number
           ]
         },
@@ -395,63 +394,13 @@
           //可售周数 = （亚马逊总库存 + 国内库存 + 未完成采购计划数 + 应备货件数） /（7日销量修正）
           let amazonTotalStock = this.detailItem.amazonTotalStock || 0;
           let domesticStockCartonQty = this.detailItem.domesticStockCartonQty || 0;
-          let unfinishedPlanCartonQty = this.detailItem.unfinishedPlanCartonQty || 0;
+          let unfinishedPlanQty = this.detailItem.unfinishedPlanQty || 0;
           let numberOfCarton = this.detailItem.numberOfCarton || 1;
-          let total = amazonTotalStock + (domesticStockCartonQty * numberOfCarton)
-            + (unfinishedPlanCartonQty * numberOfCarton) + (val * numberOfCarton);
+          let total = amazonTotalStock + domesticStockCartonQty + unfinishedPlanQty + (val * numberOfCarton);
 
           if (this.detailItem.sevenSalesCount) {
             this.detailItem.saleWeek = (total / this.detailItem.sevenSalesCount).toFixed(1);
           }
-        }
-      },
-      onLoadProduct() {
-        if (!this.detailItem.skuCode) {
-          this.$message.error("请输入产品SKU");
-        }
-        else {
-          this.loading = true;
-          this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.skuCode}`;
-          this.global.axios
-            .get(url)
-            .then(resp => {
-              let res = resp.data;
-              let data = res || {};
-
-              // 转字段
-              this.detailItem.product = data;
-              this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.numberOfCarton = data.numberOfCarton;
-
-              url = `/amazonStocks/plans/${this.primary.merchantId}?warehouse=${this.primary.warehouseId}&pids=${data.id}&safetyStockWeek=${this.primary.safetyStockWeek}&vip1SafetyStockWeek=${this.primary.vip1SafetyStockWeek}&vip2SafetyStockWeek=${this.primary.vip2SafetyStockWeek}&exclude=${this.primary.handleMethod}`;
-              this.global.axios
-                .get(url)
-                .then(resp => {
-                  let res = resp.data;
-                  let data = res || [];
-                  data.forEach(row => {
-                    if (row.skuCode == this.detailItem.skuCode) {
-                      this.detailItem.cartonQty = row.replenishmentCartonPlanQty;
-                      this.detailItem.safetyStockWeek = row.safetyWeek;
-                      this.detailItem.saleWeek = row.saleWeek;
-                      this.detailItem.sevenSalesCount = row.sevenAmendQty;
-                      this.detailItem.amazonTotalStock = row.totalQty;
-                      this.detailItem.domesticStockCartonQty = row.domesticStockCartonQty;
-                      this.detailItem.unfinishedPlanCartonQty = row.unfinishedPlanCartonQty;
-                    }
-                  });
-                  this.loading = false;
-                  this.confirmLoading = false;
-                })
-                .catch(err => {
-                  this.loading = false;
-                  this.confirmLoading = false;
-                });
-            })
-            .catch(err => {
-            });
-
         }
       },
 
@@ -472,8 +421,6 @@
 
           //转义字段
           let _object = JSON.parse(JSON.stringify(this.detailItem));
-          _object.unfinishedPlanQty = null;
-          _object.domesticStockQty = null;
 
           this.global.axios[method](url, _object)
             .then(resp => {

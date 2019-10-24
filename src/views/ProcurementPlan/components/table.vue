@@ -151,18 +151,18 @@
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="85" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
+          <el-button v-if="([1].indexOf(scope.row.status) > -1)&& hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="([0,2,3,4,5,6,7,8].indexOf(scope.row.status) > -1) || hasView" size="mini" icon="el-icon-view" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
+          <el-button v-if="([1].indexOf(scope.row.status) > -1) && hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>

@@ -5,7 +5,7 @@
 
     <!--本地搜索 TODO: 更加实际情况调整 el-form-item -->
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
-             @submit.native.prevent >
+             @submit.native.prevent>
 
       <el-form-item label="SKU">
         <el-input v-model="searchParam.skuCode" size="mini" placeholder="请输入SKU" clearable></el-input>
@@ -41,10 +41,12 @@
       :hasImport="hasImport"
       :hasAdd="hasAdd"
       :hasDelete="hasDelete"
+      :hasReload="hasReload"
       @onToolBarAdd="onToolBarAdd"
       @onToolBarDelete="onToolBarDelete"
       @onToolBarDownloadData="onToolBarDownloadData"
       @onToolBarImportData="onToolBarImportData"
+      @onToolBarReload="onToolBarReload"
     >
     </tableToolBar>
 
@@ -69,8 +71,9 @@
     >
 
       <el-table-column
+        v-if="hasDelete"
         type="selection"
-        width="50">
+        width="30">
       </el-table-column>
 
       <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
@@ -101,7 +104,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+      <el-table-column prop="product.imgUrl" label="图片" width="40">
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -133,8 +136,7 @@
       <el-table-column prop="sevenSalesCount" label="7日销量(件)" width="100"></el-table-column>
       <el-table-column prop="amazonTotalStock" label="亚马逊含在途库存(件)" width="140"></el-table-column>
       <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100"></el-table-column>
-      <el-table-column prop="unfinishedPlanQty" label="国内在途(箱)" width="100"></el-table-column>
-
+      <el-table-column prop="unfinishedPlanCartonQty" label="国内在途(箱)" width="100"></el-table-column>
 
       <el-table-column prop="qty" label="采购件数" width="80"></el-table-column>
 
@@ -197,7 +199,7 @@
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
-                       width="120" fixed="right">
+                       width="85" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -251,14 +253,13 @@
       },
 
       hasImport() {
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('ProcurementPlanItemResource_import');
       },
       hasAdd() {
-        //return false;
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('ProcurementPlanItemResource_create');
@@ -269,16 +270,19 @@
         return this.hasEdit || this.hasDelete;
       },
       hasEdit() {
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('ProcurementPlanItemResource_update');
       },
       hasDelete() {
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
         return checkPermission('ProcurementPlanItemResource_remove');
+      },
+      hasReload() {
+        return this.hasAdd && this.hasEdit;
       },
 
       hasExecute() {
@@ -296,7 +300,7 @@
 
     data() {
       return {
-        maxUploadCount: 20,
+        maxUploadCount: 10,
         // 选择项
         statusSelectOptions: [],
         prioritySelectOptions: [],
@@ -555,10 +559,10 @@
       },
 
       onToolBarDelete() {
-          let ids = [];
-          this.selected.forEach(data => {
-            ids.push(data.id);
-          });
+        let ids = [];
+        this.selected.forEach(data => {
+          ids.push(data.id);
+        });
 
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
@@ -610,6 +614,78 @@
       },
 
       /********************* 工具条按钮  ***************************/
+      async onToolBarReload() {
+
+        let loading = this.$loading({
+          lock: true,
+          text: '加载数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let pids = [];
+        this.data.forEach(row => {
+          pids.push(row.productId);
+        });
+
+        let promiseArr = [];
+        let resData = [];
+
+        let url = `/amazonStocks/plans/${this.primary.merchantId}?warehouse=${this.primary.warehouseId}&pids=${pids.join(",")}&safetyStockWeek=${this.primary.safetyStockWeek}&vip1SafetyStockWeek=${this.primary.vip1SafetyStockWeek}&vip2SafetyStockWeek=${this.primary.vip2SafetyStockWeek}&exclude=${this.primary.handleMethod}`;
+        await this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data;
+            let sales = res || [];
+            this.data.forEach(data => {
+              sales.forEach(sale => {
+                if (sale.productId === data.productId) {
+                  data.sevenSalesCount = sale.sevenAmendQty;
+                  data.amazonTotalStock = sale.totalQty;
+                  data.domesticStockCartonQty = sale.domesticStockCartonQty;
+                  data.unfinishedPlanCartonQty = sale.unfinishedPlanCartonQty;
+                  data.numberOfCarton = sale.numberOfCarton;
+                  resData.push(data);
+                }
+              })
+            });
+          })
+          .catch(err => {
+            loading.close();
+          });
+
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.saveData(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经更新[" + (i + 1) + "]条";
+              promiseArr = [];
+
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经更新[" + resData.length + "]条";
+          });
+        }
+
+        this.getList();
+        loading.close();
+      },
+
+      saveData(data) {
+        let url = `/procurementPlanItems/${data.id}`;
+        return this.global.axios.put(url, data)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
       onToolBarDownloadData() {
         //获取数据
         let downloadUrl = this.downloadUrl;

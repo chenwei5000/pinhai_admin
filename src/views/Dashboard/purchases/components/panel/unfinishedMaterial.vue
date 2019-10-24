@@ -11,7 +11,7 @@
 
       </div>
       <div class="card-body">
-          <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
+        <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
       </div>
 
     </router-link>
@@ -23,16 +23,16 @@
   import CountTo from 'vue-count-to'
 
   export default {
-     data(){
+    data() {
       return {
         number: 0,
-        relations: [ "category","supplier","cartonSpec","currency","declareConfig"],  
+        relations: [],
         filters: [
           {"field": "status", "op": "in", "data": "1"}
-        ], 
+        ],
       }
     },
-    
+
     props: {
       mine: {
         type: Object,
@@ -43,18 +43,18 @@
       CountTo
     },
 
-    mounted(){
+    mounted() {
       this.$nextTick(() => {
         this.initData();
       })
     },
 
     methods: {
-        initData(){
-        let countUrl = "products/countUnfinishs";
+      initData() {
+        let countUrl = "/products/countUnfinishs";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-         this.global.axios
+        this.global.axios
           .get(countUrl)
           .then(resp => {
             this.number = resp.data;

@@ -35,7 +35,16 @@
     </el-form>
 
     <!-- 表格工具条 添加、导入、导出等 -->
-    <tableToolBar :primary="primary" @modifyCBEvent="modifyCBEvent">
+    <tableToolBar :primary="primary"
+                  :hasExport="hasExport"
+                  :hasImport="hasImport"
+                  :hasAdd="hasAdd"
+                  :hasDelete="hasDelete"
+                  @onToolBarAdd="onToolBarAdd"
+                  @onToolBarDelete="onToolBarDelete"
+                  @onToolBarDownloadData="onToolBarDownloadData"
+                  @onToolBarImportData="onToolBarImportData"
+                  @modifyCBEvent="modifyCBEvent">
     </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
@@ -57,9 +66,15 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
+
+      <el-table-column
+        v-if="hasDelete"
+        type="selection"
+        width="30">
       </el-table-column>
 
+      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
+      </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40">
         <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
@@ -127,7 +142,7 @@
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
-                       width="100" fixed="right">
+                       width="85" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -144,8 +159,8 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <!--itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
-    </itemDialog-->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
+    </itemDialog>
   </div>
 
 </template>
@@ -155,7 +170,8 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from './toolBar'
-  import itemDialog from './dialog'
+  import itemDialog from './itemDialog'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {
@@ -173,14 +189,36 @@
         'device',
         'rolePower'
       ]),
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
+      hasExport() {
+        return checkPermission('LinerShippingPlanItemResource_export');
+      },
+      hasImport() {
+        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
           return false;
         }
+        return checkPermission('LinerShippingPlanItemResource_import');
       },
+      hasAdd() {
+        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('LinerShippingPlanItemResource_create');
+      },
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
+      hasEdit() {
+        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('LinerShippingPlanItemResource_update');
+      },
+      hasDelete() {
+        if ([6,7,8,9,10,11].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('LinerShippingPlanItemResource_remove');
+      }
     },
     filters: {
       currency: currency
@@ -193,12 +231,6 @@
 
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         // 多选记录对象
         selected: [],

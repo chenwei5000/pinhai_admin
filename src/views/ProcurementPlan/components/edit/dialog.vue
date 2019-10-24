@@ -229,6 +229,7 @@
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
+        this.initData();
         this.$emit("modifyCBEvent", object);
       },
       /* 重新加载 */
