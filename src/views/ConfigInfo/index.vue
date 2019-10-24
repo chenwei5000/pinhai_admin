@@ -28,6 +28,21 @@
        <el-form-item label="排除Amazon货柜" prop="desc">
         <el-input type="textarea" v-model="configInfo.invalidShipment" rows="3"></el-input>
        </el-form-item>
+      <el-form-item label="财务人员ID，多个逗号分隔" prop="financeId">
+        <el-input type="textarea" v-model="configInfo.financeId" ></el-input>
+      </el-form-item>
+      <el-form-item label="船务人员ID，多个逗号分隔" prop="shippingBusinessId">
+        <el-input type="textarea" v-model="configInfo.shippingBusinessId" ></el-input>
+      </el-form-item>
+      <el-form-item label="管理员收件邮箱，多个逗号分隔" prop="toEmail">
+        <el-input type="textarea" v-model="configInfo.toEmail" ></el-input>
+      </el-form-item>
+      <el-form-item label="ERP域名" prop="domainName">
+        <el-input v-model="configInfo.domainName" ></el-input>
+      </el-form-item>
+      <el-form-item label="技术支持邮箱" prop="technicalSupport">
+        <el-input v-model="configInfo.technicalSupport" ></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button  v-if="hasEdit" type="primary" @click="onSubmit">保存</el-button>
       </el-form-item>

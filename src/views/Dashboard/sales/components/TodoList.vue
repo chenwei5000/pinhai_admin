@@ -48,12 +48,22 @@
     <editPlanDialog @modifyCBEvent="modifyPlanCBEvent" ref="editPlanDialog">
     </editPlanDialog>
 
+    <!--预付款申请的编辑对话框-->
+    <ProcurementOrderpaymentDialog ref="ProcurementOrderpaymentDialog">
+    </ProcurementOrderpaymentDialog>
+
+    <!--编辑对话框-->
+    <paymentDialog ref="paymentDialog">
+    </paymentDialog>
   </div>
 </template>
 
 <script>
 
   import editPlanDialog from '@/views/ProcurementPlan/components/edit/dialog';
+  import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
+  import ProcurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
+
   import {parseLineBreak} from '@/utils';
 
   const filters = {
@@ -64,7 +74,9 @@
 
   export default {
     components: {
-      editPlanDialog
+      editPlanDialog,
+      ProcurementOrderpaymentDialog,
+      paymentDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -140,9 +152,35 @@
       },
       goTodo(val) {
         if (val && val.notice) {
+
           if (val.notice.targetType == "PROCUREMENT_PLAN") {
             this.$refs.editPlanDialog.openDialog(val.notice.target);
           }
+          if (val.notice.targetType == "FINANCE_ORDER") {
+            this.$refs.paymentDialog.openDialog(val.notice.target);
+          }
+          if (val.notice.targetType == "FINANCE_ORDER_FLOW_OVER") {
+            let relations = ["procurementOrder","procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
+            try{
+            this.global.axios
+              .get(`/financeBills/${val.notice.target}?relations=${JSON.stringify(relations)}`)
+              .then(resp => {
+                //console.log("aaaa=>", resp.data);
+                if(resp.data && resp.data.procurementOrder){
+                  this.$refs.ProcurementOrderpaymentDialog.openDialog(resp.data.procurementOrder);
+                }
+                else{
+                  this.$message.error("无效付款单!");
+                }
+              })
+              .catch(err => {
+              });
+            }
+            catch (e) {
+              console.log(e);
+            }
+          }
+
         }
       },
       completeTodo(val) {
