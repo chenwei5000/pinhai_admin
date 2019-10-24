@@ -339,7 +339,7 @@
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               //console.log(this.detailItem.soldOutTime);
               this.detailItem.soldOutTime =
-                  this.detailItem.soldOutTime ? moment(this.detailItem.soldOutTime).format("YYYY-MM-DD") : null;
+                this.detailItem.soldOutTime ? moment(this.detailItem.soldOutTime).format("YYYY-MM-DD") : null;
               this.loading = false;
             })
         }
@@ -462,13 +462,14 @@
           this.confirmLoading = true;
           let method = 'post'
           let url = this.url + '';
-          if (!this.detailItemId && this.detailItemId > 0) {
+          if (this.detailItemId != null && this.detailItemId > 0) {
             method = 'put';
             url = `${this.url}/${this.detailItemId}`;
           }
           //转义字段
           let _object = JSON.parse(JSON.stringify(this.detailItem));
           _object.linerShippingPlanId = this.primary.id;
+          _object.domesticStockQty = null;
 
           this.global.axios[method](url, _object)
             .then(resp => {
