@@ -51,7 +51,7 @@
 
     methods: {
         initData(){
-        let countUrl = "products/countUnfinishs";
+        let countUrl = "products/countUnfinishedMaterials";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
          this.global.axios

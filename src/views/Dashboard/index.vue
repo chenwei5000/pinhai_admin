@@ -59,7 +59,7 @@
     components: {adminDashboard, editorDashboard, salesDashboard, purchasesDashboard},
     data() {
       return {
-        activeStatus: 'salesDashboard'
+        activeStatus: 'purchasesDashboard'
       }
     },
     computed: {
