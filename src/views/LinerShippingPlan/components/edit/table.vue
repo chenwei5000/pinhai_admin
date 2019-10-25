@@ -58,6 +58,7 @@
       style="width: 100%"
       stripe
       border
+      lazy
       highlight-current-row
       :max-height="tableMaxHeight"
       :row-class-name="dangerClassName"
@@ -207,10 +208,13 @@
 
   import {mapGetters} from 'vuex'
   import {currency, parseTime} from '@/utils'
+  import excelSaleConfig from './excelSaleConfig'
+  import excelConfig from './excelConfig'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './itemDialog'
   import {checkPermission} from "@/utils/permission";
   import smartDialog from '../smart/dialog';
+  import moment from 'moment';
 
   export default {
     components: {
@@ -293,7 +297,7 @@
 
         //数据 TODO: 根据实际情况调整
         url: "/linerShippingPlanItems", // 资源URL
-        downloadUrl: "", //下载Url
+        downloadUrl: "/linerShippingPlanItems", //下载Url
         searchParam: {
           skuCode: null,
           category: null,
@@ -769,38 +773,97 @@
       },
 
       onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
-            tpl: true,
-          })
-        })
       },
+
       onToolBarDownloadData() {
         //获取数据
-        let table = this.$refs.table;
         let downloadUrl = this.downloadUrl;
+        downloadUrl += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
+        downloadUrl += "&relations=" + JSON.stringify(this.relations);
 
-        import('@/vendor/Export2Excel').then(excel => {
+        let saleExcelField = JSON.parse(JSON.stringify(excelSaleConfig.excelField));
+        console.log(this.warehouses);
+        this.warehouses.forEach(row => {
+          saleExcelField.push(
+            {'attrName': `domesticStocksArray.${row.id}`, 'type': 'n', 'name': `#${row.name}库存#`}
+          );
+        });
+
+        import('@/vendor/Export2ExcelPinHai').then(excel => {
           this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
-          })
+          excel.export_json_url_to_excel_with_formulae({
+            url: downloadUrl,
+            excelField: this.hasSale ? saleExcelField : excelConfig.excelField,
+            filename: `${this.primary.fromWarehouse ? this.primary.fromWarehouse.name : ''}-${this.primary.toWarehouse ? this.primary.toWarehouse.name : '' }-${this.primary.portOfLoading}出口-${this.primary.categoryName}-${moment(this.primary.etdTime).format("YYYY-MM-DD-HH-mm")}-${this.primary.code}`
+          });
           this.loading = false;
         })
       },
-      onToolBarImportData() {
 
+
+      uploadPromise(res) {
+        let url = this.url + '';
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      async onToolBarImportData(excelData) {
+
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.linerShippingPlanId = this.primary.id;
+          _res.skuCode = obj["SKU"];
+          _res.cartonQty = obj["应发箱数"];
+          _res.cartonSpecCode = obj["箱规"];
+          _res.numberOfCarton = obj["装箱数"];
+          _res.sevenSalesCount = obj["7日销量(件)"];
+          _res.logisticsWeek = obj["运输周数"];
+          _res.safetyWeek = obj["销售周数"];
+          _res.coverageWeek = obj["覆盖周数"];
+          _res.validateStockQty = obj["有效库存(件)"];
+          _res.domesticStockCartonQty = obj["国内库存(箱)"];
+          resData.push(_res);
+        });
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.info("导入成功");
+        this.getList();
       }
     }
   }
