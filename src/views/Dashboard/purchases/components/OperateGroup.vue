@@ -10,30 +10,30 @@
     <el-row :gutter="40" class="panel-group">
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newSteamship :mine="mine"></newSteamship>
+        <doOrder :mine="mine"></doOrder>
       </el-col>
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newPrepare :mine="mine"></newPrepare>
-      </el-col>
-
-
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <auditingPlan :mine="mine"></auditingPlan>
+        <procurementSettlement :mine="mine"></procurementSettlement>
       </el-col>
 
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <auditingOrder :mine="mine"></auditingOrder>
+        <product :mine="mine"></product>
       </el-col>
 
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newProduct :mine="mine"></newProduct>
+        <material :mine="mine"></material>
+      </el-col>
+
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+        <productSafetyStock :mine="mine"></productSafetyStock>
       </el-col>
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <saleSetting :mine="mine"></saleSetting>
+        <materialSafetyStock :mine="mine"></materialSafetyStock>
       </el-col>
 
     </el-row>
@@ -42,12 +42,12 @@
 </template>
 
 <script>
-  import newSteamship from './operate/newSteamship'
-  import newPrepare from './operate/newPrepare'
-  import auditingPlan from './operate/auditingPlan'
-  import auditingOrder from './operate/auditingOrder'
-  import newProduct from './operate/newProduct'
-  import saleSetting from './operate/saleSetting'
+  import doOrder from './operate/doOrder'
+  import material from './operate/material'
+  import materialSafetyStock from './operate/materialSafetyStock'
+  import procurementSettlement from './operate/procurementSettlement'
+  import product from './operate/product'
+  import productSafetyStock from './operate/productSafetyStock'
 
   export default {
     props: {
@@ -57,12 +57,12 @@
       }
     },
     components: {
-      newSteamship,
-      newPrepare,
-      auditingPlan,
-      auditingOrder,
-      newProduct,
-      saleSetting
+      doOrder,
+      material,
+      materialSafetyStock,
+      procurementSettlement,
+      product,
+      productSafetyStock
     },
     methods: {}
   }
