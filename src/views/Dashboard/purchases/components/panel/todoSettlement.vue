@@ -1,16 +1,18 @@
+@@ -0,0 +1,70 @@
 <template>
 
   <div class="card-panel">
     <router-link to="/m2/SettlementBill_index?s=inpayment">
       <div class="card-header">
         待结算
+
         <div class="card-badge icon-red">
           <svg-icon icon-class="overdue" class-name="card-panel-icon"/>
         </div>
 
       </div>
       <div class="card-body">
-          <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
+        <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
       </div>
 
     </router-link>
@@ -25,7 +27,7 @@
     data(){
       return {
         number: 0,
-        relations: [],
+        relations: [ "supplier","currency","procurementOrder" ],
         filters: [
           {"field": "status", "op": "in", "data": "0"}
         ],
@@ -41,7 +43,7 @@
       CountTo
     },
 
-     mounted(){
+    mounted(){
       this.$nextTick(() => {
         this.initData();
       })
@@ -49,10 +51,10 @@
 
     methods: {
       initData(){
-        let countUrl = "/settlementBills/count";
+        let countUrl = "settlementBills/count";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-         this.global.axios
+        this.global.axios
           .get(countUrl)
           .then(resp => {
             this.number = resp.data;

@@ -1,9 +1,11 @@
+@@ -0,0 +1,72 @@
 <template>
 
   <div class="card-panel">
     <router-link to="/m2/ProcurementOrder_index?s=create">
       <div class="card-header">
         待下单
+
         <div class="card-badge icon-green">
           <svg-icon icon-class="new" class-name="card-panel-icon"/>
         </div>
@@ -20,13 +22,13 @@
 
 <script>
   import CountTo from 'vue-count-to'
-  import {parse} from 'path';
+  import { parse } from 'path';
 
   export default {
-    data() {
+    data(){
       return {
         number: 0,
-        relations: [],
+        relations: [ "creator"],
         filters: [
           {"field": "status", "op": "in", "data": "2, 3"}
         ],
@@ -43,15 +45,15 @@
       CountTo
     },
 
-    mounted() {
+    mounted(){
       this.$nextTick(() => {
         this.initData();
       })
     },
 
     methods: {
-      initData() {
-        let countUrl = "/procurementPlans/count";
+      initData(){
+        let countUrl = "procurementPlans/count";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
         this.global.axios
