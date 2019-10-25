@@ -92,7 +92,7 @@
 
     data() {
       return {
-        activeStatus: 'stockManagerDashboard'
+        activeStatus: 'purchasesDashboard'
       }
     },
     computed: {

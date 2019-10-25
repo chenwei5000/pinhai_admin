@@ -3,7 +3,7 @@
   <el-card class="box-card" style="margin-top:10px;">
 
     <div slot="header">
-      <svg-icon icon-class="business"/>
+      <svg t="1571804357599" class="icon" viewBox="0 0 1134 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="21082" width="16" height="16"><path d="M1134.237447 0L374.755353 714.919402 0 519.031941 1134.237447 0zM1134.237447 0L910.335903 950.04282 447.705649 747.82174 1134.237447 0zM614.296064 840.487455l-114.622261 183.512545-51.968154-258.996289 166.590415 75.483744z" fill="#2196F3" p-id="21083"></path></svg>
       <span style="margin-left:10px;">采购跟单</span>
     </div>
 

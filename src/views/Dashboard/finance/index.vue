@@ -5,8 +5,7 @@
               style="padding-right:8px;margin-bottom:30px;">
 
         <panel-group @handleSetLineChartData="handleSetLineChartData" :mine="mine"/>
-        <operate-group @handleSetLineChartData="handleSetLineChartDat
-        a" :mine="mine"/>
+        <operate-group @handleSetLineChartData="handleSetLineChartData" :mine="mine"/>
 
       </el-col>
       <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}"
