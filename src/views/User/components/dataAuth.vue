@@ -76,7 +76,8 @@
           children: [
             {id: "-1#ADMIN", label: "管理员"},
             {id: "-1#PRICE", label: "采购价"},
-            {id: "-1#SUPPLIERINFO", label: "供货商信息"}
+            {id: "-1#SUPPLIERINFO", label: "供货商信息"},
+            {id: "-1#SALES", label: "销售数据"}
           ]
         }
         goal[0].children.push(base);
@@ -219,7 +220,7 @@
             {
               field: "targetType",
               op: 'in',
-              data: "ADMIN,CATEGORY,WAREHOUSE,SUPPLIER,PRICE,SUPPLIERINFO"
+              data: "ADMIN,SALES,CATEGORY,WAREHOUSE,SUPPLIER,PRICE,SUPPLIERINFO"
             }
           ]
         })}`;

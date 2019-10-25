@@ -100,6 +100,7 @@
         this.stepsActive = step;
         if(step == 3){
           this.closeDialog();
+          this.$emit("smartEvent", 0);
         }
       }
     }

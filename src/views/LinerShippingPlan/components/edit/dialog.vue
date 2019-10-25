@@ -50,7 +50,7 @@
               <i class="el-icon-s-order"></i> 产品明细
             </span>
             <keep-alive>
-              <detail :primary="primary"></detail>
+              <detail :primary="primary" @modifiedInfoCBEvent="onModifiedCBEvent" ></detail>
             </keep-alive>
           </el-tab-pane>
 

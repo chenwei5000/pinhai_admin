@@ -14,6 +14,7 @@
                ref="detailItem" label-position="right"
                label-width="120px"
                inline-message
+               v-if="detailItem"
                v-loading="loading" size="mini"
       >
         <el-row>
@@ -369,14 +370,23 @@
         this.loading = false;
         this.confirmLoading = false;
         this.detailItemId = null;
-        this.detailItem = null;
+        this.detailItem = {
+          skuCode: '',
+          cartonSpecId: null,
+          numberOfCarton: null,
+          cartonQty: 0,
+          qty: 0,
+          soldOutTime: null,
+          linerShippingPlanId: this.primary.id
+        };
         this.cartonspecSelectOptions = [];
       },
 
       onQtyChange(val) {
         if (this.detailItem) {
-          let numberOfCarton = this.detailItem.numberOfCarton || 1;
-          this.detailItem.qty = (this.detailItem.cartonQty * numberOfCarton).toFixed(0);
+          let numberOfCarton = this.detailItem.numberOfCarton || 0;
+          let cartonQty = this.detailItem.cartonQty || 0;
+          this.detailItem.qty = (cartonQty * numberOfCarton).toFixed(0);
         }
       },
       onLoadProduct() {
@@ -398,7 +408,7 @@
               this.detailItem.numberOfCarton = data.numberOfCarton;
               try {
                 url = `/amazonStocks/shippings/${this.detailItem.merchantId}`;
-                url += "?warehouse=" + this.primary.domesticStockWarehouses  //出货仓库
+                url += "?warehouse=" + (this.primary.domesticStockWarehouses != null ?  this.primary.domesticStockWarehouses : "") //出货仓库
                   + "&pids=" + data.id    //产品
                   + "&category=" + data.categoryId //分类
                   + "&etdTime=" + this.primary.formatEtdTime      //发柜时间

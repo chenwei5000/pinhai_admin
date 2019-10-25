@@ -108,7 +108,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.vipLevel" label="Vip级别" width="80"></el-table-column>
+      <el-table-column prop="product.vipLevel" label="Vip级别" width="80" v-if="hasSale"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" width="130"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
       <el-table-column prop="product.name" label="名称" width="200">
@@ -123,27 +123,27 @@
       <el-table-column prop="nwoneCartonSpecWeight" label="单箱净重(Kg)" width="130"></el-table-column>
       <el-table-column prop="gwoneCartonSpecWeight" label="单箱毛重(Kg)" width="130"></el-table-column>
 
-      <el-table-column prop="sevenSalesCount" label="7日销量（件)" width="100"></el-table-column>
-      <el-table-column prop="soldOutTime" label="销售覆盖时间" width="100">
+      <el-table-column prop="sevenSalesCount" label="7日销量（件)" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="soldOutTime" label="销售覆盖时间" width="100" v-if="hasSale">
         <template slot-scope="scope">
           <span>{{ scope.row.soldOutTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="logisticsWeek" label="运输周数" width="100"></el-table-column>
-      <el-table-column prop="safetyWeek" label="销售周数" width="100"></el-table-column>
-      <el-table-column prop="coverageWeek" label="覆盖周数" width="100"></el-table-column>
-      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
-      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100"></el-table-column>
-      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110"></el-table-column>
-      <el-table-column prop="validateStockQty" label="有效库存(件)" width="100"></el-table-column>
+      <el-table-column prop="logisticsWeek" label="运输周数" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="safetyWeek" label="销售周数" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="coverageWeek" label="覆盖周数" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110" v-if="hasSale"></el-table-column>
+      <el-table-column prop="validateStockQty" label="有效库存(件)" width="100" v-if="hasSale"></el-table-column>
 
 
-      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100">
+      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100" v-if="hasSale">
       </el-table-column>
 
 
-      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" >
+      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" v-if="hasSale">
         <template slot-scope="scope">
           <span>{{ scope.row.domesticStocks ? JSON.parse(scope.row.domesticStocks)[item.id] : ''}}</span>
         </template>
@@ -206,7 +206,7 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency,parseTime} from '@/utils'
+  import {currency, parseTime} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './itemDialog'
   import {checkPermission} from "@/utils/permission";
@@ -224,6 +224,11 @@
         default: null
       }
     },
+    watch: {
+      primary(newName, oldName) {
+        this.initData();
+      }
+    },
     computed: {
       ...mapGetters([
         'device',
@@ -234,9 +239,11 @@
       },
 
       hasReload() {
-        return this.hasAdd && this.hasEdit;
+        return this.hasAdd && this.hasEdit && this.hasSale
       },
-
+      hasSale() {
+        return checkPermission('SaleInfoVisible');
+      },
       hasSmart() {
         return this.hasAdd && this.hasImport;
       },
@@ -327,25 +334,27 @@
       initData() {
         let warehouses = [];
 
-        if (this.primary.domesticStockWarehouses.indexOf(-99) !== false ) {
-          warehouses.push({id: -99, name: '供货商(箱)'})
+        if (this.primary.domesticStockWarehouses) {
+          if (this.primary.domesticStockWarehouses.indexOf(-99) !== false) {
+            warehouses.push({id: -99, name: '供货商(箱)'})
+          }
+
+          let url = `/warehouses?filters=${JSON.stringify({
+            "groupOp": "AND",
+            "rules": [{
+              field: "id",
+              op: 'in',
+              data: this.primary.domesticStockWarehouses
+            }]
+          })}&sort=id&dir=asc`;
+
+          this.global.axios.get(url).then(data => {
+            data.data.forEach(res => {
+              warehouses.push({id: res.id, name: `${res.name}(箱)`})
+            })
+            this.warehouses = warehouses;
+          });
         }
-
-        let url = `/warehouses?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [{
-            field: "id",
-            op: 'in',
-            data: this.primary.domesticStockWarehouses
-          }]
-        })}&sort=id&dir=asc`;
-
-        this.global.axios.get(url).then(data => {
-          data.data.forEach(res => {
-            warehouses.push({id: res.id, name: `${res.name}(箱)`})
-          })
-          this.warehouses = warehouses;
-        });
       },
 
       // 获取表格的高度
@@ -592,14 +601,171 @@
       onToolBarEdit() {
       },
       onToolBarDelete() {
+        let ids = [];
+        this.selected.forEach(data => {
+          ids.push(data.id);
+        });
+        this.loading = true;
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+
+              let url = `${this.url}/${ids.join(",")}`;
+              this.global.axios.delete(url)
+                .then(resp => {
+                  this.$message({type: 'success', message: '删除成功'});
+                  let obj = resp.data;
+                  this.loading = false;
+                  this.getList();
+                })
+                .catch(err => {
+                  this.loading = false;
+                })
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
-      onToolBarReload() {
+
+      async onToolBarReload() {
+        if (this.data == null || this.data.length == 0) {
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '加载数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let pids = [];
+        let merchantId = null;
+        let cids = [];
+        let vip0SoldOutTime;
+        let vip1SoldOutTime;
+        let vip2SoldOutTime;
+
+        this.data.forEach(row => {
+          pids.push(row.productId);
+          if (cids.indexOf(row.product.categoryId) === -1) {
+            cids.push(row.product.categoryId);
+          }
+          merchantId = row.merchantId;
+          if (row.product.vipLevel == 0 && row.soldOutTime) {
+            vip0SoldOutTime = row.soldOutTime;
+          }
+          else if (row.product.vipLevel == 1 && row.soldOutTime) {
+            vip1SoldOutTime = row.soldOutTime;
+          }
+          else if (row.product.vipLevel == 2 && row.soldOutTime) {
+            vip2SoldOutTime = row.soldOutTime;
+          }
+
+        });
+
+        let promiseArr = [];
+        let resData = [];
+
+        let url = '';
+
+        try {
+          url = `/amazonStocks/shippings/${merchantId}`;
+          url += "?warehouse=" + this.primary.domesticStockWarehouses  //出货仓库
+            + "&pids=" + pids   //产品
+            + "&category=" + cids //分类
+            + "&etdTime=" + this.primary.formatEtdTime      //发柜时间
+            + "&shipmentType=" + this.primary.type    //物流类型
+            + "&portOfLoading=" + this.primary.portOfLoading  //出货港口
+            + "&toWarehouse=" + this.primary.toWarehouse.address;      //收货区域
+
+          if (this.primary.groupName) {
+            url += "&group=" + this.primary.groupName.join(",");  //销售覆盖时间
+          }
+          if (vip0SoldOutTime) {
+            url += "&vip0SoldOutTime=" + vip0SoldOutTime;  //销售覆盖时间
+          }
+          if (vip1SoldOutTime) {
+            url += "&vip1SoldOutTime=" + vip1SoldOutTime;  //销售覆盖时间
+          }
+          if (vip2SoldOutTime) {
+            url += "&vip2SoldOutTime=" + vip2SoldOutTime;  //销售覆盖时间
+          }
+        } catch (e) {
+          console.log(e);
+        }
+
+        await this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data;
+            let sales = res || [];
+            this.data.forEach(data => {
+              sales.forEach(sale => {
+                try {
+                  if (sale.productId === data.productId) {
+                    data.safetyWeek = sale.safetyWeek;
+                    data.logisticsWeek = sale.logisticsWeek;
+                    data.sevenSalesCount = sale.sevenAmendQty;
+                    data.inStockQty = sale.inStockQty;
+                    data.validateStockQty = sale.validateStockQty;
+                    data.domesticStockQty = sale.domesticStockQty;
+                    data.domesticStockCartonQty = sale.domesticStockCartonQty;
+                    data.unfinishedPlanCartonQty = sale.unfinishedPlanCartonQty;
+                    data.domesticStocks = JSON.stringify(sale.warehouseStocks);
+                    data.domesticStocksStr = sale.domesticStocks;
+                    data.numberOfCarton = sale.numberOfCarton;
+                    resData.push(data);
+                  }
+                } catch (e) {
+                  console.log(e);
+                }
+              })
+            });
+          })
+          .catch(err => {
+            loading.close();
+          });
+
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.saveData(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经更新[" + (i + 1) + "]条";
+              promiseArr = [];
+
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经更新[" + resData.length + "]条";
+          });
+        }
+
+        this.getList();
+        loading.close();
+      },
+
+      saveData(data) {
+        let url = `/linerShippingPlanItems/${data.id}`;
+        return this.global.axios.put(url, data)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
       },
       onToolBarSmart() {
         this.$refs.smart.openDialog(this.primary);
       },
       smartEvent(obj) {
         this.getList();
+        this.$emit("modifiedInfoCBEvent", obj);
       },
 
       onToolBarDownloadTpl() {
