@@ -55,6 +55,11 @@
     <!--编辑对话框-->
     <paymentDialog ref="paymentDialog">
     </paymentDialog>
+
+    <!--编辑对话框-->
+    <ProcurementShippedOrderEditDialog ref="ProcurementShippedOrderEditDialog">
+    </ProcurementShippedOrderEditDialog>
+
   </div>
 </template>
 
@@ -63,6 +68,7 @@
   import editPlanDialog from '@/views/ProcurementPlan/components/edit/dialog';
   import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
   import ProcurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
+  import ProcurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
 
   import {parseLineBreak} from '@/utils';
 
@@ -76,7 +82,8 @@
     components: {
       editPlanDialog,
       ProcurementOrderpaymentDialog,
-      paymentDialog
+      paymentDialog,
+      ProcurementShippedOrderEditDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -151,14 +158,21 @@
 
       },
       goTodo(val) {
+
         if (val && val.notice) {
 
           if (val.notice.targetType == "PROCUREMENT_PLAN") {
             this.$refs.editPlanDialog.openDialog(val.notice.target);
           }
+          //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
+          if(val.notice.targetType == "PROCUREMENT_ORDER"){
+            this.$refs.ProcurementShippedOrderEditDialog.openDialog(val.notice.target);
+          }
+
           if (val.notice.targetType == "FINANCE_ORDER") {
             this.$refs.paymentDialog.openDialog(val.notice.target);
           }
+
           if (val.notice.targetType == "FINANCE_ORDER_FLOW_OVER") {
             let relations = ["procurementOrder","procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
             try{
@@ -180,6 +194,7 @@
               console.log(e);
             }
           }
+
 
         }
       },

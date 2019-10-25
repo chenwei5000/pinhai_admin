@@ -34,13 +34,13 @@
       <el-form-item label="船务人员ID，多个逗号分隔" prop="shippingBusinessId">
         <el-input type="textarea" v-model="configInfo.shippingBusinessId" ></el-input>
       </el-form-item>
-      <el-form-item label="管理员收件邮箱，多个逗号分隔" prop="toEmail">
+      <el-form-item label="管理邮箱,多个分号(;)分隔" prop="toEmail">
         <el-input type="textarea" v-model="configInfo.toEmail" ></el-input>
       </el-form-item>
       <el-form-item label="ERP域名" prop="domainName">
         <el-input v-model="configInfo.domainName" ></el-input>
       </el-form-item>
-      <el-form-item label="技术支持邮箱" prop="technicalSupport">
+      <el-form-item label="技术邮箱,多个分号(;)分隔" prop="technicalSupport">
         <el-input v-model="configInfo.technicalSupport" ></el-input>
       </el-form-item>
       <el-form-item>
