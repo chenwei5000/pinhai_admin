@@ -21,7 +21,7 @@
       <el-button type="primary" size="small" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
       <el-button type="primary" size="small" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
 
-      <el-button type="primary" size="small" @click="closeDialog">取 消</el-button>
+      <el-button size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
 

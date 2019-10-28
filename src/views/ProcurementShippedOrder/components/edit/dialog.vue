@@ -15,7 +15,7 @@
       </router-link>
 
       <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" size="small"  @click="onStatus">修改状态</el-button>
-      <el-button type="primary" @click="closeDialog" size="small" >取 消</el-button>
+      <el-button @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
 
     <!-- 折叠面板 -->

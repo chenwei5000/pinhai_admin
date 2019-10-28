@@ -5,7 +5,7 @@
 
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-      <el-button type="primary" @click="closeDialog" size="small" >取 消</el-button>
+      <el-button @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
 
     <!-- 折叠面板 -->

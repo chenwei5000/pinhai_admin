@@ -14,7 +14,7 @@
 
       <el-button v-if="hasReceived" type="success" icon="el-icon-s-claim" size="small" @click="onComplete">确认收货</el-button>
 
-      <el-button type="primary" @click="closeDialog" size="small" >取 消</el-button>
+      <el-button @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
 
     <itemTable ref="itemTable" :primary="primary"></itemTable>

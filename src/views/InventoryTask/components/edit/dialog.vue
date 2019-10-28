@@ -7,8 +7,8 @@
 
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-      <el-button type="success" icon="el-icon-s-claim" @click="onComplete">盘点完成</el-button>
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button type="success" size="small" icon="el-icon-s-claim" @click="onComplete">盘点完成</el-button>
+      <el-button size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
 

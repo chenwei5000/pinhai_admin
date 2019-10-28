@@ -29,7 +29,7 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" size="small" @click="save">保 存</el-button>
-      <el-button size="small" @click="closeDialog">取 消</el-button>
+      <el-button size="small"  @click="closeDialog">取 消</el-button>
     </div>
   </el-dialog>
 </template>
