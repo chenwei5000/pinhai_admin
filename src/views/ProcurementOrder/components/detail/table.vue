@@ -73,6 +73,7 @@
           </span>
         </template>
       </el-table-column>
+
       <el-table-column prop="product.imgUrl" label="图片" width="40" >
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image

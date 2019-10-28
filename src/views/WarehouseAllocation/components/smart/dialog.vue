@@ -244,6 +244,7 @@
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.numberOfCarton = data.numberOfCarton;
               this.detailItem.cartonSpecCode = data.cartonSpecCode;
+              this.detailItem.imgUrl = data.imgUrl;
               // 转字段
               this.detailItem.productName = data.name;
               if (data.cartonSpecId == -3) { //原料采购

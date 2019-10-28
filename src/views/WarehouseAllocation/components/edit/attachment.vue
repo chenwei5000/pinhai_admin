@@ -8,7 +8,7 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" v-if="hasEdit">+ 添加附件</el-button>
+      <el-button class="button-new-tag" v-if="hasEdit" size="mini">+ 添加附件</el-button>
     </el-upload>
 
   </div>

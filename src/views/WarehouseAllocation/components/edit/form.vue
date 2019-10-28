@@ -105,6 +105,7 @@
           <span v-if="!hasEdit" style="font-size: 12px">{{editObject.expectTime}}</span>
           <el-date-picker
             v-else
+            size="mini"
             v-model="editObject.expectTime"
             format="yyyy-MM-dd"
             type="date"
@@ -227,7 +228,7 @@
         this.loading = true;
         if (this.primary) {
           //获取计划数据
-          this.editObject = JSON.parse(JSON.stringify(this.primary));
+          this.editObject = this.primary;
           //转化时间
           this.editObject.expectTime = this.editObject.formatExpectTime;
 

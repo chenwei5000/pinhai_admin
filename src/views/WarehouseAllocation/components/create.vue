@@ -73,6 +73,7 @@
           this.object.id = objectId;
           // 切换到第二步
           this.stepsActive = 1;
+          this.$emit("createCBEvent", null);
         }
       },
       // 采购计划确认成功之后回调
@@ -87,7 +88,9 @@
       step4CBEvent(step) {
         // 切换步骤
         if(step == 4){
+          this.$message.success("创建成功");
           this.$emit("createCBEvent", null);
+          this.stepsActive = 0;
         }else{
          this.stepsActive = step;
         }

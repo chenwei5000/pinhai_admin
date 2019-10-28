@@ -140,14 +140,14 @@
       <el-table-column prop="id" label="ID" width="90"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="80" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="scope.row.status==4 && hasEdit" size="mini" icon="el-icon-receiving" circle
                      @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="scope.row.status!=4 && hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 

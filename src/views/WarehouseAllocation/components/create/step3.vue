@@ -2,9 +2,9 @@
 
   <div class="page-container">
 
-    <aside>
-      为了保证本国内调拨的执行，需要指派对应的仓库负责人，可多选。指派的仓库负责人将会收到对应的邮件和系统消息提醒。
-      默认会自动把对应品类的仓库负责人自动选中。
+    <aside style="font-size: 12px">
+      为了保证本次国内调拨的执行，需要指派对应的仓库负责人，可多选。指派的仓库负责人将会收到对应的邮件和系统消息提醒。
+      默认会自动把对应仓库的仓库负责人自动选中。
     </aside>
 
     <h5>仓库负责人：</h5>
@@ -14,14 +14,14 @@
     <el-row>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="warning" style="margin-top: 40px" @click="onBack">
+          <el-button type="warning" style="margin-top: 40px" size="mini" @click="onBack">
             < 上一步
           </el-button>
         </el-row>
       </el-col>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 40px" @click="onNext">
+          <el-button type="primary" style="margin-top: 40px" size="mini" @click="onNext">
             下一步 >
           </el-button>
         </el-row>
