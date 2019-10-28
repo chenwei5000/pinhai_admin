@@ -51,23 +51,18 @@
             id="table"
             >
             <el-table-column prop="id" label="ID" width="200" v-if="disabled" ></el-table-column>
+            <el-table-column prop="merchantId" label="渠道ID" width="200" v-if="disabled" ></el-table-column>
             <el-table-column prop="skuCode" label="SKU编码" width="200"></el-table-column>
             <el-table-column prop="productName" label="产品名" width="200"></el-table-column>
             <el-table-column prop="categoryName" label="分类" width="200"></el-table-column>
-            <el-table-column prop="fnSku" label="FNSKU" width="200" v-if="disabled"></el-table-column>
-            <el-table-column prop="groupName" label="产品款式" width="200" v-if="disabled" ></el-table-column>
-            <el-table-column prop="model" label="型号" width="200" v-if="disabled"></el-table-column>
-            <el-table-column prop="color" label="颜色" width="200" v-if="disabled"></el-table-column>
-            <el-table-column prop="size" label="尺码" width="200" v-if="disabled"></el-table-column>
-            <el-table-column prop="vipLevel" label="vip等级" width="200"></el-table-column>
-            <el-table-column prop="sevenAmendQty" label="7日销量修正" width="200"></el-table-column>
-            <el-table-column prop="inStockQty" label="库存" width="200"></el-table-column>
-            <el-table-column prop="onPassageQty" label="待入库" width="200"></el-table-column>
-            <el-table-column prop="stockSoldOutTime" label="库售罄时间" width="200"></el-table-column>
-            <el-table-column prop="allSoldOutTime" label="途售罄时间" width="200"></el-table-column>
-            <el-table-column prop="containerSoldOutTime" label="途断货日期" width="200"></el-table-column>
-            <el-table-column prop="containerSoldOutDay" label="途断货天数" width="200"></el-table-column>
-            <el-table-column prop="containerSoldOutCartonQty" label="途缺口箱数" width="200"></el-table-column>
+            <el-table-column prop="minQty" label="7日最小销量" width="200"></el-table-column>
+            <el-table-column prop="maxQty" label="7日最大销量" width="200"></el-table-column>
+            <el-table-column prop="avgQty" label="7日平均销量" width="200"></el-table-column>
+            <el-table-column prop="recommendQty" label="7日推荐销量" width="200"></el-table-column>
+            <el-table-column prop="sevenSaleQty" label="7日销量" width="200"></el-table-column>
+            <el-table-column prop="finalSevenSaleQty" label="7日最终销量" width="200"></el-table-column>
+            <el-table-column prop="formatLastModified" label="修改时间" width="200"></el-table-column>
+            <el-table-column prop="expire" label="是否过期" width="200" ></el-table-column>
           </el-table>
 
       </div>
@@ -96,7 +91,7 @@
         categoryId: null,
 
         title: '途断货情况',
-        url: '/amazonStocks/containerSoldOutDays',
+        url: '/merchantManualSales/',
         tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -108,7 +103,7 @@
       });
     },
     computed: {
-      disabled:'false'
+      disabled: false,
     },
     methods: {
       initData(){
@@ -174,7 +169,7 @@
 
       setUrl(){
         if (this.merchantId !=null){
-          this.url = `/amazonStocks/containerSoldOutDays/${this.merchantId}?cid=${this.categoryId ? this.categoryId : -1}&weekNum=${this.week ? this.week : ''}`;
+          this.url = `/merchantManualSales/${this.merchantId}?cid=${this.categoryId ? this.categoryId : -1}&weekNum=${this.week ? this.week : ''}`;
         }
         else{
           this.url = null;
