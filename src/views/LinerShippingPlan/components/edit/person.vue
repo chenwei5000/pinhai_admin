@@ -11,13 +11,13 @@
       <el-tag type="success"
               :key="item.userId"
               v-for="item in primary.dataAuthories"
-              closable
+              :closable="hasEdit"
               :disable-transitions="false"
               @close="handleRemove(item)">
         {{item.user ? item.user.name : ''}}
       </el-tag>
 
-      <el-button class="button-new-tag" size="mini" @click="openPersonDialog">+ 添加负责人</el-button>
+      <el-button class="button-new-tag" size="mini" @click="openPersonDialog" v-if="hasEdit">+ 添加负责人</el-button>
     </div>
 
     <phMembers ref="members" @saveCBEvent="saveCBEvent" title="选择采购负责人"></phMembers>
@@ -38,7 +38,11 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      hasEdit(){
+        return true;
+      }
+    },
 
     data() {
       return {

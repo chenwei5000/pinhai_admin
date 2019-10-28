@@ -2,12 +2,11 @@
   <div>
     <div class="tag-group">
       <el-tag type="success"
-        :key="item.userId"
-        v-for="item in primary.dataAuthories"
-              closable
+              :key="item.userId"
+              v-for="item in primary.dataAuthories"
               :closable="hasEdit"
-        :disable-transitions="false"
-        @close="handleRemove(item)">
+              :disable-transitions="false"
+              @close="handleRemove(item)">
         {{item.user.name}}
       </el-tag>
 
@@ -34,7 +33,7 @@
       }
     },
     computed: {
-      hasEdit(){
+      hasEdit() {
         return checkPermission('ProcurementOrderResource_update');
       }
     },

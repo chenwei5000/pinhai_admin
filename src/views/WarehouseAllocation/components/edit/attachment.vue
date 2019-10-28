@@ -114,6 +114,10 @@
       },
       // 删除
       beforeRemove(file, fileList) {
+        if(this.hasEdit == false){
+          this.$message.error("无删除权限!");
+          return false;
+        }
         return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
