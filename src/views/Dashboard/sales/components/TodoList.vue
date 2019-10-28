@@ -49,7 +49,7 @@
     </editPlanDialog>
 
     <!--预付款申请的编辑对话框-->
-    <ProcurementOrderpaymentDialog ref="ProcurementOrderpaymentDialog">
+    <ProcurementOrderpaymentDialog ref="procurementOrderpaymentDialog">
     </ProcurementOrderpaymentDialog>
 
     <!--编辑对话框-->
@@ -57,20 +57,23 @@
     </paymentDialog>
 
     <!--编辑对话框-->
-    <ProcurementShippedOrderEditDialog ref="ProcurementShippedOrderEditDialog">
+    <ProcurementShippedOrderEditDialog ref="procurementShippedOrderEditDialog">
     </ProcurementShippedOrderEditDialog>
 
     <!--采购单待发货->创建发货计划-编辑对话框-->
-    <ProcurementShippedOrderExecutingDialog ref="ProcurementShippedOrderExecutingDialog">
+    <ProcurementShippedOrderExecutingDialog ref="procurementShippedOrderExecutingDialog">
     </ProcurementShippedOrderExecutingDialog>
 
     <!--发货单待执行界面 创建发货计划-编辑对话框-->
-    <ProcurementShippedOrderExecutingEditDialog ref="ProcurementShippedOrderExecutingEditDialog">
+    <ProcurementShippedOrderExecutingEditDialog ref="procurementShippedOrderExecutingEditDialog">
     </ProcurementShippedOrderExecutingEditDialog>
 
     <!--采购入库待收货-发货计划-> 执行发货-> 消息给对应采购单创建人、指派人-编辑对话框-->
-    <ProcurementReceivedOrderEditDialog ref="ProcurementReceivedOrderEditDialog">
+    <ProcurementReceivedOrderEditDialog ref="procurementReceivedOrderEditDialog">
     </ProcurementReceivedOrderEditDialog>
+    <!--查看采购入库完成状态对话框-->
+    <procurementReceivedOrderViewDialog ref="procurementReceivedOrderViewDialog">
+    </procurementReceivedOrderViewDialog>
 
   </div>
 </template>
@@ -79,11 +82,12 @@
 
   import editPlanDialog from '@/views/ProcurementPlan/components/edit/dialog';
   import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
-  import ProcurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
-  import ProcurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
-  import ProcurementShippedOrderExecutingDialog from '@/views/ProcurementShippedOrder/components/create/dialog'
-  import ProcurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
-  import ProcurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
+  import procurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
+  import procurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
+  import procurementShippedOrderExecutingDialog from '@/views/ProcurementShippedOrder/components/create/dialog'
+  import procurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
+  import procurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
+  import procurementReceivedOrderViewDialog from '@/views/ProcurementReceivedOrder/components/view/dialog'
 
   import {parseLineBreak} from '@/utils';
 
@@ -96,12 +100,13 @@
   export default {
     components: {
       editPlanDialog,
-      ProcurementOrderpaymentDialog,
+      procurementOrderpaymentDialog,
       paymentDialog,
-      ProcurementShippedOrderEditDialog,
-      ProcurementShippedOrderExecutingDialog,
-      ProcurementShippedOrderExecutingEditDialog,
-      ProcurementReceivedOrderEditDialog
+      procurementShippedOrderEditDialog,
+      procurementShippedOrderExecutingDialog,
+      procurementShippedOrderExecutingEditDialog,
+      procurementReceivedOrderEditDialog,
+      procurementReceivedOrderViewDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -184,7 +189,7 @@
           }
           //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
           if(val.notice.targetType == "PROCUREMENT_ORDER"){
-            this.$refs.ProcurementShippedOrderEditDialog.openDialog(val.notice.target);
+            this.$refs.procurementShippedOrderEditDialog.openDialog(val.notice.target);
           }
 
           if (val.notice.targetType == "FINANCE_ORDER") {
@@ -199,7 +204,7 @@
               .then(resp => {
                 //console.log("aaaa=>", resp.data);
                 if(resp.data && resp.data.procurementOrder){
-                  this.$refs.ProcurementOrderpaymentDialog.openDialog(resp.data.procurementOrder);
+                  this.$refs.procurementOrderpaymentDialog.openDialog(resp.data.procurementOrder);
                 }
                 else{
                   this.$message.error("无效付款单!");
@@ -214,15 +219,19 @@
           }
           if (val.notice.targetType == "DATE_CONFIRM") {
             // 弹窗
-            this.$refs.ProcurementShippedOrderExecutingDialog.openDialog(val.notice.target);
+            this.$refs.procurementShippedOrderExecutingDialog.openDialog(val.notice.target);
           }
           if (val.notice.targetType == "SHIPPED_PLAN_SUCCESS") {
             // 弹窗
-            this.$refs.ProcurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
+            this.$refs.procurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
           }
           if (val.notice.targetType == "SHIPPED_PLAN_IMPLEMENT") {
             // 弹窗
-            this.$refs.ProcurementReceivedOrderEditDialog.openDialog(val.notice.target);
+            this.$refs.procurementReceivedOrderEditDialog.openDialog(val.notice.target);
+          }
+          //弹窗:采购入库 --- (完成状态)
+          if(val.notice.targetType =="PROCUREMENT_WAREHOUSE_SUCCESS"){
+            this.$refs.procurementReceivedOrderViewDialog.openDialog(val.notice.target);
           }
         }
       },
