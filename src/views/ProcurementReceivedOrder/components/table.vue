@@ -143,11 +143,11 @@
       <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-receiving" circle
+          <el-button v-if="scope.row.status==4 && hasEdit" size="mini" icon="el-icon-receiving" circle
                      @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="scope.row.status!=4 && hasView" size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
@@ -193,6 +193,7 @@
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from "../../../api/supplier";
   import warehouseModel from "../../../api/warehouse";
+  import {checkPermission} from "../../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -224,16 +225,10 @@
         'device', 'rolePower'
       ]),
       hasEdit() {
-        if (this.type === 'shipped') {
-          return true;
-        }
-        return false;
+        return checkPermission('ProcurementReceivedOrderItemResource_update');
       },
       hasView() {
-        if (this.type === 'complete' || this.type === 'all') {
-          return true;
-        }
-        return false;
+        return checkPermission('ProcurementReceivedOrderResource_list');
       },
       hasOperation() {
         return this.hasView || this.hasEdit
@@ -260,7 +255,7 @@
         countUrl: '/procurementReceivedOrders/count', // 资源URL
         relations: ["procurementOrder", "supplier", "warehouse"],  // 关联对象
         data: [],
-        phSort: {prop: "id", order: "desc"},
+        phSort: {prop: "lastModified", order: "desc"},
         // 表格加载效果
         loading: false,
 
@@ -278,13 +273,6 @@
           name: {value: null, op: 'bw', id: 'status'},
           code: {value: null, op: 'bw', id: 'code'},
         },
-
-        //弹窗
-        dialogTitle: '新增',
-        dialogVisible: false,
-        isNew: true,
-        isEdit: false,
-        isView: false,
 
         // 记录修改的那一行
         row: {},
@@ -361,7 +349,7 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          //tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {

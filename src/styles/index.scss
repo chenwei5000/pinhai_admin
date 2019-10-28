@@ -255,6 +255,15 @@ aside {
     /deep/ .sort-caret.descending{
       bottom: 0;
     }
+    /deep/ .el-table__footer .is-leaf{
+      font-weight: bold;
+      padding: 5px 0 !important;
+    }
+
+    /deep/ .el-textarea__inner {
+      font-size: 12px !important;
+    }
+
   }
 
   .el-form {

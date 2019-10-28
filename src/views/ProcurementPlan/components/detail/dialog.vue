@@ -439,7 +439,7 @@
                   let data = res || [];
                   data.forEach(row => {
                     if (row.skuCode == this.detailItem.skuCode) {
-                      this.detailItem.cartonQty = row.replenishmentCartonPlanQty;
+                      //this.detailItem.cartonQty = row.replenishmentCartonPlanQty;
                       this.detailItem.safetyStockWeek = row.safetyWeek;
                       this.detailItem.saleWeek = row.saleWeek;
                       this.detailItem.sevenSalesCount = row.sevenAmendQty;

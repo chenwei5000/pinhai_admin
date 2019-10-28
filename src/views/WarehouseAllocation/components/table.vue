@@ -337,7 +337,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.statusSelectOptions = phEnumModel.getSelectOptions('WarehouseAllocationStatus');
       },
 

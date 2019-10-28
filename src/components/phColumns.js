@@ -1,5 +1,6 @@
 import {currency,parseTime} from '@/utils'
 import phEnumModel from '../api/phEnum'
+import {checkPermission} from "../utils/permission";
 
 const phColumns = {
 
@@ -44,6 +45,7 @@ const phColumns = {
     prop: 'price',
     label: '采购价',
     width: 100,
+    hidden: !checkPermission('PurchasePriceVisible'),
     formatter: row => {
       try {
         return  currency(row.price,row.currency.symbolLeft,2) ;
@@ -57,6 +59,7 @@ const phColumns = {
   amount: {
     prop: 'amount',
     label: '总金额',
+    hidden: !checkPermission('PurchasePriceVisible'),
     width: 100,
     formatter: row => {
       try {
