@@ -44,7 +44,7 @@
           exportFileName: '数据字典列表',
 
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('DataDicItemResource_remove') ? 'selection' : '', hidden: !checkPermission('DataDicItemResource_remove')},
             phColumns.id,
             {prop: 'type', label: '字典类型', sortable: 'custom', 'min-width': 100},
             {prop: 'name', label: '字典类型名称', sortable: 'custom', 'min-width': 100},

@@ -49,7 +49,7 @@
           operationAttrs: {width: '120', fixed: 'right'},
 
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('SupplierResource_remove') ? 'selection' : '', hidden: !checkPermission('PositionResource_remove')},
             phColumns.id,
             {prop: 'code', label: '编码', "width": 100},
             {prop: 'name', label: '简称', "min-width": 150},

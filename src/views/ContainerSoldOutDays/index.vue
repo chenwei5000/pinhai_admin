@@ -36,7 +36,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('CountryResource_remove') ? 'selection' : '', hidden: !checkPermission('CountryResource_remove')},
             {prop: 'skuCode', label: 'SKU编码', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'productName', label: '产品名', "min-width": 120},
             {prop: 'categoryName', label: '分类', "min-width": 120},

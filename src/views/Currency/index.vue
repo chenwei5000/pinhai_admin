@@ -37,7 +37,7 @@
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('CurrencyResource_remove') ? 'selection' : '', hidden: !checkPermission('CurrencyResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '代码', sortable: 'custom', width: 80},
             {prop: 'symbolLeft', label: '左侧符', width: 80},

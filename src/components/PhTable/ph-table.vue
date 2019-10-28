@@ -65,6 +65,7 @@
 
     <!--新增、编辑-->
     <tableToolBar
+      ref="tableToolBar"
       v-bind="toolbarConfig"
       @onToolBarAdd="onToolBarAdd"
       @onToolBarEdit="onToolBarEdit"
@@ -179,17 +180,6 @@
           <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
                      @click="onDefaultView(scope.row)">
           </el-button>
-          <self-loading-button v-for="(btn, i) in extraButtons"
-                               v-if="'show' in btn ? btn.show(scope.row) : true"
-                               v-bind="btn"
-                               :click="btn.atClick"
-                               :params="scope.row"
-                               :callback="getList"
-                               :key="i"
-                               size="mini"
-          >
-            {{btn.text}}
-          </self-loading-button>
 
           <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
@@ -883,7 +873,9 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+
+          tableHeight = tableHeight - (this.$refs.tableToolBar && this.$refs.tableToolBar.$el.offsetHeight ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
+          //tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {

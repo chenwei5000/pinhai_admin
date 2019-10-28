@@ -71,7 +71,7 @@
 
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
-          <el-tag
+          <el-tag size="mini"
             :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 2
             ? 'danger' : scope.row.status === 6

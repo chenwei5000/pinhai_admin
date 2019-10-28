@@ -40,7 +40,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('SafetyStockConfigResource_remove') ? 'selection' : '', hidden: !checkPermission('SafetyStockConfigResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 90, fixed: 'left'},
             {prop: 'typeName', label: '类型', 'min-width': 80},
             {prop: 'vip0SafetyStockWeek', label: 'Vip0普通', 'min-width': 80},

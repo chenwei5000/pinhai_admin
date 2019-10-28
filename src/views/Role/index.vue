@@ -51,7 +51,7 @@
           operationAttrs: {width: '120', fixed: 'right'},
 
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('UserResource_remove') ? 'selection' : '', hidden: !checkPermission('UserResource_remove')},
             phColumns.id,
             {prop: 'name', label: '名称', sortable: 'custom', "min-width": 100},
             phColumns.status,

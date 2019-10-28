@@ -38,7 +38,7 @@
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('DeclareConfigResource_remove') ? 'selection' : '', hidden: !checkPermission('DeclareConfigResource_remove')},
             {prop: 'id', label: '报关码', "min-width": 100},
             {prop: 'name', label: '申报品名(中)', "min-width": 200},
             {prop: 'ename', label: '申报品名(英)', "min-width": 200},

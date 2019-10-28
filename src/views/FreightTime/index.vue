@@ -41,7 +41,7 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('FreightTimeResource_remove') ? 'selection' : '', hidden: !checkPermission('FreightTimeResource_remove')},
             {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 200},
             {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 200},
             {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 200},

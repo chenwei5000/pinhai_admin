@@ -45,7 +45,7 @@
 
 
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('ProductToMaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('ProductToMaterialResource_remove')},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, 'min-width': '80', fixed: 'left'},
             {prop: 'product.skuCode', label: '产品SKU', 'min-width': 250},
             {prop: 'product.name', label: '产品名', 'min-width': 250},

@@ -43,7 +43,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('CollectionAccountResource_remove') ? 'selection' : '', hidden: !checkPermission('CollectionAccountResource_remove')},
             {prop: 'companyManagementId', label: '公司ID', hidden: true, "min-width": 100},
             {prop: 'bankAccountId', label: '银行账号ID', hidden: true, "min-width": 100},
             {prop: 'companyManagement.fullName', label: '公司名', "min-width": 200},

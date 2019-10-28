@@ -41,7 +41,7 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('NoticeResource_remove') ? 'selection' : '', hidden: !checkPermission('NoticeResource_remove')},
             phColumns.id,
             {prop: 'title', label: '标题', 'min-width': 120},
             {prop: 'content', label: '内容', 'min-width': 250},

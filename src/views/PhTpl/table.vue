@@ -100,7 +100,7 @@
 
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
-            {type: 'selection'}, //多选
+            {type: checkPermission('CountryResource_remove') ? 'selection' : '', hidden: !checkPermission('CountryResource_remove')},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 150},
             {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},

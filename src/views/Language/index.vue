@@ -38,7 +38,7 @@
             "row-class-name": this.statusClassName,
           },
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('LanguageResource_remove') ? 'selection' : '', hidden: !checkPermission('LanguageResource_remove')},
             {prop: 'name', label: '名称', 'min-width': 150, fixed: 'left', sortable: 'custom'},
             {prop: 'code', label: '代码', sortable: 'custom', 'min-width': 150},
             phColumns.status,

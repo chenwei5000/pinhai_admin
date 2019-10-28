@@ -42,7 +42,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('CartonSpecResource_remove') ? 'selection' : '', hidden: !checkPermission('CartonSpecResource_remove')},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 150, fixed: 'left'},
             {prop: 'category.name', label: '分类', 'min-width': 120},
             {prop: 'categoryId', label: '分类ID', hidden: true, 'min-width': 120},
