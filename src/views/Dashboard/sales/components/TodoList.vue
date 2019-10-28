@@ -60,6 +60,14 @@
     <ProcurementShippedOrderEditDialog ref="ProcurementShippedOrderEditDialog">
     </ProcurementShippedOrderEditDialog>
 
+    <!--采购单待发货->创建发货计划-编辑对话框-->
+    <ProcurementShippedOrderExecutingDialog ref="ProcurementShippedOrderExecutingDialog">
+    </ProcurementShippedOrderExecutingDialog>
+
+    <!--发货单待执行界面 创建发货计划-编辑对话框-->
+    <ProcurementShippedOrderExecutingEditDialog ref="ProcurementShippedOrderExecutingEditDialog">
+    </ProcurementShippedOrderExecutingEditDialog>
+
   </div>
 </template>
 
@@ -69,6 +77,8 @@
   import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
   import ProcurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
   import ProcurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
+  import ProcurementShippedOrderExecutingDialog from '@/views/ProcurementShippedOrder/components/create/dialog'
+  import ProcurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
 
   import {parseLineBreak} from '@/utils';
 
@@ -83,7 +93,9 @@
       editPlanDialog,
       ProcurementOrderpaymentDialog,
       paymentDialog,
-      ProcurementShippedOrderEditDialog
+      ProcurementShippedOrderEditDialog,
+      ProcurementShippedOrderExecutingDialog,
+      ProcurementShippedOrderExecutingEditDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -194,7 +206,15 @@
               console.log(e);
             }
           }
-
+          if (val.notice.targetType == "DATE_CONFIRM") {
+            // 弹窗
+            this.$refs.ProcurementShippedOrderExecutingDialog.openDialog(val.notice.target);
+          }
+          if (val.notice.targetType == "SHIPPED_PLAN_SUCCESS") {
+            // 弹窗
+            // this.$refs.
+            this.$refs.ProcurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
+          }
 
         }
       },
