@@ -28,7 +28,7 @@
 
     </el-col>
 
-    <el-dropdown @command="onDefaultCommand" v-if="hasExportTpl || hasExport || hasImport">
+    <el-dropdown @command="onDefaultCommand" size="small" v-if="hasExportTpl || hasExport || hasImport">
       <el-button type="primary" icon="el-icon-folder-opened" size="mini">
         导入导出<i class="el-icon-arrow-down el-icon--right"></i>
       </el-button>

@@ -3,6 +3,7 @@
   <!-- 修改弹窗 TODO: title -->
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
              fullscreen>
+
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;" v-if="primaryComplete" >
       <el-button type="primary" size="small" icon="el-icon-s-check" v-if="hasCommit" @click="onCommit">提交审核</el-button>
@@ -23,6 +24,7 @@
       <el-button type="primary" size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
+
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">

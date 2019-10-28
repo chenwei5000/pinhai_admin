@@ -5,18 +5,19 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
 
     <el-row
-      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;" v-if="primaryComplete" >
 
-      <!-- <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button> -->
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="mini" @click="onShipped">执行发货</el-button>
+      <!-- <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" size="small" @click="onWithdraw">撤回</el-button> -->
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="small" @click="onShipped">执行发货</el-button>
 
       <router-link target="_blank" :to="'/warehouseAllocation/print?id='+primary.id" v-if="hasShipped">
-        <el-button type="primary" icon="el-icon-printer" v-if="hasShipped" size="mini" @click="onPrint">打印调拨单
+        <el-button type="primary" icon="el-icon-printer" v-if="hasShipped" size="small" @click="onPrint">打印调拨单
         </el-button>
       </router-link>
-      <el-button type="primary" @click="closeDialog" size="mini">取 消</el-button>
 
-      <!-- <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button> -->
+      <el-button type="primary" @click="closeDialog" size="small">取 消</el-button>
+
+      <!-- <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" size="small" @click="onStatus">修改状态</el-button> -->
 
     </el-row>
 
@@ -46,6 +47,7 @@
 
     <!-- 弹窗框 -->
     <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"></shippedDialog>
+
     <phStatus statusName="warehouseAllocationStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
               :objStatus="primary.status"></phStatus>
 
