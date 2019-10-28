@@ -181,7 +181,7 @@
             .post("/inventoryTasks", this.newObject)
             .then(resp => {
               loading.close();
-              this.$message.info("盘点任务创建成功");
+              this.$message.success("盘点任务创建成功");
               this.$emit("modifyCBEvent");
               this.clearData();
             })

@@ -171,13 +171,9 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        console.log("传给子类的编进", row)
         this.$refs.itemDialog.openDialog(row);
       },
 
-      onSmart(row) {
-        this.tableData[0].cartonSpecCode = "aaaa1";
-      },
       /* 行删除功能 */
       onDefaultDelete(index) {
         console.log(index);
@@ -349,7 +345,7 @@
         }
 
         loading.close();
-        this.$message.info("导入成功");
+        this.$message.success("导入成功");
       }
     }
   }

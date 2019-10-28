@@ -597,7 +597,7 @@
 
         this.global.axios.post(`/supplierStocks/importStock/${this.primaryId}`, resData)
           .then(resp => {
-            this.$message.info("导入成功");
+            this.$message.success("导入成功");
             loading.close();
             this.getList();
           })

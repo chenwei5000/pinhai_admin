@@ -68,7 +68,7 @@
 
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
-          <el-tag
+          <el-tag size="mini"
             :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 2
             ? 'danger' : scope.row.status === 6
@@ -107,7 +107,7 @@
       </el-table-column>
 
       <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120" v-if="type != 'executing' "></el-table-column>
 
       <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
@@ -602,7 +602,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

@@ -117,7 +117,7 @@
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
+            this.$message.success('操作成功!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表
@@ -132,7 +132,7 @@
       onConfirm() {
         this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("确认发货成功");
+            this.$message.success("确认发货成功");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = true;
@@ -157,7 +157,7 @@
       onPrint() {
         this.global.axios.get(`/attachments/warehouseAllocations/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("打印调拨单");
+            this.$message.success("打印调拨单");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = false;

@@ -8,12 +8,13 @@
       style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
 
       <!-- <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button> -->
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" @click="onShipped">执行发货</el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="mini" @click="onShipped">执行发货</el-button>
 
-      <router-link target="_blank" :to="'/warehouseAllocation/print?id='+primary.id" v-if="hasExecute" >
-      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印调拨单</el-button>
+      <router-link target="_blank" :to="'/warehouseAllocation/print?id='+primary.id" v-if="hasShipped">
+        <el-button type="primary" icon="el-icon-printer" v-if="hasShipped" size="mini" @click="onPrint">打印调拨单
+        </el-button>
       </router-link>
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button type="primary" @click="closeDialog" size="mini">取 消</el-button>
 
       <!-- <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button> -->
 
@@ -24,17 +25,17 @@
 
       <el-collapse-item name="infoFrom">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent"  v-if="primaryComplete" :primary="primary"></infoFrom>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 国内调拨内容</div>
-        <itemTable ref="itemTable"  v-if="primaryComplete" :primary="primary"></itemTable>
+        <itemTable ref="itemTable" v-if="primaryComplete" :primary="primary"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
         <div slot="title" class="title">3. 附件</div>
-        <attachment ref="attachment"  v-if="primaryComplete" :primary="primary"></attachment>
+        <attachment ref="attachment" v-if="primaryComplete" :primary="primary"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="person" style="margin-top: 10px">
@@ -44,7 +45,7 @@
     </el-collapse>
 
     <!-- 弹窗框 -->
-    <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"> </shippedDialog>
+    <shippedDialog ref="shippedDialog" @shippedCBEvent="onShippedCBEvent"></shippedDialog>
     <phStatus statusName="warehouseAllocationStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
               :objStatus="primary.status"></phStatus>
 
@@ -83,11 +84,11 @@
           return false;
         }
       },
-      hasAdmin(){
+      hasAdmin() {
         return checkPermission('WarehouseAllocationResource_updateStatus');
       },
 
-      hasWithdraw(){
+      hasWithdraw() {
         if ([4].indexOf(this.primary.status) > -1) {
           return true;
         }
@@ -95,8 +96,8 @@
           return false;
         }
       },
-      hasShipped(){
-        if (this.primary.status == 3 || this.primary.status == 1){
+      hasShipped() {
+        if (this.primary.status == 3 || this.primary.status == 1) {
           if (!checkPermission('WarehouseAllocationResource_shippedOrder')) {
             return false;
           }
@@ -196,7 +197,7 @@
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
-                  this.$message.info(message);
+                  this.$message.success(message);
                   this.initData();
                   loading.close();
                   // 继续向父组件抛出事件 修改成功刷新列表
@@ -222,7 +223,7 @@
       onShipped() {
         this.$refs.shippedDialog.openDialog(this.primary);
       },
-      onShippedCBEvent(object){
+      onShippedCBEvent(object) {
         this.initData();
       },
 
@@ -242,7 +243,7 @@
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
+            this.$message.success('操作成功!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表

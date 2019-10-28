@@ -436,7 +436,7 @@
           });
         }
         loading.close();
-        this.$message.info("导入成功");
+        this.$message.success("导入成功");
         this.getList();
       },
 

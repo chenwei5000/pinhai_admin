@@ -101,7 +101,7 @@
           // 控制多个异步请求，保证所有请求全部完成
           Promise.all(assignArr).then(obj => {
             this.$refs.members.closeDialog();
-            this.$message.info("操作成功!");
+            this.$message.success("操作成功!");
             loading.close();
 
             // 继续向父组件抛出事件 修改成功刷新列表
@@ -127,7 +127,7 @@
                 this.global.axios.put(url)
                   .then(resp => {
                     done();
-                    this.$message.info("操作成功!");
+                    this.$message.success("操作成功!");
                     loading.close();
                     // 继续向父组件抛出事件 修改成功刷新列表
                     this.$emit("reloadCBEvent");

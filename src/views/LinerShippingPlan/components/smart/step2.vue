@@ -521,7 +521,7 @@
         let url = `/linerShippingPlanItems/importData/${this.primary.id}`
         this.global.axios.post(url, postData)
           .then(data => {
-            this.$message.info('操作成功！');
+            this.$message.success('操作成功！');
             loading.close();
             this.$emit("step2CBEvent", 3);
 
