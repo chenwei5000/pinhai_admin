@@ -68,6 +68,10 @@
     <ProcurementShippedOrderExecutingEditDialog ref="ProcurementShippedOrderExecutingEditDialog">
     </ProcurementShippedOrderExecutingEditDialog>
 
+    <!--采购入库待收货-发货计划-> 执行发货-> 消息给对应采购单创建人、指派人-编辑对话框-->
+    <ProcurementReceivedOrderEditDialog ref="ProcurementReceivedOrderEditDialog">
+    </ProcurementReceivedOrderEditDialog>
+
   </div>
 </template>
 
@@ -79,6 +83,7 @@
   import ProcurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
   import ProcurementShippedOrderExecutingDialog from '@/views/ProcurementShippedOrder/components/create/dialog'
   import ProcurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
+  import ProcurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
 
   import {parseLineBreak} from '@/utils';
 
@@ -95,7 +100,8 @@
       paymentDialog,
       ProcurementShippedOrderEditDialog,
       ProcurementShippedOrderExecutingDialog,
-      ProcurementShippedOrderExecutingEditDialog
+      ProcurementShippedOrderExecutingEditDialog,
+      ProcurementReceivedOrderEditDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -212,10 +218,12 @@
           }
           if (val.notice.targetType == "SHIPPED_PLAN_SUCCESS") {
             // 弹窗
-            // this.$refs.
             this.$refs.ProcurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
           }
-
+          if (val.notice.targetType == "SHIPPED_PLAN_IMPLEMENT") {
+            // 弹窗
+            this.$refs.ProcurementReceivedOrderEditDialog.openDialog(val.notice.target);
+          }
         }
       },
       completeTodo(val) {
