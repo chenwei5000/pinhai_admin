@@ -220,6 +220,7 @@
   import harbourModel from "@/api/harbour";
   import categoryModel from "@/api/category";
   import moment from 'moment';
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -231,7 +232,12 @@
     },
     computed: {
       hasEdit() {
-        return true;
+
+        if([8,9,10,11].indexOf(this.primary.status) > -1){
+          return false;
+        }
+
+        return checkPermission('LinerShippingPlanResource_update');
       }
     },
 

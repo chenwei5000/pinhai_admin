@@ -8,7 +8,7 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button slot="trigger" size="mini">+ 添加附件</el-button>
+      <el-button slot="trigger" size="mini" v-if="hasEdit">+ 添加附件</el-button>
 
       <el-button icon="el-icon-download" size="mini" @click="downloadAmazonFeed">下载Amazon清单</el-button>
 
@@ -34,6 +34,7 @@
 
 <script>
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -46,6 +47,9 @@
     computed: {
       uploadUrl() {
         return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
+      },
+      hasEdit() {
+        return checkPermission('AttachmentFileResource_uploadLinerShippingPlan');
       }
     },
 
@@ -128,6 +132,10 @@
       },
       // 删除
       beforeRemove(file, fileList) {
+        if (this.hasEdit == false) {
+          this.$message.error("无删除权限!");
+          return false;
+        }
         return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
@@ -138,14 +146,16 @@
             }
           }
         })
-      },
+      }
+      ,
 
       // 下载AmazonFeed
       downloadAmazonFeed() {
         let url = `${this.global.generateUrl('/linerShippingPlans/downloadAmazonFeed')}/${this.primary.id}?accessToken=${this.$store.state.user.token}`
         window.open(url, '_blank');
         return false;
-      },
+      }
+      ,
       // 下载箱贴
       downloadAmazonPackageLabels(command) {
         if (!this.primary.shipmentId) {
@@ -161,7 +171,8 @@
         }
         window.open(url, '_blank');
         return false;
-      },
+      }
+      ,
       // 下载托贴
       downloadAmazonPalletLabels(command) {
         if (!this.primary.shipmentId) {

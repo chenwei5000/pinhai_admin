@@ -10,7 +10,7 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <el-button type="primary" icon="el-icon-truck" @click="onCompleteAllocation"
+      <el-button type="primary" icon="el-icon-truck" @click="onCompleteAllocation" v-if="hasCommit"
                  size="small">
         发布计划
       </el-button>
@@ -106,6 +106,7 @@
   import logisticPayment from '../logisticPayment/table'
   import planModel from "@/api/linerShippingPlan";
   import allocationDialog from './allocationDialog';
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     props: {},
@@ -129,6 +130,13 @@
           return "编辑出口计划";
         }
       },
+      hasCommit(){
+        if([1,2,3,4].indexOf(this.primary.status) === -1){
+          return false;
+        }
+
+        return checkPermission('LinerShippingPlanResource_postPlan');
+      }
     },
     mounted() {
     },

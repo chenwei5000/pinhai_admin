@@ -179,6 +179,7 @@
   import planModel from "../../api/linerShippingPlan";
   import createEvent from "./components/createEvent";
   import editEvent from "./components/edit/dialog";
+  import {checkPermission} from "../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -235,8 +236,12 @@
 
         harbourSelectOptions: [],
         categorySelectOptions: [],
-
       };
+    },
+    computed: {
+      hasNew() {
+        return checkPermission('LinerShippingPlanItemResource_create');
+      }
     },
 
     mounted() {
@@ -405,13 +410,19 @@
       },
       // 添加
       handleDateClick(day, jsEvent) {
-        // 开启弹窗
-        this.$refs.createEvent.openDialog(day.dateStr);
+        if (this.hasNew) {
+          // 开启弹窗
+          this.$refs.createEvent.openDialog(day.dateStr);
+        }
+        else {
+          this.$message.error("您没有创建出口计划权限！");
+        }
       },
 
       moreClick(day, events, jsEvent) {
         // console.log('moreCLick', day, events, jsEvent)
       },
+
       addCalendarEvent(event, title) {
         this.calendarEvents.push({
           id: event.id,
@@ -419,17 +430,19 @@
           title: title.title,
           className: title.className
         });
-      },
+      }
+      ,
       editCalendarEvent(event, title) {
         for (let i = 0; i < this.calendarEvents.length; i++) {
           if (this.calendarEvents[i].id == event.id) {
-              this.calendarEvents[i].start = event.formatEtdTime;
-              this.calendarEvents[i].title = title.title;
-              this.calendarEvents[i].className = title.className;
-              break;
+            this.calendarEvents[i].start = event.formatEtdTime;
+            this.calendarEvents[i].title = title.title;
+            this.calendarEvents[i].className = title.className;
+            break;
           }
         }
-      },
+      }
+      ,
       search() {
         this.$refs.searchForm.validate(valid => {
           if (!valid) {
@@ -438,7 +451,8 @@
           this.searchFlg = true;
           this.loadData(true);
         })
-      },
+      }
+      ,
       /*搜索重置*/
       resetSearch() {
         this.$refs.searchForm.resetFields();
@@ -457,9 +471,11 @@
         this.$nextTick(() => {
           this.loadData()
         });
-      },
+      }
+      ,
     }
-  };
+  }
+  ;
 </script>
 
 <style lang='scss'>

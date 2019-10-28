@@ -27,6 +27,7 @@
 <script>
   import {intArrToStrArr} from '@/utils'
   import phMembers from '@/components/PhMembers'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -40,7 +41,7 @@
     },
     computed: {
       hasEdit(){
-        return true;
+        return checkPermission('LinerShippingPlanResource_assign') && checkPermission('LinerShippingPlanResource_update') ;
       }
     },
 
