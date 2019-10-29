@@ -81,7 +81,12 @@
     <!--弹窗:出口调拨-待发货-确认发货 -->
     <exportAllocationEditDialog ref="exportAllocationEditDialog">
     </exportAllocationEditDialog>
-
+    <!--弹窗:确认采购付款单窗口-->
+    <financeBillPaymentDialog ref="financeBillPaymentDialog">
+    </financeBillPaymentDialog>
+    <!--弹窗:采购单-待结算-窗口-->
+    <settlementBillViewDialog ref="settlementBillViewDialog">
+    </settlementBillViewDialog>
 
   </div>
 </template>
@@ -98,6 +103,8 @@
   import procurementReceivedOrderViewDialog from '@/views/ProcurementReceivedOrder/components/view/dialog'
   import allocationReceivedEditDialog from '@/views/AllocationReceived/components/edit/dialog'
   import exportAllocationEditDialog from '@/views/ExportAllocation/components/edit/dialog'
+  import financeBillPaymentDialog from '@/views/FinanceBill/components/paymentBill/payment/dialog'
+  import settlementBillViewDialog from '@/views/SettlementBill/components/view/dialog'
 
 
   import {parseLineBreak} from '@/utils';
@@ -119,7 +126,9 @@
       procurementReceivedOrderEditDialog,
       procurementReceivedOrderViewDialog,
       allocationReceivedEditDialog,
-      exportAllocationEditDialog
+      exportAllocationEditDialog,
+      financeBillPaymentDialog,
+      settlementBillViewDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -201,7 +210,7 @@
             this.$refs.editPlanDialog.openDialog(val.notice.target);
           }
           //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
-          if(val.notice.targetType == "PROCUREMENT_ORDER"){
+          if (val.notice.targetType == "PROCUREMENT_ORDER") {
             this.$refs.procurementShippedOrderEditDialog.openDialog(val.notice.target);
           }
 
@@ -210,23 +219,21 @@
           }
 
           if (val.notice.targetType == "FINANCE_ORDER_FLOW_OVER") {
-            let relations = ["procurementOrder","procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
-            try{
-            this.global.axios
-              .get(`/financeBills/${val.notice.target}?relations=${JSON.stringify(relations)}`)
-              .then(resp => {
-                //console.log("aaaa=>", resp.data);
-                if(resp.data && resp.data.procurementOrder){
-                  this.$refs.procurementOrderpaymentDialog.openDialog(resp.data.procurementOrder);
-                }
-                else{
-                  this.$message.error("无效付款单!");
-                }
-              })
-              .catch(err => {
-              });
-            }
-            catch (e) {
+            let relations = ["procurementOrder", "procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
+            try {
+              this.global.axios
+                .get(`/financeBills/${val.notice.target}?relations=${JSON.stringify(relations)}`)
+                .then(resp => {
+                  //console.log("aaaa=>", resp.data);
+                  if (resp.data && resp.data.procurementOrder) {
+                    this.$refs.procurementOrderpaymentDialog.openDialog(resp.data.procurementOrder);
+                  } else {
+                    this.$message.error("无效付款单!");
+                  }
+                })
+                .catch(err => {
+                });
+            } catch (e) {
               console.log(e);
             }
           }
@@ -243,17 +250,27 @@
             this.$refs.procurementReceivedOrderEditDialog.openDialog(val.notice.target);
           }
           //弹窗:采购入库 --- (完成状态)
-          if(val.notice.targetType =="PROCUREMENT_WAREHOUSE_SUCCESS"){
+          if (val.notice.targetType == "PROCUREMENT_WAREHOUSE_SUCCESS") {
             this.$refs.procurementReceivedOrderViewDialog.openDialog(val.notice.target);
           }
           //弹窗:调拨入库-确认收货
-          if(val.notice.targetType =="DOMESTIC_ALLOCATION_CONFIRM"){
+          if (val.notice.targetType == "DOMESTIC_ALLOCATION_CONFIRM") {
             this.$refs.allocationReceivedEditDialog.openDialog(val.notice.target);
           }
           //弹窗:出口调拨-待发货-确认发货
-          if(val.notice.targetType =="LINERSHIPPING_PLAN"){
+          if (val.notice.targetType == "LINERSHIPPING_PLAN") {
             this.$refs.exportAllocationEditDialog.openDialog(val.notice.target);
           }
+          //弹窗:确认采购付款单
+          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_APPLY") {
+            this.$refs.financeBillPaymentDialog.openDialog(val.notice.target);
+          }
+           //弹窗:待结算 详情
+          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE") {
+            this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
+          }
+
+          // http://localhost:9001/erp-service/settlementBills/41?relations=[%22supplier%22,%22currency%22,%22procurementOrder%22]
 
         }
       },
@@ -284,49 +301,49 @@
     z-index: 1;
     position: relative;
 
-  /deep/ .el-card__body {
-    padding: 0;
-  }
+    /deep/ .el-card__body {
+      padding: 0;
+    }
 
-  /deep/ .el-card__header {
-    border-bottom: none;
-  }
+    /deep/ .el-card__header {
+      border-bottom: none;
+    }
 
-  .todo-title {
-    padding: 0 0 0 10px;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-  }
+    .todo-title {
+      padding: 0 0 0 10px;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
 
-  .todo-centent {
-    padding: 5px 20px;
-    font-size: 14px;
+    .todo-centent {
+      padding: 5px 20px;
+      font-size: 14px;
 
-  p {
-    max-height: 410px;
-    overflow-y: hidden;
-  }
+      p {
+        max-height: 410px;
+        overflow-y: hidden;
+      }
 
-  }
+    }
 
-  .footer {
-    color: #000;
-    position: relative;
-    padding: 10px 15px;
-    font-size: 14px;
-    height: 40px;
-    text-align: center;
-    min-width: 230px;
-    max-width: 550px;
-    margin: 0 auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 300;
-    background: #fff;
-    z-index: 1;
-    position: relative;
-  }
+    .footer {
+      color: #000;
+      position: relative;
+      padding: 10px 15px;
+      font-size: 14px;
+      height: 40px;
+      text-align: center;
+      min-width: 230px;
+      max-width: 550px;
+      margin: 0 auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: 300;
+      background: #fff;
+      z-index: 1;
+      position: relative;
+    }
 
   }
 </style>
