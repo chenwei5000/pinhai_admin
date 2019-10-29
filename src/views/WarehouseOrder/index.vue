@@ -46,23 +46,18 @@
             {prop: 'allocationCode', label: '调拨单', 'min-width': 130},
             {prop: 'typeName', label: '类型', 'min-width': 100},
             /*{prop: 'storageLocation.code', label: '存放货位', 'min-width': 100},*/
-            {prop: 'product.skuCode', label: 'SKU编码', 'min-width': 100},
-            {prop: 'product.name', label: '产品名', 'min-width': 120},
-            {prop: 'numberOfCarton', label: '装箱数', 'min-width': 100},
-            {prop: 'cartonQty', label: '箱数', 'min-width': 100},
-            {prop: 'qty', label: '件数', 'min-width': 100},
-            {prop: 'usedQty', label: '消耗件数', 'min-width': 100},
+            {prop: 'product.skuCode', label: 'SKU编码', 'min-width': 150},
+            {prop: 'product.name', label: '产品名', 'min-width': 150},
+            {prop: 'numberOfCarton', label: '装箱数', 'min-width': 90},
+            {prop: 'cartonQty', label: '箱数', 'min-width': 90},
+            {prop: 'qty', label: '件数', 'min-width': 90},
+            {prop: 'usedQty', label: '消耗件数', 'min-width': 90},
 
-            {prop: 'currency.name', label: '结算货币', 'min-width': 100, hidden: !checkPermission('PurchasePriceVisible'),},
-          /*  {prop: 'price', label: '采购价', 'min-width': 100},*/
+            {prop: 'currency.name', label: '结算货币', 'min-width': 100, hidden: !checkPermission('PurchasePriceVisible')},
             phColumns.price,
             phColumns.amount,
-            /*{prop: 'amount', label: '总金额', 'min-width': 100},*/
-            // {prop: 'createTime', label: '创建时间', 'min-width': 100},
             phColumns.jobStatus,
             phColumns.createTime
-            // phColumns.status,
-            // phColumns.lastModified
           ],
           // 搜索
           searchForm: [
