@@ -45,7 +45,7 @@
 
           // 表格列定义
           columns: [
-            {type: checkPermission('SupplierResource_remove') ? 'selection' : '', hidden: !checkPermission('SupplierResource_remove')},
+            {width: 30, type: checkPermission('SupplierResource_remove') ? 'selection' : '', hidden: !checkPermission('SupplierResource_remove')},
             {prop: 'name', label: '简称', sortable: 'custom', 'min-width': 150, fixed: 'left'},
             phColumns.id,
             {prop: 'code', label: '编码', width: 100},

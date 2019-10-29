@@ -84,7 +84,7 @@
           },
           //列表
           columns: [
-            {type: checkPermission('SafetyStockResource_remove') ? 'selection' : '', hidden: !checkPermission('SafetyStockResource_remove')},
+            {width: 30, type: checkPermission('SafetyStockResource_remove') ? 'selection' : '', hidden: !checkPermission('SafetyStockResource_remove')},
             phColumns.id,
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 120},
             {prop: 'productName', label: '材料名', 'min-width': 120},

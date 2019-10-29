@@ -4,7 +4,7 @@ import {checkPermission} from "../utils/permission";
 
 const phColumns = {
 
-  id: {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, width: 80},
+  id: {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, width: 80, align: "center"},
 
   creator: {prop: 'creator.name', label: '创建人', width: 80},
 

@@ -104,7 +104,7 @@ import warehouseModel from '../../api/warehouse';
     mounted(){
       this.$nextTick(()=>{
         this.tableConfig.columns = [
-          {type: checkPermission('MaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('MaterialResource_remove')},
+          {width: 30, type: checkPermission('MaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('MaterialResource_remove')},
           phColumns.id,
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200},
             {prop: 'productName', label: '材料名', 'min-width': 180},

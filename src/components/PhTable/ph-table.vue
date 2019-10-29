@@ -96,7 +96,7 @@
 
         <!--有多选-->
         <template v-if="hasSelect">
-          <el-table-column key="selection-key" v-bind="columns[0]">
+          <el-table-column key="selection-key" v-bind="columns[0]" align="center">
           </el-table-column>
 
           <el-table-column
@@ -159,6 +159,7 @@
           :key="col.prop"
           v-bind="col"
           v-if="!col.hidden"
+          :align="col.align ? col.align : 'center'"
         >
 
 
@@ -632,7 +633,7 @@
       operationAttrs: {
         type: Object,
         default() {
-          return {width: '100', fixed: 'right'}
+          return {width: '80', fixed: 'right'}
         }
       },
       /**

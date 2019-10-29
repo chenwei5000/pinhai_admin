@@ -45,7 +45,7 @@
           hasImport: true,
 
           columns: [
-            {type: checkPermission('MenuResource_remove') ? 'selection' : '', hidden: !checkPermission('MenuResource_remove')},
+            {type: checkPermission('MenuResource_remove') ? 'selection' : '', hidden: !checkPermission('MenuResource_remove') , width: 30},
 
             {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
             {

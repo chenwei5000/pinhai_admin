@@ -232,7 +232,9 @@ aside {
     }
     /deep/ .cell {
       line-height: 100% !important;
-      padding: 2px !important;
+      padding: 3px 2px !important;
+      min-height: 24px;
+
     }
 
     /deep/ .ph-cell-header {

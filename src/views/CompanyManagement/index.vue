@@ -38,7 +38,7 @@
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: checkPermission('CompanyManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('CompanyManagementResource_remove')},
+            {width: 30, type: checkPermission('CompanyManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('CompanyManagementResource_remove')},
             {
               prop: 'type', label: '类型',"min-width": 90,
               formatter: row => (row.type == 1 ? '本公司' :

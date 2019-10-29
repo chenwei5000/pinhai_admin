@@ -13,6 +13,11 @@ const enumModel = {
 // 获取枚举 id:name格式下拉框选项
   getSelectOptions(type) {
     let _options = [];
+    if(type == 'Status'){
+      _options.push({label: '开启', value: '1'});
+      _options.push({label: '关闭', value: '0'});
+      return _options;
+    }
     const _loadData = async function () {
       let list = store.getters.enums;
       if (list == null) {

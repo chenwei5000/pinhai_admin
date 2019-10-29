@@ -45,7 +45,7 @@
 
 
           columns: [
-            {type: checkPermission('ActionResource_remove') ? 'selection' : '', hidden: !checkPermission('ActionResource_remove')},
+            {width: 30,type: checkPermission('ActionResource_remove') ? 'selection' : '', hidden: !checkPermission('ActionResource_remove')},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, 'min-width': '300', fixed: 'left'},
             {prop: 'resource', label: '资源标识', sortable: 'custom', 'min-width': 120},
             {prop: 'method', label: '行为动作', 'min-width': 100},

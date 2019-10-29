@@ -39,7 +39,7 @@
             "default-sort": {prop: 'releaseTime', order: 'descending'}, //设置默认排序
           },
           columns: [
-            {type: checkPermission('ReleaseLogResource_remove') ? 'selection' : '', hidden: !checkPermission('ReleaseLogResource_remove')},
+            {width: 30,type: checkPermission('ReleaseLogResource_remove') ? 'selection' : '', hidden: !checkPermission('ReleaseLogResource_remove')},
             {
               prop: 'releaseTime',
               label: '发版日期',

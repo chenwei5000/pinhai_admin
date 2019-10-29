@@ -43,7 +43,7 @@
 
 
           columns: [
-            {type: checkPermission('PositionResource_remove') ? 'selection' : '', hidden: !checkPermission('PositionResource_remove')},
+            {width: 30,type: checkPermission('PositionResource_remove') ? 'selection' : '', hidden: !checkPermission('PositionResource_remove')},
             {prop: 'name', label: '职位名称', fixed: 'left', "min-width": 100},
             {prop: 'level', label: '岗位级别', "min-width": 100},
             phColumns.creator,

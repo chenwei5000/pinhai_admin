@@ -40,7 +40,7 @@
             "row-class-name": this.statusClassName,
           },
           columns: [
-            {type: checkPermission('WarehouseResource_remove') ? 'selection' : '', hidden: !checkPermission('WarehouseResource_remove')},
+            {width: 30,type: checkPermission('WarehouseResource_remove') ? 'selection' : '', hidden: !checkPermission('WarehouseResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '编码', 'min-width': 150},
             {prop: 'address', label: '地址', 'min-width': 150},

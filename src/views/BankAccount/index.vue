@@ -41,7 +41,7 @@
           },
           //表格内容显示
           columns: [
-            {type: checkPermission('BankAccountResource_remove') ? 'selection' : '', hidden: !checkPermission('BankAccountResource_remove')},
+            {width: 30,type: checkPermission('BankAccountResource_remove') ? 'selection' : '', hidden: !checkPermission('BankAccountResource_remove')},
             {prop: 'accountName', label: '户名', "min-width": 200},
             {prop: 'accountCardHide', label: '银行卡号', "min-width": 160},
             {prop: 'openingBank', label: '开户行', "min-width": 200},
