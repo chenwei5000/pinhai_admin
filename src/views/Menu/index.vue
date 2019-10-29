@@ -45,7 +45,8 @@
           hasImport: true,
 
           columns: [
-            {type: 'selection'},
+            {type: checkPermission('MenuResource_remove') ? 'selection' : '', hidden: !checkPermission('MenuResource_remove') , width: 30},
+
             {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
             {
               prop: 'level', label: '菜单级别', sortable: 'custom', 'min-width': 120,

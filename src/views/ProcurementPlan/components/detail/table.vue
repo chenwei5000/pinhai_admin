@@ -73,6 +73,7 @@
       <el-table-column
         v-if="hasDelete"
         type="selection"
+        align="center"
         width="30">
       </el-table-column>
 
@@ -165,13 +166,13 @@
       <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
-      <el-table-column prop="saleWeek" sortable label="可售周数" width="110"
+      <el-table-column prop="saleWeek" sortable label="可售周数" width="90"
                        fixed="right"></el-table-column>
 
-      <el-table-column prop="cartonQty" sortable label="采购箱数" width="110"
+      <el-table-column prop="cartonQty" sortable label="采购箱数" width="90"
                        fixed="right"></el-table-column>
 
-      <el-table-column prop="amount" sortable label="金额" width="100"
+      <el-table-column prop="amount" sortable label="金额" width="90"
                        fixed="right">
         <template slot-scope="scope">
           {{scope.row.amount, scope.row.product.currency ? scope.row.product.currency.symbolLeft : '' | currency}}
@@ -760,7 +761,7 @@
         }
 
         loading.close();
-        this.$message.info("导入成功");
+        this.$message.success("导入成功");
         this.getList();
       }
     }

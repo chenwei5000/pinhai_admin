@@ -349,7 +349,7 @@
 
           this.global.axios[method](url, _object)
             .then(resp => {
-              this.$message.info("修改成功");
+              this.$message.success("修改成功");
               this.loading = false;
               this.confirmLoading = false;
               this.dialogVisible = false;

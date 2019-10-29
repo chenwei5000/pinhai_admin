@@ -61,7 +61,7 @@
 
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
-            {type: 'selection'}, //多选
+            {width: 30,type: checkPermission('MaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('MaterialResource_remove')},
             {prop: 'skuCode', label: 'SKU', 'min-width': 200, fixed: 'left'},
             {prop: 'categoryId', label: '分类ID', sortable: 'custom', hidden: true},
             {prop: 'category.name', label: '分类名称', width: 80},

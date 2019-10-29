@@ -38,7 +38,7 @@
             "row-class-name": this.statusClassName,
           },
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('HarbourResource_remove') ? 'selection' : '', hidden: !checkPermission('HarbourResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'location', label: '地址', sortable: 'custom', 'min-width': 100},
             {prop: 'creator.name', label: '创建人', width: 100},

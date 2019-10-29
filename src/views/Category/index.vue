@@ -44,7 +44,7 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CategoryResource_remove') ? 'selection' : '', hidden: !checkPermission('CategoryResource_remove')},
             {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 100},
             {prop: 'user.name', label: '采购负责人', width: 100},

@@ -5,26 +5,26 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-    <el-button type="primary" icon="el-icon-s-check" v-if="hasRelease" @click="onCommit">发布</el-button>
+    <el-button type="primary" size="small" icon="el-icon-s-check" v-if="hasRelease" @click="onCommit">发布</el-button>
       <!--el-button type="success" icon="el-icon-success" v-if="primary.status == 2" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 2" @click="onRefuse">不同意</el-button-->
 
-      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
+      <el-button type="warning" size="small" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
 
       <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认完成日期</el-button -->
 
-      <el-button type="primary" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
-      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印合同</el-button>
+      <el-button type="primary" size="small" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
+      <el-button type="primary" size="small" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印合同</el-button>
 
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
+      <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
-      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
 
-      <el-button type="primary" icon="el-icon-user-solid" v-if="false" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
+      <el-button type="primary" size="small" icon="el-icon-user-solid" v-if="false" @click="onAssign">指派处理人</el-button>
+      <el-button type="primary" size="small" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
+      <el-button type="primary" size="small" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
 
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
 
@@ -270,7 +270,7 @@
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
+            this.$message.success('操作成功!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表
@@ -298,7 +298,7 @@
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
-                  this.$message.info(message);
+                  this.$message.success(message);
                   loading.close();
                   this.$refs.auditing.closeDialog();
                   this.initData();

@@ -92,7 +92,7 @@
               this.global.axios.put(url, note)
                 .then(resp => {
                   done();
-                  this.$message.info("提交成功,请耐心等待上级处理! 您还可以继续创建新的采购计划! ");
+                  this.$message.success("提交成功,请耐心等待上级处理! 您还可以继续创建新的采购计划! ");
                   this.$refs.auditing.closeDialog();
                   loading.close();
                   // 继续向父组件抛出事件 修改成功刷新列表

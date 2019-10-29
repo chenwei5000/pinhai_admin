@@ -257,7 +257,7 @@
               .post(url, this.user)
               .then(data => {
                 if (data.status == 200) {
-                  this.$message.info("注册成功，待管理员审核");
+                  this.$message.success("注册成功，待管理员审核");
                   this.$router.push({
                     path: "/login"
                   });
@@ -265,7 +265,7 @@
                   return;
                 }
                 this.loading = false;
-                this.$message.info("注册失败");
+                this.$message.error("注册失败");
               })
               .catch(_ => {
                 this.loading = false;

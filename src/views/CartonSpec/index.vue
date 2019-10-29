@@ -42,15 +42,15 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CartonSpecResource_remove') ? 'selection' : '', hidden: !checkPermission('CartonSpecResource_remove'), width: 30, align: "center"},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 150, fixed: 'left'},
-            {prop: 'category.name', label: '分类', 'min-width': 120},
+            {prop: 'category.name', label: '分类', 'min-width': 100},
             {prop: 'categoryId', label: '分类ID', hidden: true, 'min-width': 120},
-            {prop: 'length', label: '长(Cm)', width: 80},
-            {prop: 'width', label: '宽(Cm)', width: 80},
-            {prop: 'height', label: '高(Cm)', width: 80},
-            {prop: 'volume', label: '体积(m³)', 'min-width': 100},
-            {prop: 'grossWeight', label: '皮重(Kg)', width: 80},
+            {prop: 'length', label: '长(Cm)', width: 80, align: "center"},
+            {prop: 'width', label: '宽(Cm)', width: 80, align: "center"},
+            {prop: 'height', label: '高(Cm)', width: 80, align: "center"},
+            {prop: 'volume', label: '体积(m³)', 'min-width': 100, align: "center"},
+            {prop: 'grossWeight', label: '皮重(Kg)', width: 80, align: "center"},
             {
               prop: 'pallet',
               label: '是否打托',
@@ -66,7 +66,7 @@
                 return _label;
               }
             },
-            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
+            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120, align: "center"},
             phColumns.creator,
             phColumns.status,
             phColumns.id,

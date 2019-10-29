@@ -37,7 +37,7 @@
     </el-collapse>
 
     <el-row type="flex" justify="center">
-      <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onPayment">
+      <el-button type="primary" style="margin-top: 15px"  size="mini" :loading="confirmLoading" @click="onPayment">
         申请付款
       </el-button>
     </el-row>

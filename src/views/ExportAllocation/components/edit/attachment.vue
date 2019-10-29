@@ -92,7 +92,7 @@
           this.global.axios
             .delete(url)
             .then(resp => {
-              this.$message.info("附件删除成功!");
+              this.$message.success("附件删除成功!");
             })
             .catch(err => {
             });

@@ -7,24 +7,24 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px"
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 150px"
                   placeholder="请输入"></el-input>
       </el-form-item>
 
       <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
+        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 150px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
-      <el-form-item label="名称">
+      <!--el-form-item label="名称">
         <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 110px"
                   placeholder="请输入名称"></el-input>
-      </el-form-item>
+      </el-form-item-->
 
       <el-form-item label="发货仓库">
         <el-select filterable v-model="searchParam.fromWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 150px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -36,7 +36,7 @@
       <el-form-item label="收货仓库">
         <el-select filterable v-model="searchParam.toWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 150px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -70,14 +70,14 @@
     >
       <el-table-column prop="code" label="编码" width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="80">
         <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 0
+          <el-tag size="mini"
+                  :type="scope.row.status === 0
             ? 'warning' : scope.row.status === 3
             ? 'primary' : scope.row.status === 6
             ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
+                  disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
@@ -85,7 +85,7 @@
       <el-table-column prop="fromWarehouse.name" label="发货仓库" min-width="100"></el-table-column>
       <el-table-column prop="toWarehouse.name" label="收货仓库" min-width="100"></el-table-column>
 
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="120">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
                       v-if="scope.row.trackNumber">
@@ -107,10 +107,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="formatExpectTime" label="预计到货日期" width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" width="120"></el-table-column>
+      <el-table-column prop="formatExpectTime" label="预计到货日期" width="100"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" width="100"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="remark" label="备注" width="100">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                       v-if="scope.row.remark && scope.row.remark.length > 10">
@@ -123,10 +123,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
+      <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="40" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-receiving" circle
@@ -164,7 +164,7 @@
     </editDialog>
 
     <!--查看对话框-->
-    <viewDialog ref="viewDialog" >
+    <viewDialog ref="viewDialog">
     </viewDialog>
   </div>
 
@@ -178,6 +178,7 @@
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import warehouseModel from "../../../api/warehouse";
+  import {checkPermission} from "../../../utils/permission";
 
   const valueSeparator = '~';
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g');
@@ -208,18 +209,17 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
-      hasEdit() {
-        if (this.type === 'shipped') {
-          return true;
-        }
-        return false;
-      },
+
       hasView() {
-        if (this.type === 'complete' || this.type === 'all') {
-          return true;
-        }
-        return false;
+        return !this.hasEdit;
       },
+      hasEdit() {
+        if (this.type != 'shipped') {
+          return false;
+        }
+        return checkPermission('WarehouseAllocationResource_update');
+      },
+
       hasOperation() {
         return this.hasView || this.hasEdit
       }
@@ -243,6 +243,11 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/allocationReceiveds', // 资源URL
         countUrl: '/allocationReceiveds/count', // 资源URL
+        filters: {
+          'field': 'needDeclare',
+          op: 'eq',
+          data: 0
+        },
         relations: ["fromWarehouse", "toWarehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
@@ -250,7 +255,6 @@
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
-
         warehouseSelectOptions: [],
         statusSelectOptions: [],
 
@@ -266,9 +270,6 @@
         //弹窗
         dialogTitle: '新增',
         dialogVisible: false,
-        isNew: true,
-        isEdit: false,
-        isView: false,
 
         // 记录修改的那一行
         row: {},
@@ -344,7 +345,6 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -402,30 +402,12 @@
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
-        // 代码示例
-        // if (row.exemple === 0) {
-        //   return "0-普通"
-        // }
-        // else if (row.exemple === 1) {
-        //   return "1-热销"
-        //
-        // }
-        // else if (row.exemple === 2) {
-        //   return "2-爆款"
-        // }
-        // else {
-        //   return row.exemple;
-        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
-        // 代码示例 return 为css定义的样式 -row 结尾
-        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
-        //   return 'warning-row';
-        // }
         return '';
       },
 
@@ -492,6 +474,7 @@
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         });
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
+        filters.push(JSON.parse(JSON.stringify(this.filters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});

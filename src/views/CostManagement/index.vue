@@ -37,7 +37,7 @@
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CostManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('CostManagementResource_remove')},
             {prop: 'costType', label: '费用类型', fixed: 'left',"min-width": 100},
             {prop: 'costName', label: '费用名称', hidden: 'false', "min-width": 100},
             phColumns.status,

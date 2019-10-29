@@ -35,8 +35,9 @@
 
               <el-input-number v-model="detailItem.cartonQty"
                                :precision="0"
-                               :min="1"
+                               :min="0"
                                :step="1"
+                               style="width: 160px"
                                @change="onQtyChange"
                                :max="100000" label="采购箱数">
 
@@ -74,6 +75,7 @@
             <el-form-item label="装箱数" prop="numberOfCarton">
 
               <el-input v-model.trim="detailItem.numberOfCarton"
+                        @change="onQtyChange"
                         style="width: 160px" placeholder="请填写装箱数" clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="一箱有多少个产品.不输入使用产品上默认的装箱数" placement="right">
@@ -104,11 +106,7 @@
 
           <el-col :md="14">
             <el-form-item label="可售周数" prop="saleWeek">
-              <el-input v-model.trim="detailItem.saleWeek"
-                        style="width: 160px" placeholder="可售周数，自动计算" clearable></el-input>
-              <el-tooltip class="item" effect="light" content="采购的产品可以销售的周数" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
+              <span style="font-size:12px">{{detailItem.saleWeek}}周</span>
             </el-form-item>
           </el-col>
 
@@ -223,6 +221,12 @@
           </el-col>
         </el-row>
       </el-form>
+      <hr/>
+
+      <div style="text-align: right">
+        共采购: {{detailItem.cartonQty}}箱，{{detailItem.qty}}件
+      </div>
+
     </div>
 
     <div slot="footer" class="dialog-footer">
@@ -367,7 +371,8 @@
             priority: '2',
             safetyStockWeek: 10,
             numberOfCarton: null,
-            cartonQty: 1,
+            cartonQty: 0,
+            qty: 0,
             procurementPlanId: this.primary.id
           }
 
@@ -403,6 +408,8 @@
           if (this.detailItem.sevenSalesCount) {
             this.detailItem.saleWeek = (total / this.detailItem.sevenSalesCount).toFixed(1);
           }
+
+          this.detailItem.qty = this.detailItem.cartonQty * numberOfCarton;
         }
       },
       onLoadProduct() {
@@ -432,7 +439,7 @@
                   let data = res || [];
                   data.forEach(row => {
                     if (row.skuCode == this.detailItem.skuCode) {
-                      this.detailItem.cartonQty = row.replenishmentCartonPlanQty;
+                      //this.detailItem.cartonQty = row.replenishmentCartonPlanQty;
                       this.detailItem.safetyStockWeek = row.safetyWeek;
                       this.detailItem.saleWeek = row.saleWeek;
                       this.detailItem.sevenSalesCount = row.sevenAmendQty;
@@ -477,7 +484,7 @@
 
           this.global.axios[method](url, _object)
             .then(resp => {
-              this.$message.info("修改成功");
+              this.$message.success("修改成功");
               this.loading = false;
               this.confirmLoading = false;
               this.dialogVisible = false;

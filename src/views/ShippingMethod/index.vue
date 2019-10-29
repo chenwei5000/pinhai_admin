@@ -38,7 +38,7 @@
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('ShippingMethodResource_remove') ? 'selection' : '', hidden: !checkPermission('ShippingMethodResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 100},
             phColumns.creator,

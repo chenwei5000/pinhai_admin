@@ -125,10 +125,10 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" :loading="confirmLoading" @click="onCreateObject">
+      <el-button type="primary" :loading="confirmLoading"  size="mini" @click="onCreateObject">
         生成采购计划
       </el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button @click="closeDialog"  size="mini">取 消</el-button>
     </div>
 
 
@@ -387,6 +387,7 @@
         let _object = JSON.parse(JSON.stringify(this.object));
         _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
         _object.groupName = _object.groupName ? _object.groupName.join(",") : "";
+        console.log(this.object);
 
         let items = [];
         this.selected.forEach(obj => {

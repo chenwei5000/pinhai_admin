@@ -65,6 +65,7 @@
 
     <!--新增、编辑-->
     <tableToolBar
+      ref="tableToolBar"
       v-bind="toolbarConfig"
       @onToolBarAdd="onToolBarAdd"
       @onToolBarEdit="onToolBarEdit"
@@ -95,7 +96,7 @@
 
         <!--有多选-->
         <template v-if="hasSelect">
-          <el-table-column key="selection-key" v-bind="columns[0]">
+          <el-table-column key="selection-key" v-bind="columns[0]" align="center">
           </el-table-column>
 
           <el-table-column
@@ -158,9 +159,8 @@
           :key="col.prop"
           v-bind="col"
           v-if="!col.hidden"
+          :align="col.align ? col.align : 'center'"
         >
-
-
         </el-table-column>
 
       </template>
@@ -179,17 +179,6 @@
           <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
                      @click="onDefaultView(scope.row)">
           </el-button>
-          <self-loading-button v-for="(btn, i) in extraButtons"
-                               v-if="'show' in btn ? btn.show(scope.row) : true"
-                               v-bind="btn"
-                               :click="btn.atClick"
-                               :params="scope.row"
-                               :callback="getList"
-                               :key="i"
-                               size="mini"
-          >
-            {{btn.text}}
-          </self-loading-button>
 
           <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
@@ -642,7 +631,7 @@
       operationAttrs: {
         type: Object,
         default() {
-          return {width: '100', fixed: 'right'}
+          return {width: '80', fixed: 'right'}
         }
       },
       /**
@@ -883,7 +872,9 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+
+          tableHeight = tableHeight - (this.$refs.tableToolBar && this.$refs.tableToolBar.$el.offsetHeight ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
+          //tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -1498,7 +1489,7 @@
 
       uploadPromise(res) {
         let url = this.url;
-        if(this.importMethod != "post"){
+        if (this.importMethod != "post") {
           url = `${url}/${res.id}`;
         }
         return this.global.axios[this.importMethod](url, res)
@@ -1577,7 +1568,7 @@
         }
 
         loading.close();
-        this.$message.info("导入成功");
+        this.$message.success("导入成功");
         this.getList();
       }
     }

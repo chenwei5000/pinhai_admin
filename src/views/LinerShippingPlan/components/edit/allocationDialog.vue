@@ -193,7 +193,7 @@
 
           this.global.axios.put(`/linerShippingPlans/postPlan/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("执行调拨成功!");
+              this.$message.success("执行调拨成功!");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

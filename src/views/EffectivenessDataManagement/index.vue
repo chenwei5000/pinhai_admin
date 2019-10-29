@@ -45,7 +45,7 @@
           hasNew: false,
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('EffectivenessDataManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('EffectivenessDataManagementResource_remove')},
             {prop: 'statDateFormat', label: 'Stat Date', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'category.name', label: '分类', sortable: 'custom', "min-width": 120},
             {prop: 'session', label: 'Sessions', "min-width": 120},

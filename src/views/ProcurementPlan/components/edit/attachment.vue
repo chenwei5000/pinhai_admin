@@ -33,7 +33,7 @@
         if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
-        if(!checkPermission('ProcurementPlanResource_update')){
+        if(!checkPermission('AttachmentFileResource_uploadProcurementPlan')){
           return false;
         }
         return true;
@@ -104,7 +104,7 @@
           this.global.axios
             .delete(url)
             .then(resp => {
-              this.$message.info("附件删除成功!");
+              this.$message.success("附件删除成功!");
             })
             .catch(err => {
             });

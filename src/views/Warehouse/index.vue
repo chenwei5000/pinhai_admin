@@ -33,16 +33,16 @@
           hasExportTpl: checkPermission('WarehouseResource_export'),
           hasExport: checkPermission('WarehouseResource_export'),
           hasImport: checkPermission('WarehouseResource_import'),
-
+          exportFileName: '仓库列表',
           url: '/warehouses',
           relations: ["supplier", "creator", "leader"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
           },
           columns: [
-            {type: 'selection'},
-            {prop: 'code', label: '编码', 'min-width': 200},
-            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 200, fixed: 'left'},
+            {width: 30,type: checkPermission('WarehouseResource_remove') ? 'selection' : '', hidden: !checkPermission('WarehouseResource_remove')},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
+            {prop: 'code', label: '编码', 'min-width': 150},
             {prop: 'address', label: '地址', 'min-width': 150},
             {prop: 'linkman', label: '联系人', width: 100},
             {prop: 'tel', label: '联系电话', width: 125},

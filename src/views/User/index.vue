@@ -59,7 +59,7 @@
           operationAttrs: {width: '130', fixed: 'right'},
 
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('UserResource_remove') ? 'selection' : '', hidden: !checkPermission('UserResource_remove')},
             phColumns.id,
             {prop: 'account', label: '账号', "min-width": 200},
             {prop: 'name', label: '姓名', sortable: 'custom', "min-width": 100},

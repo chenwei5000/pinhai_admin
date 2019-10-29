@@ -46,7 +46,7 @@
 
 
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('DepartmentResource_remove') ? 'selection' : '', hidden: !checkPermission('DepartmentResource_remove')},
             {prop: 'allName', label: '部门', fixed: 'left', "min-width": 300},
             {prop: 'name', label: '名称', "min-width": 100},
             {prop: 'user.name', label: '负责人', "min-width": 100},

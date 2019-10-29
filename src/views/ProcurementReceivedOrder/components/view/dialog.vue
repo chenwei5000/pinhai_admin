@@ -1,7 +1,12 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible"  @close='closeDialog' fullscreen>
+
+    <el-row
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
+      <el-button @click="closeDialog" size="small" >取 消</el-button>
+    </el-row>
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
@@ -86,63 +91,17 @@
         this.activeNames = ['infoFrom', 'itemTable', 'attachment'];
       },
 
+      closeDialog() {
+        this.primaryId = null;
+        this.primary = {};
+        this.activeNames = [];
+        this.dialogVisible = false;
+      },
+
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
-      },
-
-
-      //确认收货
-      onConfirm(){
-        this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
-          .then(resp => {
-            this.$message.info("确认收货成功");
-            this.loading = false;
-            this.confirmLoading = false;
-            this.dialogVisible = true;
-            this.$refs.itemTable.getList();
-            this.$emit("modifyCBEvent", resp.data);
-
-          })
-          .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
-          })
-      },
-
-      //收货完成
-      onComplete(){
-        this.global.axios.put(`/procurementReceivedOrders/receivedTask/${this.primaryId}`)
-          .then(resp => {
-            this.$message.info("收货完成");
-            this.loading = false;
-            this.confirmLoading = false;
-            this.dialogVisible = false;
-            this.$emit("modifyCBEvent", resp.data);
-
-          })
-          .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
-          })
-      },
-
-      //打印收货单
-      onPrint(){
-        this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
-          .then(resp => {
-            this.$message.info("打印收货单");
-            this.loading = false;
-            this.confirmLoading = false;
-            this.dialogVisible = false;
-            this.$emit("modifyCBEvent",  resp.data);
-
-          })
-          .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
-          })
       },
     }
   }

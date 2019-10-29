@@ -40,7 +40,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CountryResource_remove') ? 'selection' : '', hidden: !checkPermission('CountryResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'enName', label: '英文名', sortable: 'custom', "min-width": 120},
             {prop: 'isoCode2', label: '2位iso编码', "min-width": 120},

@@ -30,16 +30,16 @@
         <el-table-column prop="product.skuCode" label="SKU" width="200">
         </el-table-column>
 
-        <el-table-column prop="product.name" label="名称" width="166">
+        <el-table-column prop="product.name" label="名称" width="256">
         </el-table-column>
 
-        <el-table-column prop="product.name" label="规格型号" width="150">
+        <el-table-column prop="product.model" label="规格型号" width="150">
           <template slot-scope="scope">
             {{scope.row.product.model}} , {{scope.row.product.color}}
           </template>
         </el-table-column>
 
-        <el-table-column prop="cartonSpecCode" label="箱规" width="90">
+        <el-table-column prop="cartonSpecCode" label="箱规" width="80" v-if="false">
           <template slot-scope="scope">
             {{scope.row.cartonSpec? scope.row.cartonSpec.length : ""}}
             *{{scope.row.cartonSpec? scope.row.cartonSpec.width : "" }}

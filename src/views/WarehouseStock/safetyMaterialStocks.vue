@@ -104,8 +104,8 @@ import warehouseModel from '../../api/warehouse';
     mounted(){
       this.$nextTick(()=>{
         this.tableConfig.columns = [
-            {type: 'selection'},
-            phColumns.id,
+          {width: 30, type: checkPermission('MaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('MaterialResource_remove')},
+          phColumns.id,
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200},
             {prop: 'productName', label: '材料名', 'min-width': 180},
             {prop: 'categoryName', label: '分类', 'min-width': 100},
@@ -115,7 +115,7 @@ import warehouseModel from '../../api/warehouse';
             {prop: 'safetyStocks.stockGapQty3', sortable: true, label: 'P2缺口', 'min-width': 100},
             {prop: 'safetyStocks.stockGapQty4', sortable: true, label: 'P3缺口', 'min-width': 100},
             {prop: 'safetyStocks.stockGapQty5', sortable: true, label: 'P4缺口', 'min-width': 100},
-            
+
             {prop: 'safetyStocks.stockGapQty6', label: 'P5缺口', 'min-width': 200},
             {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 100},
             {prop: 'domesticStockQty', label: '国内成品库存(含在途)', 'min-width': 100},

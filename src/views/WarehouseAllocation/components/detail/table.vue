@@ -6,7 +6,7 @@
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
       <el-form-item label="SKU">
-        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" size="mini" clearable></el-input>
       </el-form-item>
 
       <el-form-item>
@@ -17,9 +17,13 @@
 
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
-      v-bind="toolbarConfig"
+      :hasExportTpl="hasExportTpl"
+      :hasExport="hasExport"
+      :hasImport="hasImport"
+      :hasAdd="hasAdd"
+      :hasDelete="hasDelete"
+
       @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
       @onToolBarDelete="onToolBarDelete"
       @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
@@ -46,24 +50,20 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="sortNum" label="序号" width="50"></el-table-column>
 
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 30">
-            <div v-html="scope.row.product.skuCode"></div>
-            <span slot="reference">{{
-              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
-        </template>
+      <el-table-column
+        v-if="hasDelete"
+        type="selection"
+        width="30" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+
+      <el-table-column prop="sortNum" label="序号" width="50" align="center"></el-table-column>
+
+      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
+      </el-table-column>
+
+      <el-table-column prop="product.imgUrl" label="图片" width="40">
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -75,26 +75,14 @@
       </el-table-column>
 
       <el-table-column prop="product.name" label="名称" width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 17">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-            </span>
-        </template>
       </el-table-column>
 
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
 
-      <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="110"></el-table-column>
-      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110"></el-table-column>
-      <el-table-column prop="stock" label="库存" min-width="110" v-if="hasStock"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="80" align="center"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="90" align="center"></el-table-column>
+      <el-table-column prop="shippedQty" sortable label="调拨件数" min-width="90" align="center"></el-table-column>
+      <el-table-column prop="stock" label="当前库存" min-width="90" align="center"></el-table-column>
 
       <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
@@ -112,7 +100,7 @@
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
-                       width="120" fixed="right">
+                       width="80" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -141,6 +129,8 @@
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './dialog'
+  import {checkPermission} from "../../../../utils/permission";
+  import {parseTime} from "../../../../utils";
 
   export default {
     components: {
@@ -160,11 +150,64 @@
       shippedQtyTitle() {
         return `调拨${this.unit == '箱' ? '件' : this.unit}数`;
       },
-      hasStock(){
-        if (this.primary.status == 1 || this.primary.status == 3){
+      hasStock() {
+        if (this.primary.status == 1 || this.primary.status == 3) {
           return true;
         }
         return false;
+      },
+      hasAdd() {
+        if ([1, 3].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        if (!checkPermission('WarehouseAllocationItemResource_create')) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      },
+      hasEdit() {
+        if ([1, 3].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        if (!checkPermission('WarehouseAllocationItemResource_update')) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      },
+      hasDelete() {
+        if ([1, 3].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        if (!checkPermission('WarehouseAllocationItemResource_remove')) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      },
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
+      hasExportTpl() {
+        return checkPermission('WarehouseAllocationItemResource_export');
+      },
+      hasExport() {
+        return checkPermission('WarehouseAllocationItemResource_export');
+      },
+      hasImport() {
+        if ([1, 3].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        if (!checkPermission('WarehouseAllocationItemResource_import')) {
+          return false;
+        }
+        else {
+          return true;
+        }
       }
     },
     filters: {
@@ -177,6 +220,10 @@
         statusSelectOptions: [],
         prioritySelectOptions: [],
 
+        exportFileName: '国内调拨产品明细',
+        tplNoExportProps: ['序号', '图片', '名称', '箱规', '装箱数', '调拨件数'],
+        maxUploadCount: 20,
+
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
 
@@ -184,11 +231,6 @@
         confirmLoading: false,
 
         //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
-
         unit: "箱",
 
         // 多选记录对象
@@ -215,15 +257,6 @@
         // 记录修改的那一行
         row: {},
 
-        // 表格工具条配置
-        toolbarConfig: {
-          hasEdit: false,
-          hasDelete: false,
-          hasAdd: [1, 3].indexOf(this.primary.status) != -1,
-          hasExportTpl: false,
-          hasExport: false,
-          hasImport: false,
-        }
       }
     },
 
@@ -247,10 +280,7 @@
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
-        if (row.saleWeek == 0 || row.safetyStockWeek - row.saleWeek > 2) { //可售周数不足
-          return 'warning-row';
-        }
-        else if (row.saleWeek - row.safetyStockWeek > 2) { //可售周数超2周
+        if (row.shippedQty == 0 || row.shippedQty > row.stock) { //库存不足
           return 'danger-row';
         }
         return '';
@@ -270,7 +300,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty') {
+          if (column.property == 'shippedCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -287,7 +317,7 @@
             }
           }
 
-          if (column.property == 'amount') {
+          if (column.property == 'shippedQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -298,7 +328,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index]);
+              sums[index] += ' 件';
             } else {
               sums[index] = 'N/A';
             }
@@ -438,12 +468,37 @@
       onToolBarAdd() {
         this.$refs.itemDialog.openDialog(null);
       },
-      onToolBarEdit() {
 
-      },
       onToolBarDelete() {
+        let ids = [];
+        this.selected.forEach(data => {
+          ids.push(data.id);
+        });
+        this.loading = true;
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
 
+              let url = `${this.url}/${ids.join(",")}`;
+              this.global.axios.delete(url)
+                .then(resp => {
+                  this.$message({type: 'success', message: '删除成功'});
+                  let obj = resp.data;
+                  this.loading = false;
+                  this.getList();
+                })
+                .catch(err => {
+                  this.loading = false;
+                })
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
+
       onToolBarDownloadTpl() {
         //获取数据
         let table = this.$refs.table;
@@ -453,16 +508,104 @@
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "fa计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
+            filename: `${this.exportFileName}-模版-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.tplNoExportProps,
             tpl: true,
           })
         })
       },
-      onToolBarDownloadData() {
-      },
-      onToolBarImportData() {
 
+      onToolBarDownloadData() {
+        //获取数据
+        let table = this.$refs.table;
+        let params = '';
+
+        let downloadUrl = this.url
+
+        if (!downloadUrl) {
+          console.warn('url 为空, 导出数据失败！')
+          return
+        }
+        // 处理查询
+        if (this.filters && this.filters.length > 0) {
+          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
+        }
+        // 处理关联加载
+        if (this.relations && this.relations.length > 0) {
+          params += "&relations=" + JSON.stringify(this.relations);
+        }
+
+        import('@/vendor/Export2Excel').then(excel => {
+          this.loading = true;
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: `${this.primary.code}国内调拨产品明细`,
+            noExportProps: ['图片'],
+            params: params
+          });
+          this.loading = false;
+        })
+      },
+
+      uploadPromise(res) {
+        let url = this.url + '';
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      async onToolBarImportData(excelData) {
+        console.log(excelData);
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.warehouseAllocationId = this.primary.id;
+          _res.skuCode = obj["SKU"];
+          _res.shippedCartonQty = obj["调拨箱数"];
+          _res.cartonSpecName = obj["箱规"];
+          _res.numberOfCarton = obj["装箱数"];
+          _res.shippedNote = obj["备注"];
+          resData.push(_res);
+        });
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.success("导入成功");
+        this.getList();
       }
     }
   }
