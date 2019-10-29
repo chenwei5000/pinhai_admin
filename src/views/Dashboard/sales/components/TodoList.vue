@@ -74,6 +74,9 @@
     <!--查看采购入库完成状态对话框-->
     <procurementReceivedOrderViewDialog ref="procurementReceivedOrderViewDialog">
     </procurementReceivedOrderViewDialog>
+    <!--调拨入库-待收货-确认收货对话框框 -->
+    <allocationReceivedEditDialog ref="allocationReceivedEditDialog">
+    </allocationReceivedEditDialog>
 
   </div>
 </template>
@@ -88,6 +91,7 @@
   import procurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
   import procurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
   import procurementReceivedOrderViewDialog from '@/views/ProcurementReceivedOrder/components/view/dialog'
+  import allocationReceivedEditDialog from '@/views/AllocationReceived/components/edit/dialog'
 
   import {parseLineBreak} from '@/utils';
 
@@ -106,7 +110,8 @@
       procurementShippedOrderExecutingDialog,
       procurementShippedOrderExecutingEditDialog,
       procurementReceivedOrderEditDialog,
-      procurementReceivedOrderViewDialog
+      procurementReceivedOrderViewDialog,
+      allocationReceivedEditDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -233,6 +238,11 @@
           if(val.notice.targetType =="PROCUREMENT_WAREHOUSE_SUCCESS"){
             this.$refs.procurementReceivedOrderViewDialog.openDialog(val.notice.target);
           }
+          //弹窗:调拨入库-确认收货
+          if(val.notice.targetType =="DOMESTIC_ALLOCATION_CONFIRM"){
+            this.$refs.allocationReceivedEditDialog.openDialog(val.notice.target);
+          }
+
         }
       },
       completeTodo(val) {
