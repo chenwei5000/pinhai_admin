@@ -52,7 +52,7 @@
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasView" size="small" icon="el-icon-view" circle
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 

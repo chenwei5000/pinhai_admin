@@ -36,6 +36,14 @@
     </el-row>
 
     <el-row>
+      <el-col :md="12">
+        <el-form-item label="创建人" prop="creatorName">
+          <span style="font-size: 12px">{{editObject.creator.name}}</span>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row>
       <el-col :md="24">
         <el-form-item label="备注" prop="comments">
           <div style="font-size: 12px" v-html="editObject.formatComments"></div>
