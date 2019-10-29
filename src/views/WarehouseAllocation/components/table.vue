@@ -246,6 +246,11 @@
         url: '/warehouseAllocations', // 资源URL
         countUrl: '/warehouseAllocations/count', // 资源URL
         relations: ["team", "fromWarehouse", "toWarehouse"],  // 关联对象
+        filters: {
+          'field': 'needDeclare',
+          op: 'eq',
+          data: 0
+        },
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -473,6 +478,7 @@
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
+        filters.push(JSON.parse(JSON.stringify(this.filters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});

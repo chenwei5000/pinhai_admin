@@ -98,7 +98,7 @@
           <el-col :md="24">
             <el-form-item label="备注" prop="priorityNote">
               <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.remark"
+                <el-input type="textarea" v-model="detailItem.shippedNote"
                           maxlength="500"
                           show-word-limit
                           rows="3"

@@ -74,6 +74,7 @@
         ref="itemTable"
         @createCBEvent="createCBEvent"
         style="margin-top: 5px"
+        :primary="newObject"
       ></itemTable>
 
       <el-col :md="24">

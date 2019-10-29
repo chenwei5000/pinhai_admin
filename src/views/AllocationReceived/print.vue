@@ -1,16 +1,16 @@
 <template>
-  <div v-loading.fullscreen.lock="fullscreenLoading"
+  <div v-loading.fullscreen.lock="fullscreenLoading" v-if="primaryComplete"
        class="main-article" element-loading-text="采购入库单">
 
     <div class="article__heading">
-      <div class="article__heading__title">采购入库单{{primary.code}}</div>
+      <div class="article__heading__title">调拨入库单{{primary.code}}</div>
     </div>
     <el-row style="margin-bottom: 10px">
       <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
         发货仓库：{{primary.fromWarehouse.name}}
       </el-col>
       <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}}
+        物流单号: {{primary.trackNumber ? primary.trackNumber : '无'}}
       </el-col>
       <el-col :span="8" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
         收货仓库： {{primary.toWarehouse.name}}
@@ -33,7 +33,11 @@
         <el-table-column prop="product.skuCode" label="SKU" width="200">
         </el-table-column>
 
-        <el-table-column prop="product.name" label="规格型号" width="150">
+
+        <el-table-column prop="product.name" label="名称" width="256">
+        </el-table-column>
+
+        <el-table-column prop="product.model" label="规格型号" width="150">
           <template slot-scope="scope">
             {{scope.row.product.model}} , {{scope.row.product.color}}
           </template>
@@ -88,7 +92,7 @@
         <tr height="100">
           <td align="center" width="90" style="border: 1px solid #000;border-top: 0;font-weight: bold">物流信息</td>
           <td width="320" style="border: 1px solid #000;border-top: 0;">
-            物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}} <BR/>
+            物流单号: {{primary.trackNumber ? primary.trackNumber : '无'}} <BR/>
             物流公司: {{primary.channel ? primary.channel : '无'}} <BR/>
             车牌: {{primary.plateNumber ? primary.plateNumber : '无'}} <BR/>
             联系人: {{primary.linkman ? primary.linkman : '无'}} <BR/>
@@ -114,7 +118,9 @@
     data() {
       return {
         primaryId: null,
+        primary: {},
         items: [],
+        primaryComplete: false,
         fullscreenLoading: true,
       }
     },
@@ -133,19 +139,20 @@
 
           //获取计划数据
           let url = `/allocationReceiveds/${this.primaryId}`;
-          url += "?relations=" + JSON.stringify(["procurementOrder", "procurementOrder.supplier", "toWarehouse","fromWarehouse"]);
-
+          url += "?relations=" + JSON.stringify(["toWarehouse","fromWarehouse"]);
           _arr.push(this.global.axios
             .get(url)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
+              this.primaryComplete = true;
+              console.log(this.primary);
             })
             .catch(err => {
             })
           );
 
-          let itemsUrl = `allocationReceivedItems/`;
+          let itemsUrl = `/allocationReceivedItems`;
           // 处理查询
           itemsUrl += "?filters=" + JSON.stringify({
             "groupOp": "AND", "rules": [
@@ -157,7 +164,7 @@
             ]
           });
           // 处理关联加载
-          itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec","toWarehouse","fromWarehouse"]);
+          itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec"]);
           //排序
           itemsUrl + "&sort=sortNum&dir=asc"
 

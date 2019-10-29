@@ -161,8 +161,6 @@
           v-if="!col.hidden"
           :align="col.align ? col.align : 'center'"
         >
-
-
         </el-table-column>
 
       </template>
@@ -1491,7 +1489,7 @@
 
       uploadPromise(res) {
         let url = this.url;
-        if(this.importMethod != "post"){
+        if (this.importMethod != "post") {
           url = `${url}/${res.id}`;
         }
         return this.global.axios[this.importMethod](url, res)

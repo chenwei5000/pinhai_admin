@@ -73,6 +73,7 @@
       <el-table-column
         v-if="hasDelete"
         type="selection"
+        align="center"
         width="30">
       </el-table-column>
 

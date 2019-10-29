@@ -20,7 +20,7 @@
             <el-form-item label="SKU" prop="skuCode">
               <span v-if="!hasAdd" style="font-size: 12px">{{detailItem.skuCode}}</span>
 
-              <el-input v-else v-model.trim="detailItem.skuCode"
+              <el-input v-else v-model.trim="detailItem.skuCode" size="mini"
                         style="width: 200px" placeholder="请填写SKU" clearable>
 
               </el-input>
@@ -43,7 +43,7 @@
           <el-col :md="10">
             <el-form-item label="箱规" prop="cartonSpecId">
 
-              <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
+              <el-select filterable size="mini" v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
                          style="width: 200px">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
@@ -112,6 +112,7 @@
                 <el-input type="textarea" v-model="detailItem.shippedNote"
                           maxlength="500"
                           show-word-limit
+                          size="mini"
                           rows="3"
                           cols="80"
                 ></el-input>

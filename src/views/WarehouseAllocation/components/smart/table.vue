@@ -58,7 +58,7 @@
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="shippedNote" label="备注" width="130">
       </el-table-column>
 
       <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="90"></el-table-column>
@@ -83,9 +83,14 @@
       </el-table-column>
     </el-table>
 
+
+    <!-- 添加明细对话框 -->
+    <addDialog @modifyCBEvent="modifyCBEvent" ref="addDialog">
+    </addDialog>
+
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
-    </itemDialog>
+    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
+    </editDialog>
 
   </div>
 
@@ -95,16 +100,23 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
-  import itemDialog from './dialog'
+  import editDialog from './editDialog'
+  import addDialog from './addDialog'
   import tableToolBar from '@/components/PhTableToolBar'
   import {parseTime} from "../../../../utils";
 
   export default {
     components: {
-      itemDialog,
+      editDialog,
+      addDialog,
       tableToolBar
     },
-    props: {},
+    props: {
+      primary: {
+        type: [Object],
+        default: {}
+      }
+    },
     computed: {
       ...mapGetters([
         'device', 'rolePower'
@@ -171,12 +183,11 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行修改功能 */
       onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row);
+        this.$refs.editDialog.openDialog(row);
       },
 
       /* 行删除功能 */
       onDefaultDelete(index) {
-        console.log(index);
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
@@ -212,7 +223,12 @@
 
       /********************* 工具条按钮  ***************************/
       onDefaultAdd() {
-        this.$refs.itemDialog.openDialog(null);
+        if (this.primary == null || this.primary.fromWarehouseId == null) {
+          this.$message.error("请选择发货仓库!");
+          return false;
+        }
+        this.$refs.addDialog.openDialog(this.primary);
+
       },
       onToolBarDelete() {
         this.$confirm('确认删除吗', '提示', {

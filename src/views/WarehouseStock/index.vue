@@ -44,8 +44,8 @@
             "summary-method" : this.getSummaries
           },
           columns: [
-            {prop: 'warehouseName', label: '仓库', 'min-width': 150},
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200, fixed: 'left'},
+            {prop: 'warehouseName', label: '仓库', 'min-width': 150},
             {prop: 'productName', label: '产品名', 'min-width': 220},
             {prop: 'cartonSpecCode', label: '箱规', 'min-width': 150},
             {prop: 'numberOfCarton', label: '装箱数', width: 90},
