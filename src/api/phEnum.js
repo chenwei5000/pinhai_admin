@@ -18,6 +18,11 @@ const enumModel = {
       _options.push({label: '关闭', value: '0'});
       return _options;
     }
+    if(type == 'YesOrNo'){
+      _options.push({label: '是', value: '1'});
+      _options.push({label: '否', value: '0'});
+      return _options;
+    }
     const _loadData = async function () {
       let list = store.getters.enums;
       if (list == null) {
