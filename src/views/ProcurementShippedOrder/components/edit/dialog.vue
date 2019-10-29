@@ -197,7 +197,7 @@
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
-                  this.$message.info(message);
+                  this.$message.success(message);
                   this.initData();
                   loading.close();
                   // 继续向父组件抛出事件 修改成功刷新列表
@@ -245,7 +245,7 @@
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
+            this.$message.success('操作成功!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表

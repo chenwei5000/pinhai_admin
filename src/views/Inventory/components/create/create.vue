@@ -184,7 +184,7 @@
           .post("/inventories", _order)
           .then(resp => {
             loading.close();
-            this.$message.info("盘亏盘盈单创建成功");
+            this.$message.success("盘亏盘盈单创建成功");
             this.$emit("modifyCBEvent", resp.data);
           })
           .catch(err => {

@@ -97,7 +97,7 @@
       onConfirm(){
         this.global.axios.put(`/allocationReceiveds/confirmTask/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("确认收货成功");
+            this.$message.success("确认收货成功");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = true;
@@ -115,7 +115,7 @@
       onComplete(){
         this.global.axios.put(`/allocationReceiveds/receivedTask/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("收货完成");
+            this.$message.success("收货完成");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = false;
@@ -132,7 +132,7 @@
       onPrint(){
         this.global.axios.get(`/attachments/allocationReceiveds/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("打印收货单");
+            this.$message.success("打印收货单");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = false;

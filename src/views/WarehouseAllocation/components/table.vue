@@ -9,18 +9,18 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" size="mini" style="width: 120px" placeholder="请输入"></el-input>
+        <el-input v-model="searchParam.code.value" size="mini" style="width: 150px" placeholder="请输入"></el-input>
       </el-form-item>
 
       <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" size="mini" style="width: 120px"
+        <el-input v-model="searchParam.trackNumber.value" size="mini" style="width: 150px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
         <el-form-item label="发货仓库">
         <el-select filterable v-model="searchParam.fromWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 120px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -32,7 +32,7 @@
       <el-form-item label="收货仓库">
         <el-select filterable v-model="searchParam.toWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 120px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -68,7 +68,7 @@
 
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
-          <el-tag
+          <el-tag size="mini"
             :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 2
             ? 'danger' : scope.row.status === 6
@@ -107,7 +107,7 @@
       </el-table-column>
 
       <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120" v-if="type != 'executing' "></el-table-column>
 
       <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
@@ -125,7 +125,7 @@
       <el-table-column prop="id" label="ID" width="90"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="80" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -337,7 +337,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.statusSelectOptions = phEnumModel.getSelectOptions('WarehouseAllocationStatus');
       },
 
@@ -353,7 +353,6 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -603,7 +602,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

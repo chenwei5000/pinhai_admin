@@ -132,7 +132,7 @@
 
           this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("发货完成");
+              this.$message.success("发货完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

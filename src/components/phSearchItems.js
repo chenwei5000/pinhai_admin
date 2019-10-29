@@ -193,7 +193,7 @@ const phSearchItems = {
   },
 
   //仓库名称搜索
-  warehouseId: () => {
+  warehouseDomesticId: () => {
     return {
       $type: 'select',
       $id: 'warehouseId',
@@ -204,7 +204,7 @@ const phSearchItems = {
         filterable: true,
         placeholder: '请选择仓库'
       },
-      $options: warehouseModel.getSelectOptions,
+      $options: warehouseModel.getSelectDomesticOptions(),
     }
   },
 

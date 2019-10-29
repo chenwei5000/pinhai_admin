@@ -51,7 +51,9 @@
             {prop: 'numberOfCarton', label: '装箱数', 'min-width': 100},
             {prop: 'cartonQty', label: '箱数', 'min-width': 100},
             {prop: 'qty', label: '件数', 'min-width': 100},
-            {prop: 'currency.name', label: '结算货币', 'min-width': 100},
+            {prop: 'usedQty', label: '消耗件数', 'min-width': 100},
+
+            {prop: 'currency.name', label: '结算货币', 'min-width': 100, hidden: !checkPermission('PurchasePriceVisible'),},
           /*  {prop: 'price', label: '采购价', 'min-width': 100},*/
             phColumns.price,
             phColumns.amount,
@@ -68,7 +70,7 @@
               $type: 'select',
               $id: 'warehouseId',
               label: '收货仓库',
-              $options: warehouseModel.getSelectOptions(),
+              $options: warehouseModel.getSelectDomesticOptions(),
               $el: {
                 op: 'eq',
                 filterable: true,

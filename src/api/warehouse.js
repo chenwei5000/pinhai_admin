@@ -5,7 +5,7 @@ const warehouseModel = {
 
   // 获取仓库列表
   getWarehouses: (pagesize = -1) => {
-    const path = '/warehouses?sort=name&order=asc';
+    const path = '/warehouses/permissions?sort=name&order=asc';
     return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 

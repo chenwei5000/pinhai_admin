@@ -22,7 +22,7 @@
       id="table"
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left">
+      <el-table-column prop="product.skuCode" label="SKU编码" width="180" fixed="left">
 
       </el-table-column>
 
@@ -38,28 +38,16 @@
       </el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
-        </template>
       </el-table-column>
 
-      <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+      <el-table-column prop="boxCode" label="箱码" width="90"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="100"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
 
       <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
       <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
 
-      <el-table-column prop="receivedNote" label="异常备注" width="130">
+      <el-table-column prop="receivedNote" label="异常备注" width="120">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="异常备注" width="250" trigger="hover"
                       v-if="scope.row.receivedNote && scope.row.receivedNote.length > 10">

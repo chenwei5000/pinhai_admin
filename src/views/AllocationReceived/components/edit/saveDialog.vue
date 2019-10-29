@@ -139,7 +139,7 @@
 
           this.global.axios.put(`/allocationReceiveds/receivedTask/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("收货完成");
+              this.$message.success("收货完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

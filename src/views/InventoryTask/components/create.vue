@@ -122,7 +122,7 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.initWarehouseData();
 
         this.loading = false;
@@ -181,7 +181,7 @@
             .post("/inventoryTasks", this.newObject)
             .then(resp => {
               loading.close();
-              this.$message.info("盘点任务创建成功");
+              this.$message.success("盘点任务创建成功");
               this.$emit("modifyCBEvent");
               this.clearData();
             })

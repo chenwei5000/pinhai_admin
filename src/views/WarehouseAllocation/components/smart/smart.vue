@@ -6,7 +6,6 @@
              :model="newObject"
              status-icon
              inline
-             inline-message
              ref="newObject"
              label-position="right"
              label-width="120px"
@@ -18,17 +17,17 @@
         <legend class="panel-title">国内调拨
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
-              货物从国内仓转移到国内仓
+              货物从国内仓转移到另一个国内仓
             </div>
             <i class="el-icon-question">&nbsp;</i>
           </el-tooltip>
         </legend>
 
-      <el-row>
-        <el-col :md="8">
+        <el-row>
+          <el-col :md="8">
             <el-form-item label="发货仓库" prop="fromWarehouseId">
-              <el-select  size="mini" v-model="newObject.fromWarehouseId" style="width: 180px"
-                        filterable placeholder="请选择发货仓库">
+              <el-select size="mini" v-model="newObject.fromWarehouseId" style="width: 180px"
+                         filterable placeholder="请选择发货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
                   :label="item.label"
@@ -41,8 +40,8 @@
 
           <el-col :md="8">
             <el-form-item label="收货仓库" prop="toWarehouseId">
-              <el-select  size="mini" v-model="newObject.toWarehouseId" style="width: 180px"
-                        filterable placeholder="请选择收货仓库">
+              <el-select size="mini" v-model="newObject.toWarehouseId" style="width: 180px"
+                         filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
                   :label="item.label"
@@ -66,21 +65,25 @@
           </el-col>
         </el-row>
 
-        <!-- 国内调拨明细列表 -->
-        <itemTable
-          ref="itemTable"
-          @createCBEvent="createCBEvent"
-        ></itemTable>
-
-        <el-col :md="24">
-          <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
-              创建
-            </el-button>
-          </el-row>
-        </el-col>
-
       </fieldset>
+
+      <!-- 国内调拨明细列表 -->
+      <div style="font-size: 12px; margin-top:10px;">调拨产品</div>
+
+      <itemTable
+        ref="itemTable"
+        @createCBEvent="createCBEvent"
+        style="margin-top: 5px"
+      ></itemTable>
+
+      <el-col :md="24">
+        <el-row type="flex" justify="center">
+          <el-button type="primary" size="mini" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
+            创建
+          </el-button>
+        </el-row>
+      </el-col>
+
     </el-form>
 
 
@@ -90,15 +93,13 @@
 
 <script>
   import warehouseModel from '@/api/warehouse'
-  import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
   import itemTable from './table'
 
   export default {
     components: {itemTable},
     props: {},
-    computed: {
-    },
+    computed: {},
 
     data() {
       return {
@@ -118,13 +119,13 @@
         // 字段验证规则 TODO:
         rules: {
           fromWarehouseId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
+            {required: true, message: '必填', trigger: 'blur'}
           ],
           toWarehouseId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
+            {required: true, message: '必填', trigger: 'blur'}
           ],
           expectTime: [
-            {required: true, message: '必须输入', trigger: 'blur'}
+            {required: true, message: '必填', trigger: 'blur'}
           ],
         },
       }
@@ -152,16 +153,16 @@
           if (!valid) {
             return;
           }
-        let detailItems = this.$refs.itemTable.tableData;
-        if (!detailItems || detailItems.length == 0) {
-            this.$message.error("调拨单内容不能为空!");
-            return;
-          }
+          let detailItems = this.$refs.itemTable.tableData;
+          // if (!detailItems || detailItems.length == 0) {
+          //   this.$message.error("调拨单内容不能为空!");
+          //   return;
+          // }
           this.saveObject(detailItems);
         });
       },
 
-           // 下单
+      // 下单
       saveObject(detailItems) {
         let _order = JSON.parse(JSON.stringify(this.newObject));
         _order.warehouseAllocationItems = detailItems;

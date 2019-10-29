@@ -130,7 +130,7 @@
 
           this.global.axios.put(`/inventoryTasks/receivedTask/${this.primary.id}`)
             .then(resp => {
-              this.$message.info("盘点完成");
+              this.$message.success("盘点完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();

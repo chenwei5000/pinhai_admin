@@ -202,7 +202,7 @@
         let url = `/dataAuthorities/importData/${this.userId}`
         this.global.axios.post(url, postData).then(data => {
           if (data.status == 200) {
-            this.$message.info('操作成功！')
+            this.$message.success('操作成功！')
           }
           loading.close();
         })
