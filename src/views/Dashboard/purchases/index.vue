@@ -36,7 +36,7 @@
 
   const lineChartData = {
     newVisitis: {
-      expectedData: [100, 120, 161, 134, 105, 160, 165]
+      expectedData: [5000, 120, 161, 134, 105, 160, 165]
     },
     messages: {
       expectedData: [200, 192, 120, 144, 160, 130, 140],

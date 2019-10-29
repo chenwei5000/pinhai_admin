@@ -19,7 +19,7 @@ export default {
     },
     height: {
       type: String,
-      default: '350px'
+      default: '550px'
     },
     autoResize: {
       type: Boolean,
@@ -87,7 +87,7 @@ export default {
           align: 'right'
         },
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: ['Mon11', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           boundaryGap: false,
           axisTick: {
             show: false
@@ -98,7 +98,7 @@ export default {
           right: 10,
           bottom: 20,
           top: 30,
-          containLabel: true
+          containLabel: true  
         },
         tooltip: {
           trigger: 'axis',
@@ -119,7 +119,7 @@ export default {
         series: [{
           name: 'expected', itemStyle: {
             normal: {
-              color: '#FF005A',
+              color: '#EE005A',
               lineStyle: {
                 color: '#FF005A',
                 width: 2
@@ -155,7 +155,7 @@ export default {
       })
     },
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
+      this.chart = echarts.init(this.$el, ' ')
       this.setOptions(this.chartData)
     }
   }

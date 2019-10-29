@@ -87,7 +87,7 @@ export default {
           align: 'right'
         },
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: this.chartData.dateData,
           boundaryGap: false,
           axisTick: {
             show: false
