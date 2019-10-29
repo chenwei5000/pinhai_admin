@@ -78,6 +78,11 @@
     <allocationReceivedEditDialog ref="allocationReceivedEditDialog">
     </allocationReceivedEditDialog>
 
+    <!--弹窗:出口调拨-待发货-确认发货 -->
+    <exportAllocationEditDialog ref="exportAllocationEditDialog">
+    </exportAllocationEditDialog>
+
+
   </div>
 </template>
 
@@ -92,6 +97,8 @@
   import procurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
   import procurementReceivedOrderViewDialog from '@/views/ProcurementReceivedOrder/components/view/dialog'
   import allocationReceivedEditDialog from '@/views/AllocationReceived/components/edit/dialog'
+  import exportAllocationEditDialog from '@/views/ExportAllocation/components/edit/dialog'
+
 
   import {parseLineBreak} from '@/utils';
 
@@ -111,7 +118,8 @@
       procurementShippedOrderExecutingEditDialog,
       procurementReceivedOrderEditDialog,
       procurementReceivedOrderViewDialog,
-      allocationReceivedEditDialog
+      allocationReceivedEditDialog,
+      exportAllocationEditDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -241,6 +249,10 @@
           //弹窗:调拨入库-确认收货
           if(val.notice.targetType =="DOMESTIC_ALLOCATION_CONFIRM"){
             this.$refs.allocationReceivedEditDialog.openDialog(val.notice.target);
+          }
+          //弹窗:出口调拨-待发货-确认发货
+          if(val.notice.targetType =="LINERSHIPPING_PLAN"){
+            this.$refs.exportAllocationEditDialog.openDialog(val.notice.target);
           }
 
         }
