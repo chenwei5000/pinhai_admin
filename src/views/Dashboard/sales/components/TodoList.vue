@@ -87,6 +87,9 @@
     <!--弹窗:采购单-待结算-窗口-->
     <settlementBillViewDialog ref="settlementBillViewDialog">
     </settlementBillViewDialog>
+    <!--弹窗：物流付款单，财务确认付款-->
+    <logisticPaymentBillPaymentDialog ref="logisticPaymentBillPaymentDialog">
+    </logisticPaymentBillPaymentDialog>
 
   </div>
 </template>
@@ -105,6 +108,8 @@
   import exportAllocationEditDialog from '@/views/ExportAllocation/components/edit/dialog'
   import financeBillPaymentDialog from '@/views/FinanceBill/components/paymentBill/payment/dialog'
   import settlementBillViewDialog from '@/views/SettlementBill/components/view/dialog'
+  import logisticPaymentBillPaymentDialog from '@/views/FinanceBill/components/logisticPaymentBill/payment/dialog'
+
 
 
   import {parseLineBreak} from '@/utils';
@@ -128,7 +133,8 @@
       allocationReceivedEditDialog,
       exportAllocationEditDialog,
       financeBillPaymentDialog,
-      settlementBillViewDialog
+      settlementBillViewDialog,
+      logisticPaymentBillPaymentDialog
     },
     filters: {
       pluralize: (n, w) => n === 1 ? w : w + 's',
@@ -273,7 +279,11 @@
           if(val.notice.targetType =="PROCUREMENT_ORDER_PAYMENT_AGREE"){
             this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
           }
-          // http://localhost:9001/erp-service/settlementBills/41?relations=[%22supplier%22,%22currency%22,%22procurementOrder%22]
+          //弹窗：物流付款单，财务确认付款
+          if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_APPLY"){
+            this.$refs.logisticPaymentBillPaymentDialog.openDialog(val.notice.target);
+          }
+
 
         }
       },
