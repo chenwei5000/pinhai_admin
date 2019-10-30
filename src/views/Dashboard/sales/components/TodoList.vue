@@ -269,7 +269,10 @@
           if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE") {
             this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
           }
-
+          //弹窗：采购结算 详情
+          if(val.notice.targetType =="PROCUREMENT_ORDER_PAYMENT_AGREE"){
+            this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
+          }
           // http://localhost:9001/erp-service/settlementBills/41?relations=[%22supplier%22,%22currency%22,%22procurementOrder%22]
 
         }
