@@ -4,37 +4,38 @@
       <el-form :inline="true" ref="searchForm" id="filter-form"
                @submit.native.prevent>
         <el-form-item label="销售渠道">
-          <el-select filterable v-model="mine.merchantId" placeholder="请选择销售渠道">
+          <el-select filterable v-model="searchParam.merchantId" placeholder="请选择销售渠道" >
             <el-option
               v-for="(item,idx) in merchantSelectOptions"
               :label="item.label" :value="item.value"
               :key="idx"
             ></el-option>
-
           </el-select>
         </el-form-item>
 
         <el-form-item label="分类">
-          <el-select filterable v-model="mine.categoryId" placeholder="请选择分类">
+          <el-select filterable v-model="searchParam.categoryId" placeholder="请选择分类" >
             <el-option
               v-for="(item,idx) in categorySelectOptions"
               :label="item.label" :value="item.value"
               :key="idx"
             ></el-option>
-
           </el-select>
         </el-form-item>
 
         <el-form-item label="周数">
-          <el-select filterable v-model="mine.week" placeholder="统计周数">
+          <el-select filterable v-model="searchParam.week" placeholder="统计周数" >
             <el-option
               v-for="(item,idx) in weekSelectOptions"
               :label="item.label" :value="item.value"
               :key="idx"
             ></el-option>
-
           </el-select>
         </el-form-item>
+
+         <el-button type="primary"  @click="onSearch">
+              查看销售情况
+            </el-button>
 
       </el-form>
     </el-row>
@@ -54,6 +55,9 @@
           <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
             <line-chart :chart-data="lineChartData"/>
           </el-row>
+          <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+            <saleDetails :fromParent="searchParam" ref="saleDetails" />
+          </el-row>
         </el-card>
 
       </el-col>
@@ -72,6 +76,7 @@
   import LineChart from './components/LineChart'
   import TodoList from './components/TodoList'
   import categoryModel from '@/api/category'
+  import saleDetails from './components/SaleDetails'
 
   const lineChartData = {
     newVisitis: {
@@ -100,6 +105,10 @@
 
   const weekSelectOptions = [
     {
+      label: '10周',
+      value: '10'
+    },
+    {
       label: '19周',
       value: '19'
     },
@@ -119,7 +128,8 @@
       PanelGroup,
       OperateGroup,
       LineChart,
-      TodoList
+      TodoList,
+      saleDetails
     },
     computed: {
       //store 的状态必须变成计算方法，只有这样state值修改之后，才会重新计算
@@ -130,8 +140,12 @@
     data() {
       return {
         categorySelectOptions: [],
-        //mine: {merchantId: '8a23287966dc9acb0166dca2574c0000', categoryId: '1', week: '20'},
-        lineChartData: lineChartData.newVisitis
+       // searchParam: {merchantId: null, categoryId: null, week: null},
+        searchParam: {merchantId: '8a23287966dc9acb0166dca2574c0000', categoryId: '10', week: 20},
+        lineChartData: {
+          expectedData: [],
+          dateData: [],
+        }
       }
     },
     created() {
@@ -139,12 +153,48 @@
       this.merchantSelectOptions = merchantOptions;
       this.weekSelectOptions = weekSelectOptions;
     },
+
+    mounted() {
+    },
     methods: {
       initData(){
-
+        let url = "/amazonSales/weekSales/";
+        if (this.searchParam.merchantId == null){
+          this.$message.error("请选择销售渠道！")
+          return false;
+        }else{
+          url += this.searchParam.merchantId;
+        }
+        if (this.searchParam.week != null){
+          url += "?weekNum=" + this.searchParam.week;
+        }
+        if (this.searchParam.categoryId != null){
+          if (url.indexOf('?') != -1){
+            url += "&cid=" + this.searchParam.categoryId;
+          }else{
+            url += "?cid=" + this.searchParam.categoryId;
+          }
+        }
+        this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data;
+            res.forEach(element => {
+            this.lineChartData.expectedData.push(element.saleQty);
+            this.lineChartData.dateData.push(element.formatStartTime)
+            });
+          })
+          .catch(err => {
+          })
       },
       handleSetLineChartData(type) {
         this.lineChartData = lineChartData[type]
+      },
+      onSearch(){
+        this.lineChartData.expectedData = [],
+        this.lineChartData.dateData = [],
+        this.initData();
+        this.$refs.saleDetails.getList();
       }
     }
   }
