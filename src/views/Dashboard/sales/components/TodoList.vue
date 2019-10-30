@@ -49,28 +49,28 @@
     </editPlanDialog>
 
     <!--预付款申请的编辑对话框-->
-    <ProcurementOrderpaymentDialog ref="procurementOrderpaymentDialog">
-    </ProcurementOrderpaymentDialog>
+    <procurementOrderpaymentDialog ref="procurementOrderpaymentDialog">
+    </procurementOrderpaymentDialog>
 
     <!--编辑对话框-->
     <paymentDialog ref="paymentDialog">
     </paymentDialog>
 
     <!--编辑对话框-->
-    <ProcurementShippedOrderEditDialog ref="procurementShippedOrderEditDialog">
-    </ProcurementShippedOrderEditDialog>
+    <procurementShippedOrderEditDialog ref="procurementShippedOrderEditDialog">
+    </procurementShippedOrderEditDialog>
 
     <!--采购单待发货->创建发货计划-编辑对话框-->
-    <ProcurementShippedOrderExecutingDialog ref="procurementShippedOrderExecutingDialog">
-    </ProcurementShippedOrderExecutingDialog>
+    <procurementShippedOrderExecutingDialog ref="procurementShippedOrderExecutingDialog">
+    </procurementShippedOrderExecutingDialog>
 
     <!--发货单待执行界面 创建发货计划-编辑对话框-->
-    <ProcurementShippedOrderExecutingEditDialog ref="procurementShippedOrderExecutingEditDialog">
-    </ProcurementShippedOrderExecutingEditDialog>
+    <procurementShippedOrderExecutingEditDialog ref="procurementShippedOrderExecutingEditDialog">
+    </procurementShippedOrderExecutingEditDialog>
 
     <!--采购入库待收货-发货计划-> 执行发货-> 消息给对应采购单创建人、指派人-编辑对话框-->
-    <ProcurementReceivedOrderEditDialog ref="procurementReceivedOrderEditDialog">
-    </ProcurementReceivedOrderEditDialog>
+    <procurementReceivedOrderEditDialog ref="procurementReceivedOrderEditDialog">
+    </procurementReceivedOrderEditDialog>
     <!--查看采购入库完成状态对话框-->
     <procurementReceivedOrderViewDialog ref="procurementReceivedOrderViewDialog">
     </procurementReceivedOrderViewDialog>
@@ -271,19 +271,26 @@
           if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_APPLY") {
             this.$refs.financeBillPaymentDialog.openDialog(val.notice.target);
           }
-           //弹窗:待结算 详情
+          //弹窗:待结算 详情
           if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE") {
             this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
           }
           //弹窗：采购结算 详情
-          if(val.notice.targetType =="PROCUREMENT_ORDER_PAYMENT_AGREE"){
+          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_AGREE") {
             this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
           }
           //弹窗：物流付款单，财务确认付款
-          if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_APPLY"){
+          if (val.notice.targetType == "LOGISTIC_PAYMENT_ORDER_APPLY") {
             this.$refs.logisticPaymentBillPaymentDialog.openDialog(val.notice.target);
           }
+          //弹窗：物流付款单，申请人查看是否通过
+          // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_REFUSE"){
 
+          // }
+           //弹窗：物流付款单，申请人查看是否通过
+          // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_AGREE"){
+
+          // }
 
         }
       },
