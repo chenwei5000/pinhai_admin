@@ -12,7 +12,7 @@
       <el-form-item label="仓库">
         <el-select filterable v-model="searchParam.warehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 200px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
