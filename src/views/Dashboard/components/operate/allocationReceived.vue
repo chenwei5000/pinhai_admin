@@ -2,13 +2,13 @@
 
   <el-badge :value="count" type="primary">
     <div class="card-panel">
-      <router-link to="/m2/Material_index">
+      <router-link to="/m3/AllocationReceived_index">
         <div class="card-panel-icon-wrapper icon-green">
-          <svg-icon icon-class="material" class-name="card-panel-icon"/>
+          <svg-icon icon-class="inStock" class-name="card-panel-icon"/>
         </div>
 
         <div class="card-panel-text">
-          原料管理
+          调拨入库
         </div>
       </router-link>
     </div>
@@ -21,38 +21,25 @@
     props: {
       mine: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
       }
     },
     components: {},
+
     data() {
       return {
         count: null
       }
     },
+
     mounted() {
       this.$nextTick(() => {
         this.initData();
       });
     },
+
     methods: {
       initData() {
-        let url = '/procurementPlans/count';
-        let filters = [];
-        filters.push({
-          'field': "status",
-          op: 'eq',
-          data: '0'
-        })
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        this.global.axios
-          .get(url)
-          .then(resp => {
-            let res = resp.data;
-            this.count = res || null;
-          })
-          .catch(err => {
-          });
+
       }
     }
   }

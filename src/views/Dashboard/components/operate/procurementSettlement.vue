@@ -3,7 +3,7 @@
   <div class="card-panel">
     <router-link to="/m2/SettlementBill_index?s=inpayment">
       <div class="card-panel-icon-wrapper icon-red">
-        <svg-icon icon-class="auditing-order" class-name="card-panel-icon"/>
+        <svg-icon icon-class="settlement" class-name="card-panel-icon"/>
       </div>
 
       <div class="card-panel-text">

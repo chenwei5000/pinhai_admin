@@ -5,7 +5,7 @@
 
       <router-link to="/m2/Product_index">
         <div class="card-panel-icon-wrapper icon-green">
-          <svg-icon icon-class="prepare" class-name="card-panel-icon"/>
+          <svg-icon icon-class="product" class-name="card-panel-icon"/>
         </div>
 
         <div class="card-panel-text">

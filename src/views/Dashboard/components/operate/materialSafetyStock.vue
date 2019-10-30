@@ -1,13 +1,13 @@
 <template>
 
   <div class="card-panel">
-    <router-link to="/m2/WarehouseStock_safetyStocks">
+    <router-link to="/m2/WarehouseStock_safetyMaterialStocks">
       <div class="card-panel-icon-wrapper icon-orange">
-        <svg-icon icon-class="steamship" class-name="card-panel-icon"/>
+        <svg-icon icon-class="inventory-warning" class-name="card-panel-icon"/>
       </div>
 
       <div class="card-panel-text">
-        成品安全库存
+        原料安全库存
       </div>
     </router-link>
   </div>

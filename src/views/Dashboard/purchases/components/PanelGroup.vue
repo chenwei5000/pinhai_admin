@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card">
     <div slot="header">
-      <svg-icon icon-class="steamship"/>
+      <i class="el-icon-shopping-cart-full" />
       <span style="margin-left:10px;">采购相关</span>
     </div>
 
@@ -27,10 +27,10 @@
 </template>
 
 <script>
-  import todoOrder from './panel/todoOrder'
-  import todoSettlement from './panel/todoSettlement'
-  import unfinishedProduct from './panel/unfinishedProduct'
-  import unfinishedMaterial from './panel/unfinishedMaterial'
+  import todoOrder from '../../components/panel/procurementOrder'
+  import todoSettlement from '../../components/panel/procurementSettlement'
+  import unfinishedProduct from '../../components/panel/unfinishedProduct'
+  import unfinishedMaterial from '../../components/panel/unfinishedMaterial'
 
   export default {
     props: {

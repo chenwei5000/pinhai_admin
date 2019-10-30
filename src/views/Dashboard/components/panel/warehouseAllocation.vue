@@ -1,16 +1,15 @@
-@@ -0,0 +1,72 @@
 <template>
 
   <div class="card-panel">
-    <router-link to="/m2/ProcurementOrder_index?s=create">
+    <router-link to="/m3/WarehouseAllocation_index?s=executing">
       <div class="card-header">
-        待下单
-
-        <div class="card-badge icon-green">
-          <svg-icon icon-class="new" class-name="card-panel-icon"/>
+        调拨待出库
+        <div class="card-badge icon-yellow">
+          <svg-icon icon-class="outStock" class-name="card-panel-icon"/>
         </div>
 
       </div>
+
       <div class="card-body">
         <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
       </div>
@@ -22,15 +21,13 @@
 
 <script>
   import CountTo from 'vue-count-to'
-  import { parse } from 'path';
-
   export default {
     data(){
       return {
         number: 0,
-        relations: [ "creator"],
-        filters: [
-          {"field": "status", "op": "in", "data": "2, 3"}
+        relations: ["team","fromWarehouse","toWarehouse"] ,
+        filters:[
+          {"field": "status", "op": "in", "data": "1,2,3"}
         ],
       }
     },
@@ -38,7 +35,6 @@
     props: {
       mine: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
       }
     },
     components: {
@@ -53,7 +49,7 @@
 
     methods: {
       initData(){
-        let countUrl = "procurementPlans/count";
+        let countUrl = "warehouseAllocations/count";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
         this.global.axios

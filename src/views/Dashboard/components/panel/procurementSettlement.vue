@@ -1,13 +1,11 @@
-@@ -0,0 +1,70 @@
 <template>
 
   <div class="card-panel">
     <router-link to="/m2/SettlementBill_index?s=inpayment">
       <div class="card-header">
         待结算
-
         <div class="card-badge icon-red">
-          <svg-icon icon-class="overdue" class-name="card-panel-icon"/>
+          <svg-icon icon-class="settlement" class-name="card-panel-icon"/>
         </div>
 
       </div>
@@ -35,8 +33,7 @@
     },
     props: {
       mine: {
-        type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
+        type: Object
       }
     },
     components: {

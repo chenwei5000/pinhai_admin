@@ -42,12 +42,12 @@
 </template>
 
 <script>
-  import doOrder from './operate/doOrder'
-  import material from './operate/material'
-  import materialSafetyStock from './operate/materialSafetyStock'
-  import procurementSettlement from './operate/procurementSettlement'
-  import product from './operate/product'
-  import productSafetyStock from './operate/productSafetyStock'
+  import doOrder from '../../components/operate/procurementOrder'
+  import procurementSettlement from '../../components/operate/procurementSettlement'
+  import product from '../../components/operate/product'
+  import material from '../../components/operate/material'
+  import materialSafetyStock from '../../components/operate/materialSafetyStock'
+  import productSafetyStock from '../../components/operate/productSafetyStock'
 
   export default {
     props: {
@@ -69,16 +69,12 @@
 </script>
 
 <style lang="scss" scoped>
-
   .panel-group {
     margin-top: 10px;
-
     .card-panel-col {
       margin-bottom: 15px;
       align-content: center;
       text-align: center;
     }
-
   }
-
 </style>
