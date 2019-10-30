@@ -90,11 +90,6 @@
             {prop: 'productName', label: '材料名', 'min-width': 120},
             {prop: 'categoryName', label: '分类', 'min-width': 100},
             {prop: 'unit', label: '单位', 'min-width': 100},
-            {prop: 'safetyStocks.demandedQty2', label: '4周消耗', 'min-width': 120},
-            {prop: 'safetyStocks.stockGapQty1', label: 'P0缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty2', label: 'P1缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty3', sortable: true, label: 'P2缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty4', label: 'P3缺口', 'min-width': 100},
             {prop: 'vipLevelName', label: 'Vip级别', 'min-width': 100},
             {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 180},
             {prop: 'domesticStockQty', label: '国内库存', 'min-width': 100},
@@ -104,11 +99,45 @@
       }
     },
     computed: {},
+
+    mounted() {
+      this.initData();
+    },
+
     methods: {
+        initData(){
+          this.global.axios.get('/safetyStockConfigs').then( resp => {
+           let res = resp.data || []
+           this.data = res;
+            for(let element of res){
+               if (element.type == 0 ||element.type == 2){
+                if (element.vip0SafetyStockWeek == 4 && element.vip1SafetyStockWeek == 4 && element.vip2SafetyStockWeek == 4){
+                    this.tableConfig.columns.push({
+                      prop: `safetyStocks.demandedQty${element.id}`,
+                      label: `${element.name}`,
+                      'min-width': 100
+                   });
+                   continue
+                }
+                this.tableConfig.columns.push({
+                  prop: `safetyStocks.stockGapQty${element.id}`,
+                  sortable: true,
+                  label: `${element.name}缺口`,
+                  'min-width': 100
+                })
+              }
+
+            }
+          }).catch(err => {
+
+          })
+      },
+
       resetSearch() {
         this.param.category = null;
         this.param.warehouse = null;
       },
+
       onChange() {
         let cateId = this.param.category;
         if (cateId != null) {

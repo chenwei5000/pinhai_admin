@@ -14,6 +14,17 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="国内原料库存" prop="materialWarehouse">
+        <el-select v-model="param.materialWarehouse" size="mini" multiple placeholder="请选择原料仓库">
+          <el-option
+            v-for="item in materialWarehouses"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
        <el-form-item label="国内成品库存" prop="warehouse">
         <el-select v-model="param.warehouse" size="mini" multiple placeholder="请选择成品仓库">
           <el-option
@@ -25,16 +36,7 @@
         </el-select>
       </el-form-item>
 
-       <el-form-item label="国内原料库存" prop="materialWarehouse">
-        <el-select v-model="param.materialWarehouse" size="mini" multiple placeholder="请选择原料仓库">
-          <el-option
-            v-for="item in materialWarehouses"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
+    
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
@@ -74,7 +76,7 @@ import warehouseModel from '../../api/warehouse';
           materialWarehouse: '',
         },
         categories: categoryModel.getMineSelectMaterialOptions(),
-        warehouses: [],
+        warehouses: warehouseModel.getSelectDomesticOptions(),
         // warehouseModel.getSelectDomesticOptions(),
         materialWarehouses: warehouseModel.getSelectMaterialOptions(),
         tableConfig: {
@@ -97,58 +99,81 @@ import warehouseModel from '../../api/warehouse';
             "default-sort": {prop: 'safetyStocks.stockGapQty3', order: 'descending'},
           },
           //列表
-          columns: []
+          columns: [
+              {width: 30, type: checkPermission('MaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('MaterialResource_remove')},
+              phColumns.id,
+              {prop: 'skuCode', label: 'SKU编码', 'min-width': 200},
+              {prop: 'productName', label: '材料名', 'min-width': 180},
+              {prop: 'categoryName', label: '分类', 'min-width': 100},
+              {prop: 'unit', label: '单位', 'min-width': 100},
+              {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 100},
+              {prop: 'domesticStockQty', label: '国内成品库存(含在途)', 'min-width': 100},
+              {prop: 'domesticMaterialStockQty', label: '国内原料库存', 'min-width': 100},
+              {prop: 'supplierStockQty', label: '采购中库存', 'min-width': 100},
+            ],
         }
       }
     },
     mounted(){
+      this.initData();
       this.$nextTick(()=>{
-        this.tableConfig.columns = [
-          {width: 30, type: checkPermission('MaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('MaterialResource_remove')},
-          phColumns.id,
-            {prop: 'skuCode', label: 'SKU编码', 'min-width': 200},
-            {prop: 'productName', label: '材料名', 'min-width': 180},
-            {prop: 'categoryName', label: '分类', 'min-width': 100},
-            {prop: 'unit', label: '单位', 'min-width': 100},
-
-            {prop: 'safetyStocks.demandedQty7', label: '4周消耗', 'min-width': 120},
-            {prop: 'safetyStocks.stockGapQty3', sortable: true, label: 'P2缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty4', sortable: true, label: 'P3缺口', 'min-width': 100},
-            {prop: 'safetyStocks.stockGapQty5', sortable: true, label: 'P4缺口', 'min-width': 100},
-
-            {prop: 'safetyStocks.stockGapQty6', label: 'P5缺口', 'min-width': 200},
-            {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 100},
-            {prop: 'domesticStockQty', label: '国内成品库存(含在途)', 'min-width': 100},
-            {prop: 'domesticMaterialStockQty', label: '国内原料库存', 'min-width': 100},
-            {prop: 'supplierStockQty', label: '采购中库存', 'min-width': 100},
-          ]
       })
     },
 
-    computed: {},
+    computed: {
+    },
     methods: {
+
+      initData(){
+          this.global.axios.get('/safetyStockConfigs').then( resp => {
+           let res = resp.data || []
+           this.data = res;
+            for(let element of res){
+               if (element.type == 1 ||element.type == 2){
+                if (element.vip0SafetyStockWeek == 4 && element.vip1SafetyStockWeek == 4 && element.vip2SafetyStockWeek == 4){
+                    this.tableConfig.columns.push({
+                      prop: `safetyStocks.demandedQty${element.id}`,
+                      label: `${element.name}`,
+                      'min-width': 100
+                   });
+                   continue
+                }
+                this.tableConfig.columns.push({
+                  prop: `safetyStocks.stockGapQty${element.id}`,
+                  sortable: true,
+                  label: `${element.name}缺口`,
+                  'min-width': 100
+                })
+              }
+
+            }
+          }).catch(err => {
+
+          })
+      },
+
       onChange(){
-          let cateId = this.param.category;
-          if( cateId != null){
-             this.loading = true;
-             let url = "/warehouses/category/";
-             url += "?cateId=" + cateId.join(",");
-             this.global.axios.get(url)
-              .then(resp => {
-                let res = resp.data || [];
-                this.warehouses = [];
-                res.forEach(r => {
-                  this.warehouses.push({
-                    label: r.name,
-                    value: r.id + ''
-                  });
-                });
-                this.loading = false;
-              })
-              .catch(err => {
-                this.loading = false;
-              });
-          }
+          // let cateId = this.param.category;
+          // if( cateId != null){
+          //    this.loading = true;
+          //    let url = "/warehouses/category/";
+          //    url += "?cateId=" + cateId.join(",");
+          //    this.global.axios.get(url)
+          //     .then(resp => {
+          //       let res = resp.data || [];
+          //       this.materialWarehouses = [];
+          //       res.forEach(r => {
+          //         this.materialWarehouses.push({
+          //           label: r.name,
+          //           value: r.id + ''
+          //         });
+          //       });
+          //       this.loading = false;
+          //     })
+          //     .catch(err => {
+          //       this.loading = false;
+          //     });
+          // }
       },
       statusClassName({row}) {
         try{
@@ -166,7 +191,7 @@ import warehouseModel from '../../api/warehouse';
       search(){
         this.$refs.searchForm.validate(valid => {
           if(valid){
-            this.tableConfig.url = `/stocks/safetyMaterialStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}&materialWarehous=${this.param.materialWarehouse.join(",")}`
+            this.tableConfig.url = `/stocks/safetyMaterialStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}&materialWarehoues=${this.param.materialWarehouse.join(",")}`
             this.$refs.table1.getList();
           }
         })
