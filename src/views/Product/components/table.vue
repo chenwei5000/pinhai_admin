@@ -99,7 +99,8 @@
       <el-table-column prop="width" label="宽(Cm)" width="100" align="center"></el-table-column>
       <el-table-column prop="height" label="高(Cm)" width="100" align="center"></el-table-column>
       <el-table-column prop="volume" label="体积(Cm³)" sortable="custom" width="120" align="center"></el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="supplier.name" label="供货商" min-width="100" v-if="hasPrice"
+                       align="center"></el-table-column>
       <el-table-column prop="currencyName" label="结算货币" min-width="100" v-if="hasPrice"
                        align="center"></el-table-column>
       <el-table-column prop="price" label="采购价" v-if="hasPrice" sortable="custom" min-width="100"
@@ -261,7 +262,8 @@
       return {
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
-
+        exportFileName: '产品列表',
+        maxUploadCount: 10,
         //操作
         selected: [],
 
@@ -275,6 +277,8 @@
         //数据
         url: this.type === 'unfinished' ? '/products/unfinishs' : '/products', // 资源URL
         countUrl: this.type === 'unfinished' ? '/products/countUnfinishs' : '/products/count', // 资源URL
+        downloadUrl: this.type === 'unfinished' ? '/products/unfinishs' : '/products', // 资源URL
+
         relations: ["category", "supplier", "cartonSpec", "currency", "declareConfig"],  // 关联对象
         data: [],
         phSort: {prop: "skuCode", order: "asc"},
@@ -406,6 +410,9 @@
           searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
         }
 
+
+        this.downloadUrl = url;
+
         // 处理查询
         let filters = [];
         Object.keys(this.productParam).filter(k => {
@@ -426,11 +433,13 @@
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          this.downloadUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
 
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
+          this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
 
         // 请求开始
@@ -619,9 +628,6 @@
         }]
       },
 
-      onDefaultEdit(row) {
-        this.$refs.createDialog.openDialog(row.id);
-      },
       cancel() {
       },
       confirm() {
@@ -629,12 +635,12 @@
       onRefreshTable: function () {
         this.getList();
       },
-      
+
       /********************* 操作按钮相关方法  ***************************/
       /* 行编辑按钮 */
       onDefaultEdit(row) {
         // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
+        this.$refs.createDialog.openDialog(row.id);
       },
 
       /* 行删除按钮 */
@@ -657,7 +663,10 @@
                 .catch(er => {
                   this.loading = false
                 })
-            } else done()
+            } else {
+              this.loading = false;
+              done();
+            }
           }
         }).catch(er => {
           /*取消*/
@@ -674,12 +683,15 @@
         this.selected.forEach(data => {
           ids.push(data.id);
         });
+        if (ids == null || ids.length == 0) {
+          this.$message.error("请选择要删除的产品");
+          return false;
+        }
         this.loading = true;
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-
               let url = `${this.url}/${ids.join(",")}`;
               this.global.axios.delete(url)
                 .then(resp => {
@@ -692,7 +704,10 @@
                   this.loading = false;
                 })
               done();
-            } else done()
+            } else {
+              this.loading = false
+              done()
+            }
           }
         }).catch(er => {
           /*取消*/
@@ -703,13 +718,17 @@
         //获取数据
         let table = this.$refs.table;
         let downloadUrl = this.downloadUrl;
-
+        if (!downloadUrl) {
+          console.warn('url 为空, 导出数据失败！')
+          return
+        }
         import('@/vendor/Export2Excel').then(excel => {
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
             filename: `${this.exportFileName}-模版-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
-            noExportProps: this.tplNoExportProps,
+            noExportProps: ['图片', '型号', '颜色', '净重(Kg)', '长(Cm)', '宽(Cm)', '高(Cm)', '体积(Cm³)', '供货商',
+              '结算货币', '采购价', 'ASIN', 'FN-SKU', 'Parent Asin', 'Vip级别', '超大', '新品', '修改时间', '状态'],
             tpl: true,
           })
         })
@@ -718,32 +737,20 @@
       onToolBarDownloadData() {
         //获取数据
         let table = this.$refs.table;
-        let params = '';
-
-        let downloadUrl = this.url
-
+        let downloadUrl = this.downloadUrl;
         if (!downloadUrl) {
           console.warn('url 为空, 导出数据失败！')
           return
         }
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
-        }
-
         import('@/vendor/Export2Excel').then(excel => {
           this.loading = true;
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: `${this.primary.code}国内调拨产品明细`,
-            noExportProps: ['图片'],
-            params: params
-          });
+            filename: `${this.exportFileName}-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.hasPrice ? ['图片'] : ['图片', '结算货币', '采购价', '供货商']
+          })
+          ;
           this.loading = false;
         })
       },
@@ -754,11 +761,21 @@
           .then(resp => {
           })
           .catch(err => {
+            try {
+              this.$store.dispatch('errorLog/addErrorLog', {
+                message: err.response.data.description,
+                //url: window.location.href,
+                title: '导入产品',
+                time: new Date()
+              });
+            }
+            catch (e) {
+              console.log(e);
+            }
           })
       },
 
       async onToolBarImportData(excelData) {
-        console.log(excelData);
         if (!excelData) {
           this.$message.error("导入失败!");
           return false;
@@ -777,12 +794,38 @@
         // 创建提交列表
         excelData.results.forEach(obj => {
           let _res = {};
-          _res.warehouseAllocationId = this.primary.id;
           _res.skuCode = obj["SKU"];
-          _res.shippedCartonQty = obj["调拨箱数"];
-          _res.cartonSpecName = obj["箱规"];
+          _res.groupName = obj["款式"];
+          _res.name = obj["名称"];
+          _res.model = obj["型号"];
+          _res.color = obj["颜色"];
+          _res.grossWeight = obj["净重(Kg)"];
+          _res.length = obj["长(Cm)"];
+          _res.width = obj["宽(Cm)"];
+          _res.height = obj["高(Cm)"];
           _res.numberOfCarton = obj["装箱数"];
-          _res.shippedNote = obj["备注"];
+          _res.leadDay = obj["交期(天)"];
+          _res.categoryName = obj["分类"];
+          _res.currencyName = obj["结算货币"];
+          _res.supplierName = obj["供货商"];
+          _res.price = obj["采购价"];
+
+          _res.brand = obj["品牌"];
+          _res.brandType = obj["品牌类型"];
+          _res.preferentialDuties = obj["出口享惠类型"];
+          _res.texture = obj["材质"];
+          //_res.declareLength = obj["分类"];
+          //_res.declareWidth = obj["分类"];
+          //_res.declareHeight = obj["分类"];
+          _res.purpose = obj["用途"];
+          _res.origin = obj["产地"];
+          _res.invoiceTitle = obj["开票抬头"];
+          _res.invoiceUnit = obj["开票单位"];
+          _res.cartonSpecName = obj["箱规"];
+          _res.vipLevel = obj["Vip级别"];
+          _res.oversize = obj["超大"];
+          _res.newGoods = obj["新品"];
+
           resData.push(_res);
         });
 

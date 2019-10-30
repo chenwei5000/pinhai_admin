@@ -1,6 +1,7 @@
 /* eslint-disable */
 import XLSX from 'xlsx'
 import global from '@/api/global'
+import  moment from 'moment';
 
 require('script-loader!file-saver');
 
@@ -89,8 +90,18 @@ function sheet_from_array_of_arrays(data, opts) {
         r: R
       });
 
-      if (typeof cell.v === 'number') cell.t = 'n';
-      else if (typeof cell.v === 'boolean') cell.t = 'b';
+      if (typeof cell.v === 'number') {
+        if (cell.v >= 1000000000000) {
+          cell.t = 's';
+          cell.v = moment(cell.v).format("YYYY-MM-DD HH:mm")
+        }
+        else {
+          cell.t = 'n';
+        }
+      }
+      else if (typeof cell.v === 'boolean') {
+        cell.t = 'b';
+      }
       else if (cell.v instanceof Date) {
         cell.t = 'n';
         cell.z = XLSX.SSF._table[14];

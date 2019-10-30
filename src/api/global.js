@@ -3,6 +3,7 @@ import store from '@/store'
 import {Message} from 'element-ui'
 import qs from 'qs'
 import systemModel from './system'
+import Vue from 'vue'
 
 const config = {
   NAME: process.env.VUE_APP_NAME,
@@ -117,7 +118,6 @@ axios.interceptors.response.use(data => {
       if(err.response.data.description && err.response.data.description=='无效的凭证'){
         systemModel.logout();
       }
-
       throw err
     } else {
       if (err.response.status == 504 || err.response.status == 404) {

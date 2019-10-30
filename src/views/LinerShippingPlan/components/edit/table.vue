@@ -627,7 +627,10 @@
                   this.loading = false;
                 })
               done();
-            } else done()
+            } else {
+              this.loading = false;
+              done()
+            }
           }
         }).catch(er => {
           /*取消*/

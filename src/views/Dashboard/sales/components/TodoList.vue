@@ -301,7 +301,10 @@
             if (action == 'confirm') {
               instance.confirmButtonLoading = true;
               this.doComplete(val, instance, done);
-            } else done()
+            } else {
+              instance.confirmButtonLoading = true;
+              done()
+            }
           }
         }).catch(er => {
           /*取消*/
