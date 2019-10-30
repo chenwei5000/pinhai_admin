@@ -1,7 +1,9 @@
 <template>
 
-  <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
-  </ph-form>
+  <div class="ph-form">
+    <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
+    </ph-form>
+  </div>
 
 </template>
 
@@ -29,7 +31,8 @@
             $id: 'name',
             label: '分类名称',
             $el: {
-              placeholder: '请输入分类名称'
+              placeholder: '请输入分类名称',
+              size: 'mini',
             },
             rules: [
               validRules.required
@@ -41,7 +44,8 @@
             label: '采购负责人',
             $el: {
               placeholder: '请选择采购负责人,可筛选',
-              filterable: true
+              filterable: true,
+              size: 'mini',
             },
             $options: userModel.getSelectOptions(),
             rules: [

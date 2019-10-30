@@ -1,15 +1,11 @@
 <template>
-  <!-- 表格工具条 添加、导入、导出等 -->
   <div class="ph-table">
-
-    <el-row class="table-tool" type="flex" justify="space-between">
-      <el-col :md="18">
-        <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
-                   size="mini">
-          新增
-        </el-button>
-      </el-col>
-    </el-row>
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar
+      :hasAdd="hasAdd"
+      @onToolBarAdd="onDefaultAdd"
+    >
+    </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -23,7 +19,7 @@
       header-cell-class-name="ph-cell-header"
       :data="tableData"
       v-loading="loading"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'materialSkuCode', order: 'ascending'}"
       id="table"
     >
       <el-table-column prop="materialSkuCode" label="原料SKU" sortable min-width="150" fixed="left"></el-table-column>
@@ -63,12 +59,14 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
-  import itemDialog from './dialog'
+  import itemDialog from './itemDialog'
   import {checkPermission} from "@/utils/permission";
+  import tableToolBar from '@/components/PhTableToolBar'
 
   export default {
     components: {
-      itemDialog
+      itemDialog,
+      tableToolBar
     },
     props: {
       productId: {
@@ -208,33 +206,4 @@
   }
 </script>
 
-<style type="text/less" lang="scss" scoped>
-
-  .panel-heading {
-    color: #444;
-    border: 1px #cfd9db solid;
-    width: 100%;
-  }
-
-  .panel-title {
-    display: table-cell;
-    vertical-align: middle;
-    padding: 0 10px;
-  }
-
-  .table-tool {
-    background-color: #dfe6ec;
-    position: relative;
-    z-index: 890;
-    width: 100%;
-    min-height: 40px;
-    line-height: 30px;
-    padding: 5px 10px;
-  }
-
-  .excel-upload-input {
-    display: none !important;
-  }
-
-</style>
 

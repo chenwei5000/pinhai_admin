@@ -51,7 +51,7 @@
 
 <script>
   import tabPane from './components/TabPane'
-  import createFrom from './components/createFrom'
+  import createFrom from './components/from'
   import {checkPermission} from "@/utils/permission";
   const statusFlag = 's='
 
@@ -78,9 +78,14 @@
 
     // 各种相关方法定义
     methods: {
-      // 状态样式
+      /* 点击Tag相应事件 */
+      // TODO: 通过URL记录点击Tab，方便刷新后不会切换视图
       handleTabClick(tab, event) {
-      }
+        const queryFlag = '?s=';
+        const queryPath = '/m2/Product_index';
+        let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
+        history.pushState(history.state, 'ph-table search', newUrl);
+      },
     },
 
     // 观察data中的值发送变化后，调用
@@ -89,8 +94,4 @@
 </script>
 
 <style scoped>
-  .ph-table {
-    padding: 10px 15px;
-  }
-
 </style>

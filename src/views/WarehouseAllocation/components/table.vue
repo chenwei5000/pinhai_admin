@@ -64,7 +64,7 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编码" min-width="150" fixed="left"></el-table-column>
+      <el-table-column prop="code" label="编码" min-width="150" fixed="left" align="center"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
@@ -78,12 +78,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="fromWarehouse.name" label="发货仓库" min-width="100"></el-table-column>
-      <el-table-column prop="toWarehouse.name" label="收货仓库" min-width="100"></el-table-column>
-      <!-- <el-table-column prop="team.name" label="跟单团队" min-width="100"></el-table-column>
-      <el-table-column prop="merchandiser" label="跟单员" min-width="100"></el-table-column> -->
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
-
+      <el-table-column prop="fromWarehouse.name" label="发货仓库" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="toWarehouse.name" label="收货仓库" min-width="100" align="center"></el-table-column>
+      <!-- <el-table-column prop="team.name" label="跟单团队" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="merchandiser" label="跟单员" min-width="100" align="center"></el-table-column> -->
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="200" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
                       v-if="scope.row.trackNumber">
@@ -106,10 +105,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120" v-if="type != 'executing' "></el-table-column>
+      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120" align="center"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120" v-if="type != 'executing' " align="center"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="remark" label="备注" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                       v-if="scope.row.remark && scope.row.remark.length > 10">
@@ -122,7 +121,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
+      <el-table-column prop="id" label="ID" width="90" align="center"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="80" fixed="right">

@@ -14,7 +14,7 @@ const validRules = {
         return Number(value);
       }
     },
-    message: '必须是数字!',
+    message: '数字',
     trigger: 'blur'
   },
 
@@ -26,7 +26,7 @@ const validRules = {
         return Number(value);
       }
     },
-    message: '必须为正整数',
+    message: '整数',
     trigger: 'blur'
   },
 
@@ -34,7 +34,7 @@ const validRules = {
     return {
       max: len,
       whitespace: true, //处理空格
-      message: '长度不能超过' + len + '位',
+      message: '少于' + len + '位',
       trigger: 'blur'
     }
   },
