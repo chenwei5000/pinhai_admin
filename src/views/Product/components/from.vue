@@ -574,7 +574,13 @@
           _top_: '4vh',
           callback: (cartonSpec) => {
             //清除缓存
-            this.cartonspecSelectOptions.unshift({label: cartonSpec.name, value: cartonSpec.id + ''});
+            this.cartonspecSelectOptions.unshift(
+              {
+                label: `[${cartonSpec.groupCode}]${cartonSpec.code}`,
+                value: cartonSpec.id + ''}
+              );
+            console.log(cartonSpec);
+            console.log(this.cartonspecSelectOptions);
             this.newProduct.cartonSpecId = cartonSpec.id + '';
           }
         };

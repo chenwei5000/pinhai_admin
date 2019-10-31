@@ -23,6 +23,7 @@
         formAttrs: {
           "label-width": "120px",
           "label-suffix": ":",
+          "inline-message": true,
           "status-icon": true,
           size: "small"
         },

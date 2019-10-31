@@ -23,6 +23,7 @@
           "label-width": "100px",
           "label-suffix": ":",
           "status-icon": true,
+          "inline-message": true,
           size: "small"
         },
         //添加或修改弹出框
