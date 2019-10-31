@@ -527,6 +527,18 @@
 
           })
           .catch(error => {
+            try {
+              this.$store.dispatch('errorLog/addErrorLog', {
+                message: error.response.data.description,
+                //url: window.location.href,
+                title: '导入产品',
+                time: new Date()
+              });
+            }
+            catch (e) {
+              console.log(e);
+            }
+
             loading.close();
           })
       },
