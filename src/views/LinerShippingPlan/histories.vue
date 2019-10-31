@@ -39,7 +39,7 @@
               prop: 'linerShippingPlan.formatEtdTime',
               label: '开船日',
               'min-width': 120,
-              sortable: true,
+              sortable: 'custom',
               'sort-orders': ['descending', 'ascending',]
             },
             {prop: 'product.skuCode', label: 'SKU编码', 'min-width': 200},
