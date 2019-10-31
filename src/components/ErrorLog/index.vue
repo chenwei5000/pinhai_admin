@@ -27,8 +27,7 @@
           <el-table-column label="错误提示" min-width="300px">
             <template slot-scope="{row}">
               <div>
-                <el-tag type="danger">
-                  {{ row.message }}
+                <el-tag type="danger" v-html="row.message">
                 </el-tag>
               </div>
             </template>
