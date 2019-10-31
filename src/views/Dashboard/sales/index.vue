@@ -74,7 +74,7 @@
   import OperateGroup from './components/OperateGroup'
   import PanelGroup from './components/PanelGroup'
   import LineChart from './components/LineChart'
-  import TodoList from './components/TodoList'
+  import TodoList from '../components/TodoList'
   import categoryModel from '@/api/category'
   import saleDetails from './components/SaleDetails'
 

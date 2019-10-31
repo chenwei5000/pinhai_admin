@@ -20,7 +20,7 @@
 <script>
   import OperateGroup from './components/OperateGroup'
   import PanelGroup from './components/PanelGroup'
-  import TodoList from './components/TodoList'
+  import TodoList from '../components/TodoList'
 
   export default {
     name: 'DashboardAdmin',
