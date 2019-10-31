@@ -177,6 +177,7 @@
         <el-col :md="12">
           <el-form-item label="排除国内无库存商品" prop="exclude">
             <el-radio-group
+              @input="updateInput"
               v-model.number="newObject.exclude"
               size="mini">
               <el-radio-button label="1" value="1">是</el-radio-button>
@@ -340,6 +341,10 @@
           })
       },
 
+      updateInput(val) {
+        this.$forceUpdate();
+      },
+
       loadOtdTime() {
         let url = `/amazonStocks/shippings/otdTime?etdTime=${moment(this.newObject.etdTime).format("YYYY-MM-DD")}
         &portOfLoading=${this.newObject.portOfLoading}
@@ -359,6 +364,7 @@
           if (!valid) {
             return;
           }
+          console.log(this.newObject);
           this.$emit("step1CBEvent", this.newObject);
         })
       },
