@@ -2,13 +2,13 @@
 
   <el-badge :value="count" type="primary">
     <div class="card-panel">
-      <router-link to="/m3/ProcurementReceivedOrder_index">
-        <div class="card-panel-icon-wrapper icon-blue">
-          <svg-icon icon-class="inStock" class-name="card-panel-icon"/>
+      <router-link to="/m2/Product_index">
+        <div class="card-panel-icon-wrapper icon-red">
+          <svg-icon icon-class="product" class-name="card-panel-icon"/>
         </div>
 
         <div class="card-panel-text">
-          采购入库
+          产品管理
         </div>
       </router-link>
     </div>
@@ -24,12 +24,24 @@
       }
     },
     components: {},
+
     data() {
       return {
         count: null
       }
     },
-    methods: {}
+
+    mounted() {
+      this.$nextTick(() => {
+        this.initData();
+      });
+    },
+
+    methods: {
+      initData() {
+
+      }
+    }
   }
 </script>
 

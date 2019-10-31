@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import LogisticPayment from "../panel/logisticPayment"
-import Payment from "../panel/payment"
+import LogisticPayment from "../../components/panel/logisticPayment"
+import Payment from "../../components/panel/payment"
 import PrePayment from "../../components/panel/prePayment"
 
   export default {
