@@ -10,7 +10,7 @@
 
           <el-tab-pane name="completionDate" lazy>
             <span slot="label">
-              <i class="el-icon-date"></i> 确认完成日期
+              <i class="el-icon-date"></i> 确认交货日期
             </span>
             <keep-alive>
               <phTab type="completionDate" ref="completionDate"/>

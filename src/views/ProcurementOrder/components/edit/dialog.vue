@@ -11,7 +11,7 @@
 
       <el-button type="warning" size="small" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
 
-      <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认完成日期</el-button -->
+      <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认交货日期</el-button -->
 
       <el-button type="primary" size="small" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
       <el-button type="primary" size="small" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印合同</el-button>
