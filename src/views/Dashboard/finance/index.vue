@@ -36,13 +36,12 @@
       }
     },
     data() {
-      return {
-      }
+      return {}
     },
     created() {
     },
     methods: {
-      initData(){
+      initData() {
       },
       handleSetLineChartData(type) {
       }
@@ -71,3 +70,4 @@
 
   }
 </style>
+
