@@ -1,35 +1,34 @@
 <template>
-
-  <el-card class="box-card" style="margin-top:10px;">
-
+  <el-card class="box-card">
     <div slot="header">
-      <svg t="1571911088846" class="icon" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="50775" width="16" height="16"><path d="M867.900876 347.954944A382.109637 382.109637 0 0 1 993.241552 615.809762c0 276.633792-215.821777 408.190238-475.858824 408.190238h-9.483854c-260.037046 0-475.794743-131.556446-475.794744-408.190238a379.802753 379.802753 0 0 1 125.276596-267.854818 593.253567 593.253567 0 0 1 83.688611-71.513392 149.114393 149.114393 0 0 1 12.81602-9.291615 113.293617 113.293617 0 0 1-68.437547-99.516395A133.863329 133.863329 0 0 1 330.717397 49.533917a137.644055 137.644055 0 0 1 49.533917 8.843054 83.944931 83.944931 0 0 1 16.788986 7.753692 11.214018 11.214018 0 0 0 10.060576-3.139925 152.254318 152.254318 0 0 1 27.874844-29.476846A137.259574 137.259574 0 0 1 512.897121 0.320401a154.368961 154.368961 0 0 1 105.219525 62.670337 11.214018 11.214018 0 0 0 10.060576 3.139925 83.944931 83.944931 0 0 1 16.788986-7.753692 137.644055 137.644055 0 0 1 49.533917-8.843054 133.350688 133.350688 0 0 1 144.756946 118.099625 113.421777 113.421777 0 0 1-68.437547 99.516395c4.165207 2.563204 8.394493 5.703129 12.81602 9.291615a623.499374 623.499374 0 0 1 84.265332 71.513392z m-156.355444 96.12015a44.85607 44.85607 0 0 0 0-64.784981 46.522153 46.522153 0 0 0-65.746183 0L512.640801 510.077597 379.482353 379.033792a46.586233 46.586233 0 0 0-65.810263 0 44.85607 44.85607 0 0 0 0 64.784981L400.564706 529.301627H346.032541a45.560951 45.560951 0 1 0 0 91.121902h120.022027v45.625032H373.394743a45.625031 45.625031 0 1 0 0 91.185982h93.236546v70.936671a46.329912 46.329912 0 0 0 92.595745 0v-70.48811h88.943179a45.625031 45.625031 0 1 0 0-91.185983H559.227034V620.93617H679.249061v-0.512641a45.560951 45.560951 0 1 0 0-91.121902h-54.724405z" fill="#b47969" p-id="50776"></path></svg>
+      <i class="el-icon-money" />
       <span style="margin-left:10px;">财务</span>
     </div>
 
-    <el-row :gutter="40" class="panel-group">
-
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <logistic-payment :mine="mine"></logistic-payment>
-      </el-col>
-
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <payment :mine="mine"></payment>
-      </el-col>
-
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+    <el-row :gutter="20" class="panel-group">
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
         <pre-payment :mine="mine"></pre-payment>
       </el-col>
 
-    </el-row>
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <payment :mine="mine"></payment>
+      </el-col>
 
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <logistic-payment :mine="mine"></logistic-payment>
+      </el-col>
+
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      </el-col>
+
+    </el-row>
   </el-card>
 </template>
 
 <script>
 import LogisticPayment from "../panel/logisticPayment"
 import Payment from "../panel/payment"
-import PrePayment from "../panel/prePayment"
+import PrePayment from "../../components/panel/prePayment"
 
   export default {
     props: {
@@ -47,16 +46,12 @@ import PrePayment from "../panel/prePayment"
 </script>
 
 <style lang="scss" scoped>
-
   .panel-group {
     margin-top: 10px;
 
-    .card-panel-col {
-      margin-bottom: 15px;
-      align-content: center;
-      text-align: center;
-    }
-
+  .card-panel-col {
+    margin-bottom: 32px;
   }
-
+  }
 </style>
+
