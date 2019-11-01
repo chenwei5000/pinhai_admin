@@ -10,7 +10,7 @@
              @close='closeDialog'
              :visible.sync="dialogVisible">
 
-    <div class="block" style="height: 420px;">
+    <div class="block" style="height: 580px;">
       <el-scrollbar style="height: 100%">
 
         <div class="ph-table">
@@ -237,22 +237,27 @@
                       type="date"
                       size="mini"
                       format="yyyy年M月d日"
+                      value-format="yyyy年M月d日"
                       placeholder="选择交货时间">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
 
                 <el-col :md="14">
+
                   <el-input type="hidden" style="display: none" v-model="printObject.effectiveDateStart"
                             name="effectiveDateStart"></el-input>
                   <el-input type="hidden" style="display: none" v-model="printObject.effectiveDateEnd"
                             name="effectiveDateEnd"></el-input>
+
                   <el-form-item label="生效日期" prop="effectiveDate">
                     <el-date-picker
                       v-model="printObject.effectiveDate"
+                      @change="effectiveDateChange"
                       type="daterange"
                       size="mini"
                       format="yyyy年M月d日"
+                      value-format="yyyy年M月d日"
                       range-separator="至"
                       start-placeholder="开始日期"
                       end-placeholder="结束日期">
@@ -276,6 +281,27 @@
 
             </fieldset>
 
+
+             <fieldset class="panel-heading">
+              <legend class="panel-title">额外
+                <el-tooltip class="item" effect="light" size="mini" placement="right">
+                  <div slot="content">
+                    采购合同相关要求。
+                  </div>
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </legend>
+
+              <el-row>
+                <el-col :md="24">
+                  <el-form-item label="质量要求" prop="qualityRequirement">
+                    <el-input v-model="printObject.qualityRequirement" type="textarea" rows="4"
+                              name="qualityRequirement"
+                              style="width: 1000px" size="mini" placeholder="默认为： 参考合同附页" ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </fieldset>
           </el-form>
 
         </div>
@@ -380,16 +406,12 @@
     },
     methods: {
       initData() {
-        this.initComplete = false;
-        this.printObject.demanderName = '深圳市品海电⼦商务有限公司';
-        this.printObject.demanderAddress = '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
-        this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
-        this.printObject.supplierName = this.primary.supplier.companyName;
-        this.printObject.supplierAddress = this.primary.supplier.address;
-        this.printObject.supplierLinkMan = this.primary.supplier.linkman;
-        this.printObject.supplierLinkMethod = this.primary.supplier.tel;
-        this.printObject.currency = this.primary.currency.name;
+
+        this.initContractInfo();
+       
         this.initCategoryName();
+
+
       },
 
       /*获取明细列表*/
@@ -433,6 +455,53 @@
           })
       },
 
+       /*获取合同历史信息*/
+      initContractInfo() {
+        let url = "/contractInfoHistories";
+        let filters = [
+          {
+            field: "procurementOrderId",
+            op: 'eq',
+            data: this.primary ? this.primary.id : -1
+          }
+        ]
+        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+        // let relations = ["product", "product.category"]
+        // url += "&relations=" + JSON.stringify(relations);
+
+        // 请求开始
+        this.loading = true;
+
+        //获取数据
+        this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data
+            let data = res || []
+            this.printObject = data[0] || {};
+            this.initComplete = false;
+            this.printObject.demanderName = '深圳市品海电子商务有限公司';
+            this.printObject.demanderAddress = '深圳市龙岗区坂田街道永香路江南大厦二楼212室'; 
+            this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
+            this.printObject.supplierName = this.primary.supplier.companyName;
+            this.printObject.supplierAddress = this.primary.supplier.address;
+            this.printObject.currency = this.primary.currency.name;
+            if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null){
+               this.$set(this.printObject, "effectiveDate", [this.printObject.effectiveDateStart, this.printObject.effectiveDateEnd]);
+            }
+            
+            this.initCategoryName();
+          })
+          .catch(err => {
+            this.loading = false
+            this.initComplete = true;
+          })
+      },
+
+      effectiveDateChange(){
+            this.$set(this.printObject, "effectiveDateStart", this.printObject.effectiveDate[0])
+            this.$set(this.printObject, "effectiveDateEnd", this.printObject.effectiveDate[1])
+      },
 
       /* 开启弹出编辑框 需要传主键ID */
       openDialog(primary) {
@@ -455,11 +524,6 @@
         this.$refs.detailItem.validate(valid => {
           if (!valid) {
             return false
-          }
-          // ajax获取合同数据
-          if (this.printObject.effectiveDate) {
-            this.printObject.effectiveDateStart = parseTime(this.printObject.effectiveDate[0], "{y}年{m}月{d}日");
-            this.printObject.effectiveDateEnd = parseTime(this.printObject.effectiveDate[1], "{y}年{m}月{d}日");
           }
           let url = `${this.global.generateUrl("/pdfs/purchaseContract")}/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
           let form = this.$refs.detailItem.$el;
