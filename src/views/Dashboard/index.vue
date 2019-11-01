@@ -4,6 +4,15 @@
 
     <el-tabs v-model="activeStatus" type="border-card">
 
+      <el-tab-pane name="salesDashboard" lazy v-if="hasSales">
+          <span slot="label" style="color: #409EFF;">
+            <i class="el-icon-s-data"></i>销售
+          </span>
+        <keep-alive>
+          <component is="salesDashboard"/>
+        </keep-alive>
+      </el-tab-pane>
+
       <el-tab-pane name="purchasesDashboard" lazy v-if="hasPurchases">
           <span slot="label" style="color: #67C23A;">
             <i class="el-icon-shopping-cart-full"></i> 采购
@@ -37,15 +46,6 @@
           </span>
         <keep-alive>
           <component is="financeDashboard"/>
-        </keep-alive>
-      </el-tab-pane>
-
-      <el-tab-pane name="salesDashboard" lazy v-if="hasSales">
-          <span slot="label" style="color: #409EFF;">
-            <i class="el-icon-s-data"></i>销售
-          </span>
-        <keep-alive>
-          <component is="salesDashboard"/>
         </keep-alive>
       </el-tab-pane>
 

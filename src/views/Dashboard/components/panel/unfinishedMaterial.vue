@@ -6,7 +6,7 @@
         原料信息不全
 
         <div class="card-badge icon-red">
-          <svg-icon icon-class="alert" class-name="card-panel-icon"/>
+          <svg-icon icon-class="material" class-name="card-panel-icon"/>
         </div>
 
       </div>

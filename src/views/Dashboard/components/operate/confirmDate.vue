@@ -3,7 +3,7 @@
   <el-badge :value="count" type="primary">
     <div class="card-panel">
       <router-link to="/m2/ProcurementShippedOrder_index?s=completionDate">
-        <div class="card-panel-icon-wrapper icon-blue">
+        <div class="card-panel-icon-wrapper icon-green">
           <svg-icon icon-class="date" class-name="card-panel-icon"/>
         </div>
 
