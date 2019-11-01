@@ -27,8 +27,8 @@
 </template>
 
 <script>
-  import LogisticPayment from "../operate/logisticPayment";
-  import Payment from "../operate/payment";
+  import LogisticPayment from "../../components/operate/logisticPayment";
+  import Payment from "../../components/operate/payment";
   import PrePayment from "../../components/operate/prePayment";
   export default {
     props: {

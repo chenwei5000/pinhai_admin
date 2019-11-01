@@ -17,7 +17,7 @@
       >
         <el-row>
           <el-col :md="24">
-            <el-form-item label="预计完成日期" prop="otdTime">
+            <el-form-item label="预计交货日期" prop="otdTime">
               <el-date-picker
                 v-model="detailItem.otdTime"
                 type="date"
@@ -63,7 +63,7 @@
         return this.calAmount();
       },
       dialogTitle() {
-        return "确认采购单完成日期";
+        return "确认采购单交货日期";
 
       },
       hasEdit() {

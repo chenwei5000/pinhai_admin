@@ -29,10 +29,10 @@
       </fieldset>
 
       <fieldset class="panel-heading">
-        <legend class="panel-title">预计完成日期
+        <legend class="panel-title">预计交货日期
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
-              采购单预计的完成日期，由跟单确认
+              采购单预计的交货日期，由跟单确认
             </div>
             <i class="el-icon-question">&nbsp;</i>
           </el-tooltip>

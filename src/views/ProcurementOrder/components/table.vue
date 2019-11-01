@@ -121,7 +121,7 @@
 
       <el-table-column prop="accountPeriod" label="帐期(天)" width="90"></el-table-column>
 
-      <el-table-column prop="formatOtdTime" label="预计完成日期" width="100"></el-table-column>
+      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100"></el-table-column>
 
       <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
         <template slot-scope="scope">

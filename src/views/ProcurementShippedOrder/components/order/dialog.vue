@@ -5,7 +5,7 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row
       style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
-      <el-button type="primary" size="small" icon="el-icon-date" v-if="hasExecute" @click="onConfirmDate">确认完成日期</el-button>
+      <el-button type="primary" size="small" icon="el-icon-date" v-if="hasExecute" @click="onConfirmDate">确认交货日期</el-button>
       <el-button @click="closeDialog">取 消</el-button>
     </el-row>
 
