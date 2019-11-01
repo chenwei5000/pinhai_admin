@@ -22,6 +22,14 @@
         <unfinishedMaterial :mine="mine"></unfinishedMaterial>
       </el-col>
 
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <unfinishedMaterial :mine="mine"></unfinishedMaterial>
+      </el-col>
+
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <overdue :mine="mine"></overdue>
+      </el-col>
+
     </el-row>
   </el-card>
 </template>
@@ -31,6 +39,7 @@
   import todoSettlement from '../../components/panel/procurementSettlement'
   import unfinishedProduct from '../../components/panel/unfinishedProduct'
   import unfinishedMaterial from '../../components/panel/unfinishedMaterial'
+  import overdue from '../../components/panel/overdue'
 
   export default {
     props: {
@@ -44,6 +53,7 @@
       todoSettlement,
       unfinishedProduct,
       unfinishedMaterial,
+      overdue,
     },
     methods: {}
   }
