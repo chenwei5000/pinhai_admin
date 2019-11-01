@@ -4,11 +4,11 @@
     <div class="card-panel">
       <router-link to="/m2/ProcurementShippedOrder_index?s=orderExecuting">
         <div class="card-panel-icon-wrapper icon-yellow">
-          <svg-icon icon-class="shipped" class-name="card-panel-icon"/>
+          <svg-icon icon-class="outStock" class-name="card-panel-icon"/>
         </div>
 
         <div class="card-panel-text">
-          待发货
+          发货计划
         </div>
       </router-link>
     </div>

@@ -4,6 +4,15 @@
 
     <el-tabs v-model="activeStatus" type="border-card">
 
+      <el-tab-pane name="salesDashboard" lazy v-if="hasSales">
+          <span slot="label" style="color: #409EFF;">
+            <i class="el-icon-s-data"></i>销售
+          </span>
+        <keep-alive>
+          <component is="salesDashboard"/>
+        </keep-alive>
+      </el-tab-pane>
+
       <el-tab-pane name="purchasesDashboard" lazy v-if="hasPurchases">
           <span slot="label" style="color: #67C23A;">
             <i class="el-icon-shopping-cart-full"></i> 采购
@@ -40,12 +49,12 @@
         </keep-alive>
       </el-tab-pane>
 
-      <el-tab-pane name="salesDashboard" lazy v-if="hasSales">
+      <el-tab-pane name="defaultDashboard" lazy v-if="hasDefault">
           <span slot="label" style="color: #409EFF;">
-            <i class="el-icon-s-data"></i>销售
+            <i class="el-icon-user"></i>控制台
           </span>
         <keep-alive>
-          <component is="salesDashboard"/>
+          <component is="defaultDashboard"/>
         </keep-alive>
       </el-tab-pane>
 
@@ -63,6 +72,7 @@
   import documentaryDashboard from './documentary'
   import stockManagerDashboard from './stockManager'
   import financeDashboard from './finance'
+  import defaultDashboard from './default/index'
   import {checkRole} from "../../utils/permission";
 
 
@@ -74,7 +84,8 @@
       purchasesDashboard,
       documentaryDashboard,
       stockManagerDashboard,
-      financeDashboard
+      financeDashboard,
+      defaultDashboard
     },
 
     data() {
@@ -100,16 +111,19 @@
       },
       hasFinance() {
         return checkRole("财务");
+      },
+      hasDefault(){
+        return !this.hasSales && !this.hasDocumentary && !this.hasFinance && !this.hasPurchases && !this.hasStockManager
       }
     },
 
     mounted() {
       this.$nextTick(() => {
-        this.activeStatus = this.hasSales ? 'documentaryDashboard' :
+        this.activeStatus = this.hasSales ? 'salesDashboard' :
           this.hasPurchases ? 'purchasesDashboard' :
-            this.hasDocumentary ? 'salesDashboard' :
+            this.hasDocumentary ? 'documentaryDashboard' :
               this.hasStockManager ? 'stockManagerDashboard' :
-                this.hasFinance ? 'financeDashboard' : null;
+                this.hasFinance ? 'financeDashboard' : 'defaultDashboard';
       })
     },
   }

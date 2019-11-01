@@ -6,7 +6,7 @@
         产品信息不全
 
         <div class="card-badge icon-red">
-          <svg-icon icon-class="inventory-warning" class-name="card-panel-icon"/>
+          <svg-icon icon-class="product" class-name="card-panel-icon"/>
         </div>
 
       </div>

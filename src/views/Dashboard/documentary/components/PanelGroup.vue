@@ -12,11 +12,11 @@
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <material-management :mine="mine"></material-management>
+        <unfinishedProduct :mine="mine"></unfinishedProduct>
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <product-management :mine="mine"></product-management>
+        <unfinishedMaterial :mine="mine"></unfinishedMaterial>
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
@@ -36,8 +36,8 @@
   import ConfirmDate from '../../components/panel/confirmDate'
   import ProcurementShippedPlan from "../../components/panel/procurementShippedPlan";
   import ProcurementShipped from "../../components/panel/procurementShipped";
-  import ProductManagement from "../../components/panel/productManagement";
-  import MaterialManagement from "../../components/panel/materialManagement";
+  import unfinishedProduct from '../../components/panel/unfinishedProduct';
+  import unfinishedMaterial from '../../components/panel/unfinishedMaterial';
 
   export default {
     props: {
@@ -46,8 +46,8 @@
       }
     },
     components: {
-      MaterialManagement,
-      ProductManagement,
+      unfinishedProduct,
+      unfinishedMaterial,
       ProcurementShipped,
       ProcurementShippedPlan,
       ConfirmDate,

@@ -4,7 +4,7 @@
     <div class="card-panel">
       <router-link to="/m2/ProcurementShippedOrder_index?s=executing">
         <div class="card-panel-icon-wrapper icon-orange">
-          <svg-icon icon-class="deliver" class-name="card-panel-icon"/>
+          <svg-icon icon-class="shipped" class-name="card-panel-icon"/>
         </div>
 
         <div class="card-panel-text">

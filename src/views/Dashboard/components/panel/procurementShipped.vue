@@ -3,9 +3,9 @@
   <div class="card-panel">
     <router-link to="/m2/ProcurementShippedOrder_index?s=executing">
       <div class="card-header">
-        发货中
-        <div class="card-badge icon-blue">
-          <svg-icon icon-class="deliver-1" class-name="card-panel-icon"/>
+        待发货
+        <div class="card-badge icon-orange">
+          <svg-icon icon-class="shipped" class-name="card-panel-icon"/>
         </div>
 
       </div>

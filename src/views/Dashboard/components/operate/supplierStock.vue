@@ -2,13 +2,13 @@
 
   <el-badge :value="count" type="primary">
     <div class="card-panel">
-      <router-link to="/m2/Product_index">
-        <div class="card-panel-icon-wrapper icon-red">
-          <svg-icon icon-class="product" class-name="card-panel-icon"/>
+      <router-link to="/m2/Supplier_index">
+        <div class="card-panel-icon-wrapper icon-blue">
+          <svg-icon icon-class="inventory" class-name="card-panel-icon"/>
         </div>
 
         <div class="card-panel-text">
-          产品管理
+          供货商库存
         </div>
       </router-link>
     </div>
