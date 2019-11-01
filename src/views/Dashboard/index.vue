@@ -49,6 +49,15 @@
         </keep-alive>
       </el-tab-pane>
 
+      <el-tab-pane name="defaultDashboard" lazy v-if="hasDefault">
+          <span slot="label" style="color: #409EFF;">
+            <i class="el-icon-user"></i>控制台
+          </span>
+        <keep-alive>
+          <component is="defaultDashboard"/>
+        </keep-alive>
+      </el-tab-pane>
+
     </el-tabs>
 
   </div>
@@ -63,6 +72,7 @@
   import documentaryDashboard from './documentary'
   import stockManagerDashboard from './stockManager'
   import financeDashboard from './finance'
+  import defaultDashboard from './default/index'
   import {checkRole} from "../../utils/permission";
 
 
@@ -74,7 +84,8 @@
       purchasesDashboard,
       documentaryDashboard,
       stockManagerDashboard,
-      financeDashboard
+      financeDashboard,
+      defaultDashboard
     },
 
     data() {
@@ -100,6 +111,9 @@
       },
       hasFinance() {
         return checkRole("财务");
+      },
+      hasDefault(){
+        return !this.hasSales && !this.hasDocumentary && !this.hasFinance && !this.hasPurchases && !this.hasStockManager
       }
     },
 
@@ -109,7 +123,7 @@
           this.hasPurchases ? 'purchasesDashboard' :
             this.hasDocumentary ? 'documentaryDashboard' :
               this.hasStockManager ? 'stockManagerDashboard' :
-                this.hasFinance ? 'financeDashboard' : null;
+                this.hasFinance ? 'financeDashboard' : 'defaultDashboard';
       })
     },
   }
