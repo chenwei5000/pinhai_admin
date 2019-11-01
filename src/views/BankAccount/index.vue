@@ -35,6 +35,7 @@
           hasImport: checkPermission('BankAccountResource_import'),
 
           url: '/bankAccounts',
+          exportFileName: '银行账户',
           relations: ["creator","currency"],
           tableAttrs: {
             "row-class-name": this.statusClassName

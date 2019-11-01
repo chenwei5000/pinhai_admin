@@ -1545,6 +1545,9 @@
                   }
                 }
               }
+              if(prop=='accountCardHide'){
+                prop = 'accountCard'
+              }
               _res[prop] = obj[_head];
             }
           });
