@@ -11,12 +11,12 @@
         <el-input v-model="searchParam.skuCode" size="mini" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
 
-      <el-form-item label="产品名">
-        <el-input v-model="searchParam.productName" size="mini" placeholder="请输入产品名" clearable></el-input>
+      <el-form-item label="产品款式">
+        <el-input v-model="searchParam.groupName" size="mini" placeholder="请输入产品款式" clearable></el-input>
       </el-form-item>
 
       <el-form-item>
-        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button native-type="submit" type="primary" @click="search(true)" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
@@ -40,95 +40,100 @@
       header-cell-class-name="ph-cell-header"
       :data="tableData"
       v-loading="loading"
-      @selection-change="handleSelectionChange"
       @row-dblclick="handleDoubleClick"
       :default-sort="{prop: 'skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.skuCode && scope.row.skuCode.length > 22">
-            <div v-html="scope.row.skuCode"></div>
-            <span slot="reference">{{
-              scope.row.skuCode ? scope.row.skuCode.length > 22 ? scope.row.skuCode.substr(0,20)+'..' : scope.row.skuCode : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
+      <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left" align="center">
+      </el-table-column>
+
+      <el-table-column prop="productImgUrl" label="图片" width="40">
+        <template slot-scope="scope" v-if="scope.row.productImgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.productImgUrl"
+            :preview-src-list="[scope.row.productImgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
         </template>
       </el-table-column>
 
-      <el-table-column prop="productName" label="产品名" width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.productName && scope.row.productName.length > 17">
-            <div v-html="scope.row.productName"></div>
-            <span slot="reference">{{
-              scope.row.productName ? scope.row.productName.length > 17 ? scope.row.productName.substr(0,15)+'..' : scope.row.productName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.productName }}
-            </span>
-        </template>
+      <el-table-column prop="categoryName" label="分类" width="80" align="center"></el-table-column>
+
+      <el-table-column prop="fnSku" label="FNSKU" width="120" hidden align="center"></el-table-column>
+
+      <el-table-column prop="groupName" label="产品款式" width="110" hidden align="center"></el-table-column>
+      <el-table-column prop="model" label="型号" width="110" hidden align="center"></el-table-column>
+      <el-table-column prop="color" label="颜色" width="110" hidden align="center"></el-table-column>
+
+      <el-table-column prop="size" label="尺码" width="110" hidden align="center" v-if="false"></el-table-column>
+
+      <el-table-column prop="vipLevel" label="Vip级别" width="110" align="center"></el-table-column>
+      <el-table-column prop="saleQty" label="总销量" width="110" align="center"></el-table-column>
+      <el-table-column prop="sevenSaleQty" label="7日销量" width="110" align="center"></el-table-column>
+      <el-table-column prop="sevenAmendQty" label="7日销量修正" width="110" align="center"></el-table-column>
+      <el-table-column prop="sevenOutOfStockDay" label="7日缺货天数" width="110" align="center"></el-table-column>
+      <el-table-column prop="inStockQty" label="库存" width="110" align="center"></el-table-column>
+
+      <el-table-column prop="onPassageQty" label="待入库" width="110" align="center"></el-table-column>
+      <el-table-column prop="reservedQty" label="Reserved" width="110" align="center"></el-table-column>
+      <el-table-column prop="stockSaleWeek" label="库周转" width="110" align="center"></el-table-column>
+      <el-table-column prop="stockSoldOutTime" label="库售罄时间" width="110" align="center"></el-table-column>
+      <el-table-column prop="allSaleWeek" label="途周转" width="110" align="center"></el-table-column>
+      <el-table-column prop="containerSoldOutDay" label="途断货天数" width="110" align="center"></el-table-column>
+      <el-table-column prop="allSoldOutTime" label="途售罄时间" width="110" align="center"></el-table-column>
+      <el-table-column prop="safetyWeek" label="安全库存(周)" width="110" align="center"></el-table-column>
+      <el-table-column prop="stockGap" label="库存缺口" width="110" align="center"></el-table-column>
+
+      <el-table-column prop="productName" label="产品名" width="200" align="center">
       </el-table-column>
-
-      <el-table-column prop="categoryName" label="分类" width="80"></el-table-column>
-
-      <el-table-column prop="fnSku" label="FNSKU" width="120" hidden></el-table-column>
-
-      <el-table-column prop="groupName" label="产品款式" width="110" hidden></el-table-column>
-      <el-table-column prop="model" label="型号" width="110" hidden></el-table-column>
-      <el-table-column prop="color" label="颜色" width="110" hidden></el-table-column>
-
-      <el-table-column prop="size" label="尺码" width="110" hidden></el-table-column>
-
-      <el-table-column prop="vipLevel" label="Vip级别" width="110"></el-table-column>
-      <el-table-column prop="saleQty" label="总销量" width="110"></el-table-column>
-      <el-table-column prop="sevenSaleQty" label="7日销量" width="110"></el-table-column>
-      <el-table-column prop="sevenAmendQty" label="7日销量修正" width="110"></el-table-column>
-      <el-table-column prop="sevenOutOfStockDay" label="7日缺货天数" width="110"></el-table-column>
-      <el-table-column prop="inStockQty" label="库存" width="110"></el-table-column>
-
-      <el-table-column prop="onPassageQty" label="待入库" width="110"></el-table-column>
-      <el-table-column prop="reservedQty" label="Reserved" width="110"></el-table-column>
-      <el-table-column prop="stockSaleWeek" label="库周转" width="110"></el-table-column>
-      <el-table-column prop="stockSoldOutTime" label="库售罄时间" width="110"></el-table-column>
-      <el-table-column prop="allSaleWeek" label="途周转" width="110"></el-table-column>
-      <el-table-column prop="containerSoldOutDay" label="途断货天数" width="110"></el-table-column>
-      <el-table-column prop="allSoldOutTime" label="途售罄时间" width="110"></el-table-column>
-      <el-table-column prop="safetyWeek" label="安全库存(周)" width="110"></el-table-column>
-      <el-table-column prop="stockGap" label="库存缺口" width="110"></el-table-column>
 
 
       <!--默认操作列-->
-      <el-table-column label="操作" 
+      <el-table-column label="操作"
                        no-export="true"
                        width="130" fixed="right">
         <template slot-scope="scope">
 
-          <el-button  size="mini" icon="el-icon-sell" circle
-                      type="primary" id="ph-table-sell" @click="saleSituation(scope.row)">
+          <el-button size="mini" icon="el-icon-s-data" circle
+                     type="primary" id="ph-table-sell" @click="saleSituation(scope.row)">
           </el-button>
 
-          <el-button  size="mini" icon="el-icon-box" circle
-                      type="primary" id="ph-table-box" @click="stockSituation(scope.row)">
+          <el-button size="mini" icon="el-icon-ship" circle
+                     type="success" id="ph-table-box" @click="stockSituation(scope.row)">
           </el-button>
 
-          <el-button  size="mini" icon="el-icon-time" circle
-                      type="warning" id="ph-table-time" @click="soldOutTime(scope.row)">
+          <el-button size="mini" icon="el-icon-s-home" circle
+                     type="warning" id="ph-table-time" @click="soldOutTime(scope.row)">
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
+
+    <!--分页-->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="page"
+      :page-sizes="paginationSizes"
+      :page-size="size"
+      :total="total"
+      style="text-align: right; padding: 7px 0 0 0;"
+      background
+      size="mini"
+      :layout="paginationLayout"
+      id="ph-table-page"
+      ref="pageForm"
+    >
+      <el-button icon="el-icon-refresh" @click="onRefreshTable" class="btn-prev" circle></el-button>
+    </el-pagination>
+
     <chartDialog ref="chartDialog" :fromParent="fromParent"></chartDialog>
 
-    <stockSituationDialog ref="stockSituationDialog"></stockSituationDialog>
+    <stockSituationDialog ref="stockSituationDialog" :fromParent="fromParent"></stockSituationDialog>
 
-    <saleStockDialog ref="saleStockDialog" :fromParent="transData"></saleStockDialog>
+    <saleStockDialog ref="saleStockDialog" :fromParent="fromParent"></saleStockDialog>
 
   </div>
 
@@ -139,12 +144,12 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import phEnumModel from '@/api/phEnum'
   import {checkPermission} from "@/utils/permission";
-  import { parse } from 'path'
+  import {parse} from 'path'
   import chartDialog from './components/chartDialog'
   import stockSituationDialog from './components/stockSituationDialog'
   import saleStockDialog from './components/saleStockDialog'
+  import {parseTime} from "../../../../../utils";
 
   export default {
     components: {
@@ -156,7 +161,7 @@
     props: {
       fromParent: {
         type: [Object],
-        default: {}
+        default: {merchantId: null, categoryId: null, week: 20}
       }
     },
     computed: {
@@ -165,18 +170,23 @@
         'rolePower'
       ]),
 
-      hasExport(){
+      hasExport() {
         return true;
       },
+    },
 
-      transData(){
-        return this.fromParent;
+
+    watch: {
+      fromParent: {
+        handler(newValue, oldValue) {
+          this.initData();
+          this.getList();
+        },
+        deep: true
       }
     },
 
-    filters: {
-      currency: currency
-    },
+    filters: {},
 
     data() {
       return {
@@ -190,15 +200,18 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        // 多选记录对象
-        selected: [],
-
+        // 分页
+        paginationSizes: [10, 20, 50],
+        total: null,
+        size: 10,
+        page: 1,
+        paginationLayout: 'total, sizes, slot, prev, pager, next, jumper',
         //数据 TODO: 根据实际情况调整
         url: "/amazonStocks", // 资源URL
         downloadUrl: "", //下载Url
         searchParam: {
           skuCode: null,
-          productName: null,
+          groupName: null,
         },
         filters: [],   //搜索对象
         relations: ["shipmentItems"],  // 关联对象
@@ -240,7 +253,7 @@
 
       /*获取列表*/
       getList() {
-        if ( this.fromParent.merchantId == null ){
+        if (this.fromParent.merchantId == null) {
           return;
         }
         let url = `${this.url}/${this.fromParent.merchantId}`;
@@ -257,29 +270,28 @@
 
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
-            if (params.indexOf("?") == -1){
-              params += "?relations=" + JSON.stringify(this.relations);
-          }else{
-             params += "&relations=" + JSON.stringify(this.relations);
+          if (params.indexOf("?") == -1) {
+            params += "?relations=" + JSON.stringify(this.relations);
+          } else {
+            params += "&relations=" + JSON.stringify(this.relations);
           }
         }
 
-        if (this.fromParent.categoryId != null){
-          if (params.indexOf("?") == -1){
+        if (this.fromParent.categoryId != null) {
+          if (params.indexOf("?") == -1) {
             params += "?cid=" + this.fromParent.categoryId;
-          }else{
-             params += "&cid=" + this.fromParent.categoryId;
+          } else {
+            params += "&cid=" + this.fromParent.categoryId;
           }
         }
-        else{
-          this.$message.error("请选择分类！")
-          return;
+        else {
+          return false;
         }
 
-        if (this.fromParent.week != null){
-          if (params.indexOf("?") == -1){
+        if (this.fromParent.week != null) {
+          if (params.indexOf("?") == -1) {
             params += "?weekNum=" + this.fromParent.week;
-          }else{
+          } else {
             params += "&weekNum=" + this.fromParent.week;
           }
         }
@@ -295,7 +307,7 @@
             let data = res || []
 
             this.data = data
-            this.search()
+            this.search(false)
 
             this.total = res.length || 0
             this.loading = false
@@ -315,29 +327,47 @@
           })
       },
 
-      /* 多选功能 */
-      handleSelectionChange(val) {
-        this.selected = val
+      // 一页显示数量调整
+      handleSizeChange(val) {
+        if (this.size === val) return
+        this.page = 1
+        this.size = val
+        this.search(false);
       },
 
-      handleDoubleClick(row){
+      // 第几页调整
+      handleCurrentChange(val) {
+        if (this.page === val) return
+        this.page = val
+        this.search(false);
+      },
+
+      onRefreshTable: function () {
+        this.getList();
+      },
+
+
+      handleDoubleClick(row) {
         //this.$refs.chartDialog.openDialog(row);
       },
 
-      saleSituation(row){
+      saleSituation(row) {
         this.$refs.chartDialog.openDialog(row);
       },
 
-      stockSituation(row){
+      stockSituation(row) {
         this.$refs.stockSituationDialog.openDialog(row);
       },
 
-      soldOutTime(row){
+      soldOutTime(row) {
         this.$refs.saleStockDialog.openDialog(row);
       },
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
-      search() {
+      search(flg) {
+        if(flg){
+          this.page = 1;
+        }
         this.tableData = JSON.parse(JSON.stringify(this.data));
 
         if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
@@ -349,43 +379,50 @@
             });
         }
 
-        if (this.searchParam.productName != null && this.searchParam.productName != '') {
+        if (this.searchParam.groupName != null && this.searchParam.groupName != '') {
           this.tableData = this.tableData.filter(
             item => {
-              if (item.productName.indexOf(this.searchParam.productName) !== -1) {
+              if (item.groupName.indexOf(this.searchParam.groupName) !== -1) {
                 return true;
               }
             });
         }
+
+        this.total = this.tableData.length;
+
+        this.tableData = this.tableData.slice((this.page - 1) * this.size, this.page * this.size);
       },
 
       /*本地重置搜索*/
       resetSearch() {
         this.$refs.searchForm.resetFields();
         this.searchParam.skuCode = null;
-        this.searchParam.productName = null;
-        this.search();
+        this.searchParam.groupName = null;
+        this.search(true);
       },
       onToolBarDownloadData() {
+        if(this.fromParent.merchantId == null){
+          return false;
+        }
         //获取数据
         let table = this.$refs.table;
         let params = '';
-         if (this.fromParent.categoryId != null){
-          if (params.indexOf("?") == -1){
+        if (this.fromParent.categoryId != null) {
+          if (params.indexOf("?") == -1) {
             params += "?cid=" + this.fromParent.categoryId;
-          }else{
-             params += "&cid=" + this.fromParent.categoryId;
+          } else {
+            params += "&cid=" + this.fromParent.categoryId;
           }
         }
-        else{
+        else {
           this.$message.error("请选择分类！")
           return;
         }
 
-        if (this.fromParent.week != null){
-          if (params.indexOf("?") == -1){
+        if (this.fromParent.week != null) {
+          if (params.indexOf("?") == -1) {
             params += "?weekNum=" + this.fromParent.week;
-          }else{
+          } else {
             params += "&weekNum=" + this.fromParent.week;
           }
         }
@@ -396,8 +433,8 @@
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
+            filename: `销售产品明细-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: ['操作', '图片', 'ID']
           })
           this.loading = false;
         })

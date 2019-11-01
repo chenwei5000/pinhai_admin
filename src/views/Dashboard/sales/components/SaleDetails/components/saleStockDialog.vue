@@ -6,8 +6,9 @@
              top="10vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
+
   <div class="chart-container">
-    <StockChangeChart height="100%" width="100%" :primary="primary" v-if="isExist" ref="StockChangeChart"/>
+    <StockChangeChart height="100%" width="100%" :searchParam="fromParent" :primary="primary" v-if="isExist" ref="StockChangeChart"/>
   </div>
 </el-dialog>
 </template>
@@ -93,7 +94,7 @@ export default {
         this.initData();
     },
   }
-  
+
 }
 </script>
 

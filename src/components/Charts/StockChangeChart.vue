@@ -28,6 +28,10 @@ export default {
     primary: {
       type: Object,
       default: {}
+    },
+    searchParam: {
+      type: Object,
+      default: {merchantId: null, categoryId: null, week: 20}
     }
   },
   data() {
@@ -50,7 +54,7 @@ export default {
       this.chart = echarts.init(document.getElementById(this.id))
      let option = {
           title: {
-              text: '最近20周库存统计',
+              text: `最近${this.searchParam.week}周库存统计`,
               subtext: ''
           },
           tooltip: {

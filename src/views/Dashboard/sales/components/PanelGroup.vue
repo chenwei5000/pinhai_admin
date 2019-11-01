@@ -7,19 +7,19 @@
 
     <el-row :gutter="20" class="panel-group">
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <newSteamship :mine="mine"></newSteamship>
+        <newSteamship :searchParam="searchParam"></newSteamship>
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <overdueSteamship :mine="mine"></overdueSteamship>
+        <overdueSteamship :searchParam="searchParam"></overdueSteamship>
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <inventorySteamship :mine="mine"></inventorySteamship>
+        <inventorySteamship :searchParam="searchParam"></inventorySteamship>
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <stockAlert :mine="mine"></stockAlert>
+        <stockAlert :searchParam="searchParam"></stockAlert>
       </el-col>
 
     </el-row>
@@ -34,9 +34,9 @@
 
   export default {
     props: {
-      mine: {
+      searchParam: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
+        default: {merchantId: null, categoryId: null, week: 20}
       }
     },
     components: {
