@@ -26,15 +26,15 @@
      data(){
       return {
         number: 0,
-        relations: [ "creator"],  
+        relations: [ "creator"],
         filters: [
           {"field": "status", "op": "in", "data": "2, 3"}
-        ], 
+        ],
       }
     },
 
     props: {
-      mine: {
+      searchParam: {
         type: Object,
         default: {merchantId: '', categoryId: '', week: '20'}
       }
@@ -51,7 +51,7 @@
 
     methods: {
         initData(){
-        let countUrl = "procurementPlans/count";
+        let countUrl = "/procurementPlans/count";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
          this.global.axios

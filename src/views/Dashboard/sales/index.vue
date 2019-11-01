@@ -45,7 +45,7 @@
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 18}" :xl="{span: 18}"
               style="padding-right:8px;margin-bottom:30px;">
 
-        <panel-group :searchParam="searchParam" v-if="false"/>
+        <panel-group :searchParam="searchParam"/>
         <operate-group :searchParam="searchParam" v-if="false"/>
 
         <el-card class="box-card" style="margin-top:10px;">
