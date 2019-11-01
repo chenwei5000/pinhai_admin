@@ -105,9 +105,9 @@
 
     mounted() {
       this.$nextTick(() => {
-        this.activeStatus = this.hasSales ? 'documentaryDashboard' :
+        this.activeStatus = this.hasSales ? 'salesDashboard' :
           this.hasPurchases ? 'purchasesDashboard' :
-            this.hasDocumentary ? 'salesDashboard' :
+            this.hasDocumentary ? 'documentaryDashboard' :
               this.hasStockManager ? 'stockManagerDashboard' :
                 this.hasFinance ? 'financeDashboard' : null;
       })
