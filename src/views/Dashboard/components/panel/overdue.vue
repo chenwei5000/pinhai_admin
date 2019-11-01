@@ -3,7 +3,7 @@
   <div class="card-panel">
     <router-link to="/m2/ProcurementOrder_index?s=executing&q=pageSize~20,currentPage~1,sort~id,dir~desc,status~8,status~8">
       <div class="card-header">
-        逾期
+        即将逾期的采购单
         <div class="card-badge icon-yellow">
           <svg-icon icon-class="payment" class-name="card-panel-icon"/>
         </div>
