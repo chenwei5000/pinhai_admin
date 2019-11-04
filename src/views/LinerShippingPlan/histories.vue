@@ -92,7 +92,7 @@
               $type: 'select',
               $id: 'linerShippingPlan_portOfLoading',
               label: '发货港口',
-              $options: harbourModel.getSelectOptions(),
+              $options: harbourModel.getSelectNameOptions(),
               $el: {
                 op: 'eq',
                 size: "mini",
