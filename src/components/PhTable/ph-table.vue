@@ -87,6 +87,7 @@
       header-cell-class-name="ph-cell-header"
       v-loading="loading"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       @sort-change='handleSortChange'
       id="ph-table"
       @filter-change="handleFilterChange"
@@ -1380,7 +1381,15 @@
         this.$emit("onSetting", row);
         return false;
       },
-
+      handleDblclick(row, column, cell, event) {
+        this.$copyText(row[column.property])
+          .then(res => {
+              this.$message.success("单元格内容已成功复制，可直接去粘贴");
+            },
+            err => {
+              this.$message.error("复制失败");
+            })
+      },
       // 树形table相关
       // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/components/TreeTable
       tree2Array(data, expandAll, parent = null, level = null) {
@@ -1545,7 +1554,7 @@
                   }
                 }
               }
-              if(prop=='accountCardHide'){
+              if (prop == 'accountCardHide') {
                 prop = 'accountCard'
               }
               _res[prop] = obj[_head];

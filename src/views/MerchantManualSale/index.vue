@@ -69,7 +69,9 @@
           <!-- 表格工具条 添加、导入、导出等 -->
           <tableToolBar
             :hasExport="hasExport"
+            :hasImport="hasImport"
             @onToolBarDownloadData="onToolBarDownloadData"
+            @onToolBarImportData="onToolBarImportData"
           >
           </tableToolBar>
 
@@ -83,13 +85,15 @@
             cell-class-name="ph-cell"
             header-cell-class-name="ph-cell-header"
             :data="tableData"
+            @cell-dblclick="handleDblclick"
             v-loading="loading"
             :default-sort="{prop: 'skuCode', order: 'ascending'}"
             id="table"
           >
             <el-table-column prop="id" label="ID" width="200" v-if="false"></el-table-column>
             <el-table-column prop="merchantId" label="渠道ID" width="200" v-if="false"></el-table-column>
-            <el-table-column prop="skuCode" sortable label="SKU编码" width="150" fixed="left" align="center"></el-table-column>
+            <el-table-column prop="skuCode" sortable label="SKU编码" width="150" fixed="left"
+                             align="center"></el-table-column>
             <el-table-column prop="productImgUrl" label="图片" width="40">
               <template slot-scope="scope" v-if="scope.row.productImgUrl">
                 <el-image
@@ -102,15 +106,42 @@
             </el-table-column>
             <el-table-column prop="productName" label="产品名" width="200" align="center"></el-table-column>
             <el-table-column prop="categoryName" label="分类" width="100" align="center"></el-table-column>
+            <el-table-column prop="groupName" label="款式" width="100" align="center"></el-table-column>
             <el-table-column prop="minQty" label="7日最小销量" width="90" align="center"></el-table-column>
             <el-table-column prop="maxQty" label="7日最大销量" width="90" align="center"></el-table-column>
             <el-table-column prop="avgQty" label="7日平均销量" width="90" align="center"></el-table-column>
             <el-table-column prop="recommendQty" label="7日推荐销量" width="90" align="center"></el-table-column>
-            <el-table-column prop="sevenSaleQty" label="7日销量" width="90" align="center"></el-table-column>
-            <el-table-column prop="formatLastModified" label="修改时间" width="120" align="center"></el-table-column>
+            <el-table-column prop="sevenSaleQty" label="7日人工销量" width="90" align="center"></el-table-column>
+            <el-table-column prop="formatLastModified" label="设置时间" width="120" align="center"
+                             fixed="right"></el-table-column>
             <el-table-column prop="finalSevenSaleQty" label="7日最终销量" width="90" align="center"
                              fixed="right"></el-table-column>
-            <el-table-column prop="expire" label="是否过期" width="80" align="center" fixed="right"></el-table-column>
+            <el-table-column prop="expire" label="是否过期" width="80" align="center" fixed="right">
+              <template slot-scope="scope" v-if="scope.row.sevenSaleQty">
+                <el-tag size="mini"
+                        :type="scope.row.expire ? 'danger' : 'success'"
+                        disable-transitions>{{ scope.row.expire === true ? '过期' : '有效' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+
+            <!--默认操作列-->
+            <el-table-column label="操作"
+                             no-export="true"
+                             width="90" fixed="right">
+              <template slot-scope="scope">
+
+                <el-button v-if="hasSetting" type="warning" size="mini"
+                           id="ph-table-setting" icon="el-icon-setting" circle
+                           @click="onDefaultSetting(scope.row)">
+                </el-button>
+
+                <el-button size="mini" icon="el-icon-s-data" circle
+                           type="primary" id="ph-table-sell" @click="saleSituation(scope.row)">
+                </el-button>
+              </template>
+            </el-table-column>
+
           </el-table>
 
           <!--分页-->
@@ -133,6 +164,10 @@
 
         </div>
 
+
+        <chartDialog ref="chartDialog" :fromParent="fromParent"></chartDialog>
+        <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent" :fromParent="fromParent"></saveDialog>
+
       </div>
     </div>
   </div>
@@ -146,19 +181,20 @@
   import {checkPermission} from "@/utils/permission";
   import {currency, parseTime} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-
+  import chartDialog from '../Dashboard/sales/components/SaleDetails/components/chartDialog'
+  import saveDialog from './components/saveDialog'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
   const paramSeparator = ','
   const equal = '='
-  const equalPattern = /=/g
-  const queryFlag = 'q='
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
     components: {
-      tableToolBar
+      tableToolBar,
+      chartDialog,
+      saveDialog
     },
 
     data() {
@@ -231,7 +267,12 @@
       hasExport() {
         return true;
       },
-
+      hasSetting() {
+        return true;
+      },
+      hasImport(){
+        return true;
+      }
     },
 
     methods: {
@@ -272,7 +313,6 @@
       },
 
       getList() {
-
         if (this.fromParent.merchantId == null) {
           return;
         }
@@ -329,6 +369,22 @@
         this.getList();
       },
 
+      handleDblclick(row, column, cell, event) {
+        this.$copyText(row[column.property])
+          .then(res => {
+              this.$message.success("单元格内容已成功复制，可直接去粘贴");
+            },
+            err => {
+              this.$message.error("复制失败");
+            })
+      },
+
+      onDefaultSetting(row) {
+        if (this.fromParent.merchantId == null) {
+          return false;
+        }
+        this.$refs.saveDialog.openDialog(row, this.fromParent);
+      },
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search(flg) {
@@ -367,45 +423,109 @@
         this.searchParam.groupName = null;
         this.search(true);
       },
+
+      saleSituation(row) {
+        this.$refs.chartDialog.openDialog(row);
+      },
+
+      modifyCBEvent(resp){
+        this.tableData.forEach((item, index, arr) => {
+          if (item.skuCode === resp.skuCode) {
+            arr[index].formatLastModified = resp.formatLastModified;
+            arr[index].lastModified = resp.lastModified;
+            arr[index].sevenSaleQty = resp.sevenSaleQty;
+            arr[index].expire = resp.expire;
+            arr[index].finalSevenSaleQty = resp.finalSevenSaleQty;
+          }
+        });
+
+        this.tableData.push({});
+        this.tableData.pop();
+      },
+
       onToolBarDownloadData() {
         if (this.fromParent.merchantId == null) {
           return false;
         }
-        //获取数据
+
         let table = this.$refs.table;
-        let params = '';
-        if (this.fromParent.categoryId != null) {
-          if (params.indexOf("?") == -1) {
-            params += "?cid=" + this.fromParent.categoryId;
-          } else {
-            params += "&cid=" + this.fromParent.categoryId;
-          }
-        }
-        else {
-          this.$message.error("请选择分类！")
-          return;
-        }
-
-        if (this.fromParent.week != null) {
-          if (params.indexOf("?") == -1) {
-            params += "?weekNum=" + this.fromParent.week;
-          } else {
-            params += "&weekNum=" + this.fromParent.week;
-          }
-        }
-
-        let downloadUrl = `${this.url}/${this.fromParent.merchantId}` + params;
+        let downloadUrl = this.url;
+        downloadUrl += `/${this.fromParent.merchantId}?cid=${this.fromParent.categoryId ? this.fromParent.categoryId : -1}&weekNum=${this.fromParent.week}`;
         import('@/vendor/Export2Excel').then(excel => {
           this.loading = true;
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: `销售产品明细-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
-            noExportProps: ['操作', '图片', 'ID']
+            filename: `设置销量-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: ['操作', '图片', 'ID', '7日最终销量']
           })
           this.loading = false;
         })
       },
+
+      uploadPromise(res) {
+        let url = `${this.url}/${this.fromParent.merchantId}`
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      async onToolBarImportData(excelData) {
+
+        if (this.fromParent.merchantId == null) {
+          return false;
+        }
+
+
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.skuCode = obj["SKU编码"];
+          _res.sevenSaleQty = obj["7日人工销量"];
+          _res.merchantId = this.fromParent.merchantId;
+          if(_res.sevenSaleQty != null && _res.sevenSaleQty != '') {
+            resData.push(_res);
+          }
+        });
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.success("导入成功");
+        this.getList();
+      }
     },
     watch: {
       fromParent: {
