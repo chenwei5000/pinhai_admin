@@ -14,7 +14,7 @@
       <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认交货日期</el-button -->
 
       <el-button type="primary" size="small" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
-      <el-button type="primary" size="small" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印合同</el-button>
+      <el-button type="primary" size="small" icon="el-icon-printer" v-if="hasPrint" @click="onPrint">打印合同</el-button>
 
       <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
@@ -138,6 +138,19 @@
           return false;
         }
       },
+
+      hasPrint() {
+        if ([1, 3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1 ) {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
+        }
+        else {
+          return false;
+        }
+      },
+
       hasAdmin() {
         return checkPermission('ProcurementOrderResource_updateStatus');
         },

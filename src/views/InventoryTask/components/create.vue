@@ -18,7 +18,7 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="仓库" prop="warehouseId" >
-              <el-select v-model="newObject.warehouseId" size="mini" style="width: 220px">
+              <el-select v-model="newObject.warehouseId" size="mini" style="width: 220px" filterable="true">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
                   :label="item.label"

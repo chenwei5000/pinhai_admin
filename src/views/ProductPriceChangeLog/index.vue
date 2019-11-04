@@ -63,7 +63,7 @@
           searchForm: [
             {
                 $type: 'input',
-                $id: 'productSkuCode',
+                $id: 'product__skuCode',
                 label: 'SKU编码',
                 $el: {
                   op: 'bw',
