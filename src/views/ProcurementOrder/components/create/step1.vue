@@ -145,6 +145,23 @@
             </el-col>
           </el-row>
 
+          <el-row>
+            <el-col :md="24">
+              <el-form-item label="预计交货日期" prop="otdTime">
+                <el-date-picker
+                  v-model="editObject.otdTime"
+                  type="date"
+                  size="mini"
+                  placeholder="选择日期">
+                </el-date-picker>
+
+                <el-tooltip class="item" effect="light" content="采购单预计在该日期前完成" placement="right">
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
         </fieldset>
       </el-form>
     </div>
@@ -339,7 +356,8 @@
           warehouseId: null,
           settlementMethod: null,
           currencyId: null,
-          accountPeriod: null
+          accountPeriod: null,
+          otdTime: null,
         },
 
         // 字段验证规则 TODO:
@@ -431,7 +449,8 @@
             this.supplierSelectOptions = [];
             res.forEach(r => {
               this.supplierSelectOptions.push(r);
-            });
+            })
+
             this.loading = false;
           })
           .catch(err => {
@@ -793,6 +812,7 @@
         _order.currencyId = this.editObject.currencyId;
         _order.accountPeriod = this.editObject.accountPeriod;
         _order.name = this.editObject.name;
+        _order.otdTime = this.editObject.otdTime;
 
         let _details = [];
         this.tableData.forEach(r => {
@@ -805,6 +825,7 @@
             _detail.skuCode = r.product.skuCode;
             _detail.price = r.product.price;
             _detail.supplierId=_order.supplierId;
+            _detail.otdTime=_order.otdTime;
             _details.push(_detail);
           }
         });
