@@ -18,7 +18,7 @@
         <inventorySteamship :searchParam="searchParam"></inventorySteamship>
       </el-col>
 
-      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col" v-if="false">
         <stockAlert :searchParam="searchParam"></stockAlert>
       </el-col>
 

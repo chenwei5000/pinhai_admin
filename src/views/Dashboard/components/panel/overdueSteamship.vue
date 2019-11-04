@@ -93,7 +93,7 @@
           categories.forEach(r => {
             if (this.searchParam.categoryId + '' == r.value) {
               this.categoryName = r.label;
-              this.toUrl += `?q=,categoryName~${this.categoryName},`
+              this.toUrl += `?q=categoryName~${this.categoryName},`
               filters.push({"field": "categoryName", "op": "bw", "data": this.categoryName});
             }
           })

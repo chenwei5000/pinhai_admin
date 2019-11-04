@@ -46,7 +46,7 @@
               style="padding-right:8px;margin-bottom:30px;">
 
         <panel-group :searchParam="searchParam"/>
-        <operate-group :searchParam="searchParam" v-if="false"/>
+        <operate-group :searchParam="searchParam" />
 
         <el-card class="box-card" style="margin-top:10px;">
           <div slot="header" class="clearfix">
@@ -136,12 +136,13 @@
     },
     methods: {
       initData() {
-        this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
+        this.categorySelectOptions = categoryModel.getMineSelectOptions();
         this.categorySelectOptions.unshift({
           label: "全部",
           value: null
         });
         this.merchantSelectOptions = merchantModel.getSelectOptions();
+        this.searchParam.merchantId ='8a23287966dc9acb0166dca2574c0000';
 
         this.weekSelectOptions = [];
         for (let i = 1; i <= 52; i++) {
