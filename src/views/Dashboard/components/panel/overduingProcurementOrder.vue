@@ -1,7 +1,7 @@
 <template>
 
   <div class="card-panel">
-    <router-link to="/m2/ProcurementOrder_index?s=executing&q=pageSize~20,currentPage~1,sort~id,dir~desc,status~8,status~8">
+    <router-link :to= "toUrl">
       <div class="card-header">
         即将逾期的采购单
         <div class="card-badge icon-yellow">
@@ -27,11 +27,15 @@
         number: 0,
         relations: [],
         filters:[
-          {"field": "status", "op": "in", "data": 8},
+          {
+            "field": "status",
+            "op": "in",
+            "data": "1, 2, 3, 4, 5, 6, 7, 8, 9 ,10"
+          },
           {
             "field": "otdTime",
             "op": "timeRange",
-            "data": `${moment(new Date()).format("YYYY-MM-DD")},${moment(new Date()).add(5, 'days').format("YYYY-MM-DD")}`
+            "data": `${moment(new Date()).format("YYYY-MM-DD")}, ${moment(new Date()).add(5, 'days').format("YYYY-MM-DD")}`
           }
         ],
       }
@@ -44,6 +48,19 @@
     },
     components: {
       CountTo
+    },
+
+    computed: {
+      toUrl(){
+        return `/m2/ProcurementOrder_index?s=all&&q=pageSize~20,currentPage~1,sort~id,dir~desc,otdTime~${this.currentDay}|${this.afterFiveDay},`
+      },
+
+      currentDay(){
+        return moment(new Date()).format("YYYY-MM-DD");
+      },
+      afterFiveDay(){
+        return moment(new Date()).add(5, 'days').format("YYYY-MM-DD");
+      }
     },
 
     mounted(){

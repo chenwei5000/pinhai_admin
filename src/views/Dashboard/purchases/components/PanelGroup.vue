@@ -27,7 +27,11 @@
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <overdue :mine="mine"></overdue>
+        <overduingProcurementOrder :mine="mine"></overduingProcurementOrder>
+      </el-col>
+
+       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <overduedProcurementOrder :mine="mine"></overduedProcurementOrder>
       </el-col>
 
     </el-row>
@@ -39,7 +43,8 @@
   import todoSettlement from '../../components/panel/procurementSettlement'
   import unfinishedProduct from '../../components/panel/unfinishedProduct'
   import unfinishedMaterial from '../../components/panel/unfinishedMaterial'
-  import overdue from '../../components/panel/overdue'
+  import overduingProcurementOrder from '../../components/panel/overduingProcurementOrder'
+  import overduedProcurementOrder from '../../components/panel/overduedProcurementOrder'
 
   export default {
     props: {
@@ -53,7 +58,8 @@
       todoSettlement,
       unfinishedProduct,
       unfinishedMaterial,
-      overdue,
+      overduingProcurementOrder,
+      overduedProcurementOrder
     },
     methods: {}
   }
