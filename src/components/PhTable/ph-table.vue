@@ -168,7 +168,7 @@
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       v-bind="operationAttrs"
+                       v-bind="operationAttrs" align="center"
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="mini"
@@ -257,6 +257,7 @@
   import rangeFilter from './Filters/range.vue'
   import {doDeleteFilter} from './js/index.js'
   import tableToolBar from '@/components/PhTableToolBar'
+  import {getObjectValueByArr} from "../../utils";
 
   const myFilterComponts = {
     edit: editFilter,
@@ -350,6 +351,10 @@
       maxUploadCount: {
         type: Number,
         default: 1
+      },
+      subHeight: {
+        type: Number,
+        default: 0
       },
       tplNoExportProps: {
         type: Array,
@@ -738,6 +743,12 @@
         default() {
           return []
         }
+      },
+      defalutSort:{
+        type: String,
+        default() {
+          return null
+        }
       }
     },
     data() {
@@ -748,7 +759,7 @@
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
         page: defaultFirstPage,
-        phSort: null,
+        phSort: this.defalutSort,
         defaultTableAttrs: {
           'style': "width: 100%",
           stripe: true,
@@ -875,7 +886,7 @@
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
 
           tableHeight = tableHeight - (this.$refs.tableToolBar && this.$refs.tableToolBar.$el.offsetHeight ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
-          //tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - this.subHeight;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -893,7 +904,14 @@
         let query = Object.assign({}, formQuery, this.customQuery)
 
         let url = this.url;
-        let countUrl = this.url + this.countUrl;
+        let countUrl = null;
+        if(this.countUrl.indexOf("#") === 0){
+          countUrl = this.countUrl.replace("#","");
+        }
+        else{
+          countUrl = this.url + this.countUrl;
+        }
+
         let params = ''
         let searchParams = ''
         let size = this.hasPagination ? this.size : this.noPaginationSize

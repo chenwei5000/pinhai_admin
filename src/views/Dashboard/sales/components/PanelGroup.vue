@@ -22,6 +22,10 @@
         <stockAlert :searchParam="searchParam"></stockAlert>
       </el-col>
 
+      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+        <unfinishedMaterial :mine="searchParam"></unfinishedMaterial>
+      </el-col>
+
     </el-row>
   </el-card>
 </template>
@@ -31,6 +35,7 @@
   import overdueSteamship from '../../components/panel/overdueSteamship'
   import inventorySteamship from '../../components/panel/inventorySteamship'
   import stockAlert from '../../components/panel/stockAlert'
+  import unfinishedMaterial from '../../components/panel/unfinishedMaterial'
 
   export default {
     props: {
@@ -44,6 +49,7 @@
       overdueSteamship,
       inventorySteamship,
       stockAlert,
+      unfinishedMaterial
     },
     methods: {}
   }

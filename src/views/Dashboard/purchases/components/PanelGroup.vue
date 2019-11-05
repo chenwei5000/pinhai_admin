@@ -23,10 +23,6 @@
       </el-col>
 
       <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-        <unfinishedMaterial :mine="mine"></unfinishedMaterial>
-      </el-col>
-
-      <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
         <overduingProcurementOrder :mine="mine"></overduingProcurementOrder>
       </el-col>
 
