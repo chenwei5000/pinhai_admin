@@ -12,8 +12,9 @@
                    inline-message
                    :rules="rules"
                    @submit.native.prevent>
+
             <el-form-item label="分类" prop="category">
-              <el-select v-model="param.category" size="mini" style="width: 300px"
+              <el-select v-model="param.category" size="mini" style="width: 150px"
                          multiple placeholder="请选择原料分类" @change="onChange">
                 <el-option
                   v-for="item in categories"
@@ -25,7 +26,7 @@
             </el-form-item>
 
             <el-form-item label="国内成品库存" prop="warehouse">
-              <el-select v-model="param.warehouse" size="mini" style="width: 300px" multiple placeholder="请选择仓库">
+              <el-select v-model="param.warehouse" size="mini" style="width: 150px" multiple placeholder="请选择仓库">
                 <el-option
                   v-for="item in warehouses"
                   :key="item.value"
@@ -37,7 +38,6 @@
 
             <el-form-item>
               <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
-              <el-button @click="resetSearch" size="mini">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -61,7 +61,7 @@
   export default {
     data() {
       return {
-        title: '成品安全库存',
+        title: '成品安全库存-单位(件)',
         param: {
           category: '',
           warehouse: '',
@@ -80,24 +80,15 @@
         },
 
         tableConfig: {
-          //权限控制
-          hasNew: checkPermission('SafetyStockResource_create'),
-          hasEdit: checkPermission('SafetyStockResource_update'),
-          hasDelete: checkPermission('SafetyStockResource_remove'),
-          // hasView: checkPermission('SafetyStockResource_get'),
-          hasExportTpl: checkPermission('SafetyStockResource_export'),
           hasExport: true,
-          hasImport: checkPermission('SafetyStockResource_import'),
-
+          hasOperation: false,
+          hasPagination: false,
+          hasDelete: false,
+          hasEdit: false,
           exportFileName: '成品安全库存',
 
           url: null,
           relations: ["safetyStocks"],
-          hasNew: false,
-          hasDelete: false,
-          hasOperation: false,
-          hasPagination: false,
-          hasExport: true,
           countUrl: "",
           tableAttrs: {
             "row-class-name": this.statusClassName,
@@ -108,10 +99,7 @@
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 150},
             {prop: 'productName', label: '产品名', 'min-width': 150},
             {prop: 'categoryName', label: '分类', 'min-width': 80},
-            {prop: 'vipLevelName', label: 'Vip级别', 'min-width': 80},
-            {prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 120},
-            {prop: 'domesticStockQty', label: '国内库存', 'min-width': 80},
-
+            {prop: 'unit', label: '单位', 'min-width': 50, formatter: row => ('件')},
           ],
         }
       }
@@ -142,11 +130,15 @@
               this.tableConfig.columns.push({
                 prop: `safetyStocks.stockGapQty${element.id}`,
                 sortable: true,
-                label: `${element.name}缺口`,
-                'min-width': 80
+                label: `${element.name}缺口(${element.vip0SafetyStockWeek},${element.vip1SafetyStockWeek},${element.vip2SafetyStockWeek})`,
+                'min-width': 130
               })
             }
           }
+          this.tableConfig.columns.push({prop: 'vipLevelName', label: 'Vip级别', 'min-width': 80})
+          this.tableConfig.columns.push({prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 120})
+          this.tableConfig.columns.push({prop: 'domesticStockQty', label: '国内库存', 'min-width': 80})
+
         }).catch(err => {
 
         })
@@ -182,7 +174,7 @@
       },
 
       statusClassName({row}) {
-        if (row && row.safetyStocks && (row.safetyStocks.stockGapQty1 > 0)) {
+        if (row && row.safetyStocks && (row.safetyStocks.stockGapQty3 > 0)) {
           return 'danger-row';
         }
         else {
