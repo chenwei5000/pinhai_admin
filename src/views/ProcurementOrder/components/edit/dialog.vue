@@ -41,7 +41,7 @@
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
+      <el-collapse-item name="attachment" style="margin-top: 10px" v-if="hasAttachment">
         <div slot="title" class="title">3. 附件</div>
         <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
@@ -150,10 +150,12 @@
           return false;
         }
       },
-
+      hasAttachment(){
+        return checkPermission('AttachmentFileResource_listProcurementOrder');
+      },
       hasAdmin() {
         return checkPermission('ProcurementOrderResource_updateStatus');
-        },
+      },
 
       title() {
         return '编辑采购单 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";

@@ -17,6 +17,7 @@
       :max-height="tableMaxHeight"
       cell-class-name="ph-cell"
       header-cell-class-name="ph-cell-header"
+      @cell-dblclick="handleDblclick"
       :data="tableData"
       v-loading="loading"
       :default-sort="{prop: 'materialSkuCode', order: 'ascending'}"
@@ -62,6 +63,7 @@
   import itemDialog from './itemDialog'
   import {checkPermission} from "@/utils/permission";
   import tableToolBar from '@/components/PhTableToolBar'
+  import {getObjectValueByArr} from "../../../utils";
 
   export default {
     components: {
@@ -135,6 +137,19 @@
       /* 行修改功能 */
       onDefaultEdit(row) {
         this.$refs.itemDialog.openDialog(row);
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       onSmart(row) {

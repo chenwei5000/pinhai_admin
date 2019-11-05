@@ -65,6 +65,7 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       @filter-change="handleFilterChange"
       id="table"
     >
@@ -187,6 +188,7 @@
   import {checkPermission} from "@/utils/permission";
   import tableToolBar from '@/components/PhTableToolBar'
   import {currency, parseTime} from '@/utils'
+  import {getObjectValueByArr} from "../../../utils";
 
 
   const valueSeparator = '~'
@@ -574,6 +576,19 @@
         }
 
         return '';
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       // 一页显示数量调整

@@ -461,3 +461,25 @@ export function parseLineBreak(text) {
     return text;
   }
 }
+
+export function getObjectValueByArr(arr, prop) {
+  console.log(arr);
+  console.log(prop);
+  if (arr == null || arr.length == 0) {
+    return null;
+  }
+
+  let val = null;
+
+  if (prop.indexOf('.') !== false) {
+    val = arr;
+    let tmps = prop.split('.');
+    for (var i = 0; i < tmps.length; i++) {
+      val = val[tmps[i]];
+    }
+  }
+  else {
+    val = arr[prop];
+  }
+  return val;
+}

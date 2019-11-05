@@ -1382,13 +1382,16 @@
         return false;
       },
       handleDblclick(row, column, cell, event) {
-        this.$copyText(row[column.property])
-          .then(res => {
-              this.$message.success("单元格内容已成功复制，可直接去粘贴");
-            },
-            err => {
-              this.$message.error("复制失败");
-            })
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
       // 树形table相关
       // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/components/TreeTable

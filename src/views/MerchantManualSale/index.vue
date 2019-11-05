@@ -183,6 +183,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import chartDialog from '../Dashboard/sales/components/SaleDetails/components/chartDialog'
   import saveDialog from './components/saveDialog'
+  import {getObjectValueByArr} from "../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -370,13 +371,16 @@
       },
 
       handleDblclick(row, column, cell, event) {
-        this.$copyText(row[column.property])
-          .then(res => {
-              this.$message.success("单元格内容已成功复制，可直接去粘贴");
-            },
-            err => {
-              this.$message.error("复制失败");
-            })
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       onDefaultSetting(row) {

@@ -2,7 +2,7 @@
 
   <div class="page-container">
 
-    <aside>
+    <aside style="font-size: 12px">
       为了保证本采购计划的执行，需要指派对应的采购负责人，可多选。指派的采购负责人将会收到对应的邮件和系统消息提醒。
       默认会自动把对应品类的采购负责人自动选中。
     </aside>
@@ -14,14 +14,14 @@
     <el-row>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="warning" style="margin-top: 40px" @click="onBack">
+          <el-button type="warning" style="margin-top: 40px" size="small" @click="onBack">
             < 上一步
           </el-button>
         </el-row>
       </el-col>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 40px" @click="onNext">
+          <el-button type="primary" style="margin-top: 40px" size="small"  @click="onNext">
             下一步 >
           </el-button>
         </el-row>

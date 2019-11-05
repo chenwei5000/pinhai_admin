@@ -58,11 +58,12 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="编号" width="140" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="100"  align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -96,34 +97,22 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 27">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
+      <el-table-column prop="name" label="名称" min-width="200"  align="center">
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" width="120"></el-table-column>
+      <el-table-column prop="supplier.name" label="供货商" width="120" align="center"></el-table-column>
 
-      <el-table-column prop="warehouse.name" label="收货仓库" width="120"></el-table-column>
+      <el-table-column prop="warehouse.name" label="收货仓库" width="120" align="center"></el-table-column>
 
-      <el-table-column prop="settlementMethodName" label="结算方式" width="100"></el-table-column>
+      <el-table-column prop="settlementMethodName" label="结算方式" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="currency.name" label="结算货币" width="90"></el-table-column>
+      <el-table-column prop="currency.name" label="结算货币" width="90" align="center"></el-table-column>
 
-      <el-table-column prop="accountPeriod" label="帐期(天)" width="90"></el-table-column>
+      <el-table-column prop="accountPeriod" label="帐期(天)" width="90" align="center"></el-table-column>
 
-      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100"></el-table-column>
+      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
+      <el-table-column prop="procurementPlan.note" label="交货要求" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
                       v-if="scope.row.procurementPlan.note && scope.row.procurementPlan.note.length > 10">
@@ -137,12 +126,12 @@
       </el-table-column>
 
 
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right"  align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -195,6 +184,7 @@
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
   import {checkPermission} from "../../../utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -411,6 +401,18 @@
         }
         else {
           this.tableMaxHeight = 400;
+        }
+      },
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
         }
       },
 

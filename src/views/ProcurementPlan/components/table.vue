@@ -65,11 +65,12 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="编号" width="140" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -102,39 +103,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="categoryName" label="分类" min-width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
-            <div v-html="scope.row.categoryName"></div>
-            <span slot="reference">{{
-              scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.categoryName }}
-          </span>
-        </template>
-
+      <el-table-column prop="categoryName" label="分类" min-width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="250">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 27">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
+      <el-table-column prop="name" label="名称" min-width="250" align="center">
       </el-table-column>
 
-      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100"></el-table-column>
-      <el-table-column prop="tags" label="标签" width="120"></el-table-column>
+      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100" align="center"></el-table-column>
+      <el-table-column prop="tags" label="标签" width="120" align="center"></el-table-column>
 
       <el-table-column prop="note" label="备注" width="120" v-if="false">
         <template slot-scope="scope">
@@ -146,12 +122,12 @@
       </el-table-column>
 
 
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="85" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="([1].indexOf(scope.row.status) > -1)&& hasEdit" size="mini" icon="el-icon-edit" circle
@@ -202,6 +178,7 @@
   import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
   import {checkPermission} from "@/utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -452,6 +429,19 @@
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
         return '';
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /*获取列表*/
