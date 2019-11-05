@@ -117,9 +117,9 @@
     },
     methods: {
         onSubmit: function(){
-          this.loading=true
           this.$refs.configInfo.validate((valid) => {
             if(valid){
+              this.loading=true
               global.axios.put('/configInfos', this.configInfo).then(resp => {
               setTimeout(() => {
                 this.loading=false
