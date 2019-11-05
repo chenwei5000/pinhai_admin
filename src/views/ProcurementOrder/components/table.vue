@@ -37,6 +37,20 @@
         </el-select>
       </el-form-item>
 
+     <el-form-item label="预计交货日期">
+        <el-date-picker
+          size="mini"
+          v-model="searchParam.otdTime.value"
+          format="yyyy-MM-dd"
+          style="width: 225px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="|"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </el-form-item>
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
@@ -311,6 +325,7 @@
           supplierId: {value: null, op: 'in', id: 'supplierId'},
           name: {value: null, op: 'bw', id: 'name'},
           status: {value: null, op: 'eq', id: 'status'},
+          otdTime: {value: null, op: 'timeRange', id: 'otdTime'},
           code: {value: null, op: 'bw', id: 'name'},
         },
 
@@ -357,6 +372,9 @@
           }
           if (params.status) {
             this.searchParam.status.value = params.status;
+          }
+          if (params.otdTime) {
+            this.searchParam.otdTime.value = params.otdTime;
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
@@ -436,6 +454,7 @@
         this.searchParam.supplierId.value = null;
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
+        this.searchParam.otdTime.value = null;
         this.searchParam.code.value = null;
 
         // 重置url
@@ -523,22 +542,39 @@
           return this.searchParam[k] && this.searchParam[k].value !== ''
             && this.searchParam[k].value !== null && this.searchParam[k].value !== undefined
         }).forEach(param => {
+
+       if(param == 'otdTime'){
           filters.push({
+            'field': param,
+            op: this.searchParam[param].op ? this.searchParam[param].op : 'eq',
+            data: this.searchParam[param].value ? encodeURIComponent(this.searchParam[param].value.toString().trim().replace("|",",")) : ''
+          })
+       }else{
+         filters.push({
             'field': param,
             op: this.searchParam[param].op ? this.searchParam[param].op : 'eq',
             data: this.searchParam[param].value ? encodeURIComponent(this.searchParam[param].value.toString().trim()) : ''
           })
+       }
+          
         });
 
         filters.forEach((param, k) => {
-          searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
+          if(param.field == 'otdTime'){
+            //searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ?  decodeURIComponent(param.data.toString().trim()).replace(",","|") : '')
+            searchParams = searchParams + "&" + param.field + "=";
+            searchParams +=  param.data ?  decodeURIComponent(decodeURIComponent(param.data.toString().trim())).replace(",","|") :'';
+          }
+          else{
+            searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
+          }
         })
+
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
