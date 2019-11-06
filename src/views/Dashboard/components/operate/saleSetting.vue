@@ -42,7 +42,6 @@
           this.toUrl = '/m5/MerchantManualSale_index';
           this.toUrl += `?q=merchantId~${this.searchParam.merchantId},categoryId~${this.searchParam.categoryId ? this.searchParam.categoryId : -1},weekNum~${this.searchParam.week},`
         }
-        console.log(this.toUrl);
       },
     },
     watch: {

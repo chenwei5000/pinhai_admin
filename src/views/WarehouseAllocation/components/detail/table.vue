@@ -558,7 +558,6 @@
       },
 
       async onToolBarImportData(excelData) {
-        console.log(excelData);
         if (!excelData) {
           this.$message.error("导入失败!");
           return false;

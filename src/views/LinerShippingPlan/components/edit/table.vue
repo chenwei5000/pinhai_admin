@@ -785,7 +785,6 @@
         downloadUrl += "&relations=" + JSON.stringify(this.relations);
 
         let saleExcelField = JSON.parse(JSON.stringify(excelSaleConfig.excelField));
-        console.log(this.warehouses);
         this.warehouses.forEach(row => {
           saleExcelField.push(
             {'attrName': `domesticStocksArray.${row.id}`, 'type': 'n', 'name': `#${row.name}库存#`}

@@ -4,7 +4,7 @@
       style="text-align:left;
              position:fixed;
              width: 100%;vertical-align: bottom;
-             bottom: 0px; background-color:#efefef; padding: 0px 30px; z-index: 9999; ">
+             bottom: 0px; background-color:#efefef; padding: 0px 30px; z-index: 100; ">
 
       <el-form :inline="true" ref="searchForm" id="filter-form"
                @submit.native.prevent>

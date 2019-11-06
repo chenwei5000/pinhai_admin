@@ -376,7 +376,6 @@
         let _object = JSON.parse(JSON.stringify(this.object));
         _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
         _object.groupName = _object.groupName ? _object.groupName.join(",") : "";
-        console.log(this.object);
 
         let items = [];
         this.selected.forEach(obj => {

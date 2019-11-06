@@ -364,7 +364,6 @@
           if (!valid) {
             return;
           }
-          console.log(this.newObject);
           this.$emit("step1CBEvent", this.newObject);
         })
       },

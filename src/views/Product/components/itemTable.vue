@@ -83,16 +83,16 @@
       shippedQtyTitle() {
         return `调拨${this.unit == '箱' ? '件' : this.unit}数`;
       },
-      hasOperation(){
+      hasOperation() {
         return this.hasEdit || this.hasDelete;
       },
       hasAdd() {
         return checkPermission('ProductResource_update') && checkPermission('MaterialResource_create');
       },
-      hasEdit(){
+      hasEdit() {
         return checkPermission('ProductResource_update') && checkPermission('MaterialResource_update');
       },
-      hasDelete(){
+      hasDelete() {
         return checkPermission('ProductResource_update') && checkPermission('MaterialResource_remove');
       },
     },
@@ -107,6 +107,7 @@
         confirmLoading: false,
         //操作按钮控制
         tableData: [],  // 前端表格显示的数据，本地搜索用
+        relations: ["product", "material"],
         // 表格加载效果
         loading: false,
         unit: "箱",
@@ -115,10 +116,7 @@
 
     created() {
     },
-    watch: {
-      tableData(val) {
-      }
-    },
+    watch: {},
 
     mounted() {
       this.initData();
@@ -131,6 +129,25 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
+        if (this.productId) {
+          console.log(this.productId);
+
+          let url = `/productToMaterials?filters=${
+            JSON.stringify({
+              "groupOp": "AND",
+              "rules": [{
+                field: "productId",
+                op: 'eq',
+                data: this.productId != null ? this.productId + "" : -1
+              }]
+            })}&relations=${JSON.stringify(this.relations)}`;
+
+          this.global.axios.get(url).then(resp => {
+            this.tableData = resp.data || [];
+          }).catch(err => {
+            console.log("获取原料信息失败")
+          })
+        }
       },
 
       /********************* 操作按钮相关方法  ***************************/
@@ -152,9 +169,6 @@
         }
       },
 
-      onSmart(row) {
-        this.tableData[0].cartonSpecCode = "aaaa1";
-      },
       /* 行删除功能 */
       onDefaultDelete(index) {
         this.$confirm('确认删除吗', '提示', {
@@ -172,8 +186,6 @@
 
       /* 子组件编辑完成后相应事件 */
       modifyCBEvent(object) {
-        console.log("==>>", this.productId);
-
         if (this.productId) {
           object.productId = this.productId;
           this.global.axios.post(`/productToMaterials`, object)

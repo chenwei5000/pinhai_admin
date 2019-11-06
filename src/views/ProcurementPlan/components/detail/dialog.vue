@@ -390,7 +390,17 @@
         this.loading = false;
         this.confirmLoading = false;
         this.detailItemId = null;
-        this.detailItem = null;
+        this.detailItem = {
+          skuCode: '',
+          priorityNote: '',
+          cartonSpecId: null,
+          priority: '2',
+          safetyStockWeek: 10,
+          numberOfCarton: null,
+          cartonQty: 0,
+          qty: 0,
+          procurementPlanId: this.primary.id
+        };
         this.cartonspecSelectOptions = [];
         this.prioritySelectOptions = [];
       },

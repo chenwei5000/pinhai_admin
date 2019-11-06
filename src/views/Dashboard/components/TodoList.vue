@@ -186,6 +186,7 @@
             this.todos = res || [];
           })
           .catch(err => {
+
           });
       },
 
@@ -302,7 +303,7 @@
               instance.confirmButtonLoading = true;
               this.doComplete(val, instance, done);
             } else {
-              instance.confirmButtonLoading = true;
+              instance.confirmButtonLoading = false;
               done()
             }
           }
