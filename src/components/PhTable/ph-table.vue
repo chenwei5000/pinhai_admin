@@ -824,7 +824,7 @@
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       },
       hasOperation() {
-        return this.hasEdit || this.hasDelete;
+        return this.hasEdit || this.hasDelete || this.hasSetting || this.hasView;
       }
     },
 
@@ -1202,17 +1202,8 @@
       },
 
       onDefaultView(row) {
-        this.row = row
-        this.isView = true
-        this.isNew = false
-        this.isEdit = false
-        this.dialogTitle = this.dialogViewTitle
-        this.dialogVisible = true
-
-        // 给表单填充值
-        this.$nextTick(() => {
-          this.$refs[dialogForm].updateForm(row)
-        })
+        this.$emit("onView", row);
+        return false;
       },
 
       onDefaultEdit(row) {
