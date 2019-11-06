@@ -86,6 +86,7 @@
           hasDelete: false,
           hasEdit: false,
           exportFileName: '成品安全库存',
+          subHeight: 35,
 
           url: null,
           relations: ["safetyStocks"],

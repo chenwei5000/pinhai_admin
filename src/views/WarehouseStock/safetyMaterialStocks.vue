@@ -101,6 +101,7 @@
           url: null,
           relations: ["safetyStocks"],
           countUrl: "",
+          subHeight: 35,
           tableAttrs: {
             "row-class-name": this.statusClassName,
             "default-sort": {prop: 'safetyStocks.stockGapQty3', order: 'descending'},
