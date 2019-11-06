@@ -93,7 +93,34 @@
             <el-table-column prop="containerSoldOutTime" label="途断货日期" width="80" align="center"></el-table-column>
             <el-table-column prop="containerSoldOutDay" label="途断货天数" width="80" fixed="right" align="center"></el-table-column>
             <el-table-column prop="containerSoldOutCartonQty" label="途缺口箱数" width="80" fixed="right" align="center"></el-table-column>
+
+            <el-table-column label="操作"
+                             no-export="true"
+                             width="130" fixed="right">
+              <template slot-scope="scope">
+
+                <el-button size="mini" icon="el-icon-s-data" circle
+                           type="primary" id="ph-table-sell" @click="saleSituation(scope.row)">
+                </el-button>
+
+                <el-button size="mini" icon="el-icon-ship" circle
+                           type="success" id="ph-table-box" @click="stockSituation(scope.row)">
+                </el-button>
+
+                <el-button size="mini" icon="el-icon-s-home" circle
+                           type="warning" id="ph-table-time" @click="soldOutTime(scope.row)">
+                </el-button>
+              </template>
+            </el-table-column>
+
           </el-table>
+
+          <chartDialog ref="chartDialog" :fromParent="searchParam"></chartDialog>
+
+          <stockSituationDialog ref="stockSituationDialog" :fromParent="searchParam"></stockSituationDialog>
+
+          <saleStockDialog ref="saleStockDialog" :fromParent="searchParam"></saleStockDialog>
+
         </div>
 
       </div>
@@ -110,6 +137,10 @@
   import {currency, parseTime} from '@/utils'
   import validRules from "../../components/validRules";
 
+  import chartDialog from '../Dashboard/sales/components/SaleDetails/components/chartDialog'
+  import stockSituationDialog from '../Dashboard/sales/components/SaleDetails/components/stockSituationDialog'
+  import saleStockDialog from '../Dashboard/sales/components/SaleDetails/components/saleStockDialog'
+
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -120,13 +151,18 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
+    components: {
+      chartDialog,
+      stockSituationDialog,
+      saleStockDialog
+    },
+
     data() {
       return {
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
         data: [],
         total: 0,
         loading: false,
-
         categorySelectOptions: [],
         weekSelectOptions: [],
         merchantSelectOptions: [],
@@ -217,6 +253,18 @@
         return '';
       },
 
+      saleSituation(row) {
+        this.$refs.chartDialog.openDialog(row);
+      },
+
+      stockSituation(row) {
+        this.$refs.stockSituationDialog.openDialog(row);
+      },
+
+      soldOutTime(row) {
+        this.$refs.saleStockDialog.openDialog(row);
+      },
+
       getList() {
         this.$refs.searchForm.validate(valid => {
           if (!valid) {
@@ -231,7 +279,6 @@
           url += `/${this.searchParam.merchantId}?cid=${this.searchParam.categoryId}&weekNum=${this.searchParam.week}`;
           // 请求开始
           this.loading = true
-
           //获取数据
           this.global.axios
             .get(url)
