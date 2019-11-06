@@ -324,8 +324,6 @@
         })
 
         if (!this.searchFlg) { //设置时间
-          console.log(this.startDate);
-          console.log(this.endDate);
           let time = `${this.startDate}, ${this.endDate}`;
           filters.push({'field': 'etdTime', op: 'timeRange', data: time});
         }
@@ -398,7 +396,6 @@
       handleDatesRender(v) {
         let searchFlg = this.searchFlg || location.href.match(queryPattern);
         if (v) {
-          console.log(v.view);
           //this.startDate = dateFormat(v.view.activeStart, "yyyy-mm-dd");
           //this.endDate = dateFormat(v.view.activeEnd, "yyyy-mm-dd");
 
