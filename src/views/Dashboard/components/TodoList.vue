@@ -111,7 +111,6 @@
   import logisticPaymentBillPaymentDialog from '@/views/FinanceBill/components/logisticPaymentBill/payment/dialog'
 
 
-
   import {parseLineBreak} from '@/utils';
 
   const filters = {
@@ -178,16 +177,17 @@
         url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         let relations = ["notice"];
         url += "&relations=" + JSON.stringify(relations);
+        if (this.$store.state.user.token) {
+          this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data || [];
+              this.todos = res || [];
+            })
+            .catch(err => {
 
-        this.global.axios
-          .get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.todos = res || [];
-          })
-          .catch(err => {
-
-          });
+            });
+        }
       },
 
       // 完成任务
@@ -288,7 +288,7 @@
           // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_REFUSE"){
 
           // }
-           //弹窗：物流付款单，申请人查看是否通过
+          //弹窗：物流付款单，申请人查看是否通过
           // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_AGREE"){
 
           // }
@@ -325,49 +325,49 @@
     z-index: 1;
     position: relative;
 
-    /deep/ .el-card__body {
-      padding: 0;
-    }
+  /deep/ .el-card__body {
+    padding: 0;
+  }
 
-    /deep/ .el-card__header {
-      border-bottom: none;
-    }
+  /deep/ .el-card__header {
+    border-bottom: none;
+  }
 
-    .todo-title {
-      padding: 0 0 0 10px;
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-    }
+  .todo-title {
+    padding: 0 0 0 10px;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
 
-    .todo-centent {
-      padding: 5px 20px;
-      font-size: 14px;
+  .todo-centent {
+    padding: 5px 20px;
+    font-size: 14px;
 
-      p {
-        max-height: 410px;
-        overflow-y: hidden;
-      }
+  p {
+    max-height: 410px;
+    overflow-y: hidden;
+  }
 
-    }
+  }
 
-    .footer {
-      color: #000;
-      position: relative;
-      padding: 10px 15px;
-      font-size: 14px;
-      height: 40px;
-      text-align: center;
-      min-width: 230px;
-      max-width: 550px;
-      margin: 0 auto;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-weight: 300;
-      background: #fff;
-      z-index: 1;
-      position: relative;
-    }
+  .footer {
+    color: #000;
+    position: relative;
+    padding: 10px 15px;
+    font-size: 14px;
+    height: 40px;
+    text-align: center;
+    min-width: 230px;
+    max-width: 550px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 300;
+    background: #fff;
+    z-index: 1;
+    position: relative;
+  }
 
   }
 </style>

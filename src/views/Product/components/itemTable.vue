@@ -130,8 +130,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         if (this.productId) {
-          console.log(this.productId);
-
           let url = `/productToMaterials?filters=${
             JSON.stringify({
               "groupOp": "AND",
