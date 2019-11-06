@@ -42,7 +42,7 @@
           size="mini"
           v-model="searchParam.otdTime.value"
           format="yyyy-MM-dd"
-          style="width: 225px"
+          style="width: 210px"
           value-format="yyyy-MM-dd"
           type="daterange"
           range-separator="|"
@@ -558,7 +558,7 @@
             data: this.searchParam[param].value ? encodeURIComponent(this.searchParam[param].value.toString().trim()) : ''
           })
        }
-          
+
         });
 
         filters.forEach((param, k) => {

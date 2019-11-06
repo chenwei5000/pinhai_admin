@@ -5,7 +5,7 @@
       <div class="card-header">
         已逾期的采购单
         <div class="card-badge icon-red">
-          <svg-icon icon-class="payment" class-name="card-panel-icon"/>
+          <svg-icon icon-class="overdue" class-name="card-panel-icon"/>
         </div>
 
       </div>
