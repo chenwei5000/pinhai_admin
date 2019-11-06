@@ -10,30 +10,30 @@
     <el-row :gutter="40" class="panel-group">
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newSteamship :mine="mine"></newSteamship>
+        <newSteamship :searchParam="searchParam"></newSteamship>
       </el-col>
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newPrepare :mine="mine"></newPrepare>
-      </el-col>
-
-
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <auditingPlan :mine="mine"></auditingPlan>
+        <newPrepare :searchParam="searchParam"></newPrepare>
       </el-col>
 
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <auditingOrder :mine="mine"></auditingOrder>
+        <auditingPlan :searchParam="searchParam"></auditingPlan>
       </el-col>
 
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newProduct :mine="mine"></newProduct>
+        <auditingOrder :searchParam="searchParam"></auditingOrder>
+      </el-col>
+
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+        <newProduct :searchParam="searchParam"></newProduct>
       </el-col>
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <saleSetting :mine="mine"></saleSetting>
+        <saleSetting :searchParam="searchParam"></saleSetting>
       </el-col>
 
     </el-row>
@@ -51,9 +51,9 @@
 
   export default {
     props: {
-      mine: {
+      searchParam: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
+        default: {merchantId: null, categoryId: null, week: 20}
       }
     },
     components: {

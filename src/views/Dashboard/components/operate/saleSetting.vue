@@ -1,7 +1,7 @@
 <template>
 
   <div class="card-panel">
-    <router-link :to="'/phtpl/table?merchantId='+mine.merchantId">
+    <router-link :to="'/phtpl/table?merchantId='+searchParam.merchantId">
       <div class="card-panel-icon-wrapper icon-blue">
         <svg-icon icon-class="chart" class-name="card-panel-icon"/>
       </div>
@@ -17,9 +17,9 @@
 <script>
   export default {
     props: {
-      mine: {
+      searchParam: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
+        default: {merchantId: null, categoryId: null, week: 20}
       }
     },
     components: {},

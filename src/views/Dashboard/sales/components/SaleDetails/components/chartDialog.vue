@@ -1,67 +1,69 @@
 <template>
-<el-dialog :title="dialogTitle"
+  <el-dialog :title="dialogTitle"
              append-to-body
              v-if="dialogVisible"
              width="80%"
-             top="10vh"
+             top="5vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
-  <div class="chart-container">
-    <chart height="100%" width="100%" :primary="primary" v-if="isExist" ref="chart"/>
-  </div>
-</el-dialog>
+    <div class="chart-container">
+
+      <chart height="100%" width="100%" :searchParam="fromParent" :chart-data="lineChartData" v-if="isExist" ref="chart"/>
+
+    </div>
+  </el-dialog>
 </template>
 
 <script>
-import Chart from '@/components/Charts/MixChart'
+  //import Chart from '@/components/Charts/PhMixChart'
 
-export default {
-  name: '',
-  data(){
-    return {
-      dialogVisible: false,
-      primary: {
-          xAxisData: [],
-          yAxisData: []
-      },
-      data: {
+  import Chart from '../../LineChart'
 
-      },
-      isExist: false,
-    }
-  },
-  props: {
-       fromParent: {
+  export default {
+    name: '',
+    data() {
+      return {
+        dialogVisible: false,
+        lineChartData: {
+          xData: [],
+          yData: [],
+        },
+        data: {},
+        isExist: false,
+      }
+    },
+    props: {
+      fromParent: {
         type: Object,
         default: {}
       }
-  },
-  computed: {
-    dialogTitle(){
-      return  `产品 [ ${this.data.skuCode} / ${this.data.productName}  ${this.data.color?this.data.color: ""} ]销售情况`;
-    }
-  },
-  components: { Chart },
-  methods: {
-    initData(){
-         let url = "/amazonSales/weekProductSales/";
-        if (this.fromParent.merchantId == null){
+    },
+    computed: {
+      dialogTitle() {
+        return `产品 [ ${this.data.skuCode} / ${this.data.productName}  ${this.data.color ? this.data.color : ""} ]销售情况`;
+      }
+    },
+    components: {Chart},
+    methods: {
+      initData() {
+        let url = "/amazonSales/weekProductSales/";
+        if (this.fromParent.merchantId == null) {
           this.$message.error("请选择销售渠道！")
           return false;
-        }else{
+        } else {
           url += this.fromParent.merchantId;
         }
-        if (this.fromParent.week != null){
+        if (this.fromParent.week != null) {
           url += "?weekNum=" + this.fromParent.week;
         }
-        if (this.fromParent.categoryId != null){
-          if (url.indexOf('?') != -1){
+        if (this.fromParent.categoryId != null) {
+          if (url.indexOf('?') != -1) {
             url += "&cid=" + this.fromParent.categoryId;
-          }else{
+          } else {
             url += "?cid=" + this.fromParent.categoryId;
           }
         }
-        if (this.data.skuCode != null){
+        if (this.data.skuCode != null) {
           url += "&sku=" + this.data.skuCode;
         }
         this.global.axios
@@ -69,36 +71,36 @@ export default {
           .then(resp => {
             let res = resp.data;
             res.forEach(element => {
-              this.primary.xAxisData.push(element.formatStartTime);
-              this.primary.yAxisData.push(element.saleQty);
+              this.lineChartData.xData.push(element.formatStartTime);
+              this.lineChartData.yData.push(element.saleQty);
             });
             this.isExist = true;
           })
           .catch(err => {
           })
-    },
-    closeDialog(){
-       this.primary.xAxisData = [];
-       this.primary.yAxisData = [];
-       this.dialogVisible = false
-       this.isExist = false
-    },
+      },
+      closeDialog() {
+        this.lineChartData.xData = [];
+        this.lineChartData.yData = [];
+        this.dialogVisible = false
+        this.isExist = false
+      },
 
-    openDialog(row){
+      openDialog(row) {
         this.dialogVisible = true;
         this.data = row;
         this.initData();
-    },
+      },
+    }
+
   }
-  
-}
 </script>
 
 <style scoped>
-.chart-container{
-  position: relative;
-  width: 100%;
-  height: 450px;
-}
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 450px;
+  }
 </style>
 
