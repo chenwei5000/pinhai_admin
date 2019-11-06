@@ -494,6 +494,7 @@
 
   .fc-ltr .fc-view .fc-other-month {
     color: transparent;
+    background-color: #ccc;
   }
 
   .fc-day-grid-container {
