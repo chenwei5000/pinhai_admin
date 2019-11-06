@@ -244,7 +244,7 @@
                          fixed="right"></el-table-column>
 
         <el-table-column prop="product.price" label="单价" width="80"
-                         fixed="right">
+                         fixed="right" v-if="hasPrice">
           <template slot-scope="scope">
             {{scope.row.product.price ? scope.row.product.price : 0, selCurrency ? selCurrency.symbolLeft : '' |
             currency}}
@@ -252,7 +252,7 @@
         </el-table-column>
 
         <el-table-column prop="purchaseOrderAmount" label="总额" width="100"
-                         fixed="right">
+                         fixed="right" v-if="hasPrice">
           <template slot-scope="scope">
             {{scope.row.purchaseOrderAmount ? scope.row.purchaseOrderAmount : 0, selCurrency ? selCurrency.symbolLeft :
             '' | currency}}
@@ -263,7 +263,7 @@
         <!--默认操作列-->
         <el-table-column label="操作"
                          no-export="true"
-                         width="120" fixed="right">
+                         width="120" fixed="right" v-if="hasOperation">
 
           <template slot-scope="scope">
 
@@ -305,6 +305,7 @@
   import phEnumModel from '@/api/phEnum'
   import currencyModel from '@/api/currency'
   import planDetailDialog from './planDetailDialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -320,11 +321,23 @@
       currency: currency
     },
     computed: {
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
       hasEdit() {
-        return true;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_update');
       },
       hasDelete() {
-        return true;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_remove');
+      },
+      hasPrice(){
+        return checkPermission('PurchasePriceVisible');
       }
     },
     watch: {},

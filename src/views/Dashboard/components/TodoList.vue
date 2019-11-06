@@ -119,6 +119,7 @@
 
 
   import {parseLineBreak} from '@/utils';
+  import {checkRole} from "../../../utils/permission";
 
   const filters = {
     all: todos => todos,
@@ -161,7 +162,22 @@
       },
       remaining() {
         return this.todos.filter(todo => todo.isRead == 0).length
-      }
+      },
+      hasPurchases() {
+        return checkRole("采购");
+      },
+      hasDocumentary() {
+        return checkRole("跟单");
+      },
+      hasSales() {
+        return checkRole("销售");
+      },
+      hasStockManager() {
+        return checkRole("库管");
+      },
+      hasFinance() {
+        return checkRole("财务");
+      },
     },
 
     mounted() {
@@ -220,7 +236,7 @@
       goTodo(val) {
         if (val && val.notice) {
           if (val.notice.targetType == "PROCUREMENT_PLAN") {
-            if (val.notice.action == "agree") {
+            if (val.notice.action == "agree" && this.hasSales == false) {
               this.$refs.procurementOrderCreateDialog.openDialog(val.notice.target);
             }
             else {
