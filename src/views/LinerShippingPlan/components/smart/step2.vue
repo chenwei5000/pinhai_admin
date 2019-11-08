@@ -131,7 +131,7 @@
                      size="mini"
                      @click="toPlanItem"
                      :loading="confirmLoading">
-            转出口计划明细
+            转物流计划明细
           </el-button>
         </el-row>
       </el-col>
@@ -488,7 +488,7 @@
         row.boxVolume = (row.replenishmentCartonQty * row.cartonSpecVolume).toFixed(3);
       },
 
-      //转出口计划明细
+      //转物流计划明细
       toPlanItem() {
         let loading = this.$loading({
           lock: true,

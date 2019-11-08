@@ -252,7 +252,7 @@
           this.loading = false;
         }
         else {
-          this.$message.error("无效的出口计划!");
+          this.$message.error("无效的物流计划!");
           this.loading = false;
         }
       },

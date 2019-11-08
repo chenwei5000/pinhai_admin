@@ -145,7 +145,7 @@
         this.searchParam.merchantId ='8a23287966dc9acb0166dca2574c0000';
 
         this.weekSelectOptions = [];
-        for (let i = 1; i <= 52; i++) {
+        for (let i = 1; i <= 104; i++) {
           this.weekSelectOptions.push({
             label: `${i}周`,
             value: i
