@@ -146,7 +146,6 @@
               let res = resp.data;
               this.primary = res || {};
               this.primaryComplete = true;
-              console.log(this.primary);
             })
             .catch(err => {
             })

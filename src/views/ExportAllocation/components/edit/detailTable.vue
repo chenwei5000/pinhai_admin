@@ -212,6 +212,10 @@
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
+        if (row.sufficientStock == '否') {
+          return 'danger-row';
+        }
+        return '';
       },
 
       /*汇总数据*/

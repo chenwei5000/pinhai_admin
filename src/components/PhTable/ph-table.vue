@@ -87,6 +87,7 @@
       header-cell-class-name="ph-cell-header"
       v-loading="loading"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       @sort-change='handleSortChange'
       id="ph-table"
       @filter-change="handleFilterChange"
@@ -167,7 +168,7 @@
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       v-bind="operationAttrs"
+                       v-bind="operationAttrs" align="center"
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="mini"
@@ -256,6 +257,7 @@
   import rangeFilter from './Filters/range.vue'
   import {doDeleteFilter} from './js/index.js'
   import tableToolBar from '@/components/PhTableToolBar'
+  import {getObjectValueByArr} from "../../utils";
 
   const myFilterComponts = {
     edit: editFilter,
@@ -349,6 +351,10 @@
       maxUploadCount: {
         type: Number,
         default: 1
+      },
+      subHeight: {
+        type: Number,
+        default: 0
       },
       tplNoExportProps: {
         type: Array,
@@ -737,6 +743,12 @@
         default() {
           return []
         }
+      },
+      defalutSort:{
+        type: String,
+        default() {
+          return null
+        }
       }
     },
     data() {
@@ -747,7 +759,7 @@
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
         page: defaultFirstPage,
-        phSort: null,
+        phSort: this.defalutSort,
         defaultTableAttrs: {
           'style': "width: 100%",
           stripe: true,
@@ -812,7 +824,7 @@
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       },
       hasOperation() {
-        return this.hasEdit || this.hasDelete;
+        return this.hasEdit || this.hasDelete || this.hasSetting || this.hasView;
       }
     },
 
@@ -874,7 +886,7 @@
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
 
           tableHeight = tableHeight - (this.$refs.tableToolBar && this.$refs.tableToolBar.$el.offsetHeight ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
-          //tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - this.subHeight;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -892,7 +904,14 @@
         let query = Object.assign({}, formQuery, this.customQuery)
 
         let url = this.url;
-        let countUrl = this.url + this.countUrl;
+        let countUrl = null;
+        if(this.countUrl.indexOf("#") === 0){
+          countUrl = this.countUrl.replace("#","");
+        }
+        else{
+          countUrl = this.url + this.countUrl;
+        }
+
         let params = ''
         let searchParams = ''
         let size = this.hasPagination ? this.size : this.noPaginationSize
@@ -1183,17 +1202,8 @@
       },
 
       onDefaultView(row) {
-        this.row = row
-        this.isView = true
-        this.isNew = false
-        this.isEdit = false
-        this.dialogTitle = this.dialogViewTitle
-        this.dialogVisible = true
-
-        // 给表单填充值
-        this.$nextTick(() => {
-          this.$refs[dialogForm].updateForm(row)
-        })
+        this.$emit("onView", row);
+        return false;
       },
 
       onDefaultEdit(row) {
@@ -1380,7 +1390,18 @@
         this.$emit("onSetting", row);
         return false;
       },
-
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
       // 树形table相关
       // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/components/TreeTable
       tree2Array(data, expandAll, parent = null, level = null) {
@@ -1544,6 +1565,9 @@
                     prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
                   }
                 }
+              }
+              if (prop == 'accountCardHide') {
+                prop = 'accountCard'
               }
               _res[prop] = obj[_head];
             }

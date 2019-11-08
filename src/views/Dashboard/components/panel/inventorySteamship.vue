@@ -1,17 +1,16 @@
 <template>
 
   <div class="card-panel">
-    <router-link to="">
+    <router-link :to="toUrl">
       <div class="card-header">
         途断货商品
-
         <div class="card-badge icon-red">
           <svg-icon icon-class="alert" class-name="card-panel-icon"/>
         </div>
 
       </div>
       <div class="card-body">
-          <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
+        <count-to :start-val="0" :end-val="number" :duration="2600" class="card-panel-num"/>
       </div>
 
     </router-link>
@@ -23,13 +22,11 @@
   import CountTo from 'vue-count-to'
 
   export default {
-     data(){
+    data() {
       return {
         number: 0,
-        relations: [ "creator"],
-        filters: [
-          {"field": "status", "op": "in", "data": "2, 3"}
-        ],
+        toUrl: '',
+        relations: []
       }
     },
 
@@ -39,29 +36,44 @@
         default: {merchantId: '', categoryId: '', week: '20'}
       }
     },
+
     components: {
       CountTo
     },
 
-     mounted(){
+    mounted() {
       this.$nextTick(() => {
         this.initData();
       })
     },
 
-    methods: {
-        initData(){
-        let countUrl = "/procurementPlans/count";
-        countUrl += "?relations=" + JSON.stringify(this.relations);
-        countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-         this.global.axios
-          .get(countUrl)
-          .then(resp => {
-            this.number = resp.data;
-          })
-          .catch(err => {
-          })
+    watch: {
+      searchParam: {
+        handler(newValue, oldValue) {
+          this.initData();
+        },
+        deep: true
       }
+    },
+
+    methods: {
+      initData() {
+        if (this.searchParam.merchantId) {
+          let countUrl = "/amazonStocks/containerSoldOutDays";
+          countUrl += `/${this.searchParam.merchantId}?cid=${this.searchParam.categoryId ? this.searchParam.categoryId : -1}&weekNum=${this.searchParam.week}`;
+
+          this.global.axios
+            .get(countUrl)
+            .then(resp => {
+              this.number = resp.data.length;
+            })
+            .catch(err => {
+            })
+
+          this.toUrl = '/m5/ContainerSoldOutDays_index';
+          this.toUrl += `?q=merchantId~${this.searchParam.merchantId},categoryId~${this.searchParam.categoryId ? this.searchParam.categoryId : -1},weekNum~${this.searchParam.week},`
+        }
+      },
     }
   }
 </script>

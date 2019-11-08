@@ -86,7 +86,8 @@
               label: '分类',
               $el: {
                 filterable: true,
-                placeholder: '请选择分类,可筛选'
+                placeholder: '请选择分类,可筛选',
+                size: 'mini'
               },
               $options: categoryModel.getMineSelectProdcutOptions(),
               rules: [

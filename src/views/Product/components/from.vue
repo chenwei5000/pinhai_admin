@@ -340,7 +340,6 @@
 
         <el-collapse-item name="material">
           <div slot="title" class="title">材料信息</div>
-
           <itemTable
             ref="itemTable"
             :productId="newProduct.id"
@@ -450,7 +449,6 @@
         activeNames: ['base', 'supplier', 'declare', 'sale', 'material', 'note'],
 
         isNew: this.primary ? false : true,
-        relations: ["product", "material"],
         confirmLoading: false,
         // 新产品对象
         newProduct: this.primary ? this.primary : {
@@ -538,16 +536,6 @@
       this.vipLevelSelectOptions = vipLevelSelectOptions;
     },
 
-    mounted() {
-      this.global.axios.get("/productToMaterials?filters=" + JSON.stringify({
-        "groupOp": "AND",
-        "rules": this.filters
-      }) + "&relations=" + JSON.stringify(this.relations)).then(resp => {
-        this.$refs.itemTable.tableData = resp.data;
-      }).catch(err => {
-        console.log("获取原料信息失败")
-      })
-    },
     methods: {
       ///////////////分类///////////////////////
       // 打开
@@ -579,8 +567,6 @@
                 label: `[${cartonSpec.groupCode}]${cartonSpec.code}`,
                 value: cartonSpec.id + ''}
               );
-            console.log(cartonSpec);
-            console.log(this.cartonspecSelectOptions);
             this.newProduct.cartonSpecId = cartonSpec.id + '';
           }
         };

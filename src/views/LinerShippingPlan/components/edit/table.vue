@@ -152,7 +152,7 @@
 
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
       <el-table-column prop="cartonQty" label="应发箱数" width="90"
-                       fixed="right" align="center"></el-table-column>
+                       fixed="right" align="center" sortable sort-by="cartonQty"></el-table-column>
 
       <el-table-column prop="qty" label="应发件数" width="90"
                        fixed="right" align="center"></el-table-column>
@@ -785,7 +785,6 @@
         downloadUrl += "&relations=" + JSON.stringify(this.relations);
 
         let saleExcelField = JSON.parse(JSON.stringify(excelSaleConfig.excelField));
-        console.log(this.warehouses);
         this.warehouses.forEach(row => {
           saleExcelField.push(
             {'attrName': `domesticStocksArray.${row.id}`, 'type': 'n', 'name': `#${row.name}库存#`}

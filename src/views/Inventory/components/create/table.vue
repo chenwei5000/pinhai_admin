@@ -159,9 +159,6 @@
     created() {
     },
     watch: {
-      tableData(val) {
-        console.log("tableData", val);
-      }
     },
 
     mounted() {

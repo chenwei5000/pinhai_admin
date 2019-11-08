@@ -276,7 +276,6 @@ const actions = {
 
   loadMerchants({ commit }) {
     return new Promise((resolve, reject) => {
-
       merchantModel.getMerchants().then(async list => {
         console.log("从后端获取渠道信息");
         commit('SET_MERCHANTS', list);

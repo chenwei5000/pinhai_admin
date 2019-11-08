@@ -149,7 +149,23 @@ const phSearchItems = {
       $type: 'select',
       $id: 'categoryId',
       label: '分类',
-      $options: categoryModel.getMineSelectOptions('p'),
+      $options: categoryModel.getMineSelectProdcutOptions(),
+      $el: {
+        op: 'eq',
+        filterable: true,
+        size: "mini",
+        placeholder: '请选择分类'
+      }
+    }
+  },
+
+  // 原料分类
+  materialCategories: () => {
+    return {
+      $type: 'select',
+      $id: 'categoryId',
+      label: '原料分类',
+      $options: categoryModel.getMineSelectMaterialOptions(),
       $el: {
         op: 'eq',
         filterable: true,

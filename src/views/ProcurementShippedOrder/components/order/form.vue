@@ -147,7 +147,6 @@
           if (this.primary) {
             //获取计划数据
             this.editObject = JSON.parse(JSON.stringify(this.primary));
-            console.log(this.editObject);
             this.initComplete = true;
             this.loading = false;
           }

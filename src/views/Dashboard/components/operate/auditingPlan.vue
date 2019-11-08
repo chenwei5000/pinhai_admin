@@ -19,10 +19,6 @@
 <script>
   export default {
     props: {
-      mine: {
-        type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
-      }
     },
     components: {},
     data() {

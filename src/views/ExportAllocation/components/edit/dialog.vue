@@ -13,7 +13,7 @@
       </router-link>
 
       <el-button type="success" size="small" icon="el-icon-s-claim"  @click="onComplete" v-if="primary.status === 3">确认发货</el-button>
-      <el-button type="danger" icon="el-icon-s-opportunity" v-if="primary.status === 3" @click="onStatus">修改状态</el-button>
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="primary.status === 3" @click="onStatus">修改状态</el-button>
 
       <el-button size="small" @click="closeDialog">取 消</el-button>
     </el-row>

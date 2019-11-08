@@ -1,23 +1,15 @@
 <template>
-  <div class="app-container">
-    <div class="ph-card">
-      <div class="ph-card-body">
-        <ph-table
-          v-bind="tableConfig"
-        >
-        </ph-table>
-      </div>
-    </div>
-  </div>
+  <ph-table
+    v-bind="tableConfig"
+  >
+  </ph-table>
 </template>
 
 <script>
-  import validRules from '../../components/validRules'
-  import phColumns from '../../components/phColumns'
-  import phSearchItems from '../../components/phSearchItems'
-  import phFormItems from '../../components/phFromItems'
   import {parseTime} from '@/utils'
-  import {checkPermission} from "../../utils/permission";
+  import {checkPermission} from "../../../utils/permission";
+  import validRules from "../../../components/validRules";
+  import phFormItems from "../../../components/phFromItems";
 
   export default {
     data() {
@@ -33,24 +25,32 @@
           hasExport: checkPermission('ProductToMaterialResource_export'),
           hasImport: checkPermission('ProductToMaterialResource_import'),
 
+          defalutSort: "&sort=product.skuCode&dir=asc",
           url: '/productToMaterials',
           relations: ["creator", "product", "product.category", "material"],
           tableAttrs: {
+            stripe: true,
+            border: true,
+            "default-sort": {prop: 'product.skuCode', order: 'ascending'}, //设置默认排序
             "row-class-name": this.statusClassName,
+            "highlight-current-row": true,
           },
 
+          subHeight: 50,
           //工具按钮
           maxUploadCount: 20, //提交数量
           exportFileName: '原料产品关系',
 
-
           columns: [
-            {width: 30, type: checkPermission('ProductToMaterialResource_remove') ? 'selection' : '', hidden: !checkPermission('ProductToMaterialResource_remove')},
-            {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, 'min-width': '80', fixed: 'left'},
-            {prop: 'product.skuCode', label: '产品SKU', 'min-width': 250},
-            {prop: 'product.name', label: '产品名', 'min-width': 250},
+            {
+              width: 30,
+              type: checkPermission('ProductToMaterialResource_remove') ? 'selection' : '',
+              hidden: !checkPermission('ProductToMaterialResource_remove')
+            },
+            {prop: 'product.skuCode', sortable: 'custom', label: '产品SKU', 'min-width': 150, fixed: 'left'},
+            {prop: 'product.name', label: '产品名', 'min-width': 200},
             {prop: 'product.category.name', label: '分类', 'min-width': 100},
-            {prop: 'material.skuCode', label: '原料SKU', 'min-width': 200},
+            {prop: 'material.skuCode', label: '原料SKU', 'min-width': 150},
             {prop: 'material.name', label: '原料名', 'min-width': 200},
             {prop: 'qty', label: '数量', 'min-width': 80},
             {prop: 'attritionRate', label: '损耗率', 'min-width': 80},
@@ -70,12 +70,12 @@
                 op: 'eq',
                 placeholder: '请输入产品SKU',
                 maxlength: "100",
-                size:"mini",
+                size: "mini",
                 "show-word-limit": true,
                 clearable: true
               }
             },
-             {
+            {
               $type: 'input',
               $id: 'materialSkuCode',
               label: '原料Sku',
@@ -83,11 +83,11 @@
                 op: 'eq',
                 placeholder: '请输入原料Sku',
                 maxlength: "100",
-                size:"mini",
+                size: "mini",
                 "show-word-limit": true,
                 clearable: true
               }
-            },
+            }
           ],
           //添加或修改弹出栏
           form: [
@@ -141,21 +141,13 @@
       }
     },
     computed: {},
-    methods: {
-      // statusClassName({row, rowIndex}) {
-      //   if (row.status && row.status !== 0) {
-      //     return '';
-      //   }
-      //   else {
-      //     return 'warning-row';
-      //   }
-      // },
-    },
+    methods: {},
     watch: {}
   }
 </script>
 
-<style scoped>
-
-
+<style type="text/less" lang="scss" scoped>
+  .ph-table {
+    padding: 0 !important;
+  }
 </style>

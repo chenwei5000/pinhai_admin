@@ -23,7 +23,7 @@
       </el-col>
 
 
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col" v-if="false">
         <auditingOrder :searchParam="searchParam"></auditingOrder>
       </el-col>
 
@@ -34,6 +34,14 @@
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
         <saleSetting :searchParam="searchParam"></saleSetting>
+      </el-col>
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+        <productSafetyStock :searchParam="searchParam"></productSafetyStock>
+      </el-col>
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+        <materialSafetyStock :searchParam="searchParam"></materialSafetyStock>
       </el-col>
 
     </el-row>
@@ -48,6 +56,8 @@
   import auditingOrder from '../../components/operate/auditingOrder'
   import newProduct from '../../components/operate/newProduct'
   import saleSetting from '../../components/operate/saleSetting'
+  import materialSafetyStock from '../../components/operate/materialSafetyStock'
+  import productSafetyStock from '../../components/operate/productSafetyStock'
 
   export default {
     props: {
@@ -62,7 +72,9 @@
       auditingPlan,
       auditingOrder,
       newProduct,
-      saleSetting
+      saleSetting,
+      materialSafetyStock,
+      productSafetyStock
     },
     methods: {}
   }

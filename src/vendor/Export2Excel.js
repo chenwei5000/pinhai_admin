@@ -1,7 +1,7 @@
 /* eslint-disable */
 import XLSX from 'xlsx'
 import global from '@/api/global'
-import  moment from 'moment';
+import moment from 'moment';
 
 require('script-loader!file-saver');
 
@@ -287,7 +287,7 @@ export function export_el_table_to_excel({
             let _obj = v;
 
             tmp.forEach(obj => {
-              if (_obj[obj]) {
+              if (_obj[obj] != null) {
                 _obj = _obj[obj];
               } else {
                 _obj = '';
@@ -345,7 +345,6 @@ export function export_json_url_to_excel_with_formulae({
   let excelData = [];
   global.axios.get(url)
     .then(resp => {
-      console.log(resp);
       let res = resp.data
       excelData = res || []
       excelData = excelData.map(v => excelField.map(j => {
@@ -355,7 +354,7 @@ export function export_json_url_to_excel_with_formulae({
           let _obj = v;
 
           tmp.forEach(obj => {
-            if (_obj[obj]) {
+            if (_obj[obj] != null) {
               _obj = _obj[obj];
             } else {
               _obj = '';
@@ -368,59 +367,10 @@ export function export_json_url_to_excel_with_formulae({
         }
         return _val;
       }));
-
-      console.log(excelData);
     })
     .catch(err => {
 
     });
-
-
-  // // eslint-disable-next-line no-unused-vars
-  // let ROW = {
-  //   start: 1,
-  //   end: data.length + 1
-  // }
-  // for (let i = 0; i < data.length; i++) {
-  //   let row = i + 2;
-  //   for (let j = 0; j < firstRow.length; j++) {
-  //     const e = firstRow[j];
-  //     const name = e.name
-  //     let location = getLocation(excelData.findByName(name), row);
-  //     if (e.type === 'n' || e.type === 's') {
-  //       excel.writeCellWithValue(location, e.type, data[i][e.name.slice(1, -1)]);
-  //     } else {
-  //       // 匹配列名
-  //       let formulae = e.formulae
-  //       // console.log('e', e)
-  //       e.relation.forEach(source => {
-  //         let col = excelData.findByName(source);
-  //         let replaceStr = getLocation(col, row, e.hasRow);
-  //         formulae = replaceAll(formulae, source, replaceStr);
-  //       })
-  //       if (e.hasRow) {
-  //         // 匹配行号
-  //         let regexp = /#.*?#/g;
-  //         let allMatch = [...formulae.matchAll(regexp)];
-  //         allMatch.forEach(content => {
-  //           let rawContent = content[0]
-  //           // console.log('rawContent ', rawContent)
-  //           let evalContent = rawContent.slice(1, -1)
-  //           // eslint-disable-next-line no-eval
-  //           let value = eval(evalContent);
-  //           formulae = replaceAll(formulae, rawContent, `${value}`)
-  //         })
-  //       }
-  //
-  //       excel.writeCellWithFormulae(formulae, location);
-  //     }
-  //   }
-  // }
-  //
-  // // 更改 !ref
-  // excel.cahngeRef(`A1:${getLocation(firstRow.length - 1, data.length + 1)}`);
-  // excel.addSheet('Sheet1')
-  // return excel.download(filename)
 }
 
 

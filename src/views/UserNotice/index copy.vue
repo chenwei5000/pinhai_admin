@@ -9,26 +9,14 @@
              inline-message
              @submit.native.prevent>
 
-      <el-form-item label="编码">
-        <el-input size="mini" v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
-      </el-form-item>
-
-      <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
-      </el-form-item>
-
-      <el-form-item label="期望交货日期">
-        <el-date-picker
-          size="mini"
-          v-model="searchParam.limitTime.value"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-
+     <el-form-item label="状态">
+        <el-select filterable v-model="searchParam.isRead.value" size="mini" placeholder="请选择状态">
+          <el-option
+            v-for="(item,idx) in statusSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item>
@@ -40,7 +28,7 @@
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
-      style="width: 100%"
+      style="width: 98%"
       stripe
       border
       highlight-current-row
@@ -52,74 +40,34 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
-      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="采购计划编号" width="140" align="center"></el-table-column>
-
-      <el-table-column prop="statusName" label="状态" width="100" align="center">
+  <el-table-column prop="isRead" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
-                  :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 8
+                  :type="scope.row.isRead === 0
+            ? 'primary' : scope.row.isRead === 1
             ? 'info' : 'success'"
-                  disable-transitions>{{ scope.row.statusName }}
+                  disable-transitions>{{ scope.row.isReadName }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="note" label="下单完成度" width="120">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="下单完成度" width="250" trigger="hover">
-            <div>
-              完成度：{{ scope.row.qty.orderedCompleteness }}%<BR/>
-              总件数：{{ scope.row.qty.qty }} 件<BR/>
-              已下单：{{scope.row.qty.orderQty}} 件 <BR/>
-            </div>
-            <span slot="reference">
-              <el-progress :text-inside="true" :stroke-width="16"
-                           :percentage="scope.row.qty.orderedCompleteness > 100 ? 100: scope.row.qty.orderedCompleteness"
-                           status="success"
-              ></el-progress>
-            </span>
-          </el-popover>
 
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="categoryName" label="分类" min-width="150" align="center">
-      </el-table-column>
-
-      <el-table-column prop="name" label="名称" min-width="250" align="center">
-      </el-table-column>
-
-      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100" align="center"></el-table-column>
-
-      <el-table-column prop="note" label="交货要求" width="130">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
-                      v-if="scope.row.note && scope.row.note.length > 10">
-            <div v-html="scope.row.formatNote"></div>
-            <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.formatNote }}
-          </span>
-        </template>
-      </el-table-column>
-
-
-      <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
-
+      <el-table-column prop="notice.title" label="标题" min-width="200" align="center"></el-table-column>
+      <el-table-column prop="notice.targetType" label="目标类型" min-width="180" align="center"></el-table-column>
+      <el-table-column prop="notice.typeName" label="消息类型" min-width="80" align="center"></el-table-column>
+      <el-table-column prop="notice.senderName" label="发送者" min-width="80" align="center"></el-table-column>
       <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
-
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right" align="center">
+      <el-table-column label="操作" v-if="hasOperation" width="85" fixed="right" >
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-document-add" circle
-                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
+          <el-button size="mini" icon="el-icon-view" circle 
+                     @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
+
+           <el-button size="mini" icon="el-icon-edit" circle  v-if="scope.row.isRead == 0"
+                     @click="onDefaultEdit(scope.row)" type="warning" id="ph-table-edit">
           </el-button>
 
         </template>
@@ -144,9 +92,8 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
-    <createDialog @createCBEvent="createCBEvent" ref="createDialog">
-    </createDialog>
+    <editDialog ref= "editDialog"></editDialog>
+
 
   </div>
 
@@ -156,8 +103,8 @@
   import {mapGetters} from 'vuex'
   import qs from 'qs'
   import phEnumModel from '@/api/phEnum'
-  import createDialog from './dialog'
-  import {getObjectValueByArr} from "../../../../utils";
+  import {checkPermission} from "@/utils/permission";
+  import editDialog from './components/dialog'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -170,41 +117,34 @@
   export default {
 
     components: {
-      createDialog
+      editDialog
     },
     props: {
-      type: {
-        type: String,
-        default: 'valid'
-      },
-      defaultFilters: {
-        type: Object,
-        default: {}
-      }
+  
     },
     computed: {
       ...mapGetters([
         'device', 'rolePower', 'rolePower'
       ]),
 
-      // 显示进度条
-      hasCompleteness() {
-          return true;
-      }
+      //操作按钮控制
+      hasOperation() {
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView() {
+        return !this.hasEdit;
+      },
+      hasEdit() {
+        return checkPermission('ProcurementPlanResource_update');
+      },
     },
 
     data() {
       return {
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
         // 多选记录对象
         selected: [],
-
         //分页
         size: 20,
         page: 1,
@@ -213,34 +153,36 @@
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementPlans', // 资源URL
-        countUrl: '/procurementPlans/count', // 资源URL
-        relations: ["creator"],  // 关联对象
+        url: '/userNotices', // 资源URL
+        countUrl: '/userNotices/count', // 资源URL
+        relations: ["creator", "notice", "notice.sender", "user", ],  // 关联对象
         data: [],
-        phSort: {prop: "limitTime", order: "asc"},
+        phSort: {prop: "id", order: "desc"},
         // 表格加载效果
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
-        statusSelectOptions: [],
-        categorySelectOptions: [],
         searchParam: {
-          categoryId: {value: null, op: 'in', id: 'categoryId'},
-          name: {value: null, op: 'bw', id: 'name'},
-          limitTime: {value: null, op: 'timeRange', id: 'limitTime'},
-          status: {value: null, op: 'eq', id: 'status'},
-          code: {value: null, op: 'bw', id: 'name'},
+          isRead: {value: null, op: 'eq', id: 'isRead'},
         },
 
         //弹窗
         dialogTitle: '新增',
         dialogVisible: false,
-        isNew: true,
-        isEdit: false,
-        isView: false,
+        // isNew: true,
+        // isEdit: false,
+        // isView: false,
 
         // 记录修改的那一行
         row: {},
+        statusSelectOptions: [{
+          value: '0',
+          label: '未处理'
+        }, {
+          value: '1',
+          label: '已完成'
+        }, 
+        ],
       }
     },
 
@@ -268,20 +210,8 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
-          }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
-          }
-          if (params.status) {
-            this.searchParam.status.value = params.status;
-          }
-          if (params.code) {
-            this.searchParam.code.value = params.code;
+          if (params.isRead) {
+            this.searchParam.isRead.value = params.isRead;
           }
         }
       }
@@ -297,23 +227,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
 
-        if (this.type === 'editing') {
-        }
-        //待审核 无删除
-        else if (this.type === 'auditing') {
-          this.hasDelete = false;
-        }
-        //执行中 无删除
-        else if (this.type === 'executing') {
-          this.hasDelete = false;
-        }//完成 无删除
-        else if (this.type === 'complete') {
-          this.hasDelete = false;
-        }
-        else if (this.type === 'all') {
-        }
       },
 
       // 获取表格的高度
@@ -354,11 +268,7 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.categoryId.value = null;
-        this.searchParam.limitTime.value = null;
-        this.searchParam.name.value = null;
-        this.searchParam.status.value = null;
-        this.searchParam.code.value = null;
+        this.searchParam.isRead.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -390,31 +300,7 @@
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
-        if (row.limitTime > 0) {
-          var day = (row.limitTime - new Date()) / 86400000;
-
-          if (day > 0 && day <= 10) { //交期15天预警
-            return 'warning-row';
-          }
-          else if (day <= 0 ) { //可售周数超2周
-            return 'danger-row';
-          }
-        }
-
         return '';
-      },
-
-      handleDblclick(row, column, cell, event) {
-        let val = getObjectValueByArr(row, column.property);
-        if (val) {
-          this.$copyText(val)
-            .then(res => {
-                this.$message.success("单元格内容已成功复制，可直接去粘贴");
-              },
-              err => {
-                this.$message.error("复制失败");
-              })
-        }
       },
 
       /*获取列表*/
@@ -479,7 +365,6 @@
         filters.forEach((param, k) => {
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
-        filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
@@ -593,13 +478,46 @@
 
       /********************* 操作按钮相关方法  ***************************/
       /* 行编辑按钮 */
-      onDefaultEdit(row) {
+      onDefaultView(row) {
         // 弹窗
-        this.$refs.createDialog.openDialog(row.id);
+        this.$refs.editDialog.openDialog(row);
       },
 
+      onDefaultEdit(row) {
+        this.$confirm('确认该任务已经完成了吗?', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              instance.confirmButtonLoading = true;
+              this.doComplete(row, instance, done);
+            } else {
+              instance.confirmButtonLoading = false;
+              done()
+            }
+          }
+        }).catch(er => {
+          console.log(er)
+          /*取消*/
+        })
+      },
+
+       // 完成任务
+      doComplete(val, instance, done) {
+        if (val && val.id) {
+          this.global.axios
+            .put(this.url + '/read/' + val.id)
+            .then(res => {
+              instance.confirmButtonLoading = false;
+              done();
+              this.onRefreshTable();
+            })
+            .catch(er => {
+              instance.confirmButtonLoading = false
+            })
+        }
+      },
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      createCBEvent(object) {
+      modifyCBEvent(object) {
         this.getList();
       },
     }
@@ -612,6 +530,16 @@
     /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
       width: 220px !important;
     }
+  }
+
+  #table{
+    margin-left: 20px;
+    margin-top: 15px;
+  }
+
+  #filter-form{
+    margin-top: 15px;
+    text-indent: 10px;
   }
 </style>
 

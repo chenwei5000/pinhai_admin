@@ -285,12 +285,11 @@
         // 继续向父组件抛出事件 修改成功刷新列表
         let addFlg = true;
         this.data.forEach((item, index, arr) => {
-          if (item.pdRemarks == object.pdRemarks) {
+          if (item.remarks == object.remarks) {
             arr[index] = object;
             addFlg = false;
           }
         });
-
         if (addFlg) {
           this.data.push(object);
         }

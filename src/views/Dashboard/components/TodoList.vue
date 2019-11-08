@@ -44,9 +44,14 @@
     </el-card>
 
 
-    <!--编辑对话框-->
+    <!--编辑采购计划对话框-->
     <editPlanDialog @modifyCBEvent="modifyPlanCBEvent" ref="editPlanDialog">
     </editPlanDialog>
+
+    <!--编辑采购创建对话框-->
+    <procurementOrderCreateDialog @modifyCBEvent="modifyPlanCBEvent" ref="procurementOrderCreateDialog">
+    </procurementOrderCreateDialog>
+
 
     <!--预付款申请的编辑对话框-->
     <procurementOrderpaymentDialog ref="procurementOrderpaymentDialog">
@@ -97,6 +102,8 @@
 <script>
 
   import editPlanDialog from '@/views/ProcurementPlan/components/edit/dialog';
+  import procurementOrderCreateDialog from '@/views/ProcurementOrder/components/create/dialog';
+
   import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
   import procurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
   import procurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
@@ -111,8 +118,8 @@
   import logisticPaymentBillPaymentDialog from '@/views/FinanceBill/components/logisticPaymentBill/payment/dialog'
 
 
-
   import {parseLineBreak} from '@/utils';
+  import {checkRole} from "../../../utils/permission";
 
   const filters = {
     all: todos => todos,
@@ -123,6 +130,7 @@
   export default {
     components: {
       editPlanDialog,
+      procurementOrderCreateDialog,
       procurementOrderpaymentDialog,
       paymentDialog,
       procurementShippedOrderEditDialog,
@@ -154,7 +162,22 @@
       },
       remaining() {
         return this.todos.filter(todo => todo.isRead == 0).length
-      }
+      },
+      hasPurchases() {
+        return checkRole("采购");
+      },
+      hasDocumentary() {
+        return checkRole("跟单");
+      },
+      hasSales() {
+        return checkRole("销售");
+      },
+      hasStockManager() {
+        return checkRole("库管");
+      },
+      hasFinance() {
+        return checkRole("财务");
+      },
     },
 
     mounted() {
@@ -178,15 +201,17 @@
         url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         let relations = ["notice"];
         url += "&relations=" + JSON.stringify(relations);
+        if (this.$store.state.user.token) {
+          this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data || [];
+              this.todos = res || [];
+            })
+            .catch(err => {
 
-        this.global.axios
-          .get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.todos = res || [];
-          })
-          .catch(err => {
-          });
+            });
+        }
       },
 
       // 完成任务
@@ -209,19 +234,25 @@
 
       },
       goTodo(val) {
-
         if (val && val.notice) {
-
           if (val.notice.targetType == "PROCUREMENT_PLAN") {
-            this.$refs.editPlanDialog.openDialog(val.notice.target);
+            if (val.notice.action == "agree" && this.hasSales == false) {
+              this.$refs.procurementOrderCreateDialog.openDialog(val.notice.target);
+            }
+            else {
+              this.$refs.editPlanDialog.openDialog(val.notice.target);
+            }
+            return;
           }
           //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
           if (val.notice.targetType == "PROCUREMENT_ORDER") {
             this.$refs.procurementShippedOrderEditDialog.openDialog(val.notice.target);
+            return;
           }
 
           if (val.notice.targetType == "FINANCE_ORDER") {
             this.$refs.paymentDialog.openDialog(val.notice.target);
+            return;
           }
 
           if (val.notice.targetType == "FINANCE_ORDER_FLOW_OVER") {
@@ -242,52 +273,63 @@
             } catch (e) {
               console.log(e);
             }
+            return;
           }
           if (val.notice.targetType == "DATE_CONFIRM") {
             // 弹窗
             this.$refs.procurementShippedOrderExecutingDialog.openDialog(val.notice.target);
+            return;
           }
           if (val.notice.targetType == "SHIPPED_PLAN_SUCCESS") {
             // 弹窗
             this.$refs.procurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
+            return;
           }
           if (val.notice.targetType == "SHIPPED_PLAN_IMPLEMENT") {
             // 弹窗
             this.$refs.procurementReceivedOrderEditDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗:采购入库 --- (完成状态)
           if (val.notice.targetType == "PROCUREMENT_WAREHOUSE_SUCCESS") {
             this.$refs.procurementReceivedOrderViewDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗:调拨入库-确认收货
           if (val.notice.targetType == "DOMESTIC_ALLOCATION_CONFIRM") {
             this.$refs.allocationReceivedEditDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗:出口调拨-待发货-确认发货
           if (val.notice.targetType == "LINERSHIPPING_PLAN") {
             this.$refs.exportAllocationEditDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗:确认采购付款单
           if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_APPLY") {
             this.$refs.financeBillPaymentDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗:待结算 详情
           if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE") {
             this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗：采购结算 详情
           if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_AGREE") {
             this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗：物流付款单，财务确认付款
           if (val.notice.targetType == "LOGISTIC_PAYMENT_ORDER_APPLY") {
             this.$refs.logisticPaymentBillPaymentDialog.openDialog(val.notice.target);
+            return;
           }
           //弹窗：物流付款单，申请人查看是否通过
           // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_REFUSE"){
 
           // }
-           //弹窗：物流付款单，申请人查看是否通过
+          //弹窗：物流付款单，申请人查看是否通过
           // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_AGREE"){
 
           // }
@@ -302,7 +344,7 @@
               instance.confirmButtonLoading = true;
               this.doComplete(val, instance, done);
             } else {
-              instance.confirmButtonLoading = true;
+              instance.confirmButtonLoading = false;
               done()
             }
           }
@@ -324,49 +366,49 @@
     z-index: 1;
     position: relative;
 
-    /deep/ .el-card__body {
-      padding: 0;
-    }
+  /deep/ .el-card__body {
+    padding: 0;
+  }
 
-    /deep/ .el-card__header {
-      border-bottom: none;
-    }
+  /deep/ .el-card__header {
+    border-bottom: none;
+  }
 
-    .todo-title {
-      padding: 0 0 0 10px;
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-    }
+  .todo-title {
+    padding: 0 0 0 10px;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
 
-    .todo-centent {
-      padding: 5px 20px;
-      font-size: 14px;
+  .todo-centent {
+    padding: 5px 20px;
+    font-size: 14px;
 
-      p {
-        max-height: 410px;
-        overflow-y: hidden;
-      }
+  p {
+    max-height: 410px;
+    overflow-y: hidden;
+  }
 
-    }
+  }
 
-    .footer {
-      color: #000;
-      position: relative;
-      padding: 10px 15px;
-      font-size: 14px;
-      height: 40px;
-      text-align: center;
-      min-width: 230px;
-      max-width: 550px;
-      margin: 0 auto;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-weight: 300;
-      background: #fff;
-      z-index: 1;
-      position: relative;
-    }
+  .footer {
+    color: #000;
+    position: relative;
+    padding: 10px 15px;
+    font-size: 14px;
+    height: 40px;
+    text-align: center;
+    min-width: 230px;
+    max-width: 550px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 300;
+    background: #fff;
+    z-index: 1;
+    position: relative;
+  }
 
   }
 </style>

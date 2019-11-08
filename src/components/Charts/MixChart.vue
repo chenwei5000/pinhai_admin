@@ -47,7 +47,6 @@ export default {
   },
   methods: {
     initChart() {
-      console.log("this id si :", this.id)
       this.chart = echarts.init(document.getElementById(this.id))
       this.chart.setOption({
         backgroundColor: '#fff',
@@ -135,7 +134,7 @@ export default {
             show: false
           }
         }],
-        dataZoom: 
+        dataZoom:
         [
           {
           show: false,
@@ -149,7 +148,7 @@ export default {
           handleStyle: {color: '#d3dee5'},
           textStyle: {color: '#fff' },
           borderColor: '#90979c'
-        }, 
+        },
 
         {
           type: 'inside',
@@ -160,11 +159,11 @@ export default {
           //滚轮放大缩小 'ctrl' 'shift'
           zoomOnMouseWheel: true,
         }
-        
+
         ],
         //线条数组
         series: [
-        
+
         {
           name: 'male',
           type: 'bar',
@@ -183,8 +182,8 @@ export default {
             }
           },
           data: this.primary.yAxisData
-        }, 
-        
+        },
+
         {
           name: 'average',
           type: 'line',

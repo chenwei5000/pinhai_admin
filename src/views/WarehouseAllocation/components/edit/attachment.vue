@@ -76,7 +76,6 @@
               let data = res || [];
               this.attachments = [];
               data.forEach(obj => {
-                ///attachments/linerShippingPlan/view/8a2328796ab95c3f016b027628f1002c?accessToken=NDAzRDREQ0Y3OEMzRTZDMzczMjZFOTU4NEExM0FGQUIsMg==
                 this.attachments.push({
                   id: obj.id,
                   name: obj.fileName,

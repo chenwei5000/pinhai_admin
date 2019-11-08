@@ -166,6 +166,7 @@
 </template>
 
 <script>
+  //https://fullcalendar.io/
   import fullCalendar from "@fullcalendar/vue";
   import dayGridPlugin from "@fullcalendar/daygrid";
   import timeGridPlugin from "@fullcalendar/timegrid";
@@ -180,6 +181,7 @@
   import createEvent from "./components/createEvent";
   import editEvent from "./components/edit/dialog";
   import {checkPermission} from "../../utils/permission";
+  import moment from 'moment'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -394,8 +396,12 @@
       handleDatesRender(v) {
         let searchFlg = this.searchFlg || location.href.match(queryPattern);
         if (v) {
-          this.startDate = dateFormat(v.view.activeStart, "yyyy-mm-dd");
-          this.endDate = dateFormat(v.view.activeEnd, "yyyy-mm-dd");
+          //this.startDate = dateFormat(v.view.activeStart, "yyyy-mm-dd");
+          //this.endDate = dateFormat(v.view.activeEnd, "yyyy-mm-dd");
+
+          this.startDate = moment(v.view.currentStart).format("YYYY-MM-DD");
+          this.endDate = moment(v.view.currentEnd).add(-1, 'days').format("YYYY-MM-DD");
+
         }
         if (!searchFlg) {
           this.loadData();
@@ -482,6 +488,11 @@
   @import "~@fullcalendar/core/main.css";
   @import "~@fullcalendar/daygrid/main.css";
   @import "~@fullcalendar/timegrid/main.css";
+
+  .fc-ltr .fc-view .fc-other-month {
+    color: transparent;
+    background-color: #ccc;
+  }
 
   .fc-day-grid-container {
     overflow: visible !important;

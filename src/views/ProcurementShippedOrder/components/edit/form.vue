@@ -247,7 +247,6 @@
         if (this.primary) {
           //获取计划数据
           this.editObject = JSON.parse(JSON.stringify(this.primary));
-          console.log(this.editObject)
           //转化时间
           this.editObject.expectTime = this.editObject.formatExpectTime;
 
