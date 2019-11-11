@@ -18,39 +18,43 @@
       </el-collapse-item>
 
       <el-collapse-item name="detailTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购产品明细</div>
+        <div slot="title" class="title">2. 采购产品明细   [{{this.primary.formatLastModified}}]</div>
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
+      <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 收货明细   [{{this.primary.formatLastModified}}]</div>
+        <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
+      </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 付款项</div>
+        <div slot="title" class="title">4. 付款项</div>
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="billTable" style="margin-top: 10px">
-        <div slot="title" class="title">4. 发票信息</div>
+        <div slot="title" class="title">5. 发票信息</div>
         <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">5. 发票文件</div>
+        <div slot="title" class="title">6. 发票文件</div>
         <attachment ref="attachment" :primary="primary"
                     v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">6. 相关预付款单</div>
+        <div slot="title" class="title">7. 相关预付款单</div>
         <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
       </el-collapse-item>
 
       <el-collapse-item name="orderTable" style="margin-top: 10px">
-        <div slot="title" class="title">7. 相关付款单</div>
+        <div slot="title" class="title">8. 相关付款单</div>
         <orderTable ref="orderTable" :primary="primary" v-if="primaryComplete"></orderTable>
       </el-collapse-item>
 
       <el-collapse-item name="paymentInfo" style="margin-top: 10px" v-if="primary.status != 1 ">
-        <div slot="title" class="title">8. 付款信息</div>
+        <div slot="title" class="title">9. 付款信息</div>
         <paymentInfo ref="paymentInfo" :primary="primary" v-if="primaryComplete"></paymentInfo>
       </el-collapse-item>
 
@@ -65,6 +69,7 @@
   import {mapGetters} from 'vuex'
   import infoForm from './info'
   import detailTable from './detailTable'
+  import receivedDetailTable from './receivedDetailTable'
   import paymentsTable from './paymentsTable'
   import orderTable from './table'
   import itemTable from '../../../../SettlementBill/components/view/paymentItemTable'
@@ -79,6 +84,7 @@
       billTable,
       attachment,
       detailTable,
+      receivedDetailTable,
       paymentsTable,
       orderTable,
       paymentInfo
@@ -109,7 +115,9 @@
     data() {
       return {
         primaryId: null,  //主ID
-        primary: {}, //主对象
+        primary: {
+
+        }, //主对象
         primaryComplete: false,
         dialogVisible: false, //Dialog 是否开启
         confirmLoading: false,
@@ -150,7 +158,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoForm', 'detailTable', 'itemTable', 'billTable', 'attachment', 'paymentsTable', 'orderTable', 'paymentInfo'];
+        this.activeNames = ['infoForm', 'detailTable','receivedDetailTable', 'itemTable', 'billTable', 'attachment', 'paymentsTable', 'orderTable', 'paymentInfo'];
       },
       closeDialog() {
         this.primary = {};
