@@ -35,6 +35,19 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="statusName" label="状态" width="90" align="center">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.status === 1
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : scope.row.status === 2
+            ? 'primary' : scope.row.status === 10
+            ? 'info' : 'success'"
+            disable-transitions>{{ scope.row.statusName }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="product.name" label="产品名" sortable min-width="150"></el-table-column>
       <el-table-column prop="boxCode" label="箱码" width="90"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" width="100"></el-table-column>
