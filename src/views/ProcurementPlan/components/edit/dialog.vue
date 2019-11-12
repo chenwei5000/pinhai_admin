@@ -289,6 +289,7 @@
                   this.initData();
                   // 继续向父组件抛出事件 修改成功刷新列表
                   this.$emit("modifyCBEvent");
+                  this.$refs.itemTable.getList();
                 })
                 .catch(err => {
                   loading.close();

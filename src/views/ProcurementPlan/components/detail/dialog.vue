@@ -88,12 +88,12 @@
         <el-row>
           <el-col :md="10">
             <el-form-item label="备货周数" prop="safetyStockWeek">
-
               <el-input-number v-model="detailItem.safetyStockWeek"
                                style="width: 160px"
                                :precision="0"
                                :min="1"
                                :step="1"
+                               :disabled = true
                                :max="52" label="备货周数">
               </el-input-number>
 
@@ -144,7 +144,7 @@
           <el-col :md="10">
             <el-form-item label="国内库存(箱)" prop="domesticStockCartonQty">
               <el-input v-model.trim="detailItem.domesticStockCartonQty"
-                        style="width: 160px" placeholder="国内库存，箱数" clearable></el-input>
+                        style="width: 160px" placeholder="国内库存，箱数" clearable readonly></el-input>
 
               <el-tooltip class="item" effect="light" content="国内仓库库存箱数，不能修改" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -156,7 +156,7 @@
           <el-col :md="14">
             <el-form-item label="国内在途(箱)" prop="unfinishedPlanCartonQty">
               <el-input v-model.trim="detailItem.unfinishedPlanCartonQty"
-                        style="width: 160px" placeholder="国内在途，箱数" clearable></el-input>
+                        style="width: 160px" placeholder="国内在途，箱数" clearable readonly></el-input>
               <el-tooltip class="item" effect="light" content="未完成采购计划箱数" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>

@@ -177,9 +177,21 @@
           </el-form-item>
         </el-col>
 
-        <el-col :md="16">
+        <el-col :md="8">
           <el-form-item label="预计到港时间" prop="otdTime" ref="otdTime" v-if="editObject.otdTime">
             <span style="font-size: 12px">{{editObject.otdTime.time}},距离开船日{{editObject.otdTime.week}}周</span>
+          </el-form-item>
+        </el-col>
+
+         <el-col :md="8">
+          <el-form-item label="下次发柜时间" prop="nextDeliveryTime" ref="nextDeliveryTime" >
+            <el-date-picker
+              size="mini"
+              v-model="editObject.nextDeliveryTime"
+              type="datetime"
+              style="width: 200px"
+              placeholder="选择日期时间">
+            </el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>

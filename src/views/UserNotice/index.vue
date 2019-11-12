@@ -128,6 +128,10 @@
         }
       },
       onSetting(row) {
+          if (row.isRead === 1){
+            this.$message.warning("该消息已经完成！")
+            return;
+          }
           this.$confirm('确认该任务已经完成了吗?', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {

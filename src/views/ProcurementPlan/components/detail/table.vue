@@ -113,6 +113,7 @@
       <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
       <el-table-column prop="safetyStockWeek" label="备货周数" width="80" align="center"></el-table-column>
       <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100" align="center"></el-table-column>
+      <el-table-column prop="systemSevenSaleQty" label="系统当前7日销量(件)" width="100" align="center" v-if="this.primary.status === 0"></el-table-column>
       <el-table-column prop="sevenSalesCount" label="7日销量(件)" width="100" align="center"></el-table-column>
       <el-table-column prop="amazonTotalStock" label="亚马逊含在途库存(件)" width="140" align="center"></el-table-column>
       <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100" align="center"></el-table-column>
@@ -135,8 +136,13 @@
       <el-table-column prop="saleWeek" sortable label="可售周数" width="90"
                        fixed="right" align="center"></el-table-column>
 
+       <el-table-column prop="recommendPurchaseCartonQty" sortable label="推荐采购箱数" width="120" v-if="this.primary.status === 0"
+                       fixed="right" align="center"></el-table-column>    
+
       <el-table-column prop="cartonQty" sortable label="采购箱数" width="90"
                        fixed="right" align="center"></el-table-column>
+
+                   
 
       <el-table-column prop="amount" sortable label="金额" width="90"
                        fixed="right">
@@ -418,6 +424,35 @@
         return sums;
       },
 
+       getSevenSaleQtyAndpurchaseCartonQty(){
+        if ( this.primary.status != 0 ){
+          return;
+        }
+        console.log("当前状态是 审核中")
+        let pids = [];
+        this.data.forEach(row => {
+          pids.push(row.productId);
+        });
+         let url = `/amazonStocks/plans/${this.primary.merchantId}?warehouse=${this.primary.warehouseId}&pids=${pids.join(",")}&safetyStockWeek=${this.primary.safetyStockWeek}&vip1SafetyStockWeek=${this.primary.vip1SafetyStockWeek}&vip2SafetyStockWeek=${this.primary.vip2SafetyStockWeek}&exclude=${this.primary.handleMethod}`;
+         this.global.axios
+          .get(url)
+          .then(resp => {
+            let res = resp.data;
+            let sales = res || [];
+             this.data.forEach(data => {
+              sales.forEach(sale => {
+                if (sale.productId === data.productId) {
+                  this.$set(data, 'systemSevenSaleQty', sale.sevenAmendQty)
+                  this.$set(data, 'recommendPurchaseCartonQty', sale.replenishmentCartonPlanQty)
+                  // data.systemSevenSaleQty = sale.sevenAmendQty;
+                  // data.recommendPurchaseCartonQty = sale.replenishmentCartonQty;
+                }
+              })
+            });
+
+          })
+
+      },
       /*获取列表*/
       getList() {
         let url = this.url;
@@ -453,6 +488,7 @@
 
             this.total = res.length || 0
             this.loading = false
+            this.getSevenSaleQtyAndpurchaseCartonQty();
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
