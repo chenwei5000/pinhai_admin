@@ -421,7 +421,7 @@
           this.$refs.createEvent.openDialog(day.dateStr);
         }
         else {
-          this.$message.error("您没有创建出口计划权限！");
+          this.$message.error("您没有创建物流计划权限！");
         }
       },
 

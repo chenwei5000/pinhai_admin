@@ -300,7 +300,7 @@
         this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
         this.merchantSelectOptions = merchantModel.getSelectOptions();
         this.weekSelectOptions = [];
-        for (let i = 1; i < 52; i++) {
+        for (let i = 1; i <= 104; i++) {
           this.weekSelectOptions.push({
             label: `${i}周`,
             value: i

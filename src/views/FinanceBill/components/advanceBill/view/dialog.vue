@@ -17,18 +17,23 @@
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
+      <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 收货明细   [{{this.primary.formatLastModified}}]</div>
+        <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
+      </el-collapse-item>
+
       <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
+        <div slot="title" class="title">4. 附件</div>
         <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">4. 相关预付款单</div>
+        <div slot="title" class="title">5. 相关预付款单</div>
         <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
       </el-collapse-item>
 
       <el-collapse-item name="paymentInfo" style="margin-top: 10px" v-if="primary.status != 1 ">
-        <div slot="title" class="title">5. 付款信息</div>
+        <div slot="title" class="title">6. 付款信息</div>
         <paymentInfo ref="paymentInfo" :primary="primary" v-if="primaryComplete"></paymentInfo>
       </el-collapse-item>
 
@@ -43,6 +48,7 @@
   import {mapGetters} from 'vuex'
   import infoFrom from './form'
   import detailTable from './detailTable'
+  import receivedDetailTable from './receivedDetailTable'
   import attachment from './attachment'
   import paymentsTable from './paymentsTable'
   import paymentInfo from './paymentInfo'
@@ -51,6 +57,7 @@
     components: {
       infoFrom,
       detailTable,
+      receivedDetailTable,
       attachment,
       paymentsTable,
       paymentInfo
@@ -123,7 +130,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'paymentsTable', 'attachment', 'paymentInfo'];
+        this.activeNames = ['infoFrom', 'itemTable', 'receivedDetailTable', 'paymentsTable', 'attachment', 'paymentInfo'];
       },
       closeDialog() {
         this.primary = {};

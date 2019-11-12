@@ -20,7 +20,7 @@
   export default {
     data() {
       return {
-        title: '出口计划历史',
+        title: '物流计划历史',
         tableConfig: {
           url: '/linerShippingPlanItems/histories',
           relations: ["cartonSpec", "linerShippingPlan", "product", "linerShippingPlan.fromWarehouse"],

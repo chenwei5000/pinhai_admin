@@ -226,10 +226,10 @@
     computed: {
       dialogTitle() {
         if (this.detailItemId == null) {
-          return "添加出口计划明细";
+          return "添加物流计划明细";
         }
         else {
-          return "修改出口计划明细";
+          return "修改物流计划明细";
         }
       },
 
