@@ -180,7 +180,8 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" size="mini" style="margin-top: 20px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
+            <el-button type="primary" size="mini" style="margin-top: 20px" :loading="confirmLoading" @click="onSave"
+                       v-if="hasEdit">
               保存物流信息
             </el-button>
           </el-row>
@@ -193,7 +194,8 @@
 
 
 <script>
-  import planModel from "@/api/linerShippingPlan";
+
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     props: {
@@ -204,7 +206,7 @@
     },
     computed: {
       hasEdit() {
-        return true;
+        return checkPermission('LinerShippingPlanResource_shipDate');
       }
     },
 
@@ -250,7 +252,7 @@
           this.loading = false;
         }
         else {
-          this.$message.error("无效的出口计划!");
+          this.$message.error("无效的物流计划!");
           this.loading = false;
         }
       },

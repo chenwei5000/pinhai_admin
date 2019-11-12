@@ -27,6 +27,7 @@
       <el-table-column prop="groupName" label="款式" width="150"></el-table-column>
       <el-table-column prop="vipLevel" label="Vip级别" width="80"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+      <el-table-column prop="soldOutTime" label="销售覆盖时间" width="100"></el-table-column>
       <el-table-column prop="sevenAmendQty" label="7日销量（件)" width="100"></el-table-column>
       <el-table-column prop="logisticsWeek" label="运输周数" width="100"></el-table-column>
       <el-table-column prop="safetyWeek" label="销售周数" width="100"></el-table-column>
@@ -36,15 +37,25 @@
       <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110" v-if="false"></el-table-column>
       <el-table-column prop="validateStockQty" label="有效库存(件)" width="100"></el-table-column>
 
+
       <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100">
         <template slot-scope="scope">
-          <el-popover v-if="scope.row.domesticStockCartonQty > 0 " placement="top-start" title="国内库存(箱)" width="250" trigger="hover">
+          <el-popover v-if="scope.row.domesticStockCartonQty > 0 " placement="top-start" title="国内库存(箱)" width="250"
+                      trigger="hover">
             <div v-html="br(scope.row.domesticStocks)"></div>
             <span slot="reference">{{ scope.row.domesticStockCartonQty }}</span>
           </el-popover>
           <span v-else>{{ scope.row.domesticStockCartonQty }}</span>
         </template>
       </el-table-column>
+
+
+      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" >
+        <template slot-scope="scope">
+          <span>{{ scope.row.warehouseStocks[item.id]}}</span>
+        </template>
+      </el-table-column>
+
 
       <el-table-column prop="cartonSpecVolume" label="箱子体积(m³)" width="100">
 
@@ -72,13 +83,17 @@
           <el-input-number v-model="scope.row.replenishmentCartonQty"
                            size="mini"
                            style="width: 120px;margin: 3px 0;"
-                           :precision="0"
+                           :precision="3"
                            :min="0"
                            :step="1"
                            @change="onReceivedCartonQty(scope.row)"
                            :max="1000000" label="请填本次应补箱数">
           </el-input-number>
         </template>
+      </el-table-column>
+
+      <el-table-column prop="replenishmentQty" sortable label="应补件数"
+                       width="100" fixed="right" align="center">
       </el-table-column>
 
       <el-table-column prop="boxVolume" label="体积(m³)" width="100" fixed="right" align="center">
@@ -114,8 +129,9 @@
         <el-row type="flex" justify="center">
           <el-button type="primary" style="margin-top: 15px"
                      size="mini"
+                     @click="toPlanItem"
                      :loading="confirmLoading">
-            转出口计划明细
+            转物流计划明细
           </el-button>
         </el-row>
       </el-col>
@@ -128,6 +144,7 @@
 
   import {mapGetters} from 'vuex'
   import {currency, parseLineBreak} from '@/utils'
+  import moment from 'moment';
 
   export default {
     components: {},
@@ -145,6 +162,15 @@
       hasExecute() {
         return false;
       },
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
+      hasEdit() {
+        return false;
+      },
+      hasDelete() {
+        return true;
+      }
     },
     filters: {
       currency: currency,
@@ -158,14 +184,9 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
-
         // 多选记录对象
         selected: [],
+        warehouses: [],
 
         //数据 TODO: 根据实际情况调整
         url: "/amazonStocks/shippings", // 资源URL
@@ -202,8 +223,29 @@
       },
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
-      },
+        let warehouses = [];
 
+        if (this.primary.warehouseId.indexOf(-99)) {
+          warehouses.push({id: -99, name: '供货商(箱)'})
+        }
+
+        let url = `/warehouses?filters=${JSON.stringify({
+          "groupOp": "AND",
+          "rules": [{
+            field: "id",
+            op: 'in',
+            data: this.primary.warehouseId.join(",")
+          }]
+        })}&sort=id&dir=asc`;
+
+        this.global.axios.get(url).then(data => {
+          data.data.forEach(res => {
+            warehouses.push({id: res.id, name: `${res.name}(箱)`})
+          })
+          this.warehouses = warehouses;
+        });
+
+      },
       // 获取表格的高度
       getTableHeight() {
         if (this.device !== 'mobile') {
@@ -319,7 +361,22 @@
             let res = resp.data
             let data = res || []
 
-            this.data = data
+            this.data = [];
+            data.forEach(row => {
+              switch (row.vipLevel) {
+                case 0 :
+                  row.soldOutTime = this.primary.vip0SoldOutTime ? this.primary.vip0SoldOutTime : moment(new Date()).format("YYYY-MM-DD");
+                  break;
+                case 1 :
+                  row.soldOutTime = this.primary.vip1SoldOutTime ? this.primary.vip1SoldOutTime : moment(new Date()).format("YYYY-MM-DD");
+                  break;
+                case 2 :
+                  row.soldOutTime = this.primary.vip2SoldOutTime ? this.primary.vip2SoldOutTime : moment(new Date()).format("YYYY-MM-DD");
+                  break;
+              }
+              this.data.push(row);
+            })
+
             this.search()
 
             this.total = res.length || 0
@@ -400,19 +457,24 @@
 
       /********************* 操作按钮相关方法  ***************************/
       /* 行删除功能 */
+      // 删除功能， 本地删除
       onDefaultDelete(row) {
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              let url = `${this.url}/${row.id}`;
-              this.global.axios.delete(url).then(resp => {
-                this.$message({type: 'success', message: '删除成功'});
-                let obj = resp.data;
-                this.getList();
-              })
-                .catch(err => {
-                })
+              let idx = null;
+
+              this.data.forEach((item, index) => {
+                  if (item.skuCode === row.skuCode) {
+                    idx = index;
+                    return;
+                  }
+                }
+              );
+              this.date = this.data.splice(idx, 1);
+              this.search();
+
               done();
             } else done()
           }
@@ -422,13 +484,68 @@
       },
 
       onReceivedCartonQty(row) {
-        //row.receivedQty = (row.receivedCartonQty * row.numberOfCarton).toFixed(0);
+        row.replenishmentQty = (row.replenishmentCartonQty * row.numberOfCarton).toFixed(0);
+        row.boxVolume = (row.replenishmentCartonQty * row.cartonSpecVolume).toFixed(3);
+      },
+
+      //转物流计划明细
+      toPlanItem() {
+        let loading = this.$loading({
+          lock: true,
+          text: '保存中...',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        let postData = [];
+        this.tableData.forEach(row => {
+          postData.push({
+            productId: row.productId,
+            skuCode: row.skuCode,
+            cartonSpecId: row.cartonSpecId,
+            cartonSpecName: row.cartonSpecCode,
+            numberOfCarton: row.numberOfCarton,
+            sevenSalesCount: row.sevenAmendQty,
+            logisticsWeek: row.logisticsWeek,
+            safetyWeek: row.safetyWeek,
+            inStockQty: row.inStockQty,
+            validateStockQty: row.validateStockQty,
+            domesticStockQty: row.domesticStockQty,
+            cartonQty: row.replenishmentCartonQty,
+            merchantId: this.primary.merchantId,
+            soldOutTime: row.soldOutTime,
+            domesticStocks: JSON.stringify(row.warehouseStocks),
+            domesticStockWarehouses : this.primary.warehouseId.join(","),
+          });
+        });
+
+        let url = `/linerShippingPlanItems/importData/${this.primary.id}`
+        this.global.axios.post(url, postData)
+          .then(data => {
+            this.$message.success('操作成功！');
+            loading.close();
+            this.$emit("step2CBEvent", 3);
+
+          })
+          .catch(error => {
+            try {
+              this.$store.dispatch('errorLog/addErrorLog', {
+                message: error.response.data.description,
+                //url: window.location.href,
+                title: '导入产品',
+                time: new Date()
+              });
+            }
+            catch (e) {
+              console.log(e);
+            }
+
+            loading.close();
+          })
       },
 
       onBack() {
         this.$emit("step2CBEvent", 0);
       }
-
     }
   }
 </script>

@@ -236,7 +236,7 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
+            <el-button type="primary" style="margin-top: 15px" size="mini"  :loading="confirmLoading" @click="onSave" v-if="hasEdit">
               保存基本信息
             </el-button>
           </el-row>
@@ -254,6 +254,7 @@
   import merchantModel from '@/api/merchant'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {},
@@ -266,13 +267,15 @@
     computed: {
       hasEdit() {
         // 控制按钮
-        if ([0, 8].indexOf(this.primary.status) > -1) {
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
-        else {
-          return true;
+        if(!checkPermission('ProcurementPlanResource_update')){
+          return false;
         }
+        return true;
       },
+
       hasCategory() {
         if (this.editObject.categoryId == null || this.editObject.categoryId.length == 0) {
           return true;

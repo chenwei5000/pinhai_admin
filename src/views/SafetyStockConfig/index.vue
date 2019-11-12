@@ -16,6 +16,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
@@ -23,6 +24,15 @@
         types: [],
         title: '安全库存配置列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('SafetyStockConfigResource_create'),
+          hasEdit: checkPermission('SafetyStockConfigResource_update'),
+          hasDelete: checkPermission('SafetyStockConfigResource_remove'),
+          // hasView: checkPermission('SafetyStockConfigResource_get'),
+          hasExportTpl: checkPermission('SafetyStockConfigResource_export'),
+          hasExport: checkPermission('SafetyStockConfigResource_export'),
+          hasImport: checkPermission('SafetyStockConfigResource_import'),
+
           url: '/safetyStockConfigs',
           relations: ["creator"],
           tableAttrs: {
@@ -30,7 +40,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('SafetyStockConfigResource_remove') ? 'selection' : '', hidden: !checkPermission('SafetyStockConfigResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 90, fixed: 'left'},
             {prop: 'typeName', label: '类型', 'min-width': 80},
             {prop: 'vip0SafetyStockWeek', label: 'Vip0普通', 'min-width': 80},

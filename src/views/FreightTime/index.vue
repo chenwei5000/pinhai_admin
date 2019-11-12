@@ -18,12 +18,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
-        title: '分类列表',
+        title: '货运时间配置',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('FreightTimeResource_create'),
+          hasEdit: checkPermission('FreightTimeResource_update'),
+          hasDelete: checkPermission('FreightTimeResource_remove'),
+          // hasView: checkPermission('FreightTimeResource_get'),
+          hasExportTpl: checkPermission('FreightTimeResource_export'),
+          hasExport: checkPermission('FreightTimeResource_export'),
+          hasImport: checkPermission('FreightTimeResource_import'),
+
           url: '/freightTimes',
           relations: ["sourceHarbour", "shippingMethod", "destinationHarbour"],
           tableAttrs: {
@@ -31,10 +41,10 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
-            {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 200},
-            {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 200},
-            {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 200},
+            {width: 30,type: checkPermission('FreightTimeResource_remove') ? 'selection' : '', hidden: !checkPermission('FreightTimeResource_remove')},
+            {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 120},
+            {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 120},
+            {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 120},
             {prop: 'spendDays', label: '物流时间(天)', 'min-width': 100},
             phColumns.status,
             phColumns.id,

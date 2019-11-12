@@ -3,6 +3,7 @@
   <el-dialog :title="dialogTitle"
              append-to-body
              v-if="dialogVisible"
+             class="ph-dialog"
              width="50%"
              top="20vh"
              :visible.sync="dialogVisible">
@@ -13,7 +14,7 @@
              label-width="80px"
     >
 
-      <el-form-item label="说明" prop="note">
+      <el-form-item label="说明" prop="note" size="mini">
         <div slot="label">
           <el-tooltip class="item" effect="light" content="说明信息。支持换行！" placement="right">
             <i class="el-icon-question">&nbsp;</i>
@@ -32,8 +33,8 @@
     </el-form>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">确 认</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">确 认</el-button>
+      <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
     </div>
 
   </el-dialog>

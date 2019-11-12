@@ -234,7 +234,10 @@
 
         formVisible: false,
 
-        plan: {},
+        plan: {
+          pallet: null,
+          oversize: null,
+        },
 
         rules: {
           etdTime: [

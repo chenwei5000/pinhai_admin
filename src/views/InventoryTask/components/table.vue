@@ -12,7 +12,7 @@
       <el-form-item label="仓库">
         <el-select filterable v-model="searchParam.warehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 200px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -44,7 +44,7 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 0
@@ -55,11 +55,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
-      <el-table-column prop="formatLimitTime" label="截止日期" width="100"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
-      <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
+      <el-table-column prop="code" label="编码" min-width="140"></el-table-column>
+      <el-table-column prop="warehouse.name" label="仓库" min-width="100"></el-table-column>
+      <el-table-column prop="formatLimitTime" label="截止日期" min-width="100"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" min-width="80"></el-table-column>
+      <el-table-column prop="formatCreateTime" label="创建时间" min-width="150"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
@@ -69,7 +69,7 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+          <el-button v-if="hasView(scope.row)" size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
@@ -117,6 +117,7 @@
   import viewDialog from './view/dialog'
   import phEnumModel from '@/api/phEnum'
   import warehouseModel from "../../../api/warehouse"
+  import {checkPermission} from "@/utils/permission";
 
   const valueSeparator = '~';
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g');
@@ -149,24 +150,19 @@
 
       hasEdit() {
         if (this.type === 'inventorying') {
-          return true;
+          return checkPermission('InventoryTaskResource_update') ? true : false;
         }
         return false;
       },
 
       hasDelete() {
         if (this.type === 'inventorying') {
-          return true;
+          return checkPermission('InventoryTaskResource_remove') ? true : false;
         }
         return false;
       },
 
-      hasView() {
-        if (this.type === 'complete' || this.type === 'all') {
-          return true;
-        }
-        return false;
-      },
+
 
       hasOperation() {
         return this.hasView || this.hasEdit
@@ -279,6 +275,16 @@
         else {
           this.tableMaxHeight = 400;
         }
+      },
+
+      hasView(row) {
+        if (this.type === 'complete' || this.type === 'all') {
+          if ( row.status == 1){
+            return false;
+          }
+          return true;
+        }
+        return false;
       },
 
       /********************* 搜索相关方法  ***************************/
@@ -535,7 +541,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false;
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done();
                   this.getList()
                 })

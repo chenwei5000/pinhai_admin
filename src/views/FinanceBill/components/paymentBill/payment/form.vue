@@ -99,7 +99,7 @@
         </el-col>
 
         <el-col :md="12">
-          <el-form-item label="备注">
+          <el-form-item label="付款说明">
             <el-input v-model="editObject.remark" type="textarea"
                       :autosize="{minRows: 2, maxRows: 2}" style="width: 300px"></el-input>
           </el-form-item>

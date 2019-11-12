@@ -90,7 +90,7 @@
 
       <el-table-column prop="warehouse.name" label="收货仓库" width="120"></el-table-column>
 
-      <el-table-column prop="formatOtdTime" label="预计完成日期" width="100"></el-table-column>
+      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100"></el-table-column>
 
       <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
         <template slot-scope="scope">
@@ -143,7 +143,7 @@
 
     </el-pagination>
 
-    <!--确认完成日期对话框-->
+    <!--确认交货日期对话框-->
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
@@ -603,7 +603,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

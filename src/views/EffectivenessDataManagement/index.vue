@@ -19,12 +19,22 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
   import categoryModel from '../../api/category'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '产品效能管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('EffectivenessDataManagementResource_create'),
+          hasEdit: checkPermission('EffectivenessDataManagementResource_update'),
+          hasDelete: checkPermission('EffectivenessDataManagementResource_remove'),
+          // hasView: checkPermission('EffectivenessDataManagementResource_get'),
+          hasExportTpl: checkPermission('EffectivenessDataManagementResource_export'),
+          hasExport: checkPermission('EffectivenessDataManagementResource_export'),
+          hasImport: checkPermission('EffectivenessDataManagementResource_import'),
+
           url: '/effectivenessDataManagements',
           relations: ["category"],
           tableAttrs: {
@@ -35,7 +45,7 @@
           hasNew: false,
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('EffectivenessDataManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('EffectivenessDataManagementResource_remove')},
             {prop: 'statDateFormat', label: 'Stat Date', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'category.name', label: '分类', sortable: 'custom', "min-width": 120},
             {prop: 'session', label: 'Sessions', "min-width": 120},

@@ -16,25 +16,35 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '货币管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CurrencyResource_create'),
+          hasEdit: checkPermission('CurrencyResource_update'),
+          hasDelete: checkPermission('CurrencyResource_remove'),
+          // hasView: checkPermission('CurrencyResource_get'),
+          hasExportTpl: checkPermission('CurrencyResource_export'),
+          hasExport: checkPermission('CurrencyResource_export'),
+          hasImport: checkPermission('CurrencyResource_import'),
+
           url: '/currencies',
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
-            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
+            {width: 30,type: checkPermission('CurrencyResource_remove') ? 'selection' : '', hidden: !checkPermission('CurrencyResource_remove')},
+            {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 80, fixed: 'left'},
             {prop: 'code', label: '代码', sortable: 'custom', width: 80},
-            {prop: 'symbolLeft', label: '左侧符', width: 80},
-            {prop: 'symbolRight', label: '右侧符', width: 80},
-            {prop: 'decimalPoint', label: '小数符', width: 80},
-            {prop: 'thousandsPoint', label: '千分位符', width: 80},
-            {prop: 'decimalPlaces', label: '小数位数', width: 80},
+            {prop: 'symbolLeft', label: '左侧符', width: 60},
+            {prop: 'symbolRight', label: '右侧符', width: 60},
+            {prop: 'decimalPoint', label: '小数符', width: 60},
+            {prop: 'thousandsPoint', label: '千分位符', width: 60},
+            {prop: 'decimalPlaces', label: '小数位数', width: 60},
             {prop: 'value', label: '汇率值', sortable: 'custom', width: 100},
             phColumns.status,
             phColumns.id,

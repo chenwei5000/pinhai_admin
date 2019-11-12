@@ -33,7 +33,7 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="SKU" prop="skuCode">
+            <el-form-item label="SKU" prop="skuCode" size="mini">
 
               <span v-if="this.detailItemId" style="font-size: 12px">{{ detailItem.skuCode }}</span>
               <el-input v-else="" v-model.trim="detailItem.skuCode"
@@ -41,15 +41,11 @@
                         show-word-limit
                         style="width: 200px" placeholder="请填写SKU" clearable></el-input>
 
-
-              <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="采购单价" prop="price">
+            <el-form-item label="采购单价" prop="price" size="mini">
 
               <el-input v-model.trim="detailItem.price"
                         style="width: 200px" placeholder="请填写采购单价" clearable></el-input>
@@ -63,7 +59,7 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="箱规" prop="cartonSpecId">
+            <el-form-item label="箱规" prop="cartonSpecId" size="mini">
 
               <el-select filterable
                          v-model="detailItem.cartonSpecId"
@@ -113,7 +109,7 @@
                                :max="1000000" label="采购箱数">
               </el-input-number>
 
-              <el-tooltip class="item" effect="light" content="采购箱数,支持3位小树。" placement="right">
+              <el-tooltip class="item" effect="light" content="采购箱数,支持3位小数。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
@@ -136,9 +132,9 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="warning" @click="onLoadProduct" :loading="confirmLoading">获取产品默认信息</el-button>
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="warning" @click="onLoadProduct" size="mini"  :loading="confirmLoading">获取产品默认信息</el-button>
+      <el-button type="primary" @click="onSave" size="mini"  :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>
@@ -353,7 +349,7 @@
 
           this.global.axios[method](url, _object)
             .then(resp => {
-              this.$message.info("修改成功");
+              this.$message.success("修改成功");
               this.loading = false;
               this.confirmLoading = false;
               this.dialogVisible = false;

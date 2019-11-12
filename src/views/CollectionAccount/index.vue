@@ -19,6 +19,7 @@
   import phFromItems from '../../components/phFromItems'
   import bankAccountModel from "../../api/bankAccount";
   import companyManagementModel from "../../api/companyManagement";
+  import {checkPermission} from "../../utils/permission";
 
 
   export default {
@@ -26,6 +27,15 @@
       return {
         title: '收款账户',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CollectionAccountResource_create'),
+          hasEdit: checkPermission('CollectionAccountResource_update'),
+          hasDelete: checkPermission('CollectionAccountResource_remove'),
+          // hasView: checkPermission('CollectionAccountResource_get'),
+          hasExportTpl: checkPermission('CollectionAccountResource_export'),
+          hasExport: checkPermission('CollectionAccountResource_export'),
+          hasImport: checkPermission('CollectionAccountResource_import'),
+
           url: '/collectionAccounts',
           relations: ["creator","bankAccount","companyManagement",],
           tableAttrs: {
@@ -33,7 +43,8 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('CollectionAccountResource_remove') ? 'selection' : '', hidden: !checkPermission('CollectionAccountResource_remove')},
+            phColumns.id,
             {prop: 'companyManagementId', label: '公司ID', hidden: true, "min-width": 100},
             {prop: 'bankAccountId', label: '银行账号ID', hidden: true, "min-width": 100},
             {prop: 'companyManagement.fullName', label: '公司名', "min-width": 200},
@@ -41,7 +52,6 @@
             {prop: 'contact', label: '联系人',  "min-width": 60},
             {prop: 'phoneHide', label: '联系人电话', "min-width": 80},
             phColumns.status,
-            phColumns.id,
             phColumns.lastModified
           ],
 

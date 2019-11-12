@@ -17,7 +17,7 @@
       >
         <el-row>
           <el-col :md="24">
-            <el-form-item label="预计完成日期" prop="otdTime">
+            <el-form-item label="预计交货日期" prop="otdTime">
               <el-date-picker
                 v-model="detailItem.otdTime"
                 type="date"
@@ -37,8 +37,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>
@@ -63,7 +63,7 @@
         return this.calAmount();
       },
       dialogTitle() {
-        return "确认采购单完成日期";
+        return "确认采购单交货日期";
 
       },
       hasEdit() {

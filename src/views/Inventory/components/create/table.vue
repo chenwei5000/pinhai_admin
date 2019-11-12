@@ -2,14 +2,17 @@
   <!-- 表格工具条 添加、导入、导出等 -->
   <div class="ph-table">
 
-    <el-row class="table-tool" type="flex" justify="space-between">
-      <el-col :md="18">
-        <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
-                   size="small">
-          新增
-        </el-button>
-      </el-col>
-    </el-row>
+    <tableToolBar
+      :hasExportTpl="hasExportTpl"
+      :hasImport="hasImport"
+      :hasAdd="hasAdd"
+      :hasDelete="hasDelete"
+      @onToolBarAdd="onDefaultAdd"
+      @onToolBarDelete="onToolBarDelete"
+      @onToolBarDownloadTpl="onToolBarDownloadTpl"
+      @onToolBarImportData="onToolBarImportData"
+    >
+    </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -21,24 +24,42 @@
       :max-height="tableMaxHeight"
       cell-class-name="ph-cell"
       header-cell-class-name="ph-cell-header"
+      @selection-change="handleSelectionChange"
       :data="tableData"
       v-loading="loading"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'skuCode', order: 'ascending'}"
       id="table"
     >
+      <el-table-column
+        v-if="hasDelete"
+        type="selection"
+        align="center"
+        width="30">
+      </el-table-column>
+
       <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
+
+      <el-table-column prop="imgUrl" label="图片" width="40">
+        <template slot-scope="scope" v-if="scope.row.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.imgUrl"
+            :preview-src-list="[scope.row.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
+        </template>
+      </el-table-column>
 
       <el-table-column prop="productName" label="产品名" min-width="200">
       </el-table-column>
 
-      <el-table-column prop="storageLocationCode" label="货位" min-width="120">DEFAULT</el-table-column>
-      <el-table-column prop="price" label="价格" min-width="80"></el-table-column>
 
-      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件)" width="130">-->
-      <!--</el-table-column>-->
+      <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
 
-      <!--<el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>-->
-      <el-table-column prop="number" label="数量" min-width="110"></el-table-column>
+
+      <el-table-column prop="cartonQty" :label="typeName+'箱数'" min-width="90"></el-table-column>
+      <el-table-column prop="number" :label="typeName+'件数'" min-width="90"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -60,7 +81,7 @@
     </el-table>
 
     <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
+    <itemDialog :primary="primary" @modifyCBEvent="modifyCBEvent" ref="itemDialog">
     </itemDialog>
 
   </div>
@@ -72,17 +93,45 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import itemDialog from './dialog'
+  import tableToolBar from '@/components/PhTableToolBar'
+  import {parseTime} from "../../../../utils";
 
   export default {
     components: {
+      tableToolBar,
       itemDialog
     },
-    props: {},
+    props: {
+      primary: {
+        type: [Object],
+        default: {}
+      }
+    },
     computed: {
       ...mapGetters([
         'device', 'rolePower'
       ]),
+      typeName() {
+        if (this.primary == null || this.primary.type == null) {
+          return "";
+        }
+        if (this.primary.type == "iin") {
+          return "盘盈";
+        }
+        if (this.primary.type == "iout") {
+          return "盘亏";
+        }
+      },
       hasAdd() {
+        return true;
+      },
+      hasExportTpl() {
+        return true;
+      },
+      hasImport() {
+        return true;
+      },
+      hasDelete() {
         return true;
       }
     },
@@ -90,6 +139,10 @@
 
     data() {
       return {
+        exportFileName: '盘亏盘盈明细',
+        tplNoExportProps: ['图片', '产品名', '箱规', '装箱数'],
+        maxUploadCount: 20,
+        selected: [],
         // 选择项
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
@@ -106,9 +159,6 @@
     created() {
     },
     watch: {
-      tableData(val) {
-        console.log("tableData", val);
-      }
     },
 
     mounted() {
@@ -143,6 +193,11 @@
         else {
           this.tableMaxHeight = 400;
         }
+      },
+
+      /* 多选功能 */
+      handleSelectionChange(val) {
+        this.selected = val
       },
 
       /********************* 操作按钮相关方法  ***************************/
@@ -187,8 +242,154 @@
 
       /********************* 工具条按钮  ***************************/
       onDefaultAdd() {
+        if (this.primary == null || this.primary.warehouseId == null) {
+          this.$message.error("请选择盘点仓库!");
+          return false;
+        }
+        if (this.primary == null || this.primary.type == null) {
+          this.$message.error("请选择盘点类型!");
+          return false;
+        }
         this.$refs.itemDialog.openDialog(null);
       },
+
+      onToolBarDelete() {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              this.selected.forEach(data => {
+                this.tableData.splice(data.id, 1);
+              });
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+      onToolBarDownloadTpl() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+        this.tplNoExportProps.push(this.typeName+'件数');
+
+        import('@/vendor/Export2Excel').then(excel => {
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: `${this.exportFileName}-模版-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.tplNoExportProps,
+            tpl: true,
+          })
+        })
+      },
+
+      uploadPromise(detailItem) {
+        if (!detailItem.skuCode) {
+          this.$message.error("请输入产品SKU");
+        }
+        else {
+          let url = `/products/sku/${detailItem.skuCode}` + "?relations=" + JSON.stringify(["cartonSpec", "category"]);
+          return this.global.axios
+            .get(url)
+            .then(resp => {
+              let res = resp.data
+              let data = res || {}
+
+              detailItem.cartonSpecId = data.cartonSpecId + '';
+              detailItem.numberOfCarton = data.numberOfCarton;
+              detailItem.cartonSpecCode = data.cartonSpecCode;
+              detailItem.imgUrl = data.imgUrl;
+
+              // 转字段
+              detailItem.productName = data.name;
+
+              if (detailItem.cartonQty && detailItem.numberOfCarton) {
+                detailItem.number = (detailItem.cartonQty * detailItem.numberOfCarton).toFixed(0);
+              }
+              else {
+                detailItem.number =  0;
+              }
+
+              this.modifyCBEvent(detailItem);
+            })
+            .catch(err => {
+            })
+        }
+      },
+
+      async onToolBarImportData(excelData) {
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let table = this.$refs.table;
+        let columns = (table && table.columns) ? table.columns : [];
+        let header = [];
+        // 处理头部映射
+        excelData.header.forEach(_head => {
+          columns.forEach(_col => {
+            if (_head == _col.label) {
+              header[_head] = _col.property;
+            }
+          });
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          excelData.header.forEach(_head => {
+            let prop = header[_head];
+            if (prop) {
+              if (prop.indexOf('.') !== false) {
+                let tmps = prop.split('.');
+                for (var i = 0; i < tmps.length; i++) {
+                  if (i === 0) {
+                    prop = tmps[0];
+                  }
+                  else {
+                    prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
+                  }
+                }
+              }
+              _res[prop] = obj[_head];
+            }
+          });
+          _res['cartonQty'] = obj['箱数'];
+          resData.push(_res);
+        });
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.success("导入成功");
+      }
     }
   }
 </script>

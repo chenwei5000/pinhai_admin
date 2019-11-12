@@ -8,7 +8,7 @@
 
           <!-- TODO: name 根据实际情况修改  -->
 
-         <el-tab-pane name="create" lazy>
+          <el-tab-pane name="create" lazy v-if="hasNew">
             <span slot="label">
               <i class="el-icon-circle-plus-outline"></i> 创建调拨
             </span>
@@ -47,7 +47,7 @@
             </keep-alive>
           </el-tab-pane>
 
-           <el-tab-pane name="all" lazy>
+          <el-tab-pane name="all" lazy>
             <span slot="label">
               <i class="el-icon-s-order"></i> 全部
             </span>
@@ -68,6 +68,7 @@
 <script>
   import phTab from './components/tab'
   import phCreate from './components/create'
+  import {checkPermission} from "../../utils/permission";
 
   const actionFlag = 's='
 
@@ -87,7 +88,11 @@
       }
     },
 
-    computed: {},
+    computed: {
+      hasNew() {
+        return checkPermission('WarehouseAllocationResource_create');
+      },
+    },
 
     // 各种相关方法定义
     methods: {
@@ -101,17 +106,8 @@
       },
       /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
       createCBEvent(objectId) {
-        if (objectId) {
-          if (this.$refs.editTable) {
-            this.$refs.executing.onRefreshTable();
-          }
-        }else{
-          this.activeStatus = "executing";
-          this.$message({
-            type: "success",
-            message: "成功了,请刷新表格！"
-          });
-          this.$refs.create.stepsActive = 0;
+        if (this.$refs.executing) {
+          this.$refs.executing.onRefreshTable();
         }
       }
     },

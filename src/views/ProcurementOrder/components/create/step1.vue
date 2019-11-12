@@ -145,6 +145,23 @@
             </el-col>
           </el-row>
 
+          <el-row>
+            <el-col :md="24">
+              <el-form-item label="预计交货日期" prop="otdTime">
+                <el-date-picker
+                  v-model="editObject.otdTime"
+                  type="date"
+                  size="mini"
+                  placeholder="选择日期">
+                </el-date-picker>
+
+                <el-tooltip class="item" effect="light" content="采购单预计在该日期前完成" placement="right">
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
         </fieldset>
       </el-form>
     </div>
@@ -184,6 +201,17 @@
           </template>
         </el-table-column>
 
+        <el-table-column prop="product.imgUrl" label="图片" width="40" >
+          <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+            <el-image
+              :z-index="10000"
+              style="width: 30px; height: 30px;margin-top: 5px"
+              :src="scope.row.product.imgUrl"
+              :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+            </el-image>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="product.supplier.name" label="供货商" width="100"></el-table-column>
 
         <el-table-column prop="productName" label="名称" width="200">
@@ -216,7 +244,7 @@
                          fixed="right"></el-table-column>
 
         <el-table-column prop="product.price" label="单价" width="80"
-                         fixed="right">
+                         fixed="right" v-if="hasPrice">
           <template slot-scope="scope">
             {{scope.row.product.price ? scope.row.product.price : 0, selCurrency ? selCurrency.symbolLeft : '' |
             currency}}
@@ -224,7 +252,7 @@
         </el-table-column>
 
         <el-table-column prop="purchaseOrderAmount" label="总额" width="100"
-                         fixed="right">
+                         fixed="right" v-if="hasPrice">
           <template slot-scope="scope">
             {{scope.row.purchaseOrderAmount ? scope.row.purchaseOrderAmount : 0, selCurrency ? selCurrency.symbolLeft :
             '' | currency}}
@@ -235,7 +263,7 @@
         <!--默认操作列-->
         <el-table-column label="操作"
                          no-export="true"
-                         width="120" fixed="right">
+                         width="120" fixed="right" v-if="hasOperation">
 
           <template slot-scope="scope">
 
@@ -261,7 +289,7 @@
     <el-row>
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave"
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" size="mini"  @click="onSave"
                      v-if="hasEdit">
             下单
           </el-button>
@@ -277,6 +305,7 @@
   import phEnumModel from '@/api/phEnum'
   import currencyModel from '@/api/currency'
   import planDetailDialog from './planDetailDialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -292,11 +321,23 @@
       currency: currency
     },
     computed: {
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
       hasEdit() {
-        return true;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_update');
       },
       hasDelete() {
-        return true;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_remove');
+      },
+      hasPrice(){
+        return checkPermission('PurchasePriceVisible');
       }
     },
     watch: {},
@@ -328,7 +369,8 @@
           warehouseId: null,
           settlementMethod: null,
           currencyId: null,
-          accountPeriod: null
+          accountPeriod: null,
+          otdTime: null,
         },
 
         // 字段验证规则 TODO:
@@ -420,7 +462,8 @@
             this.supplierSelectOptions = [];
             res.forEach(r => {
               this.supplierSelectOptions.push(r);
-            });
+            })
+
             this.loading = false;
           })
           .catch(err => {
@@ -782,6 +825,7 @@
         _order.currencyId = this.editObject.currencyId;
         _order.accountPeriod = this.editObject.accountPeriod;
         _order.name = this.editObject.name;
+        _order.otdTime = this.editObject.otdTime;
 
         let _details = [];
         this.tableData.forEach(r => {
@@ -793,6 +837,8 @@
             _detail.cartonQty = r.purchaseOrderCartonQty;
             _detail.skuCode = r.product.skuCode;
             _detail.price = r.product.price;
+            _detail.supplierId=_order.supplierId;
+            _detail.otdTime=_order.otdTime;
             _details.push(_detail);
           }
         });

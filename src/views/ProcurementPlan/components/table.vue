@@ -10,11 +10,13 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px" placeholder="请输入编码"></el-input>
+        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px"
+                  placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" clearable v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" clearable v-model="searchParam.name.value" style="width: 110px"
+                  placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="期望交货日期">
@@ -63,11 +65,12 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="编号" width="140" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -100,37 +103,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="categoryName" label="分类" min-width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
-            <div v-html="scope.row.categoryName"></div>
-            <span slot="reference">{{
-              scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.categoryName }}
-          </span>
-        </template>
-
+      <el-table-column prop="categoryName" label="分类" min-width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="250">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover" v-if="scope.row.name && scope.row.name.length > 27">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
+      <el-table-column prop="name" label="名称" min-width="250" align="center">
       </el-table-column>
 
-      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100"></el-table-column>
-      <el-table-column prop="tags" label="标签" width="120"></el-table-column>
+      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100" align="center"></el-table-column>
+      <el-table-column prop="tags" label="标签" width="120" align="center"></el-table-column>
 
       <el-table-column prop="note" label="备注" width="120" v-if="false">
         <template slot-scope="scope">
@@ -142,19 +122,23 @@
       </el-table-column>
 
 
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right" align="center">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
+          <el-button v-if="([1].indexOf(scope.row.status) > -1)&& hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete" type="danger" size="mini"
+          <el-button v-if="([0,2,3,4,5,6,7,8].indexOf(scope.row.status) > -1) || hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
+          </el-button>
+
+          <el-button v-if="([1].indexOf(scope.row.status) > -1) && hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
@@ -193,6 +177,8 @@
   import qs from 'qs'
   import editDialog from './edit/dialog'
   import phEnumModel from '@/api/phEnum'
+  import {checkPermission} from "@/utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -219,8 +205,28 @@
     },
     computed: {
       ...mapGetters([
-        'device','rolePower','rolePower'
+        'device', 'rolePower', 'rolePower'
       ]),
+
+      //操作按钮控制
+      hasOperation() {
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView() {
+        return !this.hasEdit;
+      },
+      hasEdit() {
+        return checkPermission('ProcurementPlanResource_update');
+      },
+      hasDelete() {
+        if(!checkPermission('ProcurementPlanResource_remove')){
+          return false;
+        }
+        if (this.type === 'auditing' || this.type === 'executing' || this.type === 'complete') {
+          return false;
+        }
+        return true;
+      },
 
       // 显示进度条
       hasCompleteness() {
@@ -249,10 +255,6 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
         // 多选记录对象
         selected: [],
 
@@ -350,21 +352,6 @@
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementPlanStatus');
 
-        if (this.type === 'editing') {
-        }
-        //待审核 无删除
-        else if (this.type === 'auditing') {
-          this.hasDelete = false;
-        }
-        //执行中 无删除
-        else if (this.type === 'executing') {
-          this.hasDelete = false;
-        }//完成 无删除
-        else if (this.type === 'complete') {
-          this.hasDelete = false;
-        }
-        else if (this.type === 'all') {
-        }
       },
 
       // 获取表格的高度
@@ -442,6 +429,19 @@
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
         return '';
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /*获取列表*/
@@ -638,7 +638,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

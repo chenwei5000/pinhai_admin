@@ -31,17 +31,6 @@
 
       </el-form-item>
 
-      <el-form-item label="状态">
-        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
-          <el-option
-            v-for="(item,idx) in statusSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
@@ -63,11 +52,12 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="采购计划编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="采购计划编号" width="140" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -98,38 +88,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="categoryName" label="分类" min-width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.categoryName && scope.row.categoryName.length > 10">
-            <div v-html="scope.row.categoryName"></div>
-            <span slot="reference">{{
-              scope.row.categoryName ? scope.row.categoryName.length > 10 ? scope.row.categoryName.substr(0,8)+'..' : scope.row.categoryName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.categoryName }}
-          </span>
-        </template>
-
+      <el-table-column prop="categoryName" label="分类" min-width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="250">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 18">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 18 ? scope.row.name.substr(0,16)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
+      <el-table-column prop="name" label="名称" min-width="250" align="center">
       </el-table-column>
 
-      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100"></el-table-column>
+      <el-table-column prop="formatLimitTime" label="期望交货日期" width="100" align="center"></el-table-column>
 
       <el-table-column prop="note" label="交货要求" width="130">
         <template slot-scope="scope">
@@ -145,12 +110,12 @@
       </el-table-column>
 
 
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="60" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-document-add" circle
@@ -192,6 +157,7 @@
   import qs from 'qs'
   import phEnumModel from '@/api/phEnum'
   import createDialog from './dialog'
+  import {getObjectValueByArr} from "../../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -436,6 +402,19 @@
         }
 
         return '';
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /*获取列表*/

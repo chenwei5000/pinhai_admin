@@ -9,7 +9,7 @@
       :on-success="handleSuccess"
       multiple
       :file-list="attachments">
-      <el-button class="button-new-tag" size="mini">+ 添加附件</el-button>
+      <el-button class="button-new-tag" size="mini" v-if="hasEdit">+ 添加附件</el-button>
     </el-upload>
 
   </div>
@@ -17,6 +17,7 @@
 
 <script>
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
     components: {},
@@ -27,6 +28,16 @@
       }
     },
     computed: {
+      hasEdit(){
+        // 控制按钮
+        if ([0, 2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        if(!checkPermission('AttachmentFileResource_uploadProcurementPlan')){
+          return false;
+        }
+        return true;
+      },
       uploadUrl() {
         return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
       }
@@ -93,7 +104,7 @@
           this.global.axios
             .delete(url)
             .then(resp => {
-              this.$message.info("附件删除成功!");
+              this.$message.success("附件删除成功!");
             })
             .catch(err => {
             });
@@ -111,6 +122,10 @@
       },
       // 删除
       beforeRemove(file, fileList) {
+        if(this.hasEdit == false){
+          this.$message.error("无删除权限!");
+          return false;
+        }
         return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {

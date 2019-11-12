@@ -44,11 +44,11 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
-            {prop: 'name', label: '分类名称', 'min-width': 100, fixed: 'left'},
-            {prop: 'materialName', label: '类型', width: 100},
-            {prop: 'user.name', label: '采购负责人', width: 100},
-            {prop: 'harbour.name', label: '默认发货港口', width: 100},
+            {width: 30,type: checkPermission('CategoryResource_remove') ? 'selection' : '', hidden: !checkPermission('CategoryResource_remove')},
+            {prop: 'name', label: '分类名称', 'min-width': 90, fixed: 'left'},
+            {prop: 'materialName', label: '类型', width: 90},
+            {prop: 'user.name', label: '采购负责人', width: 90},
+            {prop: 'harbour.name', label: '默认发货港口', width: 90},
             {
               prop: 'needMaterial',
               label: '产品必须设置原材料',

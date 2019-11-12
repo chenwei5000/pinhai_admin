@@ -20,7 +20,7 @@ const companyManagementModel = {
         if ($res) {
           $res.forEach(obj => {
             _options.push({
-              label: obj.fullName,
+              label: obj.abbreviation,
               value: obj.id + ''
             });
           });

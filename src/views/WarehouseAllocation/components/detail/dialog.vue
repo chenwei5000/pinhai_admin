@@ -20,7 +20,7 @@
             <el-form-item label="SKU" prop="skuCode">
               <span v-if="!hasAdd" style="font-size: 12px">{{detailItem.skuCode}}</span>
 
-              <el-input v-else v-model.trim="detailItem.skuCode"
+              <el-input v-else v-model.trim="detailItem.skuCode" size="mini"
                         style="width: 200px" placeholder="请填写SKU" clearable>
 
               </el-input>
@@ -43,7 +43,7 @@
           <el-col :md="10">
             <el-form-item label="箱规" prop="cartonSpecId">
 
-              <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
+              <el-select filterable size="mini" v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
                          style="width: 200px">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
@@ -91,7 +91,7 @@
               </el-input-number>
 
 
-              <el-tooltip class="item" effect="light" content="应发箱数,支持3位小树。" placement="right">
+              <el-tooltip class="item" effect="light" content="应发箱数,支持3位小数。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
 
@@ -112,6 +112,7 @@
                 <el-input type="textarea" v-model="detailItem.shippedNote"
                           maxlength="500"
                           show-word-limit
+                          size="mini"
                           rows="3"
                           cols="80"
                 ></el-input>
@@ -133,9 +134,9 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="warning" @click="onLoadProduct" v-if="hasAdd" :loading="confirmLoading">获取产品默认信息</el-button>
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="warning" size="mini" @click="onLoadProduct" v-if="hasAdd" :loading="confirmLoading">获取产品默认信息</el-button>
+      <el-button type="primary" size="mini" @click="onSave" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>
@@ -347,7 +348,7 @@
 
           this.global.axios[method](url, _object)
             .then(resp => {
-              this.$message.info("修改成功");
+              this.$message.success("修改成功");
               this.loading = false;
               this.confirmLoading = false;
               this.dialogVisible = false;

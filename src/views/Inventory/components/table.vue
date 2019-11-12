@@ -12,22 +12,13 @@
       <el-form-item label="仓库">
         <el-select filterable v-model="searchParam.warehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 200px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
         </el-select>
-      </el-form-item>
-
-      <el-form-item label="创建时间">
-        <el-date-picker
-          size="mini"
-          v-model="searchParam.createTime.value"
-          format="yyyy-MM-dd"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
       </el-form-item>
 
       <el-form-item>
@@ -52,16 +43,16 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编码" width="140"></el-table-column>
-      <el-table-column prop="warehouse.name" label="仓库" width="100"></el-table-column>
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
-      <el-table-column prop="formatCreateTime" label="创建时间" width="150"></el-table-column>
+      <el-table-column prop="code" label="编码" min-width="140"></el-table-column>
+      <el-table-column prop="warehouse.name" label="仓库" min-width="100"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" min-width="80"></el-table-column>
+      <el-table-column prop="formatCreateTime" label="创建时间" min-width="150"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasView" size="small" icon="el-icon-view" circle
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
@@ -494,14 +485,17 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false;
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done();
                   this.getList()
                 })
                 .catch(er => {
                   this.loading = false
                 })
-            } else done()
+            } else {
+              this.loading = false
+              done()
+            }
           }
         }).catch(er => {
           /*取消*/

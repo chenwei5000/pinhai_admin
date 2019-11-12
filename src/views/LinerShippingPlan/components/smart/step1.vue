@@ -18,32 +18,43 @@
             <span style="font-size: 12px">{{newObject.formatEtdTime}}</span>
           </el-form-item>
         </el-col>
+
+        <el-col :md="12">
+          <el-form-item label="预计到港时间" prop="otdTime" ref="otdTime" v-if="newObject.otdTime">
+            <span style="font-size: 12px">{{newObject.otdTime.time}},距离开船日{{newObject.otdTime.week}}周</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+
         <el-col :md="12">
           <el-form-item label="分类">
             <span style="font-size: 12px">{{newObject.categoryName}}</span>
           </el-form-item>
         </el-col>
-      </el-row>
 
-      <el-row>
         <el-col :md="12">
           <el-form-item label="物流类型">
             <span style="font-size: 12px">{{newObject.type}}</span>
           </el-form-item>
         </el-col>
+      </el-row>
+
+      <el-row>
         <el-col :md="12">
           <el-form-item label="发货港口">
             <span style="font-size: 12px">{{newObject.portOfLoading}}</span>
           </el-form-item>
         </el-col>
-      </el-row>
-
-      <el-row>
         <el-col :md="12">
           <el-form-item label="收货区域">
             <span style="font-size: 12px">{{newObject.toWarehouse ? newObject.toWarehouse.address : ''}}</span>
           </el-form-item>
         </el-col>
+      </el-row>
+
+      <el-row>
         <el-col :md="12">
           <el-form-item label="销售渠道" prop="merchantId">
             <el-select v-model="newObject.merchantId"
@@ -64,9 +75,6 @@
             </el-tooltip>
           </el-form-item>
         </el-col>
-      </el-row>
-
-      <el-row>
         <el-col :md="12">
           <el-form-item label="库存来源" prop="warehouseId">
             <el-select v-model="newObject.warehouseId" style="width: 200px"
@@ -88,6 +96,9 @@
           </el-form-item>
         </el-col>
 
+      </el-row>
+
+      <el-row>
         <el-col :md="12">
           <el-form-item label="产品款式" prop="groupName">
             <el-select v-model="newObject.groupName" style="width: 200px"
@@ -109,9 +120,6 @@
           </el-form-item>
         </el-col>
 
-      </el-row>
-
-      <el-row>
         <el-col :md="12">
           <el-form-item label="Vip0销售覆盖时间" prop="vip0SoldOutTime">
             <el-date-picker
@@ -129,7 +137,9 @@
             <span v-if="vip0SoldOutTimeWeek" style="font-size: 12px;">距离开船日{{vip0SoldOutTimeWeek}}周</span>
           </el-form-item>
         </el-col>
+      </el-row>
 
+      <el-row>
         <el-col :md="12">
           <el-form-item label="Vip1销售覆盖时间" prop="vip1SoldOutTime">
             <el-date-picker
@@ -147,9 +157,6 @@
             <span v-if="vip1SoldOutTimeWeek" style="font-size: 12px;">距离开船日{{vip1SoldOutTimeWeek}}周</span>
           </el-form-item>
         </el-col>
-      </el-row>
-
-      <el-row>
         <el-col :md="12">
           <el-form-item label="Vip2销售覆盖时间" prop="vip2SoldOutTime">
             <el-date-picker
@@ -167,10 +174,10 @@
             <span v-if="vip2SoldOutTimeWeek" style="font-size: 12px;">距离开船日{{vip2SoldOutTimeWeek}}周</span>
           </el-form-item>
         </el-col>
-
         <el-col :md="12">
           <el-form-item label="排除国内无库存商品" prop="exclude">
             <el-radio-group
+              @input="updateInput"
               v-model.number="newObject.exclude"
               size="mini">
               <el-radio-button label="1" value="1">是</el-radio-button>
@@ -199,6 +206,7 @@
 <script>
   import validRules from '@/components/validRules'
   import merchantModel from '@/api/merchant'
+  import moment from 'moment';
 
   export default {
     components: {},
@@ -212,7 +220,7 @@
       vip0SoldOutTimeWeek() {
         if (this.newObject.vip0SoldOutTime && this.newObject.etdTime) {
           let vip0SoldOutTime = new Date(this.newObject.vip0SoldOutTime);
-          return (parseInt(Math.abs(vip0SoldOutTime - this.newObject.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
+          return (parseInt((vip0SoldOutTime - this.newObject.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
         }
         else {
           return false
@@ -221,7 +229,7 @@
       vip1SoldOutTimeWeek() {
         if (this.newObject.vip1SoldOutTime && this.newObject.etdTime) {
           let vip1SoldOutTime = new Date(this.newObject.vip1SoldOutTime);
-          return (parseInt(Math.abs(vip1SoldOutTime - this.newObject.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
+          return (parseInt((vip1SoldOutTime - this.newObject.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
         }
         else {
           return false
@@ -230,7 +238,7 @@
       vip2SoldOutTimeWeek() {
         if (this.newObject.vip2SoldOutTime && this.newObject.etdTime) {
           let vip2SoldOutTime = new Date(this.newObject.vip2SoldOutTime);
-          return (parseInt(Math.abs(vip2SoldOutTime - this.newObject.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
+          return (parseInt((vip2SoldOutTime - this.newObject.etdTime) / 1000 / 60 / 60 / 24) / 7).toFixed(2);
         }
         else {
           return false
@@ -276,9 +284,11 @@
       initData() {
         //获取数据
         this.newObject = JSON.parse(JSON.stringify(this.primary));
+        this.newObject.exclude = 1;
         this.merchantSelectOptions = merchantModel.getSelectOptions();
         this.initWarehouseData(this.newObject.categoryId);
         this.initGroupData(this.newObject.categoryId);
+        this.loadOtdTime();
       },
 
       // 初始化仓库数据
@@ -328,6 +338,24 @@
           })
           .catch(err => {
             this.loading = false;
+          })
+      },
+
+      updateInput(val) {
+        this.$forceUpdate();
+      },
+
+      loadOtdTime() {
+        let url = `/amazonStocks/shippings/otdTime?etdTime=${moment(this.newObject.etdTime).format("YYYY-MM-DD")}
+        &portOfLoading=${this.newObject.portOfLoading}
+        &toWarehouse=${this.newObject.toWarehouse.address}
+        &shipmentType=${this.newObject.type}`;
+        this.global.axios.get(url)
+          .then(data => {
+            //  解决不渲染的问题
+            this.$set(this.newObject , "otdTime", data.data || {});
+          })
+          .catch(err => {
           })
       },
 

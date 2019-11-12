@@ -26,17 +26,27 @@
 
       <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
 
+      <el-table-column prop="product.imgUrl" label="图片" width="40">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
+        </template>
+      </el-table-column>
+
+
       <el-table-column prop="product.name" label="产品名" min-width="200">
       </el-table-column>
 
-      <el-table-column prop="storageLocationCode" label="货位" min-width="120">DEFAULT</el-table-column>
-      <el-table-column prop="price" label="价格" min-width="80"></el-table-column>
+      <el-table-column prop="cartonSpec.code" label="箱规" min-width="120"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
 
-      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件)" width="130">-->
-      <!--</el-table-column>-->
+      <el-table-column prop="cartonQty" label="箱数" min-width="110"></el-table-column>
+      <el-table-column prop="number" label="件数" min-width="100"></el-table-column>
 
-      <!--<el-table-column prop="checkedStock" label="实际库存" min-width="110"></el-table-column>-->
-      <el-table-column prop="number" label="数量" min-width="110"></el-table-column>
     </el-table>
   </div>
 
@@ -84,7 +94,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock", "inventoryTaskItem","inventoryTask","inventoryItem", "storageLocation"],  // 关联对象
+        relations: ["product","cartonSpec"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果

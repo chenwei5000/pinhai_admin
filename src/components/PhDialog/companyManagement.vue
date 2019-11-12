@@ -1,14 +1,15 @@
 <template>
 
-  <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
-  </ph-form>
+  <div class="ph-form">
+    <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
+    </ph-form>
+  </div>
 
 </template>
 
 <script>
   import validRules from '@/components/validRules'
   import phFromItems from '../../components/phFromItems'
-  import datadicModel from '@/api/datadic'
   import store from '@/store'
 
   export default {
@@ -21,11 +22,12 @@
         formAttrs: {
           "label-width": "120px",
           "label-suffix": ":",
+          "inline-message": true,
           "status-icon": true,
           size: "small"
         },
         form: [
-          phFromItems.datadicName("type", '公司类型','采购公司', 'type'),
+          phFromItems.datadicName("type", '公司类型', '采购公司', 'type'),
           {
             $type: 'input',
             $id: 'abbreviation',

@@ -71,7 +71,7 @@
 
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
-          <el-tag
+          <el-tag size="mini"
             :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 2
             ? 'danger' : scope.row.status === 6
@@ -146,11 +146,15 @@
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary">
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
-                     icon="el-icon-delete" circle
+                     id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
         </template>
@@ -191,6 +195,7 @@
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
   import warehouseModel from '../../../api/warehouse';
+  import {checkPermission} from "../../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -221,17 +226,23 @@
         'device', 'rolePower'
       ]),
 
-      hasDelete() {
-        return true;
+      hasOperation(){
+        return this.hasEdit || this.hasDelete || this.hasView;
       },
-
-      hasEdit() {
-        return true;
+      hasView(){
+        return !this.hasEdit;
       },
-
-      hasOperation() {
-        return this.hasDelete || this.hasEdit;
-      }
+      hasEdit(){
+        return checkPermission('ProcurementShippedOrderResource_update');
+      },
+      hasDelete:{
+        get(){
+          return checkPermission('ProcurementShippedOrderResource_remove');
+        },
+        set(newValue){
+          return newValue;
+        }
+      },
     },
 
     data() {
@@ -603,7 +614,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

@@ -17,12 +17,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '国家列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CountryResource_create'),
+          hasEdit: checkPermission('CountryResource_update'),
+          hasDelete: checkPermission('CountryResource_remove'),
+          // hasView: checkPermission('CountryResource_get'),
+          hasExportTpl: checkPermission('CountryResource_export'),
+          hasExport: checkPermission('CountryResource_export'),
+          hasImport: checkPermission('CountryResource_import'),
+
           url: '/countries',
           relations: ["creator"],
           tableAttrs: {
@@ -30,7 +40,7 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CountryResource_remove') ? 'selection' : '', hidden: !checkPermission('CountryResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', "min-width": 120, fixed: 'left'},
             {prop: 'enName', label: '英文名', sortable: 'custom', "min-width": 120},
             {prop: 'isoCode2', label: '2位iso编码', "min-width": 120},

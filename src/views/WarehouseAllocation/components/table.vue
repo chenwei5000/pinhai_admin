@@ -9,18 +9,18 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" size="mini" style="width: 120px" placeholder="请输入"></el-input>
+        <el-input v-model="searchParam.code.value" size="mini" style="width: 150px" placeholder="请输入"></el-input>
       </el-form-item>
 
       <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" size="mini" style="width: 120px"
+        <el-input v-model="searchParam.trackNumber.value" size="mini" style="width: 150px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
         <el-form-item label="发货仓库">
         <el-select filterable v-model="searchParam.fromWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 120px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -32,7 +32,7 @@
       <el-form-item label="收货仓库">
         <el-select filterable v-model="searchParam.toWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 120px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -64,11 +64,11 @@
       @sort-change='handleSortChange'
       id="table"
     >
-      <el-table-column prop="code" label="编码" min-width="150" fixed="left"></el-table-column>
+      <el-table-column prop="code" label="编码" min-width="150" fixed="left" align="center"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" min-width="100">
         <template slot-scope="scope">
-          <el-tag
+          <el-tag size="mini"
             :type="scope.row.status === 1
             ? 'warning' : scope.row.status === 2
             ? 'danger' : scope.row.status === 6
@@ -78,12 +78,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="fromWarehouse.name" label="发货仓库" min-width="100"></el-table-column>
-      <el-table-column prop="toWarehouse.name" label="收货仓库" min-width="100"></el-table-column>
-      <!-- <el-table-column prop="team.name" label="跟单团队" min-width="100"></el-table-column>
-      <el-table-column prop="merchandiser" label="跟单员" min-width="100"></el-table-column> -->
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
-
+      <el-table-column prop="fromWarehouse.name" label="发货仓库" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="toWarehouse.name" label="收货仓库" min-width="100" align="center"></el-table-column>
+      <!-- <el-table-column prop="team.name" label="跟单团队" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="merchandiser" label="跟单员" min-width="100" align="center"></el-table-column> -->
+      <el-table-column prop="shippedMsg" label="物流信息" min-width="200" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
                       v-if="scope.row.trackNumber">
@@ -106,10 +105,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120" align="center"></el-table-column>
+      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120" v-if="type != 'executing' " align="center"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="remark" label="备注" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                       v-if="scope.row.remark && scope.row.remark.length > 10">
@@ -122,18 +121,22 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
+      <el-table-column prop="id" label="ID" width="90" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="80" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary">
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
-                     icon="el-icon-delete" circle
+                     id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
         </template>
@@ -174,6 +177,7 @@
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
   import warehouseModel from '../../../api/warehouse';
+  import {checkPermission} from "../../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -204,16 +208,22 @@
         'device', 'rolePower'
       ]),
 
-      hasDelete() {
-        return true;
-      },
-
-      hasEdit() {
-        return true;
-      },
-
       hasOperation() {
-        return this.hasDelete || this.hasEdit;
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView() {
+        return !this.hasEdit;
+      },
+      hasEdit() {
+        return checkPermission('WarehouseAllocationResource_update');
+      },
+      hasDelete: {
+        get() {
+          return checkPermission('WarehouseAllocationResource_remove');
+        },
+        set(newValue) {
+          return newValue;
+        }
       }
     },
 
@@ -235,6 +245,11 @@
         url: '/warehouseAllocations', // 资源URL
         countUrl: '/warehouseAllocations/count', // 资源URL
         relations: ["team", "fromWarehouse", "toWarehouse"],  // 关联对象
+        filters: {
+          'field': 'needDeclare',
+          op: 'eq',
+          data: 0
+        },
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -326,7 +341,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.statusSelectOptions = phEnumModel.getSelectOptions('WarehouseAllocationStatus');
       },
 
@@ -342,7 +357,6 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -463,6 +477,7 @@
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
+        filters.push(JSON.parse(JSON.stringify(this.filters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
@@ -592,7 +607,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

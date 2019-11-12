@@ -28,6 +28,18 @@
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
       <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left"></el-table-column>
+
+      <el-table-column prop="product.imgUrl" label="图片" width="40">
+        <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="product.groupName" label="款式" width="150">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
@@ -200,6 +212,10 @@
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
+        if (row.sufficientStock == '否') {
+          return 'danger-row';
+        }
+        return '';
       },
 
       /*汇总数据*/

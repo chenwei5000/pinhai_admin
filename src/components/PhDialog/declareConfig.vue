@@ -1,7 +1,10 @@
 <template>
 
-  <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
-  </ph-form>
+
+  <div class="ph-form">
+    <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
+    </ph-form>
+  </div>
 
 </template>
 
@@ -20,6 +23,7 @@
         formAttrs: {
           "label-width": "120px",
           "label-suffix": ":",
+          "inline-message": true,
           "status-icon": true,
           size: "small"
         },

@@ -16,19 +16,29 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '报关配置',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('DeclareConfigResource_create'),
+          hasEdit: checkPermission('DeclareConfigResource_update'),
+          hasDelete: checkPermission('DeclareConfigResource_remove'),
+          // hasView: checkPermission('DeclareConfigResource_get'),
+          hasExportTpl: checkPermission('DeclareConfigResource_export'),
+          hasExport: checkPermission('DeclareConfigResource_export'),
+          hasImport: checkPermission('DeclareConfigResource_import'),
+
           url: '/declareConfigs',
           relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('DeclareConfigResource_remove') ? 'selection' : '', hidden: !checkPermission('DeclareConfigResource_remove')},
             {prop: 'id', label: '报关码', "min-width": 100},
             {prop: 'name', label: '申报品名(中)', "min-width": 200},
             {prop: 'ename', label: '申报品名(英)', "min-width": 200},

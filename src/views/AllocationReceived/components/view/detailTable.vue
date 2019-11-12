@@ -26,29 +26,28 @@
 
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
+      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
         </template>
       </el-table-column>
 
-      <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
+      <el-table-column prop="product.name" label="产品名" min-width="200">
+      </el-table-column>
+
+      <el-table-column prop="boxCode" label="箱码" width="90"></el-table-column>
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
 
-      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="90"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货数量(件)" width="90"></el-table-column>
 
-      <el-table-column prop="receivedNote" label="异常备注" width="130">
+      <el-table-column prop="receivedNote" label="异常备注" width="100">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="异常备注" width="250" trigger="hover"
                       v-if="scope.row.receivedNote && scope.row.receivedNote.length > 10">
@@ -61,8 +60,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="120" fixed="right"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right"></el-table-column>
+      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="100" fixed="right"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货数量(件)" width="100" fixed="right"></el-table-column>
 
     </el-table>
   </div>

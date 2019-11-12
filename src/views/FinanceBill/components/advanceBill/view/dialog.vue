@@ -17,14 +17,24 @@
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
-      <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 附件</div>
+      <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
+        <div slot="title" class="title">3. 收货明细   [{{this.primary.formatLastModified}}]</div>
+        <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="attachment" style="margin-top: 10px">
+        <div slot="title" class="title">4. 附件</div>
         <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
       <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">4. 相关预付款单</div>
+        <div slot="title" class="title">5. 相关预付款单</div>
         <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="paymentInfo" style="margin-top: 10px" v-if="primary.status != 1 ">
+        <div slot="title" class="title">6. 付款信息</div>
+        <paymentInfo ref="paymentInfo" :primary="primary" v-if="primaryComplete"></paymentInfo>
       </el-collapse-item>
 
     </el-collapse>
@@ -38,15 +48,19 @@
   import {mapGetters} from 'vuex'
   import infoFrom from './form'
   import detailTable from './detailTable'
+  import receivedDetailTable from './receivedDetailTable'
   import attachment from './attachment'
   import paymentsTable from './paymentsTable'
+  import paymentInfo from './paymentInfo'
 
   export default {
     components: {
       infoFrom,
       detailTable,
+      receivedDetailTable,
       attachment,
-      paymentsTable
+      paymentsTable,
+      paymentInfo
     },
     props: {},
     computed: {
@@ -116,7 +130,7 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'paymentsTable'];
+        this.activeNames = ['infoFrom', 'itemTable', 'receivedDetailTable', 'paymentsTable', 'attachment', 'paymentInfo'];
       },
       closeDialog() {
         this.primary = {};
@@ -153,7 +167,7 @@
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
+            this.$message.success('操作成功!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表
@@ -181,7 +195,7 @@
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
-                  this.$message.info(message);
+                  this.$message.success(message);
                   loading.close();
                   this.$refs.auditing.closeDialog();
                   this.initData();

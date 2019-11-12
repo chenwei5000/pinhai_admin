@@ -17,8 +17,8 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="仓库" prop="warehouseId">
-              <el-select v-model="newObject.warehouseId" style="width: 220px">
+            <el-form-item label="仓库" prop="warehouseId" >
+              <el-select v-model="newObject.warehouseId" size="mini" style="width: 220px" filterable="true">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
                   :label="item.label"
@@ -32,7 +32,7 @@
 
         <el-row>
           <el-col :md="14">
-            <el-form-item label="截止日期" prop="limitTime">
+            <el-form-item label="截止日期" prop="limitTime" size="mini">
               <el-date-picker
                 v-model="newObject.limitTime"
                 format="yyyy-MM-dd"
@@ -45,7 +45,7 @@
 
         <el-row>
           <el-col :md="24">
-            <el-form-item label="备注" prop="note">
+            <el-form-item label="备注" prop="note" size="mini">
               <el-col :span="22">
                 <el-input type="textarea" v-model="newObject.note"
                           maxlength="500"
@@ -60,7 +60,7 @@
 
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
+            <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onCreate">
               生成盘点任务
             </el-button>
           </el-row>
@@ -122,7 +122,7 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
         this.initWarehouseData();
 
         this.loading = false;
@@ -181,7 +181,7 @@
             .post("/inventoryTasks", this.newObject)
             .then(resp => {
               loading.close();
-              this.$message.info("盘点任务创建成功");
+              this.$message.success("盘点任务创建成功");
               this.$emit("modifyCBEvent");
               this.clearData();
             })

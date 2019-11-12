@@ -19,6 +19,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
 
@@ -27,6 +28,15 @@
         regions: [],
         title: '供货商管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('SupplierResource_create'),
+          hasEdit: checkPermission('SupplierResource_update'),
+          hasDelete: checkPermission('SupplierResource_remove'),
+          // hasView: checkPermission('SupplierResource_get'),
+          hasExportTpl: checkPermission('SupplierResource_export'),
+          hasExport: checkPermission('SupplierResource_export'),
+          hasImport: checkPermission('SupplierResource_import'),
+
           url: '/suppliers',
           relations: ["dataDicItem.type"],
           tableAttrs: {
@@ -35,7 +45,7 @@
 
           // 表格列定义
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('SupplierResource_remove') ? 'selection' : '', hidden: !checkPermission('SupplierResource_remove')},
             {prop: 'name', label: '简称', sortable: 'custom', 'min-width': 150, fixed: 'left'},
             phColumns.id,
             {prop: 'code', label: '编码', width: 100},

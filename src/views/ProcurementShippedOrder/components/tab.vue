@@ -30,7 +30,7 @@
       },
 
       filters() {
-        //待确认完成日期
+        //待确认交货日期
         if (this.type === 'completionDate') {
           return {
             'field': 'status',

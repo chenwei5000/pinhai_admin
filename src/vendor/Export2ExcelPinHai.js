@@ -47,6 +47,10 @@ class WorkBook {
   }
 
   writeCellWithValue(location, type, value) {
+    if(type == "n" && value == null){
+       value = 0;
+    }
+
     this.ws[location] = {
       t: type,
       v: value

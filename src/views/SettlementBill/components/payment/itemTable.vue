@@ -175,7 +175,7 @@
 
         let all_url = "/financeBills";
         let filters = [
-          {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode},
+          {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode ? this.primary.procurementOrderCode : -1},
           {"field": "status", "op": "eq", "data": 2},
         ]
         all_url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
@@ -186,7 +186,7 @@
           .then(resp => {
             let res = resp.data || [];
             res.forEach(bill => {
-              let use_url = `/paymentDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
+              let use_url = `/procurementPaymentOrderDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
               this.global.axios
                 .get(use_url)
                 .then(res => {

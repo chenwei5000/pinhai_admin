@@ -17,7 +17,7 @@
       >
         <el-row>
           <el-col :md="10">
-            <el-form-item label="SKU" prop="skuCode">
+            <el-form-item label="SKU" prop="skuCode" size="mini">
               <el-input  v-model.trim="detailItem.skuCode"
                         style="width: 200px" placeholder="请填写SKU" clearable>
               </el-input>
@@ -25,7 +25,7 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="产品名" prop="productName">
+            <el-form-item label="产品名" prop="productName" size="mini">
               <span style="font-size: 12px">{{detailItem.productName}}</span>
             </el-form-item>
           </el-col>
@@ -34,13 +34,13 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="货位" prop="storageLocation">
+            <el-form-item label="货位" prop="storageLocation" size="mini">
               <span style="font-size: 12px">DEFAULT</span>
             </el-form-item>
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="价格" prop="productPrice">
+            <el-form-item label="价格" prop="productPrice" size="mini">
               <span style="font-size: 12px">{{detailItem.price}}</span>
             </el-form-item>
           </el-col>
@@ -49,9 +49,9 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="warning" @click="onLoadProduct"  :loading="confirmLoading">获取产品默认信息</el-button>
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="warning" @click="onLoadProduct" size="mini"  :loading="confirmLoading">获取产品默认信息</el-button>
+      <el-button type="primary" @click="onSave" size="mini"  :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>
@@ -225,7 +225,6 @@
           if (!valid) {
             return false
           }
-          console.log("detailsItme", this.detailItemId)
           this.loading = true;
           this.confirmLoading = true;
           let method = 'post';
@@ -241,7 +240,7 @@
 
           this.global.axios[method](url, _object)
             .then(resp => {
-              this.$message.info("修改成功");
+              this.$message.success("修改成功");
               this.loading = false;
               this.confirmLoading = false;
               this.dialogVisible = false;

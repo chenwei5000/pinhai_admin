@@ -5,8 +5,8 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row
       style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
-      <el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onConfirmDate">确认完成日期</el-button>
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button type="primary" size="small" icon="el-icon-date" v-if="hasExecute" @click="onConfirmDate">确认交货日期</el-button>
+      <el-button @click="closeDialog">取 消</el-button>
     </el-row>
 
     <!-- 折叠面板 -->
@@ -49,6 +49,7 @@
   import dateDialog from './dateDialog'
 
   import {currency, intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -69,6 +70,9 @@
       ]),
       hasExecute() {
         if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1) {
+          if (!checkPermission('ProcurementOrderResource_confirmDate')) {
+            return false;
+          }
           return true;
         }
         else {

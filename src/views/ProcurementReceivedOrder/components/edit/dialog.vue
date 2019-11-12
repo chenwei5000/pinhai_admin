@@ -9,12 +9,12 @@
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
       <router-link target="_blank" :to="'/procurementReceivedOrder/print?id='+primary.id">
-        <el-button type="primary" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
+        <el-button v-if="hasPrint" type="primary" icon="el-icon-printer" size="small"  @click="onPrint">打印收货单</el-button>
       </router-link>
 
-      <el-button type="success" icon="el-icon-s-claim" @click="onComplete">确认收货</el-button>
+      <el-button v-if="hasReceived" type="success" icon="el-icon-s-claim" size="small" @click="onComplete">确认收货</el-button>
 
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
 
     <itemTable ref="itemTable" :primary="primary"></itemTable>
@@ -29,6 +29,7 @@
   import itemTable from './detailTable'
   import attachment from './attachment'
   import saveDialog from './saveDialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -38,6 +39,12 @@
     },
     props: {},
     computed: {
+      hasPrint(){
+        return checkPermission('ProcurementReceivedOrderResource_print');
+      },
+      hasReceived(){
+        return checkPermission('ProcurementReceivedOrderResource_received')
+      },
       title() {
         return '采购入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
       }
@@ -99,7 +106,7 @@
       onConfirm() {
         this.global.axios.put(`/procurementReceivedOrders/confirmTask/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("确认收货成功");
+            this.$message.success("确认收货成功");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = true;
@@ -124,7 +131,7 @@
       onPrint() {
         this.global.axios.get(`/attachments/procurementShippedOrders/${this.primaryId}`)
           .then(resp => {
-            this.$message.info("打印收货单");
+            this.$message.success("打印收货单");
             this.loading = false;
             this.confirmLoading = false;
             this.dialogVisible = false;

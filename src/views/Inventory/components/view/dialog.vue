@@ -1,7 +1,9 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" fullscreen>
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible"
+             class="ph-dialog" @close='closeDialog'
+             fullscreen>
 
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
@@ -68,7 +70,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/inventories/${this.primaryId}?relations=${JSON.stringify(["warehouseStock","storageLocation","warehouse"])}`)
+            .get(`/inventories/${this.primaryId}?relations=${JSON.stringify(["creator","warehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -84,6 +86,13 @@
         this.primaryId = primaryId;
         this.initData();
         this.activeNames = ['infoFrom', 'itemTable', 'attachment'];
+      },
+
+      closeDialog() {
+        this.primaryId = null;
+        this.primary = null;
+        this.dialogVisible = false;
+        this.activeNames = [];
       },
 
       /* 子组件编辑完成后相应事件 */

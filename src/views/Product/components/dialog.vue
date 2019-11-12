@@ -1,134 +1,49 @@
 <template>
-  <el-dialog :title="dialogTitle"
-             append-to-body
-             v-if="dialogVisible"
-             class="ph-dialog"
-             width="70%"
-             top="10vh"
-             @close='closeDialog'
-             :visible.sync="dialogVisible">
 
-    <div class="ph-form">
-      <!-- 编辑表单 TODO:-->
-      <el-form :rules="rules" :model="detailItem" status-icon inline
-               ref="detailItem" label-position="right"
-               label-width="120px"
-               v-loading="loading"
-               :data="detailItem"
-      >
-        <el-row>
-          <el-col :md="10">
-            <el-form-item label="原料SKU" prop="materialSkuCode">
-              <el-input v-model.trim="detailItem.materialSkuCode"
-                        style="width: 200px" placeholder="请填写SKU" clearable>
-              </el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :md="14">
-            <el-form-item label="原料名称" prop="materialName">
-              <span style="font-size: 12px" v-model="detailItem.materialName">{{detailItem.materialName}}</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :md="14">
-            <el-form-item label="数量" prop="qty">
-              <el-input-number v-model="detailItem.qty"
-                               size="mini"
-                               style="width: 200px;"
-                               :precision="0"
-                               :min="1"
-                               :step="1"
-                               :max="1000" label="请填写数量">
-              </el-input-number>
-
-              <el-tooltip class="item" effect="light" content="一个产品对应多少原料." placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
-
-        </el-row>
-
-        <el-row>
-          <el-col :md="10">
-            <el-form-item label="损耗率" prop="attritionRate">
-              <el-input-number v-model="detailItem.attritionRate"
-                               size="mini"
-                               style="width: 200px;"
-                               :precision="3"
-                               :min="1"
-                               :step="1"
-                               :max="1000000" label="请填写损耗率">
-              </el-input-number>
-
-              <i >%</i>
-
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
-
-    <div slot="footer" class="dialog-footer">
-      <el-button type="warning" @click="onLoadMaterial" v-if="hasAdd" :loading="confirmLoading">获取原料默认信息</el-button>
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
-    </div>
-
+  <!-- 修改弹窗 TODO: title -->
+  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
+             width="80%"
+             top="2vh">
+    <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :primary="primary"></infoFrom>
   </el-dialog>
 
 </template>
 
 <script>
-  import validRules from '@/components/validRules'
+
+  import {mapGetters} from 'vuex'
+  import infoFrom from './from'
+  import {checkPermission} from "@/utils/permission";
 
   export default {
-    components: {},
-    props: {
+    components: {
+      infoFrom
     },
+    props: {},
     computed: {
-      dialogTitle() {
-          return "添加材料明细";
-      },
-      hasAdd() {
-        return (this.detailItemId == null);
+      ...mapGetters([
+        'device',
+        'rolePower'
+      ]),
+
+      hasEdit() {
+        return checkPermission('ProductResource_update');
       },
 
+      title() {
+        return this.primaryId ? (this.hasEdit ? "编辑产品" : "查看产品") : "添加产品";
+      }
     },
 
     data() {
       return {
-        //Dialog 是否开启
-        dialogVisible: false,
-        // 表单加载状态
-        loading: false,
-        // 点击按钮之后，按钮锁定不可在点
-        confirmLoading: false,
-        // 资源URL
-        //明细对象
-        detailItem: {
-          materialName: null,
-          qty: 1,
-          materialSkuCode: null,
-          attritionRate: 3,
-        },
-         unit: "件",
-
-        // 字段验证规则 TODO:
-        rules: {
-          materialSkuCode: [
-            validRules.required
-          ],
-          qty: [
-            validRules.required
-          ],
-          attritionRate: [
-            validRules.required
-          ],
-        },
+        primaryId: null,  //主ID
+        primary: {}, //主对象
+        relations: ["category", "supplier", "cartonSpec", "currency", "declareConfig"],  // 关联对象
+        primaryComplete: false,
+        logComplete: false,
+        dialogVisible: false, //Dialog 是否开启
+        activeNames: [],   //折叠面板开启项
       }
     },
 
@@ -139,75 +54,51 @@
       this.$nextTick(() => {
       });
     },
-    updated(){
-    },
     methods: {
-      /********************* 基础方法  *****************************/
-      //初始化加载数据 TODO:根据实际情况调整
       initData() {
-        //获取数据
-        // 箱规
-
-      },
-
-
-
-
-      /* 开启弹出编辑框 需要传明细ID */
-      openDialog(row) {
-        this.dialogVisible = true;
-        if(row != null){
-           this.detailItem =  JSON.parse(JSON.stringify(row));
-        }
-      },
-
-      closeDialog() {
-        this.dialogVisible = false;
-        this.loading = false;
-        this.confirmLoading = false;
-        this.detailItem = {
-          materialName: null,
-          qty: 1,
-          materialSkuCode: null,
-          attritionRate: 3
-        };
-        this.unit = "件";
-      },
-
-      onLoadMaterial() {
-        if (!this.detailItem.materialSkuCode) {
-          this.$message.error("请输入原料SKU");
-        }
-        else {
-          this.loading = true;
-          this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.materialSkuCode}`;
-          this.global.axios
-            .get(url)
+        if (this.primaryId) {
+          let url = `/products/${this.primaryId}`;
+          if (this.relations && this.relations.length > 0) {
+            url += "?relations=" + JSON.stringify(this.relations);
+          }
+          this.global.axios.get(url)
             .then(resp => {
-              let res = resp.data
-              let data = res || {}
-
-              // 转字段
-              this.detailItem.materialName = data.name;
-              this.confirmLoading = false;
-              this.loading = false;
+              let res = resp.data;
+              this.primary = res || {};
+              this.primary.categoryId = res.categoryId + "";
+              this.primary.cartonSpecId = res.cartonSpecId + "";
+              this.primary.supplierId = res.supplierId + "";
+              this.primary.vipLevel = res.vipLevel + "";
+              this.dialogVisible = true;
+              this.primaryComplete = true;
             })
             .catch(err => {
-              this.loading = false;
-              this.confirmLoading = false;
             })
         }
       },
-      // 保存
-      onSave() {
-        this.$refs.detailItem.validate(valid => {
-          if (!valid) {
-            return false
-          }
-         this.$emit("modifyCBEvent", this.detailItem);
-         this.closeDialog();
-        })
+
+      /* 开启弹出编辑框 需要传主键ID */
+      openDialog(primaryId) {
+        this.primaryId = primaryId;
+        this.initData();
+      },
+      closeDialog() {
+        this.primary = {};
+        this.primaryId = null;
+        this.dialogVisible = false;
+        this.primaryComplete = false;
+      },
+
+      /* 子组件编辑完成后相应事件 */
+      modifyCBEvent(object) {
+        // 继续向父组件抛出事件 修改成功刷新列表
+        this.initData();
+        this.$emit("modifyCBEvent", object);
+      },
+
+      /* 重新加载 */
+      reloadCBEvent() {
+        this.initData();
       }
     }
   }
@@ -215,6 +106,10 @@
 
 <style type="text/less" lang="scss" scoped>
 
+  .title {
+    font-size: 14px;
+    font-weight: bold;
+  }
 
 </style>
 

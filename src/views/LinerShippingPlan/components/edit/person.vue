@@ -2,22 +2,22 @@
   <div class="ph-form">
 
     <aside style="font-size: 12px">
-      为了保证本出口计划的执行，需要指派对应的物流负责人、跟单负责人，可多选。指派的相应负责人将会收到对应的邮件和系统消息提醒。
+      为了保证本物流计划的执行，需要指派对应的物流负责人、跟单负责人，可多选。指派的相应负责人将会收到对应的邮件和系统消息提醒。
     </aside>
 
-    <h5>出口计划负责人：</h5>
+    <h5>物流计划负责人：</h5>
 
     <div class="tag-group">
       <el-tag type="success"
               :key="item.userId"
               v-for="item in primary.dataAuthories"
-              closable
+              :closable="hasEdit"
               :disable-transitions="false"
               @close="handleRemove(item)">
         {{item.user ? item.user.name : ''}}
       </el-tag>
 
-      <el-button class="button-new-tag" size="mini" @click="openPersonDialog">+ 添加负责人</el-button>
+      <el-button class="button-new-tag" size="mini" @click="openPersonDialog" v-if="hasEdit">+ 添加负责人</el-button>
     </div>
 
     <phMembers ref="members" @saveCBEvent="saveCBEvent" title="选择采购负责人"></phMembers>
@@ -27,6 +27,7 @@
 <script>
   import {intArrToStrArr} from '@/utils'
   import phMembers from '@/components/PhMembers'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -38,7 +39,11 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      hasEdit(){
+        return checkPermission('LinerShippingPlanResource_assign') && checkPermission('LinerShippingPlanResource_update') ;
+      }
+    },
 
     data() {
       return {
@@ -100,7 +105,7 @@
           // 控制多个异步请求，保证所有请求全部完成
           Promise.all(assignArr).then(obj => {
             this.$refs.members.closeDialog();
-            this.$message.info("操作成功!");
+            this.$message.success("操作成功!");
             loading.close();
 
             // 继续向父组件抛出事件 修改成功刷新列表
@@ -126,7 +131,7 @@
                 this.global.axios.put(url)
                   .then(resp => {
                     done();
-                    this.$message.info("操作成功!");
+                    this.$message.success("操作成功!");
                     loading.close();
                     // 继续向父组件抛出事件 修改成功刷新列表
                     this.$emit("modifiedInfoCBEvent");

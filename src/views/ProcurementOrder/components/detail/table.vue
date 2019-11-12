@@ -8,11 +8,11 @@
              @submit.native.prevent>
 
       <el-form-item label="SKU">
-        <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" clearable></el-input>
+        <el-input v-model="searchParam.skuCode" size="mini" placeholder="请输入SKU" clearable></el-input>
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status" placeholder="请选择状态">
+        <el-select filterable v-model="searchParam.status" size="mini" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
@@ -29,11 +29,12 @@
 
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
-      v-bind="toolbarConfig"
+      :hasExport="hasExport"
+      :hasImport="hasImport"
+      :hasAdd="hasAdd"
+      :hasDelete="hasDelete"
       @onToolBarAdd="onToolBarAdd"
-      @onToolBarEdit="onToolBarEdit"
       @onToolBarDelete="onToolBarDelete"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
       @onToolBarImportData="onToolBarImportData"
     >
@@ -55,26 +56,26 @@
       show-summary
       :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
-            <div v-html="scope.row.product.skuCode"></div>
-            <span slot="reference">{{
-              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
+      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left" align="center">
+      </el-table-column>
+
+      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
         </template>
       </el-table-column>
-      <el-table-column prop="id" label="ID" width="80"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="90">
+
+      <el-table-column prop="statusName" label="状态" width="90" align="center">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.status === 1
@@ -87,42 +88,32 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.name" label="名称" width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 17">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-            </span>
-        </template>
+      <el-table-column prop="product.name" label="名称" width="200" align="center">
       </el-table-column>
 
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="procurementPlanItem.cartonQty" label="计划箱数" width="110"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="发货箱数" width="110"></el-table-column>
-      <el-table-column prop="receivedCartonQty" label="收货箱数" width="110"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120" align="center"></el-table-column>
 
+      <el-table-column prop="procurementPlanItem.cartonQty" label="计划箱数" width="110" align="center"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="发货箱数" width="110" align="center"></el-table-column>
+      <el-table-column prop="receivedCartonQty" label="收货箱数" width="110" align="center"></el-table-column>
+
+      <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
       <el-table-column prop="cartonQty" label="采购箱数" width="80"
-                       fixed="right"></el-table-column>
+                       fixed="right" align="center"></el-table-column>
 
       <el-table-column prop="qty" label="采购件数" width="80"
-                       fixed="right"></el-table-column>
+                       fixed="right" align="center"></el-table-column>
 
-      <el-table-column prop="price" label="单价" width="80"
+      <el-table-column prop="price" label="单价" width="80" v-if="hasPrice"
                        fixed="right">
         <template slot-scope="scope">
           {{scope.row.price ? scope.row.price : 0, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="amount" label="总额" width="100"
+      <el-table-column prop="amount" label="总额" width="100" v-if="hasPrice"
                        fixed="right">
         <template slot-scope="scope">
           {{scope.row.amount ? scope.row.amount : 0, primary.currency ? primary.currency.symbolLeft : '' | currency}}
@@ -131,10 +122,9 @@
 
 
       <!--默认操作列-->
-      <el-table-column label="操作"
+      <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
                        width="120" fixed="right">
-
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -144,10 +134,8 @@
           <el-button v-if="hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
-
           </el-button>
         </template>
-
       </el-table-column>
     </el-table>
 
@@ -165,6 +153,8 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import phEnumModel from '@/api/phEnum'
   import itemDialog from './dialog'
+  import {checkPermission} from "../../../../utils/permission";
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -182,6 +172,42 @@
         'device',
         'rolePower'
       ]),
+      hasExport() {
+        return checkPermission('ProcurementOrderItemResource_export');
+      },
+
+      hasImport() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_import');
+      },
+      hasAdd() {
+        //return false;
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_create');
+      },
+      hasPrice() {
+        return checkPermission('PurchasePriceVisible');
+      },
+      hasOperation() {
+        return this.hasEdit || this.hasDelete;
+      },
+      hasEdit() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_update');
+      },
+      hasDelete() {
+        if ([0, 8].indexOf(this.primary.status) > -1) {
+          return false;
+        }
+        return checkPermission('ProcurementOrderItemResource_remove');
+      },
+
       hasExecute() {
         if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return true;
@@ -191,6 +217,7 @@
         }
       },
     },
+
     filters: {
       currency: currency
     },
@@ -206,12 +233,6 @@
 
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
-
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         // 多选记录对象
         selected: [],
@@ -238,16 +259,6 @@
 
         // 记录修改的那一行
         row: {},
-
-        // 表格工具条配置
-        toolbarConfig: {
-          hasEdit: true,
-          hasDelete: false,
-          hasAdd: true,
-          hasExportTpl: false,
-          hasExport: false,
-          hasImport: false,
-        }
       }
     },
 
@@ -292,7 +303,7 @@
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row, rowIndex}) {
         // 无价格
-        if (!row.price) {
+        if (!row.price && this.hasPrice) {
           return 'danger-row';
         }
         // 产品无装箱数
@@ -304,6 +315,19 @@
           return 'danger-row';
         }
         return '';
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /*汇总数据*/

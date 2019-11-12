@@ -28,6 +28,7 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     /**********生命周期*******/
@@ -78,6 +79,15 @@
         title: '国家列表', // 页面标题
 
         tableConfig: { //品海表格配置
+          //权限控制
+          hasNew: checkPermission('CountryResource_create'),
+          hasEdit: checkPermission('CountryResource_update'),
+          hasDelete: checkPermission('CountryResource_remove'),
+          // hasView: checkPermission('CountryResource_get'),
+          hasExportTpl: checkPermission('CountryResource_export'),
+          hasExport: checkPermission('CountryResource_export'),
+          hasImport: checkPermission('CountryResource_import'),
+
           url: '/countries', // 资源URL
           relations: ["creator"],//关联查询对象
 
@@ -90,7 +100,7 @@
 
           // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
           columns: [
-            {type: 'selection'}, //多选
+            {width: 30,type: checkPermission('CountryResource_remove') ? 'selection' : '', hidden: !checkPermission('CountryResource_remove')},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: true},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 150},
             {prop: 'enName', label: '英文名', sortable: 'custom', 'min-width': 200},
@@ -113,6 +123,7 @@
               $type: 'input',
               $id: 'name',
               label: '国家名称',
+              $default: '', //默认值
               $el: {
                 placeholder: '请输入国家名称',
                 //type: ''  输入框可以设置类型，类型支持所有h5自带类型 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types

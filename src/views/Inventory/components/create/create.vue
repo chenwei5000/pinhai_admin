@@ -20,7 +20,7 @@
 
         <el-row>
           <el-col :md="12">
-            <el-form-item label="仓库" prop="warehouseId">
+            <el-form-item label="仓库" prop="warehouseId" size="mini">
               <el-select v-model="newObject.warehouseId" style="width: 180px"
                          filterable placeholder="请选择仓库">
                 <el-option
@@ -34,7 +34,7 @@
           </el-col>
 
           <el-col :md="12">
-            <el-form-item label="类型" prop="type">
+            <el-form-item label="类型" prop="type" size="mini">
               <el-select v-model="newObject.type" style="width: 180px"
                          filterable placeholder="类型">
                 <el-option
@@ -66,12 +66,13 @@
         <!-- 盘亏盘盈明细列表 -->
         <itemTable
           ref="itemTable"
+          :primary="newObject"
           @createCBEvent="createCBEvent"
         ></itemTable>
 
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onCreate">
+            <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onCreate">
               生成{{typeName}}
             </el-button>
           </el-row>
@@ -184,8 +185,9 @@
           .post("/inventories", _order)
           .then(resp => {
             loading.close();
-            this.$message.info("盘亏盘盈单创建成功");
-            this.$emit("modifyCBEvent", resp.data);
+            this.$message.success(this.typeName + "创建成功");
+            this.$refs.itemTable.tableData = [];
+            this.newObject = {};
           })
           .catch(err => {
             loading.close();

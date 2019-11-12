@@ -29,10 +29,10 @@
       </fieldset>
 
       <fieldset class="panel-heading">
-        <legend class="panel-title">预计完成日期
+        <legend class="panel-title">预计交货日期
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
-              采购单预计的完成日期，由跟单确认
+              采购单预计的交货日期，由跟单确认
             </div>
             <i class="el-icon-question">&nbsp;</i>
           </el-tooltip>
@@ -62,7 +62,7 @@
 
           <el-col :md="8">
             <el-form-item label="收货仓库" prop="warehouseId">
-              <el-select v-model="editObject.warehouseId"
+              <el-select v-model="editObject.warehouseId" size="mini"
                          filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -80,7 +80,7 @@
 
           <el-col :md="8">
             <el-form-item label="名称" prop="name">
-              <el-input v-model.trim="editObject.name"
+              <el-input v-model.trim="editObject.name" size="mini"
                         maxlength="100"
                         show-word-limit
                         style="width: 200px" placeholder="请填写名称" clearable></el-input>
@@ -97,7 +97,7 @@
         <el-row>
           <el-col :md="8">
             <el-form-item label="结算方式" prop="settlementMethod">
-              <el-select v-model="editObject.settlementMethod"
+              <el-select v-model="editObject.settlementMethod" size="mini"
                          filterable placeholder="请选择结算方式">
                 <el-option
                   v-for="(item , idx)  in settlementMethodSelectOptions"
@@ -115,7 +115,7 @@
 
           <el-col :md="8">
             <el-form-item label="结算货币" prop="currencyId">
-              <el-select v-model="editObject.currencyId"
+              <el-select v-model="editObject.currencyId" size="mini"
                          filterable placeholder="请选择结算货币">
                 <el-option
                   v-for="(item , idx)  in currencySelectOptions"
@@ -133,7 +133,7 @@
 
           <el-col :md="8">
             <el-form-item label="帐期" prop="accountPeriod">
-              <el-input-number v-model="editObject.accountPeriod"
+              <el-input-number v-model="editObject.accountPeriod" size="mini"
                                style="width: 155px"
                                :min="1"
                                :step="1"
@@ -152,7 +152,7 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave" v-if="hasEdit">
+            <el-button v-if="hasEdit" type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSave">
               保存基本信息
             </el-button>
           </el-row>
@@ -169,6 +169,7 @@
   import {intArrToStrArr} from '@/utils'
   import phEnumModel from '@/api/phEnum'
   import currencyModel from '@/api/currency'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -184,9 +185,10 @@
         if ([0, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
-        else {
-          return true;
+        if(!checkPermission('ProcurementOrderResource_update')){
+          return false;
         }
+        return true;
       },
       hasCategory() {
         if (this.editObject.categoryId == null || this.editObject.categoryId.length == 0) {

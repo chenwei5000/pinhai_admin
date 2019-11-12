@@ -17,12 +17,22 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '部门管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('DepartmentResource_create'),
+          hasEdit: checkPermission('DepartmentResource_update'),
+          hasDelete: checkPermission('DepartmentResource_remove'),
+          // hasView: checkPermission('DepartmentResource_get'),
+          hasExportTpl: checkPermission('DepartmentResource_export'),
+          hasExport: checkPermission('DepartmentResource_export'),
+          hasImport: checkPermission('DepartmentResource_import'),
+
           url: '/departments',
           relations: ["creator", "user"],
           tableAttrs: {
@@ -30,16 +40,14 @@
           },
 
           //工具按钮
-          maxUploadCount: 10, //提交数量
+          maxUploadCount: 1, //提交数量
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '部门列表',
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
+
 
           columns: [
-            {type: 'selection'},
-            {prop: 'allName', label: '部门所属', fixed: 'left', "min-width": 300},
+            {width: 30,type: checkPermission('DepartmentResource_remove') ? 'selection' : '', hidden: !checkPermission('DepartmentResource_remove')},
+            {prop: 'allName', label: '部门', fixed: 'left', "min-width": 300},
             {prop: 'name', label: '名称', "min-width": 100},
             {prop: 'user.name', label: '负责人', "min-width": 100},
             phColumns.creator,

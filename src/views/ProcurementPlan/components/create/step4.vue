@@ -2,7 +2,7 @@
 
   <div class="page-container">
 
-    <aside v-if="completed">
+    <aside v-if="completed" style="font-size: 12px">
       采购计划已经创建完毕，你可以提交上级审核了。如果不想马上提交审核，可放弃提交操作。
       之后你可以在编辑中的采购计划中，找到本次计划，可再次进行提交。
       您可以在计划说明中，添加本次计划的一些说明，可帮助上级更快的审核您的计划。<hr/>
@@ -18,14 +18,14 @@
     <el-row>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="warning" style="margin-top: 40px" @click="onBack">
+          <el-button type="warning" style="margin-top: 40px" size="small"  @click="onBack">
             < 上一步
           </el-button>
         </el-row>
       </el-col>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 40px" @click="onNext">
+          <el-button type="primary" style="margin-top: 40px" size="small"  @click="onNext">
             提交审核 >
           </el-button>
         </el-row>
@@ -104,7 +104,7 @@
               this.global.axios.put(url, note)
                 .then(resp => {
                   done();
-                  this.$message.info("提交成功,请耐心等待上级处理! 您还可以继续创建新的采购计划! ");
+                  this.$message.success("提交成功,请耐心等待上级处理! 您还可以继续创建新的采购计划! ");
                   this.$refs.auditing.closeDialog();
                   loading.close();
                   // 继续向父组件抛出事件 修改成功刷新列表

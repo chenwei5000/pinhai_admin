@@ -77,6 +77,21 @@
             </template>
           </el-table-column>
 
+          <el-table-column
+            prop="note"
+            label="备注"
+            width="180">
+            <template slot-scope="scope">
+              <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+                          v-if="scope.row.note && scope.row.note.length > 10">
+                <div v-html="scope.row.note"></div>
+                <span slot="reference">{{ scope.row.note ? scope.row.note.substr(0,8)+'..' : '' }}</span>
+              </el-popover>
+              <span v-else>
+                {{ scope.row.note }}
+              </span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
 

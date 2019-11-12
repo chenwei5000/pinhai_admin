@@ -5,26 +5,26 @@
              class="ph-dialog" @close='closeDialog' fullscreen>
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-    <el-button type="primary" icon="el-icon-s-check" v-if="primary.status == 1" @click="onCommit">发布</el-button>
+    <el-button type="primary" size="small" icon="el-icon-s-check" v-if="hasRelease" @click="onCommit">发布</el-button>
       <!--el-button type="success" icon="el-icon-success" v-if="primary.status == 2" @click="onAgree">同意</el-button>
       <el-button type="warning" icon="el-icon-error" v-if="primary.status == 2" @click="onRefuse">不同意</el-button-->
 
-      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
+      <el-button type="warning" size="small" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回</el-button>
 
-      <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认完成日期</el-button -->
+      <!-- el-button type="primary" icon="el-icon-date" v-if="hasExecute" @click="onWithdraw">确认交货日期</el-button -->
 
-      <el-button type="primary" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
-      <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" @click="onPrint">打印合同</el-button>
+      <el-button type="primary" size="small" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
+      <el-button type="primary" size="small" icon="el-icon-printer" v-if="hasPrint" @click="onPrint">打印合同</el-button>
 
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
+      <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
 
-      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
 
-      <el-button type="primary" icon="el-icon-user-solid" v-if="false" @click="onAssign">指派处理人</el-button>
-      <el-button type="primary" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
-      <el-button type="primary" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
+      <el-button type="primary" size="small" icon="el-icon-user-solid" v-if="false" @click="onAssign">指派处理人</el-button>
+      <el-button type="primary" size="small" icon="el-icon-s-goods" v-if="false" @click="onHandover">交接工作</el-button>
+      <el-button type="primary" size="small" icon="el-icon-share" v-if="false" @click="onShare">分享</el-button>
 
-      <el-button type="primary" @click="closeDialog">取 消</el-button>
+      <el-button size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
 
@@ -41,7 +41,7 @@
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
-      <el-collapse-item name="attachment" style="margin-top: 10px">
+      <el-collapse-item name="attachment" style="margin-top: 10px" v-if="hasAttachment">
         <div slot="title" class="title">3. 附件</div>
         <attachment ref="attachment" :primary="primary" v-if="primaryComplete"></attachment>
       </el-collapse-item>
@@ -85,6 +85,7 @@
   import printDialog from './printDialog'
 
   import {currency, intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -107,25 +108,55 @@
         'device',
         'rolePower'
       ]),
+      hasRelease(){
+        if (this.primary.status !== 1) {
+          return false;
+        }
+        if (!checkPermission('ProcurementOrderResource_commit')) {
+          return false;
+        }
+        return true;
+      },
       hasWithdraw() {
         if ([2, 3, 4, 5].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
+        }else {
           return false;
         }
       },
       hasExecute() {
-        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1) {
-          return true;
+        if ([3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1 ) {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
         }
         else {
           return false;
         }
       },
-      hasAdmin() {
-        return true;
+
+      hasPrint() {
+        if ([1, 3, 4, 5, 6, 7, 8, 9, 10].indexOf(this.primary.status) > -1 ) {
+          if (checkPermission('ProcurementOrderResource_withdraw')) {
+            return true;
+          }
+          return false;
+        }
+        else {
+          return false;
+        }
       },
+      hasAttachment(){
+        return checkPermission('AttachmentFileResource_listProcurementOrder');
+      },
+      hasAdmin() {
+        return checkPermission('ProcurementOrderResource_updateStatus');
+      },
+
       title() {
         return '编辑采购单 [' + this.primary.code + '] -- (' + this.primary.statusName + "状态)";
       }
@@ -254,7 +285,7 @@
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
-            this.$message.info('操作成功!');
+            this.$message.success('操作成功!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表
@@ -282,7 +313,7 @@
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
-                  this.$message.info(message);
+                  this.$message.success(message);
                   loading.close();
                   this.$refs.auditing.closeDialog();
                   this.initData();

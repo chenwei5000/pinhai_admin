@@ -24,11 +24,11 @@ common.dialog = function (option) {
   var component = option.component;
   let template = '';
   if (typeof component == 'string') {
-    template = `<el-dialog :title="title" v-if="show" :visible.sync="show" :top="top" :width="width" @close="close"><el-scrollbar class="menu-wrapper" noresize><el-row><el-col :span="22"><${component} v-on:callback="callback" :init_data="data"> </${component}> </el-col></el-row></el-scrollbar></el-dialog>`;
+    template = `<el-dialog :title="title" class="ph-dialog" v-if="show" :visible.sync="show" :top="top" :width="width" @close="close"><el-scrollbar class="menu-wrapper" noresize><el-row><el-col :span="22"><${component} v-on:callback="callback" :init_data="data"> </${component}> </el-col></el-row></el-scrollbar></el-dialog>`;
   } else if (option.htmlText != null) {
-    template = `<el-dialog :title="title" v-if="show" :visible.sync="show" :top="top" :width="width" @close="close"><el-scrollbar class="menu-wrapper" noresize><el-row><el-col :span="22">${option.htmlText}</el-col></el-row></el-scrollbar></el-dialog>`;
+    template = `<el-dialog :title="title" class="ph-dialog" v-if="show" :visible.sync="show" :top="top" :width="width" @close="close"><el-scrollbar class="menu-wrapper" noresize><el-row><el-col :span="22">${option.htmlText}</el-col></el-row></el-scrollbar></el-dialog>`;
   } else {
-    template = '<el-dialog :style="style" :title="title" :top="top" :visible.sync="show" :width="width" :before-close="handleClose" @close="close"><el-scrollbar class="menu-wrapper" noresize><el-row><el-col :span="22"><child ref="mychild" v-on:callback="callback" :init_data="data"></child></el-col></el-row></el-scrollbar><div slot="footer"><el-button @click="close" size="small">取 消</el-button><el-button type="primary" @click="confirm" :loading="confirmLoading" size="small">确 定</el-button></div></el-dialog>';
+    template = '<el-dialog :style="style" class="ph-dialog" :title="title" :top="top" :visible.sync="show" :width="width" :before-close="handleClose" @close="close"><el-scrollbar class="menu-wrapper" noresize><el-row><el-col :span="22"><child ref="mychild" v-on:callback="callback" :init_data="data"></child></el-col></el-row></el-scrollbar><div slot="footer"><el-button @click="close" size="mini">取 消</el-button><el-button type="primary" @click="confirm" :loading="confirmLoading" size="mini">确 定</el-button></div></el-dialog>';
   }
   if (option.type && option.type == 'iframe') {
     v = new Vue({
@@ -44,7 +44,7 @@ common.dialog = function (option) {
           data: _d,
         };
       },
-      template: '<el-dialog :title="title" v-if="show" :visible.sync="show" :top="top" :width="width"><iframe :src="url" style="width:100%;height:100%;"></iframe></child></el-dialog></div>',
+      template: '<el-dialog :title="title" class="ph-dialog" v-if="show" :visible.sync="show" :top="top" :width="width"><iframe :src="url" style="width:100%;height:100%;"></iframe></child></el-dialog></div>',
     });
   } else {
     v = new Vue({

@@ -16,19 +16,29 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
-        title: '公司管理',
+      title: '公司管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CompanyManagementResource_create'),
+          hasEdit: checkPermission('CompanyManagementResource_update'),
+          hasDelete: checkPermission('CompanyManagementResource_remove'),
+          // hasView: checkPermission('CompanyManagementResource_get'),
+          hasExportTpl: checkPermission('CompanyManagementResource_export'),
+          hasExport: checkPermission('CompanyManagementResource_export'),
+          hasImport: checkPermission('CompanyManagementResource_import'),
+
           url: '/companyManagements',
           relations: ["dataDicItem","creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {width: 30, type: checkPermission('CompanyManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('CompanyManagementResource_remove')},
             {
               prop: 'type', label: '类型',"min-width": 90,
               formatter: row => (row.type == 1 ? '本公司' :

@@ -22,7 +22,7 @@
 
           <el-row>
             <el-col :md="10">
-              <el-form-item label="名称" prop="name">
+              <el-form-item label="名称" prop="name" size="mini">
                 <el-input v-model.trim="editObject.name"
                           maxlength="100"
                           show-word-limit
@@ -31,7 +31,7 @@
             </el-col>
 
             <el-col :md="14">
-              <el-form-item label="预计发货时间" prop="expectTime">
+              <el-form-item label="预计发货时间" prop="expectTime" size="mini">
                 <el-date-picker
                   v-model="editObject.expectTime"
                   format="yyyy-MM-dd"
@@ -43,7 +43,7 @@
 
           <el-row>
             <el-col :md="10">
-              <el-form-item label="发货厂商" prop="supplierId">
+              <el-form-item label="发货厂商" prop="supplierId" size="mini">
                 <el-select v-model="editObject.supplierId"
                            style="width: 220px"
                            filterable placeholder="请选择">
@@ -58,7 +58,7 @@
             </el-col>
 
             <el-col :md="14">
-              <el-form-item label="收货仓库" prop="warehouseId">
+              <el-form-item label="收货仓库" prop="warehouseId" size="mini">
                 <el-select v-model="editObject.warehouseId" style="width: 220px"
                            filterable placeholder="请选择收货仓库">
                   <el-option
@@ -77,7 +77,7 @@
               <el-form-item label="备注" prop="note">
                 <el-col :span="22">
                   <el-input type="textarea" v-model="editObject.remark"
-                            maxlength="500"
+                            maxlength="200"
                             show-word-limit
                             rows="3"
                             cols="80"
@@ -131,6 +131,18 @@
           </span>
           </template>
         </el-table-column>
+
+        <el-table-column prop="product.imgUrl" label="图片" width="40" >
+          <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+            <el-image
+              :z-index="10000"
+              style="width: 30px; height: 30px;margin-top: 5px"
+              :src="scope.row.product.imgUrl"
+              :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+            </el-image>
+          </template>
+        </el-table-column>
+
 
         <el-table-column prop="productName" label="名称" width="200">
           <template slot-scope="scope">
@@ -203,7 +215,7 @@
     <el-row>
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave"
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" size="mini"  @click="onSave"
                      v-if="hasEdit">
             创建发货计划
           </el-button>
@@ -219,6 +231,7 @@
   import warehouseModel from '@/api/warehouse'
   import supplierModel from '@/api/supplier'
   import planDetailDialog from './planDetailDialog'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -235,10 +248,10 @@
     },
     computed: {
       hasEdit() {
-        return true;
+        return checkPermission('ProcurementShippedOrderItemResource_create');
       },
       hasDelete() {
-        return true;
+        return checkPermission('ProcurementShippedOrderItemResource_remove');
       }
     },
     watch: {},
@@ -484,7 +497,7 @@
 
           this.confirmLoading = true;
           let msg = '';
-          this.tableData.forEach(r => {
+          this.data.forEach(r => {
 
             // 产品无装箱数
             if (!r.numberOfCarton) {
@@ -561,6 +574,12 @@
             _details.push(_detail);
           }
         });
+       if(_details.length === 0){
+         this.$message.error('本次发货箱数总数不能为0');
+         return;
+       }
+
+
         _order.shippedOrderItems = _details;
 
         const loading = this.$loading({

@@ -17,12 +17,22 @@
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
   import {parseTime} from '@/utils'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '操作列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('ActionResource_create'),
+          hasEdit: checkPermission('ActionResource_update'),
+          hasDelete: checkPermission('ActionResource_remove'),
+          // hasView: checkPermission('ActionResource_get'),
+          hasExportTpl: checkPermission('ActionResource_export'),
+          hasExport: checkPermission('ActionResource_export'),
+          hasImport: checkPermission('ActionResource_import'),
+
           url: '/actions',
           relations: ["creator"],
           tableAttrs: {
@@ -32,12 +42,10 @@
           //工具按钮
           maxUploadCount: 20, //提交数量
           exportFileName: '操作列表',
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
+
 
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('ActionResource_remove') ? 'selection' : '', hidden: !checkPermission('ActionResource_remove')},
             {prop: 'id', label: 'ID', sortable: 'custom', hidden: false, 'min-width': '300', fixed: 'left'},
             {prop: 'resource', label: '资源标识', sortable: 'custom', 'min-width': 120},
             {prop: 'method', label: '行为动作', 'min-width': 100},

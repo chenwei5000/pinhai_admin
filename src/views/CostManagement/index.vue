@@ -16,18 +16,28 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
     data() {
       return {
         title: '费用管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CostManagementResource_create'),
+          hasEdit: checkPermission('CostManagementResource_update'),
+          hasDelete: checkPermission('CostManagementResource_remove'),
+          // hasView: checkPermission('CostManagementResource_get'),
+          hasExportTpl: checkPermission('CostManagementResource_export'),
+          hasExport: checkPermission('CostManagementResource_export'),
+          hasImport: checkPermission('CostManagementResource_import'),
+
           url: '/costManagements',
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CostManagementResource_remove') ? 'selection' : '', hidden: !checkPermission('CostManagementResource_remove')},
             {prop: 'costType', label: '费用类型', fixed: 'left',"min-width": 100},
             {prop: 'costName', label: '费用名称', hidden: 'false', "min-width": 100},
             phColumns.status,

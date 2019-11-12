@@ -124,17 +124,22 @@ const phSearchItems = {
 
   // 状态搜索
   status: () => {
+
+    let _options = phEnumModel.getSelectOptions('Status');
+    _options.unshift({label: '全部', value: null});
+
     return {
       $type: 'select',
       $id: 'status',
       label: '状态',
+      $default: '1',
       $el: {
         op: 'eq',
         size: 'mini',
         style: 'width:120px',
         placeholder: '请选择状态'
       },
-      $options: phEnumModel.getSelectOptions('Status')
+      $options: _options
     }
   },
 
@@ -144,7 +149,23 @@ const phSearchItems = {
       $type: 'select',
       $id: 'categoryId',
       label: '分类',
-      $options: categoryModel.getMineSelectOptions('p'),
+      $options: categoryModel.getMineSelectProdcutOptions(),
+      $el: {
+        op: 'eq',
+        filterable: true,
+        size: "mini",
+        placeholder: '请选择分类'
+      }
+    }
+  },
+
+  // 原料分类
+  materialCategories: () => {
+    return {
+      $type: 'select',
+      $id: 'categoryId',
+      label: '原料分类',
+      $options: categoryModel.getMineSelectMaterialOptions(),
       $el: {
         op: 'eq',
         filterable: true,
@@ -180,6 +201,7 @@ const phSearchItems = {
         op: 'eq',
         filterable: true,
         size: "mini",
+        style: 'width:120px',
         placeholder: '请选择' + label
       },
       $options: datadicModel.getSelectOptions(type)
@@ -187,7 +209,7 @@ const phSearchItems = {
   },
 
   //仓库名称搜索
-  warehouseId: () => {
+  warehouseDomesticId: () => {
     return {
       $type: 'select',
       $id: 'warehouseId',
@@ -198,7 +220,7 @@ const phSearchItems = {
         filterable: true,
         placeholder: '请选择仓库'
       },
-      $options: warehouseModel.getSelectOptions,
+      $options: warehouseModel.getSelectDomesticOptions(),
     }
   },
 

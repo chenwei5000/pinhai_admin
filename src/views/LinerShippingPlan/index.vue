@@ -67,7 +67,7 @@
                 </el-form-item>
 
                 <el-form-item label="分类">
-                  <el-select v-model="searchParam.category.value" style="width: 120px"
+                  <el-select size="mini" v-model="searchParam.categoryName.value" style="width: 120px"
                              filterable
                              placeholder="请选择分类">
                     <el-option
@@ -166,6 +166,7 @@
 </template>
 
 <script>
+  //https://fullcalendar.io/
   import fullCalendar from "@fullcalendar/vue";
   import dayGridPlugin from "@fullcalendar/daygrid";
   import timeGridPlugin from "@fullcalendar/timegrid";
@@ -179,6 +180,8 @@
   import planModel from "../../api/linerShippingPlan";
   import createEvent from "./components/createEvent";
   import editEvent from "./components/edit/dialog";
+  import {checkPermission} from "../../utils/permission";
+  import moment from 'moment'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -222,7 +225,7 @@
           portOfLoading: {value: null, op: 'eq', id: 'portOfLoading'},
           shipmentId: {value: null, op: 'eq', id: 'shipmentId'},
           destinationFulfillmentCenterId: {value: null, op: 'eq', id: 'destinationFulfillmentCenterId'},
-          category: {value: null, op: 'bw', id: 'category'},
+          categoryName: {value: null, op: 'bw', id: 'categoryName'},
           boxNumber: {value: null, op: 'eq', id: 'boxNumber'},
           ladingBillNumber: {value: null, op: 'eq', id: 'ladingBillNumber'},
         },
@@ -235,8 +238,12 @@
 
         harbourSelectOptions: [],
         categorySelectOptions: [],
-
       };
+    },
+    computed: {
+      hasNew() {
+        return checkPermission('LinerShippingPlanItemResource_create');
+      }
     },
 
     mounted() {
@@ -260,8 +267,8 @@
             this.searchParam.destinationFulfillmentCenterId.value = params.destinationFulfillmentCenterId;
             this.searchFlg = true;
           }
-          if (params.category) {
-            this.searchParam.category.value = params.category;
+          if (params.categoryName) {
+            this.searchParam.categoryName.value = params.categoryName;
             this.searchFlg = true;
           }
           if (params.boxNumber) {
@@ -359,7 +366,7 @@
                 }
               }
               else {
-                this.$message.info("无数据");
+                this.$message.success("无数据");
               }
             }
           })
@@ -389,8 +396,12 @@
       handleDatesRender(v) {
         let searchFlg = this.searchFlg || location.href.match(queryPattern);
         if (v) {
-          this.startDate = dateFormat(v.view.activeStart, "yyyy-mm-dd");
-          this.endDate = dateFormat(v.view.activeEnd, "yyyy-mm-dd");
+          //this.startDate = dateFormat(v.view.activeStart, "yyyy-mm-dd");
+          //this.endDate = dateFormat(v.view.activeEnd, "yyyy-mm-dd");
+
+          this.startDate = moment(v.view.currentStart).format("YYYY-MM-DD");
+          this.endDate = moment(v.view.currentEnd).add(-1, 'days').format("YYYY-MM-DD");
+
         }
         if (!searchFlg) {
           this.loadData();
@@ -405,13 +416,19 @@
       },
       // 添加
       handleDateClick(day, jsEvent) {
-        // 开启弹窗
-        this.$refs.createEvent.openDialog(day.dateStr);
+        if (this.hasNew) {
+          // 开启弹窗
+          this.$refs.createEvent.openDialog(day.dateStr);
+        }
+        else {
+          this.$message.error("您没有创建物流计划权限！");
+        }
       },
 
       moreClick(day, events, jsEvent) {
         // console.log('moreCLick', day, events, jsEvent)
       },
+
       addCalendarEvent(event, title) {
         this.calendarEvents.push({
           id: event.id,
@@ -419,17 +436,19 @@
           title: title.title,
           className: title.className
         });
-      },
+      }
+      ,
       editCalendarEvent(event, title) {
         for (let i = 0; i < this.calendarEvents.length; i++) {
           if (this.calendarEvents[i].id == event.id) {
-              this.calendarEvents[i].start = event.formatEtdTime;
-              this.calendarEvents[i].title = title.title;
-              this.calendarEvents[i].className = title.className;
-              break;
+            this.calendarEvents[i].start = event.formatEtdTime;
+            this.calendarEvents[i].title = title.title;
+            this.calendarEvents[i].className = title.className;
+            break;
           }
         }
-      },
+      }
+      ,
       search() {
         this.$refs.searchForm.validate(valid => {
           if (!valid) {
@@ -438,7 +457,8 @@
           this.searchFlg = true;
           this.loadData(true);
         })
-      },
+      }
+      ,
       /*搜索重置*/
       resetSearch() {
         this.$refs.searchForm.resetFields();
@@ -446,7 +466,7 @@
         this.searchParam.portOfLoading.value = null;
         this.searchParam.shipmentId.value = null;
         this.searchParam.destinationFulfillmentCenterId.value = null;
-        this.searchParam.category.value = null;
+        this.searchParam.categoryName.value = null;
         this.searchParam.boxNumber.value = null;
         this.searchParam.ladingBillNumber.value = null;
 
@@ -457,15 +477,22 @@
         this.$nextTick(() => {
           this.loadData()
         });
-      },
+      }
+      ,
     }
-  };
+  }
+  ;
 </script>
 
 <style lang='scss'>
   @import "~@fullcalendar/core/main.css";
   @import "~@fullcalendar/daygrid/main.css";
   @import "~@fullcalendar/timegrid/main.css";
+
+  .fc-ltr .fc-view .fc-other-month {
+    color: transparent;
+    background-color: #ccc;
+  }
 
   .fc-day-grid-container {
     overflow: visible !important;

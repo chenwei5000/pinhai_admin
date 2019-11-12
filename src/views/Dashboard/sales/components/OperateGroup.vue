@@ -10,30 +10,38 @@
     <el-row :gutter="40" class="panel-group">
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newSteamship :mine="mine"></newSteamship>
+        <newSteamship :searchParam="searchParam"></newSteamship>
       </el-col>
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newPrepare :mine="mine"></newPrepare>
-      </el-col>
-
-
-      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <auditingPlan :mine="mine"></auditingPlan>
+        <newPrepare :searchParam="searchParam"></newPrepare>
       </el-col>
 
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <auditingOrder :mine="mine"></auditingOrder>
+        <auditingPlan :searchParam="searchParam"></auditingPlan>
+      </el-col>
+
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col" v-if="false">
+        <auditingOrder :searchParam="searchParam"></auditingOrder>
       </el-col>
 
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <newProduct :mine="mine"></newProduct>
+        <newProduct :searchParam="searchParam"></newProduct>
       </el-col>
 
       <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
-        <saleSetting :mine="mine"></saleSetting>
+        <saleSetting :searchParam="searchParam"></saleSetting>
+      </el-col>
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+        <productSafetyStock :searchParam="searchParam"></productSafetyStock>
+      </el-col>
+
+      <el-col :xs="8" :sm="8" :lg="4" class="card-panel-col">
+        <materialSafetyStock :searchParam="searchParam"></materialSafetyStock>
       </el-col>
 
     </el-row>
@@ -48,12 +56,14 @@
   import auditingOrder from '../../components/operate/auditingOrder'
   import newProduct from '../../components/operate/newProduct'
   import saleSetting from '../../components/operate/saleSetting'
+  import materialSafetyStock from '../../components/operate/materialSafetyStock'
+  import productSafetyStock from '../../components/operate/productSafetyStock'
 
   export default {
     props: {
-      mine: {
+      searchParam: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
+        default: {merchantId: null, categoryId: null, week: 20}
       }
     },
     components: {
@@ -62,7 +72,9 @@
       auditingPlan,
       auditingOrder,
       newProduct,
-      saleSetting
+      saleSetting,
+      materialSafetyStock,
+      productSafetyStock
     },
     methods: {}
   }

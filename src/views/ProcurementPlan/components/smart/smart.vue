@@ -19,7 +19,7 @@
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
               智能备货是通过销量情况、各地库存情况自动推荐备货数量。需要选择以下对应的选项。<BR/>
-              公式：((7日销量 x ️备货周数) - 亚马逊库存(含在途) - 国内库存 - 未完成采购计划数(根据选项处理)) ➗ 装箱数（自动四舍五入保证整箱）
+              公式：((7日销量 x 备货周数) - 亚马逊库存(含在途) - 国内库存 - 未完成采购计划数(根据选项处理)) ➗ 装箱数（自动四舍五入保证整箱）
             </div>
             <i class="el-icon-question">&nbsp;</i>
           </el-tooltip>

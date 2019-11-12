@@ -61,41 +61,29 @@
 
     <el-row>
       <el-col :md="10">
-        <el-form-item label="物流单号" prop="trackNumber">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
-          <el-input v-else v-model="editObject.trackNumber"
-                    show-word-limit
-                    style="width: 220px"  size="mini" placeholder="请填写单号" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="物流单号" prop="trackNumber">
+          <span   style="font-size: 12px">{{editObject.trackNumber}}</span>
         </el-form-item>
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="物流公司" prop="channel">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
-          <el-input v-else v-model="editObject.channel"
-                    style="width: 220px"  size="mini" placeholder="请填写公司" clearable></el-input>
+        <el-form-item  v-if="!hasEdit" label="物流公司" prop="channel">
+          <span  style="font-size: 12px">{{editObject.channel}}</span>
         </el-form-item>
       </el-col>
     </el-row>
 
     <el-row>
       <el-col :md="10">
-        <el-form-item label="车牌" prop="plateNumber">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.plateNumber}}</span>
-
-          <el-input v-else v-model="editObject.plateNumber"
-                    show-word-limit
-                    style="width: 220px"  size="mini" placeholder="请填写车牌" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="车牌" prop="plateNumber">
+          <span   style="font-size: 12px">{{editObject.plateNumber}}</span>
         </el-form-item>
+
       </el-col>
 
       <el-col :md="14">
-        <el-form-item label="联系人" prop="linkman">
-
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
-
-          <el-input v-else v-model="editObject.linkman"
-                    style="width: 220px" size="mini" placeholder="请填写联系人" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="联系人" prop="linkman">
+          <span   style="font-size: 12px">{{editObject.linkman}}</span>
         </el-form-item>
       </el-col>
     </el-row>
@@ -103,11 +91,8 @@
     <el-row>
 
       <el-col :md="10">
-        <el-form-item label="电话" prop="tel">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
-
-          <el-input v-else v-model="editObject.tel"
-                    style="width: 220px"  size="mini" placeholder="请填写电话" clearable></el-input>
+        <el-form-item v-if="!hasEdit" label="电话" prop="tel">
+          <span  style="font-size: 12px">{{editObject.linkman}}</span>
         </el-form-item>
       </el-col>
 
@@ -125,6 +110,21 @@
         </el-form-item>
       </el-col>
 
+    </el-row>
+
+    <el-row>
+      <el-col :md="10">
+        <el-form-item label="采购计划编码" prop="code">
+          <span style="font-size: 12px">{{editObject.procurementPlan.code}}</span>
+        </el-form-item>
+      </el-col>
+
+
+      <el-col :md="14">
+        <el-form-item label="采购单编码" prop="name">
+          <span style="font-size: 12px">{{editObject.procurementOrder.code}}</span>
+        </el-form-item>
+      </el-col>
     </el-row>
 
     <el-row>
@@ -156,7 +156,7 @@
     <el-row v-if="hasEdit">
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
+          <el-button type="primary" v-if="hasEdit" size="mini" style="margin-top: 15px" :loading="confirmLoading" @click="onSave">
             保存基本信息
           </el-button>
         </el-row>
@@ -172,6 +172,7 @@
   import warehouseModel from '@/api/warehouse'
   import supplierModel from '@/api/supplier'
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -183,11 +184,14 @@
     },
     computed: {
       hasEdit() {
-        if ([1, 3].indexOf(this.primary.status) != -1) {
-          return true;
+        if ([1, 3].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        if(!checkPermission('ProcurementShippedOrderResource_update')){
+          return false;
         }
         else {
-          return false;
+          return true;
         }
       }
     },

@@ -27,14 +27,28 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="状态">
-        <el-select size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
+      <el-form-item label="状态" v-if="hasStatus">
+        <el-select v-if="hasSearch" size="mini" filterable v-model="searchParam.status.value" style="width: 120px" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
         </el-select>
+      </el-form-item>
+
+     <el-form-item label="预计交货日期">
+        <el-date-picker
+          size="mini"
+          v-model="searchParam.otdTime.value"
+          format="yyyy-MM-dd"
+          style="width: 210px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="|"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
       </el-form-item>
 
       <el-form-item>
@@ -58,11 +72,12 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="code" label="编号" width="140" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="100"  align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -96,34 +111,22 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 27">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
-        </template>
+      <el-table-column prop="name" label="名称" min-width="200"  align="center">
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" width="120"></el-table-column>
+      <el-table-column prop="supplier.name" label="供货商" width="120" align="center"></el-table-column>
 
-      <el-table-column prop="warehouse.name" label="收货仓库" width="120"></el-table-column>
+      <el-table-column prop="warehouse.name" label="收货仓库" width="120" align="center"></el-table-column>
 
-      <el-table-column prop="settlementMethodName" label="结算方式" width="100"></el-table-column>
+      <el-table-column prop="settlementMethodName" label="结算方式" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="currency.name" label="结算货币" width="90"></el-table-column>
+      <el-table-column prop="currency.name" label="结算货币" width="90" align="center"></el-table-column>
 
-      <el-table-column prop="accountPeriod" label="帐期(天)" width="90"></el-table-column>
+      <el-table-column prop="accountPeriod" label="帐期(天)" width="90" align="center"></el-table-column>
 
-      <el-table-column prop="formatOtdTime" label="预计完成日期" width="100"></el-table-column>
+      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
+      <el-table-column prop="procurementPlan.note" label="交货要求" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
                       v-if="scope.row.procurementPlan.note && scope.row.procurementPlan.note.length > 10">
@@ -137,16 +140,20 @@
       </el-table-column>
 
 
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right"  align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          </el-button>
+
+          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
@@ -190,6 +197,8 @@
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
+  import {checkPermission} from "../../../utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -220,6 +229,37 @@
         'device', 'rolePower', 'rolePower'
       ]),
 
+      //操作按钮控制
+      hasOperation(){
+        return this.hasEdit || this.hasDelete || this.hasView;
+      },
+      hasView(){
+        return !this.hasEdit;
+      },
+      hasEdit(){
+        return checkPermission('ProcurementOrderResource_update');
+      },
+      hasDelete:{
+        get(){
+          return checkPermission('ProcurementOrderResource_remove');
+        },
+        set(newValue){
+          return newValue;
+        }
+      },
+      hasSearch(){
+        if (this.type === 'all' || this.type === 'executing') {
+          return true;
+        }
+      },
+      hasStatus(){
+        if (this.type === 'complete' || this.type === 'editing') {
+          return false;
+        }
+        if (this.type === 'all' || this.type === 'executing') {
+          return true;
+        }
+      },
       // 显示进度条
       hasCompleteness() {
         if (this.type === 'editing') {
@@ -247,10 +287,7 @@
         //样式
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasEdit: true,
-        hasDelete: true,
+
         // 多选记录对象
         selected: [],
 
@@ -278,6 +315,7 @@
           supplierId: {value: null, op: 'in', id: 'supplierId'},
           name: {value: null, op: 'bw', id: 'name'},
           status: {value: null, op: 'eq', id: 'status'},
+          otdTime: {value: null, op: 'timeRange', id: 'otdTime'},
           code: {value: null, op: 'bw', id: 'name'},
         },
 
@@ -324,6 +362,9 @@
           }
           if (params.status) {
             this.searchParam.status.value = params.status;
+          }
+          if (params.otdTime) {
+            this.searchParam.otdTime.value = params.otdTime;
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
@@ -380,6 +421,18 @@
           this.tableMaxHeight = 400;
         }
       },
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
 
       /********************* 搜索相关方法  ***************************/
       /*搜索*/
@@ -403,6 +456,7 @@
         this.searchParam.supplierId.value = null;
         this.searchParam.name.value = null;
         this.searchParam.status.value = null;
+        this.searchParam.otdTime.value = null;
         this.searchParam.code.value = null;
 
         // 重置url
@@ -490,22 +544,39 @@
           return this.searchParam[k] && this.searchParam[k].value !== ''
             && this.searchParam[k].value !== null && this.searchParam[k].value !== undefined
         }).forEach(param => {
+
+       if(param == 'otdTime'){
           filters.push({
+            'field': param,
+            op: this.searchParam[param].op ? this.searchParam[param].op : 'eq',
+            data: this.searchParam[param].value ? encodeURIComponent(this.searchParam[param].value.toString().trim().replace("|",",")) : ''
+          })
+       }else{
+         filters.push({
             'field': param,
             op: this.searchParam[param].op ? this.searchParam[param].op : 'eq',
             data: this.searchParam[param].value ? encodeURIComponent(this.searchParam[param].value.toString().trim()) : ''
           })
+       }
+
         });
 
         filters.forEach((param, k) => {
-          searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
+          if(param.field == 'otdTime'){
+            //searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ?  decodeURIComponent(param.data.toString().trim()).replace(",","|") : '')
+            searchParams = searchParams + "&" + param.field + "=";
+            searchParams +=  param.data ?  decodeURIComponent(decodeURIComponent(param.data.toString().trim())).replace(",","|") :'';
+          }
+          else{
+            searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
+          }
         })
+
         filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -632,7 +703,7 @@
                 .delete(url)
                 .then(resp => {
                   this.loading = false
-                  this.$message.info("删除成功!");
+                  this.$message.success("删除成功!");
                   done()
                   this.getList()
                 })

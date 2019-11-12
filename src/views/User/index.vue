@@ -4,10 +4,15 @@
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
+          @onSetting="onSetting"
         >
         </ph-table>
       </div>
     </div>
+
+    <setting ref="setting">
+    </setting>
+
   </div>
 </template>
 
@@ -20,12 +25,28 @@
   import positionModel from '@/api/position'
   import userModel from '@/api/user'
   import validRules from '../../components/validRules'
+  import {checkPermission} from "../../utils/permission";
+  import setting from './components/setting'
 
   export default {
+    components: {
+      setting
+    },
+
     data() {
       return {
         title: '用户管理',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('UserResource_create'),
+          hasEdit: checkPermission('UserResource_update'),
+          hasDelete: checkPermission('UserResource_remove'),
+          // hasView: checkPermission('UserResource_get'),
+          hasExportTpl: checkPermission('UserResource_export'),
+          hasExport: checkPermission('UserResource_export'),
+          hasImport: checkPermission('UserResource_import'),
+          hasSetting: checkPermission('DataAuthorityResource_importData'),
+
           url: '/users',
           relations: ["creator", "department", "position", "parent"],
           tableAttrs: {
@@ -35,12 +56,10 @@
 
           tplNoExportProps: ['操作', '修改时间', '名称', 'ID', '创建人', '状态'],
           exportFileName: '用户列表',
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
+          operationAttrs: {width: '130', fixed: 'right'},
 
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('UserResource_remove') ? 'selection' : '', hidden: !checkPermission('UserResource_remove')},
             phColumns.id,
             {prop: 'account', label: '账号', "min-width": 200},
             {prop: 'name', label: '姓名', sortable: 'custom', "min-width": 100},
@@ -96,7 +115,7 @@
               label: '账号',
               $el: {
                 op: 'bw',
-                size:"mini",
+                size: "mini",
                 placeholder: '请输入账号',
                 clearable: true,
                 maxlength: "40",
@@ -110,7 +129,7 @@
               label: '状态',
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 placeholder: '请选择状态'
               },
               $options: phEnumModel.getSelectOptions('UserStatus')
@@ -167,8 +186,7 @@
                 placeholder: '请选择用户职位',
                 filterable: true,
               },
-              rules: [
-              ],
+              rules: [],
               $options: positionModel.getSelectOptions()
             },
             {
@@ -179,8 +197,7 @@
                 placeholder: '请选择用户的上级领导',
                 filterable: true,
               },
-              rules: [
-              ],
+              rules: [],
               $options: userModel.getSelectOptions(),
             },
             {
@@ -193,7 +210,7 @@
             },
             {
               $type: 'input',
-              $id: 'password',
+              $id: 'passwordText',
               label: '用户密码',
               $el: {
                 placeholder: '请输入用户密码,不输入不修改'
@@ -224,8 +241,8 @@
         }
       }
     },
-    computed: {}
-    ,
+
+    computed: {},
 
     methods: {
       // 状态样式
@@ -236,10 +253,11 @@
         else {
           return 'warning-row';
         }
+      },
+      onSetting(row) {
+        this.$refs.setting.openDiaLog(row.id, row.name);
       }
-      ,
-    }
-    ,
+    },
 
     // 观察data中的值发送变化后，调用
     watch: {}

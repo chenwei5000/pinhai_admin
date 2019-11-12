@@ -22,6 +22,7 @@
               type="datetime"
               @input="updateInput"
               style="width: 200px"
+              @change="loadOtdTime"
               placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
@@ -34,6 +35,7 @@
               size="mini"
               @input="updateInput"
               style="width: 200px"
+              @change="loadOtdTime"
               placeholder="请选择">
               <el-option label="海运" value="海运"></el-option>
               <el-option label="空运" value="空运"></el-option>
@@ -47,6 +49,7 @@
               v-model="editObject.portOfLoading"
               size="mini"
               style="width: 200px"
+              @change="loadOtdTime"
               @input="updateInput"
               placeholder="请选择">
               <el-option
@@ -88,6 +91,7 @@
               size="mini"
               style="width: 200px"
               filterable
+              @change="loadOtdTime"
               @input="updateInput"
               placeholder="请选择发货仓库">
               <el-option
@@ -106,6 +110,7 @@
               v-model="editObject.toWarehouseId"
               size="mini"
               style="width: 200px"
+              @change="loadOtdTime"
               filterable
               placeholder="请选择">
               <el-option
@@ -171,6 +176,24 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="预计到港时间" prop="otdTime" ref="otdTime" v-if="editObject.otdTime">
+            <span style="font-size: 12px">{{editObject.otdTime.time}},距离开船日{{editObject.otdTime.week}}周</span>
+          </el-form-item>
+        </el-col>
+
+         <el-col :md="8">
+          <el-form-item label="下次发柜时间" prop="nextDeliveryTime" ref="nextDeliveryTime" >
+            <el-date-picker
+              size="mini"
+              v-model="editObject.nextDeliveryTime"
+              type="datetime"
+              style="width: 200px"
+              placeholder="选择日期时间">
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
       </el-row>
 
       <el-row>
@@ -208,6 +231,8 @@
   import {intArrToStrArr} from '@/utils'
   import harbourModel from "@/api/harbour";
   import categoryModel from "@/api/category";
+  import moment from 'moment';
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -219,7 +244,12 @@
     },
     computed: {
       hasEdit() {
-        return true;
+
+        if([8,9,10,11].indexOf(this.primary.status) > -1){
+          return false;
+        }
+
+        return checkPermission('LinerShippingPlanResource_update');
       }
     },
 
@@ -295,6 +325,8 @@
           //转化分类
           this.editObject.categoryId = intArrToStrArr(this.editObject.categoryId);
 
+          this.loadOtdTime();
+
           // 仓库信息
           let warehousesUrl = `/warehouses?filters={"groupOp":"AND","rules":[{"field":"status","op":"eq","data":"1"}]}&sort=type asc,name`;
           this.global.axios(warehousesUrl).then(data => {
@@ -328,9 +360,23 @@
           this.loading = false;
         }
         else {
-          this.$message.error("无效的出口计划!");
+          this.$message.error("无效的物流计划!");
           this.loading = false;
         }
+      },
+
+      loadOtdTime() {
+        let url = `/amazonStocks/shippings/otdTime?etdTime=${moment(this.editObject.etdTime).format("YYYY-MM-DD")}
+        &portOfLoading=${this.editObject.portOfLoading}
+        &toWarehouse=${this.editObject.toWarehouse.address}
+        &shipmentType=${this.editObject.type}`;
+        this.global.axios.get(url)
+          .then(data => {
+            //  解决不渲染的问题
+            this.$set(this.editObject , "otdTime", data.data || {});
+          })
+          .catch(err => {
+          })
       },
 
       updateInput(val) {
@@ -378,4 +424,3 @@
 <style type="text/less" lang="scss" scoped>
 
 </style>
-

@@ -89,6 +89,7 @@
         this.dialogVisible = false;
         this.newObject = {};
         this.stepsActive = 0;
+        this.$emit("smartEvent", 0);
       },
 
       step1CBEvent(object){
@@ -97,6 +98,10 @@
       },
       step2CBEvent(step){
         this.stepsActive = step;
+        if(step == 3){
+          this.closeDialog();
+          this.$emit("smartEvent", 0);
+        }
       }
     }
   }

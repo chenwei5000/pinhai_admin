@@ -2,40 +2,82 @@
   <div class="app-container">
     <div class="ph-card">
       <div class="ph-card-body">
-        <roleTable
-        @openRoleList="openRoleList"
-        ></roleTable>
+        <ph-table
+          v-bind="tableConfig"
+          @onSetting="onSetting"
+        >
+        </ph-table>
       </div>
     </div>
 
-    <roleList
-    ref="roleList"
-    >
+    <roleList ref="roleList">
     </roleList>
   </div>
 </template>
 
 <script>
 
-  import roleTable from './components/table'
+  import phColumns from '../../components/phColumns'
+  import phFromItems from '../../components/phFromItems'
+  import phSearchItems from '../../components/phSearchItems'
+  import phEnumModel from '@/api/phEnum'
+  import validRules from '../../components/validRules'
+  import {checkPermission} from "../../utils/permission";
   import roleList from './components/roleList'
 
   export default {
     name: 'roleMgr',
     components: {
-      roleTable,
       roleList
     },
 
     data() {
       return {
-        title: '角色管理'
+        title: '角色管理',
+        tableConfig: {
+          //权限控制
+          hasNew: checkPermission('UserResource_create'),
+          hasEdit: checkPermission('UserResource_update'),
+          hasDelete: checkPermission('UserResource_remove'),
+          //hasImport: checkPermission('UserResource_import'),
+
+          url: '/roles',
+          relations: [],
+          tableAttrs: {
+            "row-class-name": this.statusClassName
+          },
+          //工具按钮
+          hasSetting: true,
+          operationAttrs: {width: '120', fixed: 'right'},
+
+          columns: [
+            {width: 30, type: checkPermission('UserResource_remove') ? 'selection' : '', hidden: !checkPermission('UserResource_remove')},
+            phColumns.id,
+            {prop: 'name', label: '名称', sortable: 'custom', "min-width": 100},
+            phColumns.status,
+            phColumns.lastModified
+          ],
+
+          // 搜索区块定义
+          searchForm: [
+            phSearchItems.name,
+            phSearchItems.status()
+          ],
+          //  弹窗表单, 用于新增与修改
+          form: [
+            phFromItems.name(),
+            phFromItems.status(),
+          ],
+          //提交后执行
+          afterConfirm: () => {
+          }
+        }
       }
     },
     computed: {},
     methods: {
-      openRoleList(id, name) {
-        this.$refs.roleList.$emit('openDiaLog', id, name)
+      onSetting(row) {
+        this.$refs.roleList.openDiaLog(row.id, row.name);
       }
     },
     watch: {}

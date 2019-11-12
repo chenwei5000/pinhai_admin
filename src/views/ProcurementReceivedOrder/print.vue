@@ -10,7 +10,7 @@
         发货单位：{{primary.procurementOrder.supplier.name}}
       </el-col>
       <el-col :span="8" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}}
+        物流单号: {{primary.trackNumber ? primary.trackNumber : '无'}}
       </el-col>
       <el-col :span="8" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
         接收单位：品海科技 {{primary.warehouse.name}}
@@ -36,7 +36,7 @@
         <el-table-column prop="product.name" label="名称" width="256">
         </el-table-column>
 
-        <el-table-column prop="product.name" label="规格型号" width="150">
+        <el-table-column prop="product.model" label="规格型号" width="150">
           <template slot-scope="scope">
             {{scope.row.product.model}} , {{scope.row.product.color}}
           </template>
@@ -91,7 +91,7 @@
         <tr height="100">
           <td align="center" width="90" style="border: 1px solid #000;border-top: 0;font-weight: bold">物流信息</td>
           <td width="320" style="border: 1px solid #000;border-top: 0;">
-            物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}} <BR/>
+            物流单号: {{primary.trackNumber ? primary.trackNumber : '无'}} <BR/>
             物流公司: {{primary.channel ? primary.channel : '无'}} <BR/>
             车牌: {{primary.plateNumber ? primary.plateNumber : '无'}} <BR/>
             联系人: {{primary.linkman ? primary.linkman : '无'}} <BR/>

@@ -10,7 +10,12 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <el-button size="mini" @click="closeDialog">取 消</el-button>
+      <el-button type="primary" icon="el-icon-truck" @click="onCompleteAllocation" v-if="hasCommit"
+                 size="small">
+        发布计划
+      </el-button>
+
+      <el-button size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
 
@@ -32,7 +37,7 @@
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="ship" class="fontColor" lazy>
             <span slot="label">
-              <i class="el-icon-ship"></i> 物流信息
+              <i class="el-icon-truck"></i> 物流信息
             </span>
             <keep-alive>
               <shipFrom @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></shipFrom>
@@ -45,9 +50,20 @@
               <i class="el-icon-s-order"></i> 产品明细
             </span>
             <keep-alive>
-              <detail :primary="primary"></detail>
+              <detail :primary="primary" @modifiedInfoCBEvent="onModifiedCBEvent" ></detail>
             </keep-alive>
           </el-tab-pane>
+
+          <!-- TODO: name 根据实际情况修改 -->
+          <el-tab-pane name="logisticPayment" lazy>
+            <span slot="label">
+              <i class="el-icon-money"></i> 物流付款
+            </span>
+            <keep-alive>
+              <logisticPayment @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></logisticPayment>
+            </keep-alive>
+          </el-tab-pane>
+
 
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="executing" lazy>
@@ -58,6 +74,7 @@
               <person @modifiedInfoCBEvent="onModifiedCBEvent" :primary="primary"></person>
             </keep-alive>
           </el-tab-pane>
+
 
           <!-- TODO: name 根据实际情况修改 -->
           <el-tab-pane name="complete" lazy>
@@ -72,6 +89,11 @@
         </el-tabs>
       </div>
     </div>
+
+
+    <allocationDialog ref="allocationDialog">
+    </allocationDialog>
+
   </el-dialog>
 </template>
 
@@ -81,8 +103,10 @@
   import person from './person';
   import attachment from './attachment';
   import detail from './table';
-
+  import logisticPayment from '../logisticPayment/table'
   import planModel from "@/api/linerShippingPlan";
+  import allocationDialog from './allocationDialog';
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     props: {},
@@ -92,18 +116,27 @@
       shipFrom,
       person,
       attachment,
-      detail
+      detail,
+      logisticPayment,
+      allocationDialog
     },
 
     computed: {
       dialogTitle() {
         if (this.primary != null && this.primary.code) {
-          return `编辑出口计划-编号[${this.primary.code}], 开船时间[${this.primary.formatEtdTime}], 发货港口[${this.primary.portOfLoading}], 品类[${this.primary.categoryName}], 发货仓库[${this.primary.fromWarehouse ? this.primary.fromWarehouse.name : ''}], 收货仓库[${this.primary.toWarehouse ? this.primary.toWarehouse.name : ''}]`;
+          return `编辑物流计划-编号[${this.primary.code}], 开船时间[${this.primary.formatEtdTime}], 发货港口[${this.primary.portOfLoading}], 品类[${this.primary.categoryName}], 发货仓库[${this.primary.fromWarehouse ? this.primary.fromWarehouse.name : ''}], 收货仓库[${this.primary.toWarehouse ? this.primary.toWarehouse.name : ''}]`;
         }
         else {
-          return "编辑出口计划";
+          return "编辑物流计划";
         }
       },
+      hasCommit(){
+        if([1,2,3,4].indexOf(this.primary.status) === -1){
+          return false;
+        }
+
+        return checkPermission('LinerShippingPlanResource_postPlan');
+      }
     },
     mounted() {
     },
@@ -197,7 +230,11 @@
         this.$emit("modifiedInfoCBEvent", obj);
         let title = planModel.generateEventTitle(obj);
         this.$emit("editCalendarEvent", obj, title);
-      }
+      },
+
+      onCompleteAllocation(){
+        this.$refs.allocationDialog.openDialog(this.primary);
+      },
     }
   };
 </script>

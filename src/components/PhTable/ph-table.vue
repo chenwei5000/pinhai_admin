@@ -65,6 +65,7 @@
 
     <!--新增、编辑-->
     <tableToolBar
+      ref="tableToolBar"
       v-bind="toolbarConfig"
       @onToolBarAdd="onToolBarAdd"
       @onToolBarEdit="onToolBarEdit"
@@ -86,6 +87,7 @@
       header-cell-class-name="ph-cell-header"
       v-loading="loading"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       @sort-change='handleSortChange'
       id="ph-table"
       @filter-change="handleFilterChange"
@@ -95,7 +97,7 @@
 
         <!--有多选-->
         <template v-if="hasSelect">
-          <el-table-column key="selection-key" v-bind="columns[0]">
+          <el-table-column key="selection-key" v-bind="columns[0]" align="center">
           </el-table-column>
 
           <el-table-column
@@ -158,16 +160,15 @@
           :key="col.prop"
           v-bind="col"
           v-if="!col.hidden"
+          :align="col.align ? col.align : 'center'"
         >
-
-
         </el-table-column>
 
       </template>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       v-bind="operationAttrs"
+                       v-bind="operationAttrs" align="center"
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="mini"
@@ -179,21 +180,18 @@
           <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
                      @click="onDefaultView(scope.row)">
           </el-button>
-          <self-loading-button v-for="(btn, i) in extraButtons"
-                               v-if="'show' in btn ? btn.show(scope.row) : true"
-                               v-bind="btn"
-                               :click="btn.atClick"
-                               :params="scope.row"
-                               :callback="getList"
-                               :key="i"
-                               size="mini"
-          >
-            {{btn.text}}
-          </self-loading-button>
+
           <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
+
+          <el-button v-if="hasSetting" type="warning" size="mini"
+                     id="ph-table-setting" icon="el-icon-setting" circle
+                     @click="onDefaultSetting(scope.row)">
+          </el-button>
+
+
         </template>
       </el-table-column>
 
@@ -259,6 +257,7 @@
   import rangeFilter from './Filters/range.vue'
   import {doDeleteFilter} from './js/index.js'
   import tableToolBar from '@/components/PhTableToolBar'
+  import {getObjectValueByArr} from "../../utils";
 
   const myFilterComponts = {
     edit: editFilter,
@@ -344,9 +343,18 @@
         type: String,
         default: '/count'
       },
+
+      importMethod: {
+        type: String,
+        default: 'post'
+      },
       maxUploadCount: {
         type: Number,
         default: 1
+      },
+      subHeight: {
+        type: Number,
+        default: 0
       },
       tplNoExportProps: {
         type: Array,
@@ -504,6 +512,11 @@
         type: Boolean,
         default: true
       },
+
+      hasSetting: {
+        type: Boolean,
+        default: false
+      },
       /**
        * 某行数据是否可以删除, 返回true表示可以, 控制的是单选时单行的删除按钮
        */
@@ -624,7 +637,7 @@
       operationAttrs: {
         type: Object,
         default() {
-          return {width: '100', fixed: 'right'}
+          return {width: '80', fixed: 'right'}
         }
       },
       /**
@@ -730,6 +743,12 @@
         default() {
           return []
         }
+      },
+      defalutSort:{
+        type: String,
+        default() {
+          return null
+        }
       }
     },
     data() {
@@ -740,7 +759,7 @@
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
         page: defaultFirstPage,
-        phSort: null,
+        phSort: this.defalutSort,
         defaultTableAttrs: {
           'style': "width: 100%",
           stripe: true,
@@ -805,7 +824,7 @@
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       },
       hasOperation() {
-        return this.hasEdit || this.hasDelete;
+        return this.hasEdit || this.hasDelete || this.hasSetting || this.hasView;
       }
     },
 
@@ -865,7 +884,9 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+
+          tableHeight = tableHeight - (this.$refs.tableToolBar && this.$refs.tableToolBar.$el.offsetHeight ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
+          tableHeight = tableHeight - this.subHeight;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -883,7 +904,14 @@
         let query = Object.assign({}, formQuery, this.customQuery)
 
         let url = this.url;
-        let countUrl = this.url + this.countUrl;
+        let countUrl = null;
+        if(this.countUrl.indexOf("#") === 0){
+          countUrl = this.countUrl.replace("#","");
+        }
+        else{
+          countUrl = this.url + this.countUrl;
+        }
+
         let params = ''
         let searchParams = ''
         let size = this.hasPagination ? this.size : this.noPaginationSize
@@ -1174,17 +1202,8 @@
       },
 
       onDefaultView(row) {
-        this.row = row
-        this.isView = true
-        this.isNew = false
-        this.isEdit = false
-        this.dialogTitle = this.dialogViewTitle
-        this.dialogVisible = true
-
-        // 给表单填充值
-        this.$nextTick(() => {
-          this.$refs[dialogForm].updateForm(row)
-        })
+        this.$emit("onView", row);
+        return false;
       },
 
       onDefaultEdit(row) {
@@ -1366,6 +1385,23 @@
           /*取消*/
         })
       },
+
+      onDefaultSetting(row) {
+        this.$emit("onSetting", row);
+        return false;
+      },
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
       // 树形table相关
       // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/components/TreeTable
       tree2Array(data, expandAll, parent = null, level = null) {
@@ -1459,6 +1495,7 @@
         let downloadUrl = this.downloadUrl;
         downloadUrl = downloadUrl.replace(/pageSize=\d*/, 'pageSize=-1');
         downloadUrl = downloadUrl.replace(/currentPage=\d*/, 'currentPage=1');
+
         import('@/vendor/Export2Excel').then(excel => {
           this.loading = true;
           excel.export_el_table_to_excel({
@@ -1472,8 +1509,11 @@
       },
 
       uploadPromise(res) {
-        let url = this.url + '';
-        return this.global.axios.post(url, res)
+        let url = this.url;
+        if (this.importMethod != "post") {
+          url = `${url}/${res.id}`;
+        }
+        return this.global.axios[this.importMethod](url, res)
           .then(resp => {
           })
           .catch(err => {
@@ -1526,6 +1566,9 @@
                   }
                 }
               }
+              if (prop == 'accountCardHide') {
+                prop = 'accountCard'
+              }
               _res[prop] = obj[_head];
             }
           });
@@ -1549,7 +1592,7 @@
         }
 
         loading.close();
-        this.$message.info("导入成功");
+        this.$message.success("导入成功");
         this.getList();
       }
     }

@@ -1,6 +1,8 @@
 <template>
 
-  <el-dialog title="智能备货" v-if="dialogVisible" :visible.sync="dialogVisible" @close='closeDialog' fullscreen>
+  <el-dialog title="智能备货" class="ph-dialog"
+             v-if="dialogVisible" :visible.sync="dialogVisible"
+             @close='closeDialog' fullscreen>
 
     <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
     <div class="ph-table">
@@ -33,6 +35,7 @@
         :row-class-name="dangerClassName"
         cell-class-name="ph-cell"
         header-cell-class-name="ph-cell-header"
+        @cell-dblclick="handleDblclick"
         :data="tableData"
         v-loading="loading"
         show-summary
@@ -43,75 +46,47 @@
       >
         <el-table-column
           type="selection"
-          width="50">
+          width="30"
+          align="center">
         </el-table-column>
 
-        <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.skuCode && scope.row.skuCode.length > 22">
-              <div v-html="scope.row.skuCode"></div>
-              <span slot="reference">{{
-              scope.row.skuCode ? scope.row.skuCode.length > 22 ? scope.row.skuCode.substr(0,20)+'..' : scope.row.skuCode : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
+        <el-table-column prop="skuCode" label="SKU" sortable width="150" fixed="left" align="center">
+        </el-table-column>
+
+        <el-table-column prop="productImgUrl" label="图片" width="40">
+          <template slot-scope="scope" v-if="scope.row.productImgUrl">
+            <el-image
+              :z-index="10000"
+              style="width: 30px; height: 30px;margin-top: 5px"
+              :src="scope.row.productImgUrl"
+              :preview-src-list="[scope.row.productImgUrl.replace('_SL75_','_SL500_')]" lazy>
+            </el-image>
           </template>
         </el-table-column>
 
-        <el-table-column prop="categoryName" label="分类" width="100"></el-table-column>
+        <el-table-column prop="categoryName" label="分类" width="100" align="center"></el-table-column>
 
-        <el-table-column prop="groupName" label="款式" width="150">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.groupName && scope.row.groupName.length > 12">
-              <div v-html="scope.row.groupName"></div>
-              <span slot="reference">{{
-              scope.row.groupName ? scope.row.groupName.length > 12 ? scope.row.groupName.substr(0,10)+'..' : scope.row.groupName : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.groupName }}
-            </span>
-          </template>
+        <el-table-column prop="groupName" label="款式" width="150" align="center"></el-table-column>
 
-        </el-table-column>
+        <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
+        <el-table-column prop="safetyWeek" label="备货周数" width="80" align="center"></el-table-column>
+        <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="120" align="center"></el-table-column>
+        <el-table-column prop="sevenAmendQty" sortable label="7日销量(件)" width="120" align="center"></el-table-column>
+        <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="180" align="center"></el-table-column>
+        <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="120" align="center"></el-table-column>
+        <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="120" align="center"></el-table-column>
+        <el-table-column prop="productName" label="名称" width="200"></el-table-column>
 
-        <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-        <el-table-column prop="safetyWeek" label="备货周数" width="80"></el-table-column>
-        <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="120"></el-table-column>
-        <el-table-column prop="sevenAmendQty" sortable label="7日销量(件)" width="120"></el-table-column>
-        <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="180"></el-table-column>
-        <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="120"></el-table-column>
-        <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="120"></el-table-column>
+        <el-table-column prop="fnSku" label="FNSKU" min-width="120" align="center"></el-table-column>
+        <el-table-column prop="vipLevel" label="Vip级别" width="100" align="center"></el-table-column>
+        <el-table-column prop="cartonSpecCode" label="箱规" width="120" v-if="false" align="center"></el-table-column>
+        <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120" align="center"></el-table-column>
 
-        <el-table-column prop="productName" label="名称" width="200">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.productName && scope.row.productName.length > 17">
-              <div v-html="scope.row.productName"></div>
-              <span slot="reference">{{
-              scope.row.productName ? scope.row.productName.length > 17 ? scope.row.productName.substr(0,15)+'..' : scope.row.productName : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.productName }}
-            </span>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="fnSku" label="FNSKU" min-width="120"></el-table-column>
-        <el-table-column prop="vipLevel" label="Vip级别" width="100"></el-table-column>
-        <el-table-column prop="cartonSpecCode" label="箱规" width="120" v-if="false"></el-table-column>
-        <el-table-column prop="numberOfPallets" label="托盘装箱数" width="120"></el-table-column>
-
-        <el-table-column prop="saleWeek" sortable label="可售周数" width="100" fixed="right"></el-table-column>
+        <el-table-column prop="saleWeek" sortable label="可售周数" width="100" fixed="right" align="center"></el-table-column>
         <el-table-column prop="replenishmentCartonPlanQty" sortable label="采购箱数" width="100"
-                         fixed="right"></el-table-column>
+                         fixed="right" align="center"></el-table-column>
         <!--默认操作列-->
-        <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
+        <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right" align="center">
           <template slot-scope="scope">
 
             <el-button v-if="hasDelete" type="danger" size="mini"
@@ -125,10 +100,10 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" :loading="confirmLoading" @click="onCreateObject">
+      <el-button type="primary" :loading="confirmLoading"  size="mini" @click="onCreateObject">
         生成采购计划
       </el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button @click="closeDialog"  size="mini">取 消</el-button>
     </div>
 
 
@@ -138,6 +113,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {},
@@ -216,6 +192,19 @@
         }
         else {
           this.tableMaxHeight = 400;
+        }
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
         }
       },
 

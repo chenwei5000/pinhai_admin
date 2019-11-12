@@ -232,7 +232,9 @@ aside {
     }
     /deep/ .cell {
       line-height: 100% !important;
-      padding: 2px !important;
+      padding: 3px 2px !important;
+      min-height: 24px;
+
     }
 
     /deep/ .ph-cell-header {
@@ -255,6 +257,15 @@ aside {
     /deep/ .sort-caret.descending{
       bottom: 0;
     }
+    /deep/ .el-table__footer .is-leaf{
+      font-weight: bold;
+      padding: 5px 0 !important;
+    }
+
+    /deep/ .el-textarea__inner {
+      font-size: 12px !important;
+    }
+
   }
 
   .el-form {
@@ -275,6 +286,9 @@ aside {
       font-size: 13px !important;
     }
     /deep/ .el-input__inner {
+      font-size: 12px !important;
+    }
+    /deep/ .el-textarea__inner {
       font-size: 12px !important;
     }
   }
@@ -313,6 +327,9 @@ aside {
       font-size: 13px !important;
     }
     /deep/ .el-input__inner {
+      font-size: 12px !important;
+    }
+    /deep/ .el-textarea__inner {
       font-size: 12px !important;
     }
   }

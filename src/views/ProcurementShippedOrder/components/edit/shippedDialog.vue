@@ -124,8 +124,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">发 货</el-button>
-      <el-button @click="closeDialog">取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">发 货</el-button>
+      <el-button @click="closeDialog" size="mini" >取 消</el-button>
     </div>
 
   </el-dialog>
@@ -220,7 +220,7 @@
           let _object = JSON.parse(JSON.stringify(this.editObject));
           this.global.axios.put(url, _object)
             .then(resp => {
-              this.$message.info("发货成功");
+              this.$message.success("发货成功");
               loading.close();
               this.closeDialog();
               this.$emit("shippedCBEvent", resp.data);

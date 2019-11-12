@@ -37,8 +37,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" :loading="confirmLoading">确认</el-button>
-      <el-button @click="closeDialog">关 闭</el-button>
+      <el-button type="primary" @click="onSave" size="mini"  :loading="confirmLoading">确认</el-button>
+      <el-button @click="closeDialog" size="mini" >关 闭</el-button>
     </div>
 
   </el-dialog>
@@ -132,7 +132,7 @@
 
           this.global.axios.put(`/exportAllocations/linerShippedOrder/${this.primary.id}`, _object)
             .then(resp => {
-              this.$message.info("发货完成");
+              this.$message.success("发货完成");
               loading.close();
               this.$emit("modifyCBEvent", resp.data);
               this.closeDialog();
