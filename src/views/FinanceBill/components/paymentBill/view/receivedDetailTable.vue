@@ -20,6 +20,7 @@
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
+
     >
       <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
       </el-table-column>
@@ -124,16 +125,15 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementOrderItems", // 资源URL
-        downloadUrl: "", //下载Url
+        url: "/procurementReceivedOrderItems", // 资源URL
         filters: [
           {
-            field: "procurementOrderId",
+            field: "procurementShippedOrderId",
             op: 'eq',
-            data: this.primary && this.primary.settlementBill.procurementOrder ? this.primary.settlementBill.procurementOrder.id : -1
+            data: this.primary ? this.primary.settlementBill.procurementShippedOrderId : -1
           }
-        ],   //搜索对象
-        relations: ["cartonSpec", "product", "product.category"],  // 关联对象
+        ],
+        relations: ["product","cartonSpec","procurementShippedOrder","procurementOrderItem","storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
