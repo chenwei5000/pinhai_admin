@@ -18,12 +18,12 @@
       </el-collapse-item>
 
       <el-collapse-item name="detailTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购产品明细   [{{this.primary.procurementOrderId}}]</div>
+        <div slot="title" class="title">2. 采购产品明细   [{{this.primary.settlementBill.procurementOrder.formatCreateTime}}]</div>
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
       <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 收货明细</div>
+        <div slot="title" class="title">3. 收货明细  </div>
         <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
       </el-collapse-item>
 
@@ -115,9 +115,7 @@
     data() {
       return {
         primaryId: null,  //主ID
-        primary: {
-
-        }, //主对象
+        primary: {}, //主对象
         primaryComplete: false,
         dialogVisible: false, //Dialog 是否开启
         confirmLoading: false,
@@ -135,7 +133,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "procurementOrder","currency", "creator", "settlementBill", "settlementBill.procurementOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
+          let relations = ["supplier", "procurementShippedOrder","procurementOrder","currency", "creator", "settlementBill", "settlementBill.procurementOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
           //获取计划数据
           this.global.axios
             .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)
