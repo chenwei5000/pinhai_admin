@@ -23,7 +23,7 @@
       </el-collapse-item>
 
       <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 收货明细 </div>
+        <div slot="title" class="title">3. 收货明细  [{{this.primary.settlementBill.procurementShippedOrder.formatCreateTime}}]</div>
         <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
       </el-collapse-item>
 
@@ -133,7 +133,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "procurementShippedOrder","procurementOrder","currency", "creator", "settlementBill", "settlementBill.procurementOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
+          let relations = ["supplier", "procurementShippedOrder","procurementOrder","currency", "creator", "settlementBill", "settlementBill.procurementOrder","settlementBill.procurementShippedOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
           //获取计划数据
           this.global.axios
             .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)

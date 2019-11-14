@@ -159,6 +159,7 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
+        console.log(this.primary)
       },
 
       /********************* 表格相关方法  ***************************/

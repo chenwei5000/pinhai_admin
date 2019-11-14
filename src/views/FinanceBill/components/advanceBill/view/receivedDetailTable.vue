@@ -20,7 +20,10 @@
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
+
     >
+      <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
+
       <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
       </el-table-column>
 
@@ -35,42 +38,43 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="90" align="center">
+
+      <el-table-column prop="product.name" label="名称" width="200">
         <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 10
-            ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
+          <el-popover placement="top-start" width="200" trigger="hover"
+                      v-if="scope.row.product.name && scope.row.product.name.length > 17">
+            <div v-html="scope.row.product.name"></div>
+            <span slot="reference">{{
+              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
+              }}</span>
+          </el-popover>
+          <span v-else>
+            {{ scope.row.product.name }}
+            </span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" sortable min-width="150"></el-table-column>
-      <el-table-column prop="boxCode" label="箱码" width="90"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="100"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
 
-      <el-table-column prop="receivedNote" label="异常备注" width="120">
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+
+      <el-table-column prop="procurementBoxQty" sortable :label="procurementBoxQtyTitle"
+                       min-width="110"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110"></el-table-column>
+      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110"></el-table-column>
+
+      <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="异常备注" width="250" trigger="hover"
-                      v-if="scope.row.receivedNote && scope.row.receivedNote.length > 10">
-            <div v-html="scope.row.receivedNote"></div>
-            <span slot="reference">{{ scope.row.receivedNote ? scope.row.receivedNote.substr(0,8)+'..' : '' }}</span>
+          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
+                      v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
+            <div v-html="scope.row.formatShippedNote"></div>
+            <span slot="reference">{{ scope.row.shippedNote ? scope.row.shippedNote.substr(0,8)+'..' : '' }}</span>
           </el-popover>
           <span v-else>
-            {{ scope.row.receivedNote }}
+            {{ scope.row.shippedNote }}
           </span>
         </template>
       </el-table-column>
-
-      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="120" fixed="right"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right"></el-table-column>
-
     </el-table>
 
   </div>
@@ -87,7 +91,7 @@
     props: {
       primary: {
         type: [Object],
-        default: null
+        default: null,
       }
     },
     computed: {
@@ -95,6 +99,13 @@
         'device',
         'rolePower'
       ]),
+      procurementBoxQtyTitle() {
+        return `采购数量(${this.unit})`;
+      },
+      shippedQtyTitle() {
+        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
+      },
+
       hasExecute() {
         if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return true;
@@ -124,16 +135,15 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementOrderItems", // 资源URL
-        downloadUrl: "", //下载Url
+        url: "/procurementShippedOrderItems", // 资源URL
         filters: [
           {
-            field: "procurementOrderId",
+            field: "procurementShippedOrderId",
             op: 'eq',
-            data: this.primary && this.primary.settlementBill.procurementOrder ? this.primary.settlementBill.procurementOrder.id : -1
+            data: this.primary  ? this.primary.procurementOrder.id: -1
           }
-        ],   //搜索对象
-        relations: ["cartonSpec", "product", "product.category"],  // 关联对象
+        ],
+        relations: ["product","cartonSpec","procurementShippedOrder","procurementShippedOrderItem","procurementOrderItem","storageLocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -223,6 +233,8 @@
         let url = this.url;
         let params = '';
 
+        console.log(this.primary)
+
         if (!url) {
           console.warn('url 为空, 不发送请求')
           return
@@ -240,32 +252,52 @@
 
         // 请求开始
         this.loading = true
+        filters: [
+          {
+            field: "procurementShippedOrderId",
+            op: 'eq',
+            data: this.primary  ? this.primary.procurementOrder.id: -1
+          }
+        ],
 
         //获取数据
         this.global.axios
-          .get(url + params)
+          .get("/procurementShippedOrders" + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": [
+              {
+                field: "procurementOrderId",
+                op: 'eq',
+                data: this.primary  ? this.primary.procurementOrder.id: -1
+              }
+            ]}))
           .then(resp => {
-            let res = resp.data
-            let data = res || []
-
-            this.data = data
-            this.search()
-
-            this.total = res.length || 0
-            this.loading = false
-            /**
-             * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
-             * @event update
-             */
-            this.$emit('update', data, res)
-          })
-          .catch(err => {
-            /**
-             * 请求数据失败，返回err对象
-             * @event error
-             */
-            this.$emit('error', err)
-            this.loading = false
+            let res = resp.data;
+            let orders = "";
+            res.forEach( item => {
+              orders = orders + item.id + ","
+            })
+            orders = orders.substr(0, orders.length - 1)
+            let filters = [
+              {
+                field: "procurementShippedOrderId",
+                op: 'in',
+                data: orders
+              }
+            ]
+            this.global.axios
+              .get(this.url + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters}))
+              .then(resp => {
+                let res = resp.data
+                let data = res || []
+                this.data = data
+                this.search()
+                this.total = res.length || 0
+                this.loading = false
+                this.$emit('update', data, res)
+              })
+              .catch(err => {
+                this.$emit('error', err)
+                this.loading = false
+              })
           })
       },
 
