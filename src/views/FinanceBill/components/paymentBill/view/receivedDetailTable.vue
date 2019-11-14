@@ -22,8 +22,7 @@
       id="table"
 
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
-      </el-table-column>
+      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150"></el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40">
         <template slot-scope="scope"  v-if="scope.row.product.imgUrl">

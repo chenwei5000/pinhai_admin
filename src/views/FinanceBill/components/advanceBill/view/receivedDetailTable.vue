@@ -22,7 +22,6 @@
       id="table"
 
     >
-      <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
 
       <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
       </el-table-column>
@@ -38,6 +37,18 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="statusName" label="状态" width="90" align="center">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.status === 1
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : scope.row.status === 2
+            ? 'primary' : scope.row.status === 10
+            ? 'info' : 'success'"
+            disable-transitions>{{ scope.row.statusName }}
+          </el-tag>
+        </template>
+      </el-table-column>
 
       <el-table-column prop="product.name" label="名称" width="200">
         <template slot-scope="scope">
@@ -58,10 +69,10 @@
 
       <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
 
-      <el-table-column prop="procurementBoxQty" sortable :label="procurementBoxQtyTitle"
+      <el-table-column prop="procurementBoxQty"  label="采购箱数"
                        min-width="110"></el-table-column>
       <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110"></el-table-column>
-      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110"></el-table-column>
+      <el-table-column prop="shippedQty" label="应发件数" min-width="110"></el-table-column>
 
       <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
@@ -284,8 +295,12 @@
               }
             ]
             this.global.axios
-              .get(this.url + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters}))
+              .get(this.url + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters})+"&relations=" + JSON.stringify(this.relations))
               .then(resp => {
+                if(this.primary.procurementOrderId = null )
+                {
+                  return null
+                }
                 let res = resp.data
                 let data = res || []
                 this.data = data

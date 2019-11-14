@@ -18,7 +18,7 @@
       </el-collapse-item>
 
       <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 收货明细   [{{this.primary.procurementOrder.formatCreateTime}}]</div>
+        <div slot="title" class="title" >3. 收货明细 </div>
         <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
       </el-collapse-item>
 
@@ -82,7 +82,7 @@
       },
       title() {
         return `预付款单 [${this.primary.code}]`;
-      }
+      },
     },
 
     data() {
