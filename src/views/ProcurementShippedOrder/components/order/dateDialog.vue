@@ -17,7 +17,7 @@
       >
         <el-row>
           <el-col :md="24">
-            <el-form-item label="预计交货日期" prop="otdTime">
+            <el-form-item label="期望交货日期" prop="otdTime">
               <el-date-picker
                 v-model="detailItem.otdTime"
                 type="date"

@@ -13,7 +13,7 @@
               <i class="el-icon-date"></i> 确认交货日期
             </span>
             <keep-alive>
-              <phTab type="completionDate" ref="completionDate"/>
+              <unPlanTable ref="completionDate" />
             </keep-alive>
           </el-tab-pane>
 
@@ -76,12 +76,14 @@
 
 <script>
   import phTab from './components/tab'
+  import unPlanTable from './components/deliveryPlan/unPlanTable'
 
   const actionFlag = 's='
 
   export default {
 
     components: {
+      unPlanTable,
       phTab
     },
 
@@ -90,8 +92,8 @@
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'executing')
-          : 'executing',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'completionDate')
+          : 'completionDate',
       }
     },
 

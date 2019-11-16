@@ -37,7 +37,7 @@
         </el-select>
       </el-form-item>
 
-     <el-form-item label="预计交货日期">
+     <el-form-item label="期望交货日期">
         <el-date-picker
           size="mini"
           v-model="searchParam.otdTime.value"
@@ -124,7 +124,7 @@
 
       <el-table-column prop="accountPeriod" label="帐期(天)" width="90" align="center"></el-table-column>
 
-      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100" align="center"></el-table-column>
+      <el-table-column prop="formatOtdTime" label="期望交货日期" width="100" align="center"></el-table-column>
 
       <el-table-column prop="procurementPlan.note" label="交货要求" width="130" align="center">
         <template slot-scope="scope">

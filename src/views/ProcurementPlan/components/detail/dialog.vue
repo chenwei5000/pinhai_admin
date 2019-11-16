@@ -166,60 +166,6 @@
 
         </el-row>
 
-        <el-row v-if="false">
-          <el-col :md="14" v-if="false">
-            <el-form-item label="优先级" prop="priority">
-
-              <el-select v-model="detailItem.priority"
-                         filterable
-                         style="width: 160px"
-                         placeholder="请选择优先级,可筛选">
-
-                <el-option
-                  v-for="(item,idx) in prioritySelectOptions"
-                  :label="item.label" :value="item.value"
-                  :key="idx"
-                ></el-option>
-              </el-select>
-
-              <el-tooltip class="item" effect="light" content="本产品在该采购计划中的优先等级" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-
-            </el-form-item>
-          </el-col>
-          <el-col :md="24" v-if="false">
-            <el-form-item label="优先要求" prop="priorityNote">
-              <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.priorityNote"
-                          maxlength="500"
-                          show-word-limit
-                          rows="3"
-                          cols="80"
-                          placeholder="示例:
-2018-08-16 : 5箱
-2018-08-26 : 45件
-2018-09-16 : 2箱"
-                          show-word-limit></el-input>
-              </el-col>
-
-              <el-col :span="2">
-
-                <el-tooltip class="item" effect="light" placement="right">
-                  <div slot="content">按时间维度定义优先要求。格式如下：
-                    <HR/>
-                    2018-08-16 : 5箱<BR/>
-                    2018-08-26 : 45件<BR/>
-                    2018-09-16 : 2箱<BR/>
-                  </div>
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-
-              </el-col>
-
-            </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <hr/>
 

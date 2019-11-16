@@ -30,22 +30,7 @@
       </fieldset>
 
       <fieldset class="panel-heading">
-        <legend class="panel-title">期望交货日期
-          <el-tooltip class="item" effect="light" placement="right">
-            <div slot="content">
-              采购单预计的交货日期，由跟单确认
-            </div>
-            <i class="el-icon-question">&nbsp;</i>
-          </el-tooltip>
-        </legend>
-
-        <el-row>
-          <span style="font-size: 12px">{{ editObject.formatOtdTime ? editObject.formatOtdTime : '无'}}</span>
-        </el-row>
-      </fieldset>
-
-      <fieldset class="panel-heading" style="margin-top: 15px">
-        <legend class="panel-title">采购单信息
+        <legend class="panel-title">采购单相关信息
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
               采购单相关信息
@@ -55,21 +40,96 @@
         </legend>
 
         <el-row>
-          <el-col :md="8">
+          <el-col :md="7">
+            <el-form-item label="期望交货日期">
+              <b style="font-size: 12px;color: blue">
+                {{ editObject.formatOtdTime ? editObject.formatOtdTime : '无'}}
+              </b>
+              <el-tooltip class="item" effect="light" placement="right">
+                <div slot="content">
+                  采购期望该商品能全部交完货的日期
+                </div>
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="7">
+            <el-form-item label="采购单编号">
+              <span style="font-size: 12px">{{editObject.code}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="10">
+            <el-form-item label="采购单名称" prop="name">
+              <span style="font-size: 12px">{{ editObject.name}}</span>
+            </el-form-item>
+          </el-col>
+
+        </el-row>
+
+        <el-row>
+          <el-col :md="7">
             <el-form-item label="供货商" prop="supplierId">
               <span style="font-size: 12px">{{editObject.supplier.name}}</span>
             </el-form-item>
           </el-col>
 
-          <el-col :md="8">
+          <el-col :md="7">
             <el-form-item label="收货仓库" prop="warehouseId">
               <span style="font-size: 12px">{{ editObject.warehouse.name}}</span>
             </el-form-item>
           </el-col>
 
-          <el-col :md="8">
-            <el-form-item label="名称" prop="name">
-              <span style="font-size: 12px">{{ editObject.name}}</span>
+          <el-col :md="10">
+            <el-form-item label="结算方式">
+              <span style="font-size: 12px">{{ editObject.settlementMethodName}}</span>
+            </el-form-item>
+          </el-col>
+
+        </el-row>
+
+        <el-row>
+          <el-col :md="7">
+            <el-form-item label="SKU">
+              <span style="font-size: 12px">{{orderItem.product.skuCode}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="7">
+            <el-form-item label="图片">
+              <el-image
+                v-if="orderItem.product.imgUrl"
+                :z-index="10000"
+                style="width: 30px; height: 30px;margin-top: 5px"
+                :src="orderItem.product.imgUrl"
+                :preview-src-list="[orderItem.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+              </el-image>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="10">
+            <el-form-item label="产品名" prop="warehouseId">
+              <span style="font-size: 12px">{{orderItem.product.name}}<</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+
+        <el-row>
+          <el-col :md="7">
+            <el-form-item label="未确认箱数">
+              <b style="font-size: 12px;color: blue;">{{ orderItem.unOrderCartonQty}}</b>
+            </el-form-item>
+          </el-col>
+          <el-col :md="7">
+            <el-form-item label="采购箱数" prop="supplierId">
+              <span style="font-size: 12px">{{orderItem.cartonQty}}</span>
+            </el-form-item>
+          </el-col>
+          <el-col :md="10">
+            <el-form-item label="已确认箱数" prop="warehouseId">
+              <span style="font-size: 12px">{{ orderItem.orderCartonQty}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -89,6 +149,10 @@
     components: {},
     props: {
       primary: {
+        type: [Object],
+        default: {}
+      },
+      orderItem: {
         type: [Object],
         default: {}
       }
@@ -146,7 +210,7 @@
         try {
           if (this.primary) {
             //获取计划数据
-            this.editObject = JSON.parse(JSON.stringify(this.primary));
+            this.editObject = this.primary;
             this.initComplete = true;
             this.loading = false;
           }
