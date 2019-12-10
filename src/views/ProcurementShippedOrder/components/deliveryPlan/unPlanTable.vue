@@ -68,7 +68,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="procurementOrder.code" label="下单完成度" width="90" align="center">
+      <el-table-column prop="procurementOrder.code" label="完成度" width="90" align="center">
         <template slot-scope="scope">
           <el-progress :text-inside="true" :stroke-width="16"
                        :percentage="scope.row.orderedCompleteness > 100 ? 100: scope.row.orderedCompleteness"

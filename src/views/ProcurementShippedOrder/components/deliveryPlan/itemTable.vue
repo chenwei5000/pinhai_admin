@@ -64,15 +64,17 @@
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasDelete && scope.row.status==0" type="danger" size="mini"
+          <el-button v-if="hasDelete && scope.row.status!=1" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
         </template>
       </el-table-column>
-
-
     </el-table>
+
+    <!-- 编辑明细对话框 -->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
+    </itemDialog>
 
   </div>
 </template>
@@ -82,10 +84,12 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import {mapGetters} from 'vuex'
   import {parseTime} from '@/utils'
+  import itemDialog from './planDialog'
 
   export default {
     components: {
-      tableToolBar
+      tableToolBar,
+      itemDialog
     },
     props: {
       primary: {
@@ -313,6 +317,7 @@
                 this.$message({type: 'success', message: '删除成功'});
                 let obj = resp.data;
                 this.getList();
+                this.$emit("reloadCBEvent");
               })
                 .catch(err => {
                 })
@@ -328,6 +333,7 @@
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.getList();
+        this.$emit("reloadCBEvent");
       },
 
       /********************* 工具条按钮  ***************************/

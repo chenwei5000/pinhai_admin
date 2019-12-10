@@ -3,9 +3,10 @@
   <!-- 修改弹窗 TODO: title -->
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" style="padding-bottom: 40px"
              class="ph-dialog" @close='closeDialog' fullscreen>
+
     <el-row
-      style="text-align:right; position:fixed; right: 20px;bottom: 0px; background-color:#FFF; padding: 5px; z-index: 9999; width: 100%;">
-      <el-button @click="closeDialog">关 闭</el-button>
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
+      <el-button @click="closeDialog" size="small">关 闭</el-button>
     </el-row>
 
     <!-- 折叠面板 -->
@@ -29,7 +30,7 @@
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">3. 交货计划</div>
-        <itemTable ref="itemTable" :primary="orderItem" v-if="primaryComplete"></itemTable>
+        <itemTable ref="itemTable" @reloadCBEvent="reloadCBEvent"  :primary="orderItem" v-if="primaryComplete && itemComplete"></itemTable>
       </el-collapse-item>
 
     </el-collapse>
@@ -109,7 +110,7 @@
             });
 
           let itemUrl = `/procurementOrderItems/${this.itemId}`;
-          let relations = ["product"];
+          let relations = ["product", "procurementOrder"];
           itemUrl += "?relations=" + JSON.stringify(relations);
           this.itemComplete = false;
           this.global.axios
@@ -117,7 +118,6 @@
             .then(resp => {
               let res = resp.data;
               this.orderItem = res || {};
-              console.log(this.orderItem);
               this.dialogVisible = true;
               this.itemComplete = true;
             })

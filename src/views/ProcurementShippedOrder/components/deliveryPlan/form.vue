@@ -110,7 +110,7 @@
 
           <el-col :md="10">
             <el-form-item label="产品名" prop="warehouseId">
-              <span style="font-size: 12px">{{orderItem.product.name}}<</span>
+              <span style="font-size: 12px">{{orderItem.product.name}}</span>
             </el-form-item>
           </el-col>
         </el-row>
