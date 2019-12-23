@@ -13,7 +13,7 @@
     <el-row>
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 40px" @click="onNext">
+          <el-button type="primary" size="mini" style="margin-top: 40px" @click="onNext">
             下一步 >
           </el-button>
         </el-row>

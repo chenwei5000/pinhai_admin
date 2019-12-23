@@ -1,7 +1,8 @@
 <template>
 
   <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
+  <el-dialog :title="title" v-if="dialogVisible"
+             :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
              fullscreen>
     <!-- 步骤条 TODO: -->
     <el-steps :active="stepsActive" finish-status="success" align-center simple>
@@ -54,14 +55,13 @@
       ]),
 
       title() {
-        return '创建发货计划 [' + this.primary.name + ']';
+        return '创建发货计划 [' + this.primary[0].formatDeliveryTime + this.primary[0].supplier.name+ ']';
       }
     },
 
     data() {
       return {
-        primaryId: null,  //主ID
-        orderId: null, //订单ID
+        orderId: null,
         primary: {}, //主对象
         // 默认选择的步骤 从0开始
         stepsActive: 0,
@@ -79,30 +79,18 @@
     },
     methods: {
       initData() {
-        if (this.primaryId) {
-          //获取计划数据
-          this.global.axios
-            .get(`/procurementOrders/${this.primaryId}?relations=${JSON.stringify(["supplier"])}`)
-            .then(resp => {
-              let res = resp.data;
-              this.primary = res || {};
-              this.dialogVisible = true;
-              this.primaryComplete = true;
-            })
-            .catch(err => {
-            });
-        }
       },
-
       /* 开启弹出编辑框 需要传主键ID */
-      openDialog(primaryId) {
-        this.primaryId = primaryId;
+      openDialog(primary) {
+        this.primary = primary;
+        this.dialogVisible = true;
+        this.primaryComplete = true;
         this.initData();
       },
 
       closeDialog() {
         this.primary = {};
-        this.primaryId = null;
+        this.orderId=null,
         this.stepsActive = 0;
         this.dialogVisible = false;
         this.primaryComplete = false;
@@ -112,6 +100,7 @@
       step1CBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("createCBEvent", object);
+        this.$emit("modifyCBEvent");
         this.orderId = object.id;
         this.stepsActive = 1;
       },
@@ -123,6 +112,7 @@
         // 切换步骤
         if (step == 'close') {
           this.closeDialog();
+          this.$emit("modifyCBEvent");
         } else {
           this.stepsActive = step;
         }

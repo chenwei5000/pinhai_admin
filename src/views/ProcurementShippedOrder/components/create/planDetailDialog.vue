@@ -71,9 +71,9 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="发货箱数" prop="planCartonQty">
+            <el-form-item label="发货箱数" prop="cartonQty">
 
-              <el-input-number v-model="detailItem.planCartonQty"
+              <el-input-number v-model="detailItem.cartonQty"
                                style="width: 175px;"
                                :precision="3"
                                :min="1"
@@ -178,7 +178,7 @@
             validRules.required,
             validRules.integer
           ],
-          planCartonQty: [
+          cartonQty: [
             validRules.required,
             validRules.number
           ]
@@ -205,6 +205,7 @@
       /* 开启弹出编辑框 需要传明细ID */
       openDialog(detailItem) {
         this.detailItem = detailItem;
+        this.detailItem.skuCode = detailItem.product.skuCode
         this.detailItem.cartonSpecId = detailItem.cartonSpecId + '';
         this.dialogVisible = true;
         this.initData();
@@ -221,7 +222,7 @@
 
       // 计算下单件数
       calOrderQty() {
-        return (this.detailItem.planCartonQty * this.detailItem.numberOfCarton).toFixed(0);
+        return (this.detailItem.cartonQty * this.detailItem.numberOfCarton).toFixed(0);
       },
 
       // 保存
@@ -232,11 +233,11 @@
           }
           this.loading = true;
           this.confirmLoading = true;
-          this.detailItem.planQty = this.calOrderQty();
+          this.detailItem.qty = this.calOrderQty();
 
           this.cartonspecSelectOptions.forEach(r => {
             if (r.value == this.detailItem.cartonSpecId + '') {
-              this.detailItem.cartonSpecCode = r.label;
+              this.detailItem.cartonSpec.code = r.label;
             }
           });
 

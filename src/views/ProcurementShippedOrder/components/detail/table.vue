@@ -44,27 +44,16 @@
       show-summary
       :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="sortNum" label="序号" min-width="50"></el-table-column>
+      <el-table-column prop="sortNum" label="序号" min-width="50" align="center"></el-table-column>
 
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
-            <div v-html="scope.row.product.skuCode"></div>
-            <span slot="reference">{{
-              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
-        </template>
+      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -76,31 +65,24 @@
       </el-table-column>
 
 
-      <el-table-column prop="product.name" label="名称" width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 17">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-            </span>
-        </template>
+      <el-table-column prop="product.name" label="名称" width="200" align="center">
       </el-table-column>
 
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+      <el-table-column prop="procurementOrder.code" label="采购单编码" width="120" align="center">
+      </el-table-column>
 
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
+
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120" align="center"></el-table-column>
 
       <el-table-column prop="procurementBoxQty" sortable :label="procurementBoxQtyTitle"
-                       min-width="110"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110"></el-table-column>
-      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110"></el-table-column>
+                       min-width="110" align="center"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
+      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110" align="center"></el-table-column>
+
+      <el-table-column prop="remark" label="备注" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                       v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
@@ -147,6 +129,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import itemDialog from './dialog'
   import {checkPermission} from "../../../../utils/permission";
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -161,11 +144,11 @@
     },
     computed: {
       hasAdd() {
-        //return false;
-        if ([0, 8].indexOf(this.primary.status) > -1) {
-          return false;
-        }
-        return checkPermission('ProcurementShippedOrderItemResource_create');
+        return false;
+        // if ([0, 8].indexOf(this.primary.status) > -1) {
+        //   return false;
+        // }
+        // return checkPermission('ProcurementShippedOrderItemResource_create');
       },
       //操作按钮控制
       hasOperation(){
@@ -229,7 +212,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["cartonSpec", "product", "procurementOrderItem"],  // 关联对象
+        relations: ["cartonSpec", "product", "procurementOrder", "procurementOrderItem"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -265,6 +248,19 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /********************* 表格相关方法  ***************************/

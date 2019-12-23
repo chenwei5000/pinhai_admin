@@ -3,27 +3,31 @@
   <div class="ph-table">
 
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
-    <el-form :inline="true"
-             :model="searchParam"
+    <el-form :inline="true" :model="searchParam"
              ref="searchForm"
+             inline-message
              @submit.native.prevent>
 
-      <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 150px" placeholder="请输入"></el-input>
+      <el-form-item label="交货日期">
+
+        <el-date-picker
+          size="mini"
+          v-model="searchParam.deliveryTime.value"
+          format="yyyy-MM-dd"
+          style="width: 220px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="交货日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+
       </el-form-item>
 
-      <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 150px"
-                  placeholder="请输入物流单号"></el-input>
-      </el-form-item>
-
-      <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 200px" placeholder="请输入名称"></el-input>
-      </el-form-item>
 
       <el-form-item label="供货商">
-        <el-select filterable v-model="searchParam.supplierId.value" size="mini"
-                   style="width: 100px" placeholder="请选择">
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+                   placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -32,23 +36,45 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.warehouseId.value"
-                   size="mini"
-                   style="width: 100px" placeholder="请选择">
+      <el-form-item label="SKU">
+        <el-input size="mini" v-model="searchParam.product_skuCode.value" style="width: 150px"
+                  placeholder="请输入名称"></el-input>
+      </el-form-item>
+
+      <el-form-item label="采购单编号">
+        <el-input size="mini" v-model="searchParam.procurementOrder_code.value" style="width: 150px"
+                  placeholder="请输入采购单编号"></el-input>
+      </el-form-item>
+
+      <el-form-item label="状态">
+        <el-select filterable v-model="searchParam.status.value" style="width: 120px;" size="mini" placeholder="请选择状态">
           <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
+            v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
         </el-select>
       </el-form-item>
 
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
+
+
+    <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd">
+
+      <el-col :md="18">
+        <el-button v-if="hasAdd" type="primary" icon="el-icon-truck" @click="onDefaultAdd"
+                   size="mini" id="table-add">
+          创建发货计划
+        </el-button>
+
+      </el-col>
+
+    </el-row>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -64,100 +90,78 @@
       :max-height="tableMaxHeight"
       v-loading="loading"
       @selection-change="handleSelectionChange"
-      @cell-dblclick="handleDblclick"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
+      show-summary
+      :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="code" label="编码" min-width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" min-width="100">
+      <el-table-column
+        type="selection"
+        width="30"
+        align="center"
+      >
+      </el-table-column>
+
+      <el-table-column prop="product.skuCode" label="SKU" sortable="custom" min-width="120" fixed="left" align="center">
+      </el-table-column>
+
+      <el-table-column prop="statusName" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 2
-            ? 'danger' : scope.row.status === 6
+                  :type="scope.row.status === 1
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : scope.row.status === 2
+            ? 'primary' : scope.row.status === 3
             ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
+                  disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 22">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 22 ? scope.row.name.substr(0,20)+'..' : scope.row.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
         </template>
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
-      <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
 
-      <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
-
+      <el-table-column prop="supplier.name" label="供货商" width="100" align="center"></el-table-column>
+      <el-table-column prop="deliveryTime" sortable="custom" label="交货日期" width="120" align="center">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.trackNumber">
-
-            <div>
-              物流单号: {{ scope.row.trackNumber}}<br>
-              物流公司: {{ scope.row.channel}}<br>
-              车牌: {{ scope.row.plateNumber }}<br>
-              联系人: {{ scope.row.linkman }}<br>
-              电话: {{ scope.row.tel }}<br>
-            </div>
-            <span slot="reference">
-              物流单号: {{ scope.row.trackNumber}}
-            </span>
-
-          </el-popover>
-          <span v-else>
-            无
-          </span>
+          <span>{{ scope.row.deliveryTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="formatExpectTime" label="发货日期" min-width="120"></el-table-column>
-      <el-table-column prop="formatReceivedTime" label="收货日期" min-width="120"></el-table-column>
+      <el-table-column prop="procurementOrder.code" label="采购编号" width="120" align="center"></el-table-column>
+      <el-table-column prop="procurementOrder.name" label="采购单名称" min-width="150" align="center"></el-table-column>
+      <el-table-column prop="cartonSpec.code" label="箱规" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="80" align="center"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" min-width="80" align="center"></el-table-column>
 
-      <el-table-column prop="remark" label="备注" width="130">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
-                      v-if="scope.row.remark && scope.row.remark.length > 10">
-            <div v-html="scope.row.formatRemark"></div>
-            <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.remark }}
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="id" label="ID" width="90"></el-table-column>
+      <el-table-column prop="cartonQty" label="计划交货箱数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="qty" label="计划交货件数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="发货箱数" width="100" align="center" v-if="false"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right" align="center">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
+          <el-button v-if="scope.row.status == 0 && hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
-          </el-button>
-
-          <el-button v-if="hasDelete" type="danger" size="mini"
+          <el-button v-if="scope.row.status == 0 && hasDelete" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -180,9 +184,13 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
-    <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
-    </editDialog>
+    <!--编辑明细对话框-->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
+    </itemDialog>
+
+    <!--创建发货计划对话框-->
+    <createDialog @modifyCBEvent="modifyCBEvent" ref="createDialog">
+    </createDialog>
 
   </div>
 
@@ -191,13 +199,13 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
-  import editDialog from './edit/dialog'
+  import {currency, parseTime} from '@/utils'
+  import itemDialog from './planDialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
-  import warehouseModel from '../../../api/warehouse';
-  import {checkPermission} from "../../../utils/permission";
-  import {getObjectValueByArr} from "../../../utils";
+  import {getObjectValueByArr} from "../../../../utils";
+  import createDialog from "../create/dialog"
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -210,41 +218,36 @@
   export default {
 
     components: {
-      editDialog,
+      createDialog,
+      itemDialog,
       phPercentage
     },
     props: {
       type: {
         type: String,
         default: 'valid'
-      },
-      defaultFilters: {
-        type: Object,
-        default: {}
       }
     },
     computed: {
       ...mapGetters([
         'device', 'rolePower'
       ]),
-
-      hasOperation(){
-        return this.hasEdit || this.hasDelete || this.hasView;
+      hasAdd() {
+        return true && this.searchParam.status.value == '0';
       },
-      hasView(){
-        return !this.hasEdit;
+      hasEdit() {
+        return true;
       },
-      hasEdit(){
-        return checkPermission('ProcurementShippedOrderResource_update');
+      hasDelete() {
+        return true;
       },
-      hasDelete:{
-        get(){
-          return checkPermission('ProcurementShippedOrderResource_remove');
-        },
-        set(newValue){
-          return newValue;
-        }
+      hasOperation() {
+        return (this.hasEdit || this.hasDelete) && this.searchParam.status.value == '0';
       },
+      // 显示进度条
+      hasCompleteness() {
+        return false;
+      }
     },
 
     data() {
@@ -254,33 +257,33 @@
 
         // 多选记录对象
         selected: [],
+
         //分页
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [20, 50, 100],
+        paginationSizes: [20, 50, 100, 500],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementShippedOrders', // 资源URL
-        countUrl: '/procurementShippedOrders/count', // 资源URL
-        relations: ["creator", "supplier", "warehouse"],  // 关联对象
+        url: '/procurementDeliveryPlans', // 资源URL
+        countUrl: '/procurementDeliveryPlans/count', // 资源URL
+        relations: ["product", "cartonSpec", "creator", "procurementOrder", "supplier"],  // 关联对象
         data: [],
-        phSort: {prop: "id", order: "desc"},
+        phSort: {prop: "deliveryTime", order: "asc"},
         // 表格加载效果
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
         supplierSelectOptions: [],
-        warehouseSelectOptions: [],
+
         searchParam: {
-          trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
-          supplierId: {value: null, op: 'eq', id: 'supplierId'},
-          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
-          status: {value: null, op: 'eq', id: 'status'},
-          name: {value: null, op: 'bw', id: 'status'},
-          code: {value: null, op: 'bw', id: 'code'},
+          deliveryTime: {value: null, op: 'timeRange', id: 'deliveryTime'},
+          status: {value: '0', op: 'eq', id: 'status'},
+          supplierId: {value: null, op: 'in', id: 'supplierId'},
+          product_skuCode: {value: null, op: 'eq', id: 'product_skuCode'},
+          procurementOrder_code: {value: null, op: 'eq', id: 'procurementOrder_code'},
         },
 
         //弹窗
@@ -299,7 +302,6 @@
     },
 
     mounted() {
-
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
@@ -319,20 +321,20 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.name) {
-            this.searchParam.name.value = params.name;
+          if (params.supplierId) {
+            this.searchParam.supplierId.value = params.supplierId;
+          }
+          if (params.product_skuCode) {
+            this.searchParam.product_skuCode.value = params.product_skuCode;
+          }
+          if (params.procurementOrder_code) {
+            this.searchParam.procurementOrder_code.value = params.procurementOrder_code;
           }
           if (params.status) {
             this.searchParam.status.value = params.status;
           }
-          if (params.code) {
-            this.searchParam.code.value = params.code;
-          }
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
-          }
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
+          if (params.deliveryTime) {
+            this.searchParam.deliveryTime.value = params.deliveryTime;
           }
         }
       }
@@ -348,9 +350,25 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementDeliveryPlanStatus');
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
-        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
+        this.statusSelectOptions.unshift({label: '全部', value: null});
+
+        if (this.type === 'editing') {
+        }
+        //待审核 无删除
+        else if (this.type === 'auditing') {
+          this.hasDelete = false;
+        }
+        //执行中 无删除
+        else if (this.type === 'executing') {
+          this.hasDelete = false;
+        }//完成 无删除
+        else if (this.type === 'complete') {
+          this.hasDelete = false;
+        }
+        else if (this.type === 'all') {
+        }
       },
 
       // 获取表格的高度
@@ -361,11 +379,10 @@
           //表格高度
           let tableHeight = windowHeight;
           tableHeight = tableHeight - 84; //减框架头部高度
-          tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -390,12 +407,14 @@
         // reset后, form里的值会变成 undefined, 在下一次查询会赋值给query
         this.$refs.searchForm.resetFields();
         this.page = 1
-        this.searchParam.trackNumber.value = null;
-        this.searchParam.status.value = null;
-        this.searchParam.code.value = null;
+
+        //TODO:根据实际情况调整
         this.searchParam.supplierId.value = null;
-        this.searchParam.warehouseId.value = null;
-        this.searchParam.name.value = null;
+        this.searchParam.status.value = '0';
+        this.searchParam.product_skuCode.value = null;
+        this.searchParam.procurementOrder_code.value = null;
+        this.searchParam.deliveryTime.value = null;
+
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
 
@@ -408,9 +427,63 @@
          * 另外, 当customQuery.sync时, 会重置customQuery
          * @event reset
          */
-        this.$emit('reset')
+        this.$emit('reset');
       },
 
+
+      /*汇总数据*/
+      getSummaries(param) {
+        const {columns, data} = param;
+        const sums = [];
+
+        columns.forEach((column, index) => {
+
+          if (column.property == 'product.skuCode') {
+            const values = data.map(item => item[column.property]);
+            sums[index] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+
+            sums[index] = '合计: ' + sums[index] + ' 行';
+          }
+
+          if (column.property == 'cartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'qty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+        });
+
+        return sums;
+      },
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
@@ -486,11 +559,11 @@
         filters.forEach((param, k) => {
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
-        filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
+
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
@@ -508,6 +581,7 @@
           })
           .catch(err => {
           })
+
         //获取数据
         this.global.axios
           .get(url + params)
@@ -550,6 +624,19 @@
         }
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /* 多选功能 */
       handleSelectionChange(val) {
         this.selected = val
@@ -569,19 +656,6 @@
         }
         this.page = 1;
         this.getList(true);
-      },
-
-      handleDblclick(row, column, cell, event) {
-        let val = getObjectValueByArr(row, column.property);
-        if (val) {
-          this.$copyText(val)
-            .then(res => {
-                this.$message.success("单元格内容已成功复制，可直接去粘贴");
-              },
-              err => {
-                this.$message.error("复制失败");
-              })
-        }
       },
 
       /********************* 分页工具条相关方法  ***************************/
@@ -610,49 +684,90 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 行编辑按钮 */
+      /*创建发货计划*/
+      onDefaultAdd() {
+        if (this.selected == null || this.selected.length == 0) {
+          this.$message.error("请选择交货内容!");
+          return false;
+        }
+
+        let sid = null;
+        let time = null;
+        this.selected.forEach(r=>{
+          if(sid == null){
+            sid= r.supplierId;
+          }
+          else{
+            if(sid != r.supplierId){
+                sid = false;
+            }
+          }
+          if(time == null){
+            time = r.deliveryTime;
+          }
+          else{
+            if(time != r.deliveryTime){
+              time = false;
+            }
+          }
+        });
+        if(sid === false){
+          this.$message.error("一个发货计划对应一个供货商!");
+          return false;
+        }
+        if(time === false){
+          this.$message.error("一个发货计划对应一个交货日期!");
+          return false;
+        }
+
+        this.$refs.createDialog.openDialog(JSON.parse(JSON.stringify(this.selected)));
+      },
+      /* 行修改功能 */
       onDefaultEdit(row) {
-        // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
+        this.$refs.itemDialog.openDialog(row.id, {});
       },
 
-      /* 行删除按钮 */
+      /* 行删除功能 */
       onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
+        this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              this.loading = true
-
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false
-                  this.$message.success("删除成功!");
-                  done()
-                  this.getList()
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+                this.$emit("reloadCBEvent");
+              })
+                .catch(err => {
                 })
-                .catch(er => {
-                  this.loading = false
-                })
+              done();
             } else done()
           }
         }).catch(er => {
           /*取消*/
         })
-
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
-      modifyCBEvent(status) {
+      modifyCBEvent(object) {
         this.getList();
       },
     }
   }
 </script>
 
-<style type="text/less" lang="scss" scoped>
 
+<style type="text/less" lang="scss" scoped>
+  .table-tool {
+    background-color: #dfe6ec;
+    position: relative;
+    z-index: 890;
+    width: 100%;
+    min-height: 24px;
+    line-height: 24px;
+    padding: 5px 10px;
+  }
 </style>
 

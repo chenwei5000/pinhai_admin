@@ -154,6 +154,7 @@
       /* 重新加载 */
       reloadCBEvent() {
         this.initData();
+        this.$emit("modifyCBEvent");
       }
     }
   }

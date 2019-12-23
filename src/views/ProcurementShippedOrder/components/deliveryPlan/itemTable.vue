@@ -25,6 +25,7 @@
       show-summary
       :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'deliveryTime', order: 'ascending'}"
       id="table"
     >
@@ -85,6 +86,7 @@
   import {mapGetters} from 'vuex'
   import {parseTime} from '@/utils'
   import itemDialog from './planDialog'
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -292,6 +294,19 @@
       /* 多选功能 */
       handleSelectionChange(val) {
         this.selected = val
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /********************* 搜索相关方法  ***************************/

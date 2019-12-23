@@ -428,7 +428,7 @@
           this.confirmLoading = true;
           let method = 'post'
           let url = this.url + '';
-          if (!this.detailItemId && this.detailItemId > 0) {
+          if (this.detailItemId && this.detailItemId > 0) {
             method = 'put';
             url = `${this.url}/${this.detailItemId}`;
           }
