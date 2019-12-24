@@ -45,15 +45,14 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200">
+      <el-table-column prop="product.skuCode" label="SKU编码" width="200" align="center"></el-table-column>
 
-      </el-table-column>
-
-      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -64,28 +63,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
-        </template>
+      <el-table-column prop="product.name" label="产品名" min-width="200" align="center">
       </el-table-column>
 
-      <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+      <el-table-column prop="boxCode" label="箱码" width="100" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100" align="center"></el-table-column>
+      <el-table-column prop="shippedQty" label="发货数量(件)" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="receivedNote" label="异常备注" width="130">
+      <el-table-column prop="receivedNote" label="异常备注" width="130" align="center">
         <template slot-scope="scope">
 
           <el-input type="textarea" v-model="scope.row.receivedNote"
@@ -118,7 +105,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right">
+      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right" align="center">
 
       </el-table-column>
     </el-table>
@@ -131,6 +118,7 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {},
@@ -314,6 +302,19 @@
             this.$emit('error', err)
             this.loading = false
           })
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /********************* 搜索相关方法  ***************************/

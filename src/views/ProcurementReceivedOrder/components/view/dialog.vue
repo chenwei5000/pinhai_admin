@@ -73,7 +73,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/procurementReceivedOrders/${this.primaryId}?relations=${JSON.stringify(["supplier", "warehouse","procurementOrder","procurementPlan"])}`)
+            .get(`/procurementReceivedOrders/${this.primaryId}?relations=${JSON.stringify(["supplier", "warehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
