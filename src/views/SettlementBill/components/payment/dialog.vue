@@ -31,7 +31,7 @@
     </el-collapse>
 
     <el-row type="flex" justify="center">
-      <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" @click="onPayment">
+      <el-button type="primary" style="margin-top: 15px" size="small" :loading="confirmLoading" @click="onPayment">
         申请付款
       </el-button>
     </el-row>
@@ -134,7 +134,8 @@
       onPayment() {
         this.$refs.infoFrom.$refs.editObject.validate(valid => {
             if (!valid) {
-              return false
+              this.$message.error("请设置收款账户!");
+              return false;
             }
             let settlementBill = this.$refs.infoFrom.editObject;
             let items = JSON.parse(JSON.stringify(this.$refs.itemTable.data));
@@ -148,6 +149,9 @@
             items.forEach(r => {
               payableAmount += r.pdAmount;
             });
+            if (payableAmount < 0) {
+              payableAmount = 0;
+            }
             if (payableAmount < 0) {
               this.$message.error("应付金额必须大于等于0");
               return false;

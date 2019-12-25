@@ -14,7 +14,7 @@
       <el-row>
         <el-col :md="6">
           <el-form-item label="供货商">
-            <span style="font-size: 12px">{{this.editObject.supplier.name}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.supplier">{{this.editObject.supplier.name}}</span>
           </el-form-item>
         </el-col>
 
@@ -26,7 +26,7 @@
 
         <el-col :md="6">
           <el-form-item label="采购单">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.name}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.procurementOrder">{{this.editObject.procurementOrder.name}}</span>
           </el-form-item>
         </el-col>
 
@@ -58,7 +58,7 @@
 
         <el-col :md="6">
           <el-form-item label="结算货币">
-            <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.currency">{{this.editObject.currency.name}}</span>
           </el-form-item>
         </el-col>
 
@@ -115,7 +115,7 @@
               <el-option
                 v-for="(item,idx) in accountSelectOptions"
                 :label="item.bankAccount.accountName + '-'
-                + item.bankAccount.currency.name + '-'
+                + (item.bankAccount.currency ? item.bankAccount.currency.name : '') + '-'
                 + item.bankAccount.openingBank + '-' + item.bankAccount.accountCardHide " :value="item.id"
                 :key="idx"
               ></el-option>

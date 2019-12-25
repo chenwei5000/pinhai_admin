@@ -20,7 +20,7 @@ const bankAccountModel = {
         if ($res) {
           $res.forEach(obj => {
             _options.push({
-              label: obj.accountName + "-" + obj.currency.name,
+              label: obj.accountName + "-" + (obj.currency ? obj.currency.name : ''),
               value: obj.id + ''
             });
           });
