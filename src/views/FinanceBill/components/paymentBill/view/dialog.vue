@@ -18,12 +18,12 @@
       </el-collapse-item>
 
       <el-collapse-item name="detailTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购产品明细   [{{this.primary.formatLastModified}}]</div>
+        <div slot="title" class="title">2. 采购产品明细[{{this.primary.settlementBill.procurementOrder.formatCreateTime}}]</div>
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
       <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 收货明细   [{{this.primary.formatLastModified}}]</div>
+        <div slot="title" class="title">3. 收货明细</div>
         <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
       </el-collapse-item>
 

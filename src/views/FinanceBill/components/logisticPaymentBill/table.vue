@@ -142,7 +142,7 @@
                      @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="scope.row.status != 1 && hasView" type="primary" size="mini"
+          <el-button v-if="scope.row.status == 1 && hasView" type="primary" size="mini"
                      id="ph-table-del" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)">
           </el-button>

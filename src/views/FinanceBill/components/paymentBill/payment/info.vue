@@ -14,25 +14,25 @@
       <el-row>
         <el-col :md="6">
           <el-form-item label="供货商">
-            <span style="font-size: 12px">{{this.editObject.supplier.name}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.supplier">{{this.editObject.supplier.name}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="采购单编码">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.code}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.procurementOrder.code}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="采购单">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.name}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.procurementOrder.name}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="收货单编码">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.warehouseOrderCode}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.warehouseOrderCode}}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -40,25 +40,25 @@
       <el-row>
         <el-col :md="6">
           <el-form-item label="结算日期">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
+            <span style="font-size: 12px" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="最晚付款日期">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}')}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}')}}</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="帐期">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.accountPeriod}}天</span>
+            <span style="font-size: 12px" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.accountPeriod}}天</span>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="结算货币">
-            <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.currency">{{this.editObject.currency.name}}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -73,13 +73,13 @@
 
         <el-col :md="6">
           <el-form-item label="结算总额">
-            <b style="font-size: 12px;">{{this.editObject.settlementBill.settlementAmount, this.editObject.currency.symbolLeft | currency }}</b>
+            <b style="font-size: 12px;" v-if="this.editObject.settlementBill">{{this.editObject.settlementBill.settlementAmount, this.editObject.currency.symbolLeft | currency }}</b>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
           <el-form-item label="采购单预付款金额">
-            <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
+            <span style="font-size: 12px" >{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
 

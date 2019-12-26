@@ -54,10 +54,10 @@
             <el-table-column prop="unit" label="单位" align="center">
             </el-table-column>
 
-            <el-table-column prop="qty" label="数量" align="center">
+            <el-table-column prop="qty" label="数量" align="right">
             </el-table-column>
 
-            <el-table-column prop="price" label="单价" align="center">
+            <el-table-column prop="price" label="单价" align="right">
               <template slot-scope="scope">
                 {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
               </template>
@@ -69,7 +69,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="taxRate" label="税率%" align="center">
+            <el-table-column prop="taxRate" label="税率" align="right">
               <template slot-scope="scope">
                 {{scope.row.taxRate}}%
               </template>
@@ -183,7 +183,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'invoiceNumber') {
+          if (column.property == 'invoiceNo') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -191,7 +191,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'price') {
+          if (column.property == 'amount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

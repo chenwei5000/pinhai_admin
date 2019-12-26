@@ -18,10 +18,17 @@
       show-summary
       :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'procurementShippedOrder.receivedTime', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
+
+      <el-table-column prop="procurementShippedOrder.code" label="收货单编码" width="120">
+      </el-table-column>
+
+      <el-table-column prop="procurementShippedOrder.formatReceivedTime" label="收货时间" sortable min-width="100">
+      </el-table-column>
+
+      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="120">
       </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40">
@@ -35,29 +42,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="90" align="center">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 0
-            ? 'danger' : scope.row.status === 2
-            ? 'primary' : scope.row.status === 10
-            ? 'info' : 'success'"
-            disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="product.name" label="产品名" sortable min-width="150"></el-table-column>
-      <el-table-column prop="boxCode" label="箱码" width="90"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="100"></el-table-column>
+      <el-table-column prop="product.name" label="产品名" sortable min-width="130"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
       <el-table-column prop="shippedCartonQty" label="发货数量(箱)" width="100"></el-table-column>
       <el-table-column prop="shippedQty" label="发货数量(件)" width="100"></el-table-column>
+      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="120" fixed="right"></el-table-column>
+      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right"></el-table-column>
 
-      <el-table-column prop="receivedNote" label="异常备注" width="120">
+      <el-table-column prop="receivedNote" label="收货备注" width="120">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="异常备注" width="250" trigger="hover"
+          <el-popover placement="top-start" title="收货备注" width="250" trigger="hover"
                       v-if="scope.row.receivedNote && scope.row.receivedNote.length > 10">
             <div v-html="scope.row.receivedNote"></div>
             <span slot="reference">{{ scope.row.receivedNote ? scope.row.receivedNote.substr(0,8)+'..' : '' }}</span>
@@ -67,9 +61,6 @@
           </span>
         </template>
       </el-table-column>
-
-      <el-table-column prop="receivedCartonQty" label="收货数量(箱)" width="120" fixed="right"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货数量(件)" width="90" fixed="right"></el-table-column>
 
     </el-table>
 
@@ -124,16 +115,21 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementOrderItems", // 资源URL
+        url: "/procurementShippedOrderItems", // 资源URL
         downloadUrl: "", //下载Url
         filters: [
           {
             field: "procurementOrderId",
             op: 'eq',
             data: this.primary && this.primary.settlementBill.procurementOrder ? this.primary.settlementBill.procurementOrder.id : -1
-          }
+          },
+          {
+            field: "procurementShippedOrder_code",
+            op: 'eq',
+            data: this.primary && this.primary.settlementBill ? this.primary.settlementBill.warehouseOrderCode : '-1'
+          },
         ],   //搜索对象
-        relations: ["cartonSpec", "product", "product.category"],  // 关联对象
+        relations: ["cartonSpec", "product", "procurementShippedOrder"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果

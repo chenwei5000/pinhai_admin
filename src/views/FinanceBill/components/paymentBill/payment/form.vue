@@ -21,8 +21,9 @@
                        placeholder="请选择供应商收款帐号">
               <el-option
                 v-for="(item,idx) in collectionAccountSelectOptions"
-                :label="item.bankAccount.accountName + '-'
-                + item.bankAccount.currency.name + '-'
+                v-if="item.bankAccount"
+                :label="item.bankAccount.accountName  + '-'
+                + (item.bankAccount.currency ? item.bankAccount.currency.name : '') + '-'
                 + item.bankAccount.openingBank + '-' + item.bankAccount.accountCard " :value="item.id"
                 :key="idx"
               ></el-option>
@@ -40,8 +41,9 @@
                        placeholder="请选择供应商收款帐号">
               <el-option
                 v-for="(item,idx) in paymentAccountSelectOptions"
+                v-if="item.bankAccount"
                 :label="item.bankAccount.accountName + '-'
-                + item.bankAccount.currency.name + '-'
+                + (item.bankAccount.currency ? item.bankAccount.currency.name : '') + '-'
                 + item.bankAccount.openingBank + '-' + item.bankAccount.accountCard " :value="item.id"
                 :key="idx"
               ></el-option>
@@ -64,7 +66,7 @@
 
         <el-col :md="12">
           <el-form-item label="金额大写">
-              <span style="font-size: 12px" v-if="editObject.paymentAmount">
+              <span style="font-size: 12px" v-if="editObject.paymentAmount && this.editObject.currency">
                   {{this.editObject.currency.name}} {{editObject.paymentAmount | money}}
               </span>
           </el-form-item>
