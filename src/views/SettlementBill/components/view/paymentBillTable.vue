@@ -109,14 +109,6 @@
         'device',
         'rolePower'
       ]),
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
     },
     filters: {
       currency: currency
@@ -131,11 +123,6 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
@@ -162,7 +149,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-        this.loading = true;
         if (this.primary) {
 
           let url = "/invoices";
@@ -183,7 +169,6 @@
             .catch(err => {
             });
         }
-        this.loading = false;
       },
 
       /********************* 表格相关方法  ***************************/
