@@ -20,22 +20,70 @@
       :default-sort="{prop: 'invoiceNumber', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
+      <el-table-column prop="invoiceNo" label="发票号" width="130">
       </el-table-column>
 
-      <el-table-column prop="invoiceTime" label="开票日期" width="150">
+      <el-table-column prop="invoiceDate" label="开票日期" width="100">
         <template slot-scope="scope">
-          <span>{{ scope.row.invoiceTime | parseTime('{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.invoiceDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="price" label="发票金额" width="150">
+      <el-table-column prop="amount" label="发票金额" width="100">
         <template slot-scope="scope">
-          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.amount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="company" label="公司" min-width="150">
+      <el-table-column prop="company" label="内容" min-width="150">
+        <template slot-scope="scope">
+          <el-table :data="scope.row.invoiceDetails"
+                    style="width: 100%"
+                    stripe
+                    border
+                    highlight-current-row
+                    cell-class-name="ph-cell"
+                    header-cell-class-name="ph-cell-header"
+          >
+            <el-table-column prop="name" label="项目" align="center">
+            </el-table-column>
+
+            <el-table-column prop="model" label="规格型号" align="center">
+            </el-table-column>
+
+            <el-table-column prop="unit" label="单位" align="center">
+            </el-table-column>
+
+            <el-table-column prop="qty" label="数量" align="center">
+            </el-table-column>
+
+            <el-table-column prop="price" label="单价" align="center">
+              <template slot-scope="scope">
+                {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="amount" label="金额" align="right">
+              <template slot-scope="scope">
+                {{scope.row.amount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="taxRate" label="税率%" align="center">
+              <template slot-scope="scope">
+                {{scope.row.taxRate}}%
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="tax" label="税额" align="right">
+              <template slot-scope="scope">
+                {{scope.row.tax, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </template>
+
       </el-table-column>
 
     </el-table>
