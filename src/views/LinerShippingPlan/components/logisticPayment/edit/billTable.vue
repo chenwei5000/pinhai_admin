@@ -29,35 +29,155 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
-      :default-sort="{prop: 'invoiceTime', order: 'ascending'}"
+      :default-sort="{prop: 'invoiceDate', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
-      </el-table-column>
-
-      <el-table-column prop="invoiceTime" label="开票日期" width="150">
+      <el-table-column prop="invoiceNo" label="发票号" width="180">
         <template slot-scope="scope">
-          <span>{{ scope.row.invoiceTime | parseTime('{y}-{m}-{d}') }}</span>
+          <el-input v-model.trim="scope.row.invoiceNo"
+                    maxlength="50"
+                    size="mini"
+                    style="width: 170px;margin: 3px 0;" placeholder="发票号"></el-input>
+
         </template>
       </el-table-column>
 
-      <el-table-column prop="price" label="发票金额" width="150">
+      <el-table-column prop="invoiceDate" label="开票日期" width="140">
         <template slot-scope="scope">
-          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          <el-date-picker
+            v-model="scope.row.invoiceDate"
+            format="yyyy-MM-dd"
+            type="date"
+            @input="updateInput"
+            style="width: 130px"
+            size="mini"
+            placeholder="开票日期"></el-date-picker>
         </template>
       </el-table-column>
 
-      <el-table-column prop="company" label="公司" min-width="150">
+      <el-table-column prop="amount" label="发票金额" width="130">
+        <template slot-scope="scope">
+          <el-input v-model.trim="scope.row.amount"
+                    show-word-limit
+                    size="mini"
+                    style="width: 120px" placeholder="发票金额" clearable></el-input>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="company" label="内容" min-width="150">
+        <template slot-scope="scope">
+          <el-table :data="scope.row.invoiceDetails"
+                    style="width: 100%"
+                    stripe
+                    border
+                    highlight-current-row
+                    cell-class-name="ph-cell"
+                    header-cell-class-name="ph-cell-header"
+          >
+            <el-table-column prop="name" label="项目" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input type="textarea" v-model="scope.row.name"
+                          rows="1"
+                          style="width: 90px;margin: 3px 0;"
+                          show-word-limit></el-input>
+
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="model" label="规格型号" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input type="textarea" v-model="scope.row.model"
+                          rows="1"
+                          style="width: 90px;margin: 3px 0;"
+                          show-word-limit></el-input>
+
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="unit" label="单位" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input v-model.trim="scope.row.unit"
+                          maxlength="50"
+                          size="mini"
+                          style="width: 90px;margin: 3px 0;" placeholder="单位"></el-input>
+
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="qty" label="数量" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input v-model.trim="scope.row.qty"
+                          maxlength="50"
+                          size="mini"
+                          style="width: 90px;margin: 3px 0;" placeholder="数量"></el-input>
+
+              </template>
+            </el-table-column>
+            <el-table-column prop="price" label="单价" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input v-model.trim="scope.row.price"
+                          maxlength="50"
+                          size="mini"
+                          style="width: 90px;margin: 3px 0;" placeholder="单价"></el-input>
+
+              </template>
+            </el-table-column>
+            <el-table-column prop="amount" label="金额" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input v-model.trim="scope.row.amount"
+                          maxlength="50"
+                          size="mini"
+                          style="width: 90px;margin: 3px 0;" placeholder="金额"></el-input>
+
+              </template>
+            </el-table-column>
+            <el-table-column prop="taxRate" label="税率%" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input v-model.trim="scope.row.taxRate"
+                          maxlength="50"
+                          size="mini"
+                          style="width: 90px;margin: 3px 0;" placeholder="税率"></el-input>
+
+              </template>
+            </el-table-column>
+            <el-table-column prop="tax" label="税额" align="center" width="100">
+              <template slot-scope="scope">
+                <el-input v-model.trim="scope.row.tax"
+                          maxlength="50"
+                          size="mini"
+                          style="width: 90px;margin: 3px 0;" placeholder="税额"></el-input>
+
+              </template>
+            </el-table-column>
+
+
+            <!--默认操作列-->
+            <el-table-column label="操作"
+                             no-export="true" align="center"
+                             width="50" fixed="right">
+              <template slot-scope="scope">
+                <el-button type="danger" size="mini"
+                           id="ph-table-del" icon="el-icon-refresh" circle
+                           @click="onDefaultDetailDelete(scope.row)">
+
+                </el-button>
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </template>
+
       </el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       no-export="true"
-                       width="120" fixed="right">
+                       no-export="true" align="center"
+                       width="100" fixed="right">
         <template slot-scope="scope">
 
-          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+          <el-button type="success" size="mini"
+                     id="ph-table-del" icon="el-icon-circle-plus-outline" circle
+                     @click="onDefaultDetailAdd(scope.row)">
           </el-button>
 
           <el-button v-if="hasDelete" type="danger" size="mini"
@@ -69,9 +189,12 @@
       </el-table-column>
     </el-table>
 
-    <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
-    </itemDialog>
+    <el-row type="flex" justify="center">
+      <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onPayment">
+        保存发票信息
+      </el-button>
+    </el-row>
+
   </div>
 
 </template>
@@ -79,18 +202,20 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency, parseTime} from '@/utils'
+  import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import itemDialog from './billDialog'
   import moment from 'moment'
 
   export default {
     components: {
-      tableToolBar,
-      itemDialog
+      tableToolBar
     },
     props: {
       primary: {
+        type: [Object],
+        default: null
+      },
+      selCurrency: {
         type: [Object],
         default: null
       }
@@ -177,7 +302,6 @@
       /********************* 基础方法  *****************************/
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
-
         this.loading = true;
         //获取计划数据
         this.global.axios
@@ -206,9 +330,8 @@
       getSummaries(param) {
         const {columns, data} = param;
         const sums = [];
-
         columns.forEach((column, index) => {
-          if (column.property == 'invoiceNumber') {
+          if (column.property == 'invoiceNo') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -216,7 +339,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'price') {
+          if (column.property == 'amount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -227,7 +350,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index], this.primary.currency.symbolLeft);
+              sums[index] = currency(sums[index], this.selCurrency.symbolLeft);
             } else {
               sums[index] = 'N/A';
             }
@@ -248,78 +371,93 @@
         this.search();
       },
 
+
       addInvoice(invoice) {
         if (invoice) {
           let addFlg = true;
           this.data.forEach(r => {
-            if (r.invoiceNumber == invoice.InvoiceCode + invoice.InvoiceNum) {
+            if (r.invoiceNo == invoice.InvoiceCode + invoice.InvoiceNum) {
               addFlg = false;
             }
           });
 
           if (addFlg) {
-            let method = 'post';
-            let url = `/invoices`;
+            let details = [];
+            for (var i = 0; i < invoice.CommodityName.length; i++) {
 
-            let detailItem = {};
-            detailItem.type = 'SH';
-            detailItem.paymentOrderId = this.primary.id;
-            detailItem.invoiceNumber = invoice.InvoiceCode + invoice.InvoiceNum;
-            detailItem.invoiceTime = moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD");
-            detailItem.price = invoice.AmountInFiguers;
-            detailItem.company = invoice.SellerName + ":" + invoice.SellerRegisterNum;
+              details.push({
+                name: invoice.CommodityName[i] ? invoice.CommodityName[i].word : '',
+                model: invoice.CommodityType[i] ? invoice.CommodityType[i].word : '',
+                unit: invoice.CommodityUnit[i] ? invoice.CommodityUnit[i].word : '',
+                qty: invoice.CommodityNum[i] ? invoice.CommodityNum[i].word : '',
+                price: invoice.CommodityPrice[i] ? invoice.CommodityPrice[i].word : '',
+                taxRate: invoice.CommodityTaxRate[i] ? invoice.CommodityTaxRate[i].word.replace('%', '') : '',
+                tax: invoice.CommodityTax[i] ? invoice.CommodityTax[i].word : '',
+                amount: invoice.CommodityAmount[i] ? invoice.CommodityAmount[i].word : '',
+              });
+            }
 
-            this.global.axios[method](url, detailItem)
-              .then(resp => {
-                this.$message({type: 'success', message: '操作成功'});
-                let obj = resp.data;
-                // 回传消息
-                this.$emit("modifyCBEvent", detailItem);
-                this.initData();
-                this.confirmLoading = false;
-                this.loading = false;
-                this.closeDialog();
-              })
-              .catch(err => {
-                this.confirmLoading = false;
-                this.loading = false;
-                this.initData();
-                this.closeDialog();
-              })
-
-            this.data.push({});
+            this.data.push({
+              invoiceNo: invoice.InvoiceCode + invoice.InvoiceNum,
+              invoiceDate: moment(invoice.InvoiceDate, "YYYY年MM月DD日").format("YYYY-MM-DD"),
+              amount: invoice.AmountInFiguers,
+              tax: invoice.TotalTax,
+              seller: invoice.SellerName + ":" + invoice.SellerRegisterNum,
+              buyer: invoice.PurchaserName + ":" + invoice.PurchaserRegisterNum,
+              invoiceDetails: details
+            });
           }
-          this.search();
         }
+        else {
+          this.data.push({
+            invoiceNo: '',
+            invoiceDate: '',
+            amount: '',
+            tax: '',
+            seller: '',
+            buyer: '',
+            invoiceDetails: [{
+              name: '',
+              model: '',
+              unit: '',
+              qty: '',
+              price: '',
+              taxRate: '',
+              tax: '',
+              amount: '',
+            }]
+          });
+        }
+        this.search();
+        console.log(this.tableData);
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 行修改功能 */
-      onDefaultEdit(row) {
-        this.$refs.itemDialog.openDialog(row);
+      onDefaultDetailAdd(row) {
+        row.invoiceDetails.push({
+          name: '',
+          model: '',
+          unit: '',
+          qty: '',
+          price: '',
+          taxRate: '',
+          tax: '',
+          amount: '',
+        })
       },
-
-      /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
+      onDefaultDetailDelete(row) {
+        this.$confirm('确认清空该项目内容吗？', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              this.loading = true;
-              this.confirmLoading = true;
-              let url = `/invoices/${row.id}`
-              this.global.axios.delete(url)
-                .then(resp => {
-                  this.$message({type: 'success', message: '删除成功'});
-                  this.confirmLoading = false;
-                  this.loading = false;
-                  this.initData();
-                  this.$emit("modifyCBEvent");
-                })
-                .catch(err => {
-                  this.confirmLoading = false;
-                  this.loading = false;
-                })
+              row.name = '';
+              row.model = '';
+              row.unit = '';
+              row.qty = '';
+              row.price = '';
+              row.taxRate = '';
+              row.tax = '';
+              row.amount = '';
               done();
             } else done()
           }
@@ -328,16 +466,67 @@
         })
       },
 
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.initData();
-        this.$emit("modifyCBEvent", object);
+      /* 行删除功能 */
+      onDefaultDelete(row) {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              let idx = null;
+
+              this.data.forEach((item, index) => {
+                  if (item.invoiceNo === row.invoiceNo) {
+                    idx = index;
+                    return;
+                  }
+                }
+              );
+              this.date = this.data.splice(idx, 1);
+              this.search();
+
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
+      updateInput(val) {
+        this.$forceUpdate();
+      },
+
+      onPayment() {
+        let listInvoice = JSON.parse(JSON.stringify(this.data));
+        this.saveInvoice(listInvoice);
+      },
+
+      saveInvoice(listInvoice) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        this.global.axios.put(`/invoices/detail/SH/${this.primary.id}`, listInvoice)
+          .then(resp => {
+              loading.close();
+              this.$message.success('操作成功');
+              this.$emit("modifyCBEvent");
+              this.initData();
+              this.closeDialog();
+            }
+          )
+          .catch(err => {
+            console.log(err);
+            loading.close();
+          })
       },
 
       /********************* 工具条按钮  ***************************/
       onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(null);
+        this.addInvoice(null);
       },
       onToolBarEdit() {
 
@@ -373,4 +562,3 @@
   }
 
 </style>
-
