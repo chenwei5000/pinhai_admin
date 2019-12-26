@@ -29,7 +29,7 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
-      :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
+      :default-sort="{prop: 'invoiceDate', order: 'ascending'}"
       id="table"
     >
       <el-table-column prop="invoiceNo" label="发票号" width="180">
