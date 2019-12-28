@@ -136,7 +136,8 @@
       <el-table-column prop="coverageWeek" label="覆盖周数" width="100" v-if="hasSale"></el-table-column>
       <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100" v-if="hasSale"></el-table-column>
       <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100" v-if="hasSale"></el-table-column>
-      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110" v-if="hasSale"></el-table-column>
+      <el-table-column prop="inStockQty" label="亚马逊在库库存(件)" width="120" v-if="hasSale"></el-table-column>
+      <el-table-column prop="amazonTotalStock" label="亚马逊总库存(件)" width="120" v-if="hasSale"></el-table-column>
       <el-table-column prop="validateStockQty" label="有效库存(件)" width="100" v-if="hasSale"></el-table-column>
 
 
@@ -709,6 +710,7 @@
           .then(resp => {
             let res = resp.data;
             let sales = res || [];
+            console.log(sales);
             this.data.forEach(data => {
               sales.forEach(sale => {
                 try {
@@ -724,6 +726,7 @@
                     data.domesticStocks = JSON.stringify(sale.warehouseStocks);
                     data.domesticStocksStr = sale.domesticStocks;
                     data.numberOfCarton = sale.numberOfCarton;
+                    data.amazonTotalStock = sale.totalQty;
                     resData.push(data);
                   }
                 } catch (e) {

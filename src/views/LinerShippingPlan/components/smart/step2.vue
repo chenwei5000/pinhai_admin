@@ -34,7 +34,10 @@
       <el-table-column prop="coverageWeek" label="覆盖周数" width="100"></el-table-column>
       <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
       <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100"></el-table-column>
-      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110" v-if="false"></el-table-column>
+
+      <el-table-column prop="inStockQty" label="亚马逊在库库存(件)" width="120"></el-table-column>
+      <el-table-column prop="totalQty" label="亚马逊总库存(件)" width="120"></el-table-column>
+
       <el-table-column prop="validateStockQty" label="有效库存(件)" width="100"></el-table-column>
 
 
@@ -49,13 +52,11 @@
         </template>
       </el-table-column>
 
-
       <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" >
         <template slot-scope="scope">
           <span>{{ scope.row.warehouseStocks[item.id]}}</span>
         </template>
       </el-table-column>
-
 
       <el-table-column prop="cartonSpecVolume" label="箱子体积(m³)" width="100">
 
@@ -515,6 +516,7 @@
             soldOutTime: row.soldOutTime,
             domesticStocks: JSON.stringify(row.warehouseStocks),
             domesticStockWarehouses : this.primary.warehouseId.join(","),
+            amazonTotalStock: row.totalQty
           });
         });
 

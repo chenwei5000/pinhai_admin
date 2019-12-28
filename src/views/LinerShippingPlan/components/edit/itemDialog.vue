@@ -143,7 +143,7 @@
             <el-form-item label="亚马逊库存(件)" prop="inStockQty">
 
               <el-input v-model.trim="detailItem.inStockQty"
-                        style="width: 200px" placeholder="亚马逊库存件数" readonly clearable></el-input>
+                        style="width: 200px" placeholder="亚马逊在库库存(件)" readonly clearable></el-input>
 
               <el-tooltip class="item" effect="light" content="亚马逊在仓库的库存件数，不能修改" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
@@ -155,6 +155,19 @@
 
         <el-row>
           <el-col :md="10">
+            <el-form-item label="亚马逊总库存(件)" prop="amazonTotalStock">
+
+              <el-input v-model.trim="detailItem.amazonTotalStock"
+                        style="width: 200px" placeholder="亚马逊在库库存件数" readonly clearable></el-input>
+
+              <el-tooltip class="item" effect="light" content="亚马逊在仓库+在途的库存件数，不能修改" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
             <el-form-item label="有效库存(件)" prop="validateStockQty">
               <el-input v-model.trim="detailItem.validateStockQty"
                         style="width: 200px" placeholder="有效库存件数" clearable></el-input>
@@ -165,8 +178,10 @@
 
             </el-form-item>
           </el-col>
+        </el-row>
 
-          <el-col :md="14">
+        <el-row>
+          <el-col :md="24">
             <el-form-item label="国内库存(箱)" prop="domesticStockCartonQty">
               <el-input v-model.trim="detailItem.domesticStockCartonQty"
                         style="width: 200px" placeholder="国内库存，箱数" clearable></el-input>
@@ -177,9 +192,7 @@
 
             </el-form-item>
           </el-col>
-
         </el-row>
-
         <el-row>
           <el-col :md="24" v-if="detailItem.domesticStocksStr">
             <el-form-item label="国内库存明细(箱)">
