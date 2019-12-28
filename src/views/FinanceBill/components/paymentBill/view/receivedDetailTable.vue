@@ -20,8 +20,8 @@
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'procurementShippedOrder.receivedTime', order: 'ascending'}"
       id="table"
-    >
 
+    >
       <el-table-column prop="procurementShippedOrder.code" label="收货单编码" width="120">
       </el-table-column>
 
@@ -119,7 +119,7 @@
         downloadUrl: "", //下载Url
         filters: [
           {
-            field: "procurementOrderId",
+            field: "procurementShippedOrderId",
             op: 'eq',
             data: this.primary && this.primary.settlementBill.procurementOrder ? this.primary.settlementBill.procurementOrder.id : -1
           },
@@ -155,6 +155,7 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
+        console.log(this.primary)
       },
 
       /********************* 表格相关方法  ***************************/

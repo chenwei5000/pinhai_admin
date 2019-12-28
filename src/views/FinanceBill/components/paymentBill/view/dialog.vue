@@ -115,9 +115,7 @@
     data() {
       return {
         primaryId: null,  //主ID
-        primary: {
-
-        }, //主对象
+        primary: {}, //主对象
         primaryComplete: false,
         dialogVisible: false, //Dialog 是否开启
         confirmLoading: false,
@@ -135,7 +133,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
+          let relations = ["supplier", "procurementShippedOrder","procurementOrder","currency", "creator", "settlementBill", "settlementBill.procurementOrder","settlementBill.procurementShippedOrder", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"];
           //获取计划数据
           this.global.axios
             .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)

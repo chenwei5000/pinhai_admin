@@ -20,13 +20,13 @@
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'procurementShippedOrder.receivedTime', order: 'ascending'}"
       id="table"
+
     >
       <el-table-column prop="procurementShippedOrder.code" label="收货单编码" width="120">
       </el-table-column>
 
       <el-table-column prop="procurementShippedOrder.formatReceivedTime" label="收货时间" sortable min-width="100">
       </el-table-column>
-
       <el-table-column prop="product.skuCode" label="SKU" sortable min-width="120">
       </el-table-column>
 
@@ -56,8 +56,8 @@
             <span slot="reference">{{ scope.row.receivedNote ? scope.row.receivedNote.substr(0,8)+'..' : '' }}</span>
           </el-popover>
           <span v-else>
-            {{ scope.row.receivedNote }}
-          </span>
+            {{ scope.row.product.name }}
+            </span>
         </template>
       </el-table-column>
 
@@ -77,7 +77,7 @@
     props: {
       primary: {
         type: [Object],
-        default: null
+        default: null,
       }
     },
     computed: {
@@ -85,6 +85,13 @@
         'device',
         'rolePower'
       ]),
+      procurementBoxQtyTitle() {
+        return `采购数量(${this.unit})`;
+      },
+      shippedQtyTitle() {
+        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
+      },
+
       hasExecute() {
         if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
           return true;
@@ -118,7 +125,7 @@
         downloadUrl: "", //下载Url
         filters: [
           {
-            field: "procurementOrderId",
+            field: "procurementShippedOrderId",
             op: 'eq',
             data: this.primary && this.primary.procurementOrder ? this.primary.procurementOrder.id : -1
           }
@@ -212,6 +219,8 @@
         let url = this.url;
         let params = '';
 
+        console.log(this.primary)
+
         if (!url) {
           console.warn('url 为空, 不发送请求')
           return
@@ -229,32 +238,56 @@
 
         // 请求开始
         this.loading = true
+        filters: [
+          {
+            field: "procurementShippedOrderId",
+            op: 'eq',
+            data: this.primary  ? this.primary.procurementOrder.id: -1
+          }
+        ],
 
         //获取数据
         this.global.axios
-          .get(url + params)
+          .get("/procurementShippedOrders" + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": [
+              {
+                field: "procurementOrderId",
+                op: 'eq',
+                data: this.primary  ? this.primary.procurementOrder.id: -1
+              }
+            ]}))
           .then(resp => {
-            let res = resp.data
-            let data = res || []
-
-            this.data = data
-            this.search()
-
-            this.total = res.length || 0
-            this.loading = false
-            /**
-             * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
-             * @event update
-             */
-            this.$emit('update', data, res)
-          })
-          .catch(err => {
-            /**
-             * 请求数据失败，返回err对象
-             * @event error
-             */
-            this.$emit('error', err)
-            this.loading = false
+            let res = resp.data;
+            let orders = "";
+            res.forEach( item => {
+              orders = orders + item.id + ","
+            })
+            orders = orders.substr(0, orders.length - 1)
+            let filters = [
+              {
+                field: "procurementShippedOrderId",
+                op: 'in',
+                data: orders
+              }
+            ]
+            this.global.axios
+              .get(this.url + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters})+"&relations=" + JSON.stringify(this.relations))
+              .then(resp => {
+                if(this.primary.procurementOrderId = null )
+                {
+                  return null
+                }
+                let res = resp.data
+                let data = res || []
+                this.data = data
+                this.search()
+                this.total = res.length || 0
+                this.loading = false
+                this.$emit('update', data, res)
+              })
+              .catch(err => {
+                this.$emit('error', err)
+                this.loading = false
+              })
           })
       },
 
