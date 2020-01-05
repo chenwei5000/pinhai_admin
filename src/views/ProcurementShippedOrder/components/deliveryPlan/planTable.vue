@@ -5,18 +5,29 @@
     <!--搜索 TODO: 更加实际情况调整 el-form-item -->
     <el-form :inline="true" :model="searchParam"
              ref="searchForm"
-             id="filter-form"
              inline-message
              @submit.native.prevent>
 
-      <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 140px"
-                  placeholder="请输入编码"></el-input>
+      <el-form-item label="交货日期">
+
+        <el-date-picker
+          size="mini"
+          v-model="searchParam.deliveryTime.value"
+          format="yyyy-MM-dd"
+          style="width: 220px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="交货日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+
       </el-form-item>
 
-      <el-form-item label="收款公司">
-        <el-select size="mini" filterable v-model="searchParam.companyManagementId.value" style="width: 120px"
-                   placeholder="收款公司">
+
+      <el-form-item label="供货商">
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+                   placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -25,22 +36,18 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="最晚付款时间">
-        <el-date-picker
-          size="mini"
-          v-model="searchParam.latestPaymentTime.value"
-          format="yyyy-MM-dd"
-          style="width: 120px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
+      <el-form-item label="SKU">
+        <el-input size="mini" v-model="searchParam.product_skuCode.value" style="width: 150px"
+                  placeholder="请输入名称"></el-input>
+      </el-form-item>
+
+      <el-form-item label="采购单编号">
+        <el-input size="mini" v-model="searchParam.procurementOrder_code.value" style="width: 150px"
+                  placeholder="请输入采购单编号"></el-input>
       </el-form-item>
 
       <el-form-item label="状态">
-        <el-select filterable v-model="searchParam.status.value" size="mini" style="width: 100px" placeholder="请选择状态">
+        <el-select filterable v-model="searchParam.status.value" style="width: 120px;" size="mini" placeholder="请选择状态">
           <el-option
             v-for="(item,idx) in statusSelectOptions"
             :label="item.label" :value="item.value"
@@ -49,11 +56,25 @@
         </el-select>
       </el-form-item>
 
+
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
+
+
+    <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd">
+
+      <el-col :md="18">
+        <el-button v-if="hasAdd" type="primary" icon="el-icon-truck" @click="onDefaultAdd"
+                   size="mini" id="table-add">
+          创建发货计划
+        </el-button>
+
+      </el-col>
+
+    </el-row>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -70,82 +91,77 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
+      show-summary
+      :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="companyManagement.abbreviation" label="收款公司" min-width="120" fixed="left">
+
+      <el-table-column
+        type="selection"
+        width="30"
+        align="center"
+      >
       </el-table-column>
 
-      <el-table-column prop="code" label="编号" min-width="130"></el-table-column>
+      <el-table-column prop="product.skuCode" label="SKU" sortable="custom" min-width="120" fixed="left" align="center">
+      </el-table-column>
 
-
-      <el-table-column prop="statusName" label="状态" width="80">
+      <el-table-column prop="statusName" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
-            ? 'success' : scope.row.status === 0
-            ? 'info' : ''"
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : scope.row.status === 2
+            ? 'primary' : scope.row.status === 3
+            ? 'info' : 'success'"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="creator.name" label="申请人" width="80">
-      </el-table-column>
-
-      <el-table-column prop="applicationTime" label="申请日期" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.applicationTime | parseTime('{y}-{m}-{d}') }}</span>
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
         </template>
       </el-table-column>
 
-      <el-table-column prop="linerShippingPlanId" label="货柜信息" min-width="180">
+
+      <el-table-column prop="supplier.name" label="供货商" width="100" align="center"></el-table-column>
+      <el-table-column prop="deliveryTime" sortable="custom" label="交货日期" width="120" align="center">
         <template slot-scope="scope">
-          <span>
-          {{scope.row.linerShippingPlan.formatEtdTime}}{{scope.row.linerShippingPlan.portOfLoading}}-{{scope.row.linerShippingPlan.code}}
-          </span>
+          <span>{{ scope.row.deliveryTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="currency.name" label="付款货币" width="80">
-      </el-table-column>
+      <el-table-column prop="procurementOrder.code" label="采购编号" width="120" align="center"></el-table-column>
+      <el-table-column prop="procurementOrder.name" label="采购单名称" min-width="150" align="center"></el-table-column>
+      <el-table-column prop="cartonSpec.code" label="箱规" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="80" align="center"></el-table-column>
+      <el-table-column prop="creator.name" label="创建人" min-width="80" align="center"></el-table-column>
 
-      <el-table-column prop="paymentAmount" label="实付金额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.paymentAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="paymentAmountTime" label="付款日期" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.paymentAmountTime | parseTime('{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
-
-      <el-table-column prop="latestPaymentTime" label="最晚付款时间" width="100" fixed="right">
-        <template slot-scope="scope">
-          <span>{{ scope.row.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="settlementAmount" label="申请金额" width="100" fixed="right">
-        <template slot-scope="scope">
-          <span>{{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="cartonQty" label="计划交货箱数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="qty" label="计划交货件数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="发货箱数" width="100" align="center" v-if="false"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status == 1 && hasEdit" size="mini" icon="el-icon-money" circle
-                     @click="onDefaultEdit(scope.row)" type="success" id="ph-table-edit">
+
+          <el-button v-if="scope.row.status == 0 && hasEdit" size="mini" icon="el-icon-edit" circle
+                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
-          <el-button v-if="scope.row.status == 1 && hasView" type="primary" size="mini"
-                     id="ph-table-del" icon="el-icon-view" circle
-                     @click="onDefaultView(scope.row)">
+          <el-button v-if="scope.row.status == 0 && hasDelete" type="danger" size="mini"
+                     id="ph-table-del" icon="el-icon-delete" circle
+                     @click="onDefaultDelete(scope.row)">
           </el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -168,13 +184,13 @@
 
     </el-pagination>
 
-    <!--编辑对话框-->
-    <viewDialog ref="viewDialog">
-    </viewDialog>
+    <!--编辑明细对话框-->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog">
+    </itemDialog>
 
-    <!--查看对话框-->
-    <paymentDialog @modifyCBEvent="modifyCBEvent" ref="paymentDialog">
-    </paymentDialog>
+    <!--创建发货计划对话框-->
+    <createDialog @modifyCBEvent="modifyCBEvent" ref="createDialog">
+    </createDialog>
 
   </div>
 
@@ -182,13 +198,14 @@
 
 <script>
   import {mapGetters} from 'vuex'
-  import {currency, parseTime} from '@/utils'
   import qs from 'qs'
-  import paymentDialog from './payment/dialog'
-  import viewDialog from './view/dialog'
-  import companyManagementModel from '@/api/companyManagement'
+  import {currency, parseTime} from '@/utils'
+  import itemDialog from './planDialog'
   import phEnumModel from '@/api/phEnum'
-  import {checkPermission} from "@/utils/permission";
+  import phPercentage from '@/components/PhPercentage/index'
+  import supplierModel from '@/api/supplier'
+  import {getObjectValueByArr} from "../../../../utils";
+  import createDialog from "../create/dialog"
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -201,8 +218,9 @@
   export default {
 
     components: {
-      paymentDialog,
-      viewDialog
+      createDialog,
+      itemDialog,
+      phPercentage
     },
     props: {
       type: {
@@ -214,19 +232,22 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
-
-      hasView() {
-        return checkPermission('LogisticPaymentBillDetailResource_get');
+      hasAdd() {
+        return true && this.searchParam.status.value == '0';
       },
       hasEdit() {
-        return checkPermission('LogisticPaymentBillResource_create');
+        return true;
+      },
+      hasDelete() {
+        return true;
       },
       hasOperation() {
-        return this.hasView || this.hasEdit;
+        return (this.hasEdit || this.hasDelete) && this.searchParam.status.value == '0';
+      },
+      // 显示进度条
+      hasCompleteness() {
+        return false;
       }
-    },
-    filters: {
-      currency: currency
     },
 
     data() {
@@ -241,28 +262,28 @@
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [1, 20, 50, 100],
+        paginationSizes: [20, 50, 100, 500],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/logisticPaymentBills', // 资源URL
-        countUrl: '/logisticPaymentBills/count', // 资源URL
-        relations: ["companyManagement", "linerShippingPlan", "currency", "creator"],  // 关联对象
+        url: '/procurementDeliveryPlans', // 资源URL
+        countUrl: '/procurementDeliveryPlans/count', // 资源URL
+        relations: ["product", "cartonSpec", "creator", "procurementOrder", "supplier"],  // 关联对象
         data: [],
-        phSort: {prop: "latestPaymentTime", order: "asc"},
-
+        phSort: {prop: "deliveryTime", order: "asc"},
         // 表格加载效果
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
-        supplierSelectOptions: [],
         statusSelectOptions: [],
+        supplierSelectOptions: [],
 
         searchParam: {
-          companyManagementId: {value: null, op: 'in', id: 'companyManagementId'},
-          latestPaymentTime: {value: null, op: 'timeRange', id: 'latestPaymentTime'},
-          code: {value: null, op: 'bw', id: 'code'},
-          status: {value: '1', op: 'in', id: 'status'}
+          deliveryTime: {value: null, op: 'timeRange', id: 'deliveryTime'},
+          status: {value: '0', op: 'eq', id: 'status'},
+          supplierId: {value: null, op: 'in', id: 'supplierId'},
+          product_skuCode: {value: null, op: 'eq', id: 'product_skuCode'},
+          procurementOrder_code: {value: null, op: 'eq', id: 'procurementOrder_code'},
         },
 
         //弹窗
@@ -300,17 +321,20 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.latestPaymentTime) {
-            this.searchParam.latestPaymentTime.value = params.latestPaymentTime;
+          if (params.supplierId) {
+            this.searchParam.supplierId.value = params.supplierId;
           }
-          if (params.companyManagementId) {
-            this.searchParam.companyManagementId.value = params.companyManagementId;
+          if (params.product_skuCode) {
+            this.searchParam.product_skuCode.value = params.product_skuCode;
           }
-          if (params.code) {
-            this.searchParam.code.value = params.code;
+          if (params.procurementOrder_code) {
+            this.searchParam.procurementOrder_code.value = params.procurementOrder_code;
           }
           if (params.status) {
             this.searchParam.status.value = params.status;
+          }
+          if (params.deliveryTime) {
+            this.searchParam.deliveryTime.value = params.deliveryTime;
           }
         }
       }
@@ -326,9 +350,25 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.supplierSelectOptions = companyManagementModel.getSelectOptions();
-        this.statusSelectOptions = phEnumModel.getSelectOptions("LogisticPaymentStatus");
+        this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementDeliveryPlanStatus');
+        this.supplierSelectOptions = supplierModel.getSelectOptions();
         this.statusSelectOptions.unshift({label: '全部', value: null});
+
+        if (this.type === 'editing') {
+        }
+        //待审核 无删除
+        else if (this.type === 'auditing') {
+          this.hasDelete = false;
+        }
+        //执行中 无删除
+        else if (this.type === 'executing') {
+          this.hasDelete = false;
+        }//完成 无删除
+        else if (this.type === 'complete') {
+          this.hasDelete = false;
+        }
+        else if (this.type === 'all') {
+        }
       },
 
       // 获取表格的高度
@@ -369,10 +409,11 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.latestPaymentTime.value = null;
-        this.searchParam.companyManagementId.value = null;
-        this.searchParam.status.value = '1';
-        this.searchParam.code.value = null;
+        this.searchParam.supplierId.value = null;
+        this.searchParam.status.value = '0';
+        this.searchParam.product_skuCode.value = null;
+        this.searchParam.procurementOrder_code.value = null;
+        this.searchParam.deliveryTime.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -386,14 +427,63 @@
          * 另外, 当customQuery.sync时, 会重置customQuery
          * @event reset
          */
-        this.$emit('reset')
-
-        // this.$emit(
-        //   'update:customQuery',
-        //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-        // )
+        this.$emit('reset');
       },
 
+
+      /*汇总数据*/
+      getSummaries(param) {
+        const {columns, data} = param;
+        const sums = [];
+
+        columns.forEach((column, index) => {
+
+          if (column.property == 'product.skuCode') {
+            const values = data.map(item => item[column.property]);
+            sums[index] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+
+            sums[index] = '合计: ' + sums[index] + ' 行';
+          }
+
+          if (column.property == 'cartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'qty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+        });
+
+        return sums;
+      },
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
@@ -455,7 +545,6 @@
 
         // 处理查询
         let filters = [];
-
         Object.keys(this.searchParam).filter(k => {
           return this.searchParam[k] && this.searchParam[k].value !== ''
             && this.searchParam[k].value !== null && this.searchParam[k].value !== undefined
@@ -535,6 +624,19 @@
         }
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /* 多选功能 */
       handleSelectionChange(val) {
         this.selected = val
@@ -582,16 +684,70 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /* 行编辑按钮 */
+      /*创建发货计划*/
+      onDefaultAdd() {
+        if (this.selected == null || this.selected.length == 0) {
+          this.$message.error("请选择交货内容!");
+          return false;
+        }
+
+        let sid = null;
+        let time = null;
+        this.selected.forEach(r=>{
+          if(sid == null){
+            sid= r.supplierId;
+          }
+          else{
+            if(sid != r.supplierId){
+                sid = false;
+            }
+          }
+          if(time == null){
+            time = r.deliveryTime;
+          }
+          else{
+            if(time != r.deliveryTime){
+              time = false;
+            }
+          }
+        });
+        if(sid === false){
+          this.$message.error("一个发货计划对应一个供货商!");
+          return false;
+        }
+        if(time === false){
+          this.$message.error("一个发货计划对应一个交货日期!");
+          return false;
+        }
+
+        this.$refs.createDialog.openDialog(JSON.parse(JSON.stringify(this.selected)));
+      },
+      /* 行修改功能 */
       onDefaultEdit(row) {
-        // 弹窗
-        this.$refs.paymentDialog.openDialog(row.id);
+        this.$refs.itemDialog.openDialog(row.id, {});
       },
 
-      /* 行删除按钮 */
-      onDefaultView(row) {
-        // 弹窗
-        this.$refs.viewDialog.openDialog(row.id);
+      /* 行删除功能 */
+      onDefaultDelete(row) {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+                this.$emit("reloadCBEvent");
+              })
+                .catch(err => {
+                })
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
@@ -604,10 +760,14 @@
 
 
 <style type="text/less" lang="scss" scoped>
-  .el-form-item__content {
-    /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
-      width: 220px !important;
-    }
+  .table-tool {
+    background-color: #dfe6ec;
+    position: relative;
+    z-index: 890;
+    width: 100%;
+    min-height: 24px;
+    line-height: 24px;
+    padding: 5px 10px;
   }
 </style>
 

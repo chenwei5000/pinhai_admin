@@ -29,7 +29,7 @@
       </fieldset>
 
       <fieldset class="panel-heading">
-        <legend class="panel-title">预计交货日期
+        <legend class="panel-title">期望交货日期
           <el-tooltip class="item" effect="light" placement="right">
             <div slot="content">
               采购单预计的交货日期，由跟单确认
@@ -65,7 +65,7 @@
               <el-select v-model="editObject.warehouseId" size="mini"
                          filterable placeholder="请选择收货仓库">
                 <el-option
-                  v-for="(item , idx)  in warehouseSelectOptions"
+                  v-for="(item , idx) in warehouseSelectOptions"
                   :label="item.name"
                   :value="item.id"
                   :key="idx"
@@ -90,8 +90,6 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-
-
         </el-row>
 
         <el-row>

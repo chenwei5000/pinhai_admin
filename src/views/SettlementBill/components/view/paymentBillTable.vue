@@ -20,22 +20,70 @@
       :default-sort="{prop: 'invoiceNumber', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="invoiceNumber" label="发票号" min-width="150">
+      <el-table-column prop="invoiceNo" label="发票号" width="130">
       </el-table-column>
 
-      <el-table-column prop="invoiceTime" label="开票日期" width="150">
+      <el-table-column prop="invoiceDate" label="开票日期" width="100">
         <template slot-scope="scope">
-          <span>{{ scope.row.invoiceTime | parseTime('{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.invoiceDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="price" label="发票金额" width="150">
+      <el-table-column prop="amount" label="发票金额" width="100">
         <template slot-scope="scope">
-          {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+          {{scope.row.amount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="company" label="公司" min-width="150">
+      <el-table-column prop="company" label="内容" min-width="150">
+        <template slot-scope="scope">
+          <el-table :data="scope.row.invoiceDetails"
+                    style="width: 100%"
+                    stripe
+                    border
+                    highlight-current-row
+                    cell-class-name="ph-cell"
+                    header-cell-class-name="ph-cell-header"
+          >
+            <el-table-column prop="name" label="项目" align="center">
+            </el-table-column>
+
+            <el-table-column prop="model" label="规格型号" align="center">
+            </el-table-column>
+
+            <el-table-column prop="unit" label="单位" align="center">
+            </el-table-column>
+
+            <el-table-column prop="qty" label="数量" align="right">
+            </el-table-column>
+
+            <el-table-column prop="price" label="单价" align="right">
+              <template slot-scope="scope">
+                {{scope.row.price, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="amount" label="金额" align="right">
+              <template slot-scope="scope">
+                {{scope.row.amount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="taxRate" label="税率" align="right">
+              <template slot-scope="scope">
+                {{scope.row.taxRate}}%
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="tax" label="税额" align="right">
+              <template slot-scope="scope">
+                {{scope.row.tax, primary.currency ? primary.currency.symbolLeft : '' | currency}}
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </template>
+
       </el-table-column>
 
     </el-table>
@@ -61,14 +109,6 @@
         'device',
         'rolePower'
       ]),
-      hasExecute() {
-        if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
     },
     filters: {
       currency: currency
@@ -83,11 +123,6 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        //操作按钮控制
-        hasOperation: true,
-        hasAdd: true,
-        hasEdit: true,
-        hasDelete: true,
 
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
@@ -114,7 +149,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-        this.loading = true;
         if (this.primary) {
 
           let url = "/invoices";
@@ -135,7 +169,6 @@
             .catch(err => {
             });
         }
-        this.loading = false;
       },
 
       /********************* 表格相关方法  ***************************/
@@ -150,7 +183,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'invoiceNumber') {
+          if (column.property == 'invoiceNo') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -158,7 +191,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'price') {
+          if (column.property == 'amount') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

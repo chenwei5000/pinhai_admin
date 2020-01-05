@@ -13,12 +13,12 @@
       </el-form-item>
 
       <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
+        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 150px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 200px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
@@ -64,6 +64,7 @@
       :max-height="tableMaxHeight"
       v-loading="loading"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       @sort-change='handleSortChange'
       id="table"
     >
@@ -196,6 +197,7 @@
   import supplierModel from '@/api/supplier'
   import warehouseModel from '../../../api/warehouse';
   import {checkPermission} from "../../../utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -567,6 +569,19 @@
         }
         this.page = 1;
         this.getList(true);
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /********************* 分页工具条相关方法  ***************************/

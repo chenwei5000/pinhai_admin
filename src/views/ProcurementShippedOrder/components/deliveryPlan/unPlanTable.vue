@@ -8,16 +8,13 @@
              inline-message
              @submit.native.prevent>
 
-      <el-form-item label="编码">
-        <el-input size="mini" v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
-      </el-form-item>
-
-      <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+      <el-form-item label="采购单编号">
+        <el-input size="mini" v-model="searchParam.procurementOrder_code.value" style="width: 150px"
+                  placeholder="请输入采购单编号"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
-        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+        <el-select size="mini" filterable v-model="searchParam.procurementOrder_supplierId.value" style="width: 120px"
                    placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
@@ -26,6 +23,12 @@
           ></el-option>
         </el-select>
       </el-form-item>
+
+      <el-form-item label="SKU">
+        <el-input size="mini" v-model="searchParam.product_skuCode.value" style="width: 150px"
+                  placeholder="请输入名称"></el-input>
+      </el-form-item>
+
 
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
@@ -48,77 +51,52 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="code" label="编号" width="140"></el-table-column>
+      <el-table-column prop="product.skuCode" label="SKU" sortable="custom" min-width="120" fixed="left" align="center">
+      </el-table-column>
 
-      <el-table-column prop="note" label="下单完成度" width="120">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="下单完成度" width="250" trigger="hover">
-            <div>
-              完成度：{{ scope.row.qty.orderedCompleteness }}%<BR/>
-              总件数：{{ scope.row.qty.qty }} 件<BR/>
-              已下单：{{ scope.row.qty.orderQty}} 件 <BR/>
-            </div>
-            <span slot="reference">
-              <el-progress :text-inside="true" :stroke-width="16"
-                           :percentage="scope.row.qty.orderedCompleteness > 100 ? 100: scope.row.qty.orderedCompleteness"
-                           status="success"
-              ></el-progress>
-            </span>
-          </el-popover>
-
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
+          <el-image
+            :z-index="10000"
+            style="width: 30px; height: 30px;margin-top: 5px"
+            :src="scope.row.product.imgUrl"
+            :preview-src-list="[scope.row.product.imgUrl.replace('_SL75_','_SL500_')]" lazy>
+          </el-image>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="名称" min-width="200">
+      <el-table-column prop="procurementOrder.code" label="完成度" width="90" align="center">
         <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.name && scope.row.name.length > 27">
-            <div v-html="scope.row.name"></div>
-            <span slot="reference">{{
-              scope.row.name ? scope.row.name.length > 27 ? scope.row.name.substr(0,25)+'..' : scope.row.name : ''
-              }}</span>
+          <el-progress :text-inside="true" :stroke-width="16"
+                       :percentage="scope.row.orderedCompleteness > 100 ? 100: scope.row.orderedCompleteness"
+                       status="success"
+          ></el-progress>
           </el-popover>
-          <span v-else>
-            {{ scope.row.name }}
-          </span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" width="120"></el-table-column>
-
-      <el-table-column prop="warehouse.name" label="收货仓库" width="120"></el-table-column>
-
-      <el-table-column prop="formatOtdTime" label="预计交货日期" width="100"></el-table-column>
-
-      <el-table-column prop="procurementPlan.note" label="交货要求" width="130">
+      <el-table-column prop="procurementOrder.supplier.name" label="供货商" width="100" align="center"></el-table-column>
+      <el-table-column prop="procurementOrder.otdTime" sortable="custom" label="期望交货日期" width="120" align="center">
         <template slot-scope="scope">
-          <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
-                      v-if="scope.row.procurementPlan.note && scope.row.procurementPlan.note.length > 10">
-            <div v-html="scope.row.procurementPlan.formatNote"></div>
-            <span slot="reference">{{ scope.row.procurementPlan.note ? scope.row.procurementPlan.note.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.procurementPlan.note }}
-          </span>
+          <span>{{ scope.row.procurementOrder.otdTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="creator.name" label="创建人" width="80"></el-table-column>
+      <el-table-column prop="procurementOrder.code" label="采购编号" width="120" align="center"></el-table-column>
+      <el-table-column prop="procurementOrder.name" label="采购单名称" min-width="150" align="center"></el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="cartonQty" label="采购箱数" width="100" align="center"></el-table-column>
+      <el-table-column prop="orderCartonQty" label="已确认箱数" width="100" align="center"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-date" circle
                      @click="onDefaultEdit(scope.row)" type="primary">
-          </el-button>
-
-          <el-button v-if="hasAdd" size="mini" icon="el-icon-truck" circle
-                     @click="onDefaultAdd(scope.row)" type="success">
           </el-button>
 
         </template>
@@ -147,10 +125,6 @@
     <editDialog @modifyCBEvent="modifyCBEvent" ref="editDialog">
     </editDialog>
 
-    <!--创建发货对话框-->
-    <createDialog ref="createDialog" @createCBEvent="modifyCBEvent">
-    </createDialog>
-
   </div>
 
 </template>
@@ -158,11 +132,12 @@
 <script>
   import {mapGetters} from 'vuex'
   import qs from 'qs'
+  import {currency, parseTime} from '@/utils'
   import editDialog from './dialog'
-  import createDialog from '../create/dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import supplierModel from '@/api/supplier'
+  import {getObjectValueByArr} from "../../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -176,17 +151,12 @@
 
     components: {
       editDialog,
-      createDialog,
       phPercentage
     },
     props: {
       type: {
         type: String,
         default: 'valid'
-      },
-      defaultFilters: {
-        type: Object,
-        default: {}
       }
     },
     computed: {
@@ -194,23 +164,10 @@
         'device', 'rolePower'
       ]),
       hasEdit() {
-        if (this.type == 'completionDate') {
-          return true;
-        }
-        else {
-          return false;
-        }
-      },
-      hasAdd() {
-        if (this.type == 'orderExecuting') {
-          return true;
-        }
-        else {
-          return false;
-        }
+        return true;
       },
       hasOperation() {
-        return this.hasEdit || this.hasAdd;
+        return this.hasEdit;
       },
       // 显示进度条
       hasCompleteness() {
@@ -230,15 +187,15 @@
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [1, 20, 50, 100],
+        paginationSizes: [20, 50, 100],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/procurementOrders', // 资源URL
-        countUrl: '/procurementOrders/count', // 资源URL
-        relations: ["procurementPlan", "creator", "currency", "supplier", "warehouse"],  // 关联对象
+        url: '/procurementOrderItems/listNoDeliveryPlans', // 资源URL
+        countUrl: '/procurementOrderItems/countNoDeliveryPlans', // 资源URL
+        relations: ["product", "procurementOrder", "procurementOrder.creator", "procurementOrder.supplier"],  // 关联对象
         data: [],
-        phSort: {prop: "id", order: "desc"},
+        phSort: {prop: "procurementOrder.otdTime", order: "asc"},
         // 表格加载效果
         loading: false,
 
@@ -247,10 +204,9 @@
         supplierSelectOptions: [],
 
         searchParam: {
-          supplierId: {value: null, op: 'in', id: 'supplierId'},
-          name: {value: null, op: 'bw', id: 'name'},
-          status: {value: null, op: 'eq', id: 'status'},
-          code: {value: null, op: 'bw', id: 'name'},
+          procurementOrder_supplierId: {value: null, op: 'in', id: 'procurementOrder_supplierId'},
+          product_skuCode: {value: null, op: 'eq', id: 'product_skuCode'},
+          procurementOrder_code: {value: null, op: 'eq', id: 'procurementOrder_code'},
         },
 
         //弹窗
@@ -288,17 +244,14 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
+          if (params.procurementOrder_supplierId) {
+            this.searchParam.procurementOrder_supplierId.value = params.procurementOrder_supplierId;
           }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
+          if (params.product_skuCode) {
+            this.searchParam.product_skuCode.value = params.product_skuCode;
           }
-          if (params.status) {
-            this.searchParam.status.value = params.status;
-          }
-          if (params.code) {
-            this.searchParam.code.value = params.code;
+          if (params.procurementOrder_code) {
+            this.searchParam.procurementOrder_code.value = params.procurementOrder_code;
           }
         }
       }
@@ -372,10 +325,9 @@
         this.page = 1
 
         //TODO:根据实际情况调整
-        this.searchParam.supplierId.value = null;
-        this.searchParam.name.value = null;
-        this.searchParam.status.value = null;
-        this.searchParam.code.value = null;
+        this.searchParam.procurementOrder_supplierId.value = null;
+        this.searchParam.product_skuCode.value = null;
+        this.searchParam.procurementOrder_code.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -467,7 +419,6 @@
         filters.forEach((param, k) => {
           searchParams += "&" + param.field + "=" + encodeURIComponent(param.data ? param.data.toString().trim() : '')
         })
-        filters.push(JSON.parse(JSON.stringify(this.defaultFilters)));
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
@@ -533,6 +484,19 @@
         }
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /* 多选功能 */
       handleSelectionChange(val) {
         this.selected = val
@@ -582,39 +546,7 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 行编辑按钮 */
       onDefaultEdit(row) {
-        // 弹窗
-        this.$refs.editDialog.openDialog(row.id);
-      },
-      /* 行编辑按钮 */
-      onDefaultAdd(row) {
-        // 弹窗
-        this.$refs.createDialog.openDialog(row.id);
-      },
-      /* 行删除按钮 */
-      onDefaultDelete(row) {
-        let url = `${this.url}/${row.id}`;
-        this.$confirm('确认删除吗?', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              this.loading = true
-
-              this.global.axios
-                .delete(url)
-                .then(resp => {
-                  this.loading = false
-                  this.$message.success("删除成功!");
-                  done()
-                  this.getList()
-                })
-                .catch(er => {
-                  this.loading = false
-                })
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
-        })
+        this.$refs.editDialog.openDialog(row);
       },
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */

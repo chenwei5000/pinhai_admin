@@ -13,14 +13,14 @@
     <el-row>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="warning" style="margin-top: 40px" @click="onBack">
+          <el-button type="warning" style="margin-top: 40px" size="mini" @click="onBack">
             < 上一步
           </el-button>
         </el-row>
       </el-col>
       <el-col :md="12">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 40px" @click="onNext">
+          <el-button type="primary" style="margin-top: 40px" size="mini"  @click="onNext">
             结束 >
           </el-button>
         </el-row>

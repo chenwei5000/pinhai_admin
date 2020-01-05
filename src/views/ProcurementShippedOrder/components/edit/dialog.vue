@@ -127,7 +127,7 @@
         primary: {}, //主对象
         dialogVisible: false, //Dialog 是否开启
         activeNames: ['infoFrom', 'itemTable', 'attachment', 'person'],   //折叠面板开启项
-        relations: ["supplier", "warehouse","procurementOrder","procurementPlan"],
+        relations: ["supplier", "warehouse"],
         url: "/procurementShippedOrders"
       }
     },

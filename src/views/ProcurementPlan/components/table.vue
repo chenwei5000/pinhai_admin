@@ -121,7 +121,6 @@
         </template>
       </el-table-column>
 
-
       <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
       <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>

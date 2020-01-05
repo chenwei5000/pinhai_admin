@@ -109,22 +109,6 @@
             placeholder="预计发货时间"></el-date-picker>
         </el-form-item>
       </el-col>
-
-    </el-row>
-
-    <el-row>
-      <el-col :md="10">
-        <el-form-item label="采购计划编码" prop="code">
-          <span style="font-size: 12px">{{editObject.procurementPlan.code}}</span>
-        </el-form-item>
-      </el-col>
-
-
-      <el-col :md="14">
-        <el-form-item label="采购单编码" prop="name">
-          <span style="font-size: 12px">{{editObject.procurementOrder.code}}</span>
-        </el-form-item>
-      </el-col>
     </el-row>
 
     <el-row>

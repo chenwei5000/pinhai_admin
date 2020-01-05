@@ -99,7 +99,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="payableAmount" label="申请金额" width="90">
+      <el-table-column prop="payableAmount" label="申请金额" width="100">
         <template slot-scope="scope">
           <div style="text-align: right;">
             {{ scope.row.payableAmount, (scope.row.currency? scope.row.currency.symbolLeft : '') | currency }}
@@ -107,7 +107,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="invoicedAmount" label="开票金额" width="80">
+      <el-table-column prop="invoicedAmount" label="开票金额" width="100">
         <template slot-scope="scope">
           <div style="text-align: right;">
             {{ scope.row.invoicedAmount, (scope.row.currency? scope.row.currency.symbolLeft : '')  | currency }}
@@ -115,7 +115,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="paymentAmount" label="已付金额" width="80">
+      <el-table-column prop="paymentAmount" label="已付金额" width="100">
         <template slot-scope="scope">
           <div style="text-align: right;">
             {{ scope.row.paymentAmount, (scope.row.currency? scope.row.currency.symbolLeft : '')  | currency }}
@@ -138,7 +138,7 @@
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       width="120">
+                       width="120" fixed="right">
         <template slot-scope="scope">
 
           <el-button v-if="hasView" size="mini" icon="el-icon-view" circle

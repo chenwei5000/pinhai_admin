@@ -56,6 +56,12 @@
 
       <el-row>
         <el-col :md="12">
+          <el-form-item label="下次发柜时间" prop="nextDeliveryTime">
+            <span style="font-size: 12px">{{newObject.nextDeliveryTime | parseTime('{y}-{m}-{d}') }}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="12">
           <el-form-item label="销售渠道" prop="merchantId">
             <el-select v-model="newObject.merchantId"
                        style="width: 200px"
@@ -75,6 +81,9 @@
             </el-tooltip>
           </el-form-item>
         </el-col>
+      </el-row>
+
+      <el-row>
         <el-col :md="12">
           <el-form-item label="库存来源" prop="warehouseId">
             <el-select v-model="newObject.warehouseId" style="width: 200px"
@@ -83,6 +92,7 @@
                        placeholder="请选择库存,可多选">
               <el-option
                 v-for="(item , idx)  in warehouseSelectOptions"
+                v-if="item.value > 0"
                 :label="item.label"
                 :value="item.value"
                 :key="idx"
@@ -96,9 +106,6 @@
           </el-form-item>
         </el-col>
 
-      </el-row>
-
-      <el-row>
         <el-col :md="12">
           <el-form-item label="产品款式" prop="groupName">
             <el-select v-model="newObject.groupName" style="width: 200px"
@@ -119,7 +126,9 @@
 
           </el-form-item>
         </el-col>
+      </el-row>
 
+      <el-row>
         <el-col :md="12">
           <el-form-item label="Vip0销售覆盖时间" prop="vip0SoldOutTime">
             <el-date-picker
@@ -137,9 +146,6 @@
             <span v-if="vip0SoldOutTimeWeek" style="font-size: 12px;">距离开船日{{vip0SoldOutTimeWeek}}周</span>
           </el-form-item>
         </el-col>
-      </el-row>
-
-      <el-row>
         <el-col :md="12">
           <el-form-item label="Vip1销售覆盖时间" prop="vip1SoldOutTime">
             <el-date-picker
@@ -174,6 +180,7 @@
             <span v-if="vip2SoldOutTimeWeek" style="font-size: 12px;">距离开船日{{vip2SoldOutTimeWeek}}周</span>
           </el-form-item>
         </el-col>
+
         <el-col :md="12">
           <el-form-item label="排除国内无库存商品" prop="exclude">
             <el-radio-group
@@ -206,6 +213,7 @@
 <script>
   import validRules from '@/components/validRules'
   import merchantModel from '@/api/merchant'
+  import {currency, parseTime} from '@/utils'
   import moment from 'moment';
 
   export default {
@@ -353,7 +361,7 @@
         this.global.axios.get(url)
           .then(data => {
             //  解决不渲染的问题
-            this.$set(this.newObject , "otdTime", data.data || {});
+            this.$set(this.newObject, "otdTime", data.data || {});
           })
           .catch(err => {
           })

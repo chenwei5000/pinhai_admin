@@ -175,7 +175,11 @@
 
         let all_url = "/financeBills";
         let filters = [
-          {"field": "relevanceCode", "op": "eq", "data": this.primary.procurementOrderCode ? this.primary.procurementOrderCode : -1},
+          {
+            "field": "relevanceCode",
+            "op": "eq",
+            "data": this.primary.procurementOrderCode ? this.primary.procurementOrderCode : -1
+          },
           {"field": "status", "op": "eq", "data": 2},
         ]
         all_url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
@@ -229,7 +233,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'costManagementTitle') {
+          if (column.property == 'pdRemarks') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -264,7 +268,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index], this.primary.currency.symbolLeft);
+              sums[index] = currency(sums[index] < 0 ? 0 : sums[index], this.primary.currency.symbolLeft);
             } else {
               sums[index] = 'N/A';
             }

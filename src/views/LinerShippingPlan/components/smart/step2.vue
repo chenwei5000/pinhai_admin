@@ -34,7 +34,10 @@
       <el-table-column prop="coverageWeek" label="覆盖周数" width="100"></el-table-column>
       <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100"></el-table-column>
       <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100"></el-table-column>
-      <el-table-column prop="inStockQty" label="亚马逊库存(件)" width="110" v-if="false"></el-table-column>
+
+      <el-table-column prop="inStockQty" label="亚马逊在库库存(件)" width="120"></el-table-column>
+      <el-table-column prop="totalQty" label="亚马逊总库存(件)" width="120"></el-table-column>
+
       <el-table-column prop="validateStockQty" label="有效库存(件)" width="100"></el-table-column>
 
 
@@ -49,13 +52,11 @@
         </template>
       </el-table-column>
 
-
-      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" >
+      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name">
         <template slot-scope="scope">
           <span>{{ scope.row.warehouseStocks[item.id]}}</span>
         </template>
       </el-table-column>
-
 
       <el-table-column prop="cartonSpecVolume" label="箱子体积(m³)" width="100">
 
@@ -225,26 +226,27 @@
       initData() {
         let warehouses = [];
 
-        if (this.primary.warehouseId.indexOf(-99)) {
-          warehouses.push({id: -99, name: '供货商(箱)'})
+        if (this.primary.warehouseId) {
+          // if (this.primary.warehouseId.indexOf(-99)) {
+          //   warehouses.push({id: -99, name: '供货商(箱)'})
+          // }
+
+          let url = `/warehouses?filters=${JSON.stringify({
+            "groupOp": "AND",
+            "rules": [{
+              field: "id",
+              op: 'in',
+              data: this.primary.warehouseId.join(",")
+            }]
+          })}&sort=id&dir=asc`;
+
+          this.global.axios.get(url).then(data => {
+            data.data.forEach(res => {
+              warehouses.push({id: res.id, name: `${res.name}(箱)`})
+            })
+            this.warehouses = warehouses;
+          });
         }
-
-        let url = `/warehouses?filters=${JSON.stringify({
-          "groupOp": "AND",
-          "rules": [{
-            field: "id",
-            op: 'in',
-            data: this.primary.warehouseId.join(",")
-          }]
-        })}&sort=id&dir=asc`;
-
-        this.global.axios.get(url).then(data => {
-          data.data.forEach(res => {
-            warehouses.push({id: res.id, name: `${res.name}(箱)`})
-          })
-          this.warehouses = warehouses;
-        });
-
       },
       // 获取表格的高度
       getTableHeight() {
@@ -328,7 +330,7 @@
       getList() {
         let url = `${this.url}/${this.primary.merchantId}`;
 
-        url += "?warehouse=" + this.primary.warehouseId.join(",")  //出货仓库
+        url += "?warehouse=" + (this.primary.warehouseId ? this.primary.warehouseId.join(",") : 'all')  //出货仓库
           + "&category=" + this.primary.categoryId.join(",")     //品类
           + "&etdTime=" + this.primary.formatEtdTime      //发柜时间
           + "&shipmentType=" + this.primary.type    //物流类型
@@ -514,7 +516,8 @@
             merchantId: this.primary.merchantId,
             soldOutTime: row.soldOutTime,
             domesticStocks: JSON.stringify(row.warehouseStocks),
-            domesticStockWarehouses : this.primary.warehouseId.join(","),
+            domesticStockWarehouses: this.primary.warehouseId.join(","),
+            amazonTotalStock: row.totalQty
           });
         });
 

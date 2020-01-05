@@ -25,8 +25,9 @@
               <el-form-item label="名称" prop="name" size="mini">
                 <el-input v-model.trim="editObject.name"
                           maxlength="100"
+                          @input="updateInput"
                           show-word-limit
-                          style="width: 220px" placeholder="请填写名称" clearable></el-input>
+                          style="width: 300px" placeholder="请填写名称" clearable></el-input>
               </el-form-item>
             </el-col>
 
@@ -34,6 +35,7 @@
               <el-form-item label="预计发货时间" prop="expectTime" size="mini">
                 <el-date-picker
                   v-model="editObject.expectTime"
+                  @input="updateInput"
                   format="yyyy-MM-dd"
                   type="date"
                   placeholder="预计发货时间"></el-date-picker>
@@ -44,22 +46,15 @@
           <el-row>
             <el-col :md="10">
               <el-form-item label="发货厂商" prop="supplierId" size="mini">
-                <el-select v-model="editObject.supplierId"
-                           style="width: 220px"
-                           filterable placeholder="请选择">
-                  <el-option
-                    v-for="(item , idx)  in supplierSelectOptions"
-                    :label="item.label"
-                    :value="item.value"
-                    :key="idx"
-                  ></el-option>
-                </el-select>
+                <span style="font-size: 12px" v-if="editObject.supplier">{{editObject.supplier.name}}</span>
               </el-form-item>
             </el-col>
 
             <el-col :md="14">
               <el-form-item label="收货仓库" prop="warehouseId" size="mini">
-                <el-select v-model="editObject.warehouseId" style="width: 220px"
+                <el-select v-model="editObject.warehouseId"
+                           @input="updateInput"
+                           style="width: 220px"
                            filterable placeholder="请选择收货仓库">
                   <el-option
                     v-for="(item , idx)  in warehouseSelectOptions"
@@ -77,6 +72,7 @@
               <el-form-item label="备注" prop="note">
                 <el-col :span="22">
                   <el-input type="textarea" v-model="editObject.remark"
+                            @input="updateInput"
                             maxlength="200"
                             show-word-limit
                             rows="3"
@@ -113,26 +109,15 @@
         v-loading="loading"
         show-summary
         :summary-method="getSummaries"
+        @cell-dblclick="handleDblclick"
         @selection-change="handleSelectionChange"
         :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
         id="table"
       >
-        <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
-              <div v-html="scope.row.product.skuCode"></div>
-              <span slot="reference">{{
-              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
-          </template>
+        <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left" align="center">
         </el-table-column>
 
-        <el-table-column prop="product.imgUrl" label="图片" width="40" >
+        <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
           <template slot-scope="scope" v-if="scope.row.product.imgUrl">
             <el-image
               :z-index="10000"
@@ -143,29 +128,15 @@
           </template>
         </el-table-column>
 
-
-        <el-table-column prop="productName" label="名称" width="200">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.product.name && scope.row.product.name.length > 17">
-              <div v-html="scope.row.product.name"></div>
-              <span slot="reference">{{
-              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.product.name }}
-            </span>
-          </template>
+        <el-table-column prop="product.name" label="名称" width="200" align="center">
         </el-table-column>
 
-        <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-        <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
+        <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
+        <el-table-column prop="cartonSpec.code" label="箱规" width="120" align="center"></el-table-column>
+        <el-table-column prop="procurementOrder.code" label="采购单号" width="120" align="center"></el-table-column>
 
-        <el-table-column prop="cartonQty" label="采购箱数" width="110"></el-table-column>
-        <el-table-column prop="orderCartonQty" label="已下单箱数" width="100"></el-table-column>
-        <el-table-column prop="noOrderCartonQty" label="未下单箱数" width="100"></el-table-column>
-        <el-table-column prop="remark" label="备注" width="130">
+        <el-table-column prop="cartonQty" label="采购箱数" width="90" align="center"></el-table-column>
+        <el-table-column prop="remark" label="备注" width="130" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                         v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
@@ -178,13 +149,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
 
-        <el-table-column prop="planCartonQty" label="本次发货箱数" width="120"
-                         fixed="right"></el-table-column>
+        <el-table-column prop="cartonQty" label="本次发货箱数" width="90"
+                         fixed="right" align="center"></el-table-column>
 
-        <el-table-column prop="planQty" label="本次发货件数" width="120"
-                         fixed="right"></el-table-column>
+        <el-table-column prop="qty" label="本次发货件数" width="90"
+                         fixed="right" align="center"></el-table-column>
 
         <!--默认操作列-->
         <el-table-column label="操作"
@@ -215,7 +186,7 @@
     <el-row>
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" size="mini"  @click="onSave"
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" size="mini" @click="onSave"
                      v-if="hasEdit">
             创建发货计划
           </el-button>
@@ -232,6 +203,7 @@
   import supplierModel from '@/api/supplier'
   import planDetailDialog from './planDetailDialog'
   import {checkPermission} from "../../../../utils/permission";
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -239,7 +211,7 @@
     },
     props: {
       primary: {
-        type: [Object],
+        type: [Object, Array],
         default: {}
       }
     },
@@ -278,9 +250,6 @@
 
         // 字段验证规则 TODO:
         rules: {
-          supplierId: [
-            {required: true, message: '必须输入', trigger: 'blur'}
-          ],
           warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
@@ -288,18 +257,6 @@
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },
-
-        //数据
-        url: "/procurementOrderItems", // 资源URL
-        downloadUrl: "", //下载Url
-        filters: [
-          {
-            field: "procurementOrderId",
-            op: 'eq',
-            data: this.primary ? this.primary.id : -1
-          }
-        ],   //搜索对象
-        relations: ["cartonSpec", "product"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
       }
@@ -315,6 +272,11 @@
     },
     methods: {
       /********************* 基础方法  *****************************/
+
+      updateInput(val) {
+        this.$forceUpdate();
+      },
+
       /**
        * 初始化数据
        */
@@ -322,15 +284,13 @@
         this.loading = true;
         if (this.primary) {
           //获取计划数据
-          this.editObject = {};
-
+          this.editObject = {}
           // 采购单信息转化成发货单信息
-          this.editObject.name = this.primary.name;
-          this.editObject.warehouseId = this.primary.warehouseId + '';
-          this.editObject.supplierId = this.primary.supplierId + '';
-          this.editObject.supplier = this.primary.supplier;
-          this.editObject.procurementOrderId = this.primary.id;
-          this.editObject.procurementPlanId = this.primary.procurementPlanId;
+          this.editObject.name = this.primary[0].formatDeliveryTime + this.primary[0].supplier.name + '交货';
+          this.editObject.warehouseId = this.primary[0].procurementOrder.warehouseId + '';
+          this.editObject.supplierId = this.primary[0].supplierId + '';
+          this.editObject.supplier = this.primary[0].supplier;
+          this.editObject.expectTime = this.primary[0].formatDeliveryTime;
 
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
@@ -338,7 +298,7 @@
           this.loading = false;
         }
         else {
-          this.$message.error("无效的采购单!");
+          this.$message.error("无效的数据!");
           this.loading = false;
         }
       },
@@ -346,60 +306,23 @@
       /********************* 表格相关方法  ***************************/
       /*获取列表*/
       getList() {
-        let url = this.url;
-        let params = '';
+        this.data = this.primary;
+        this.search();
+        this.total = this.data.length || 0
+        this.loading = false
+      },
 
-        if (!url) {
-          console.warn('url 为空, 不发送请求')
-          return
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
         }
-
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
-        }
-
-        // 请求开始
-        this.loading = true
-
-        //获取数据
-        this.global.axios
-          .get(url + params)
-          .then(resp => {
-            let res = resp.data || [];
-            let data = []
-            res.forEach(r => {
-              // 默认使用未发货的箱数，作为要发货的箱数
-              r.planCartonQty = r.noOrderCartonQty;
-              // 默认发货件
-              r.planQty = r.planCartonQty * r.numberOfCarton;
-              data.push(r);
-            });
-
-            this.data = data
-            this.search();
-
-            this.total = res.length || 0
-            this.loading = false
-            /**
-             * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
-             * @event update
-             */
-            this.$emit('update', data, res)
-          })
-          .catch(err => {
-            /**
-             * 请求数据失败，返回err对象
-             * @event error
-             */
-            this.$emit('error', err)
-            this.loading = false
-          })
       },
 
       //报警样式
@@ -452,7 +375,7 @@
             }
           }
 
-          if (column.property == 'planQty') {
+          if (column.property == 'qty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -491,7 +414,7 @@
             return;
           }
           if (!this.data || this.data.length == 0) {
-            this.$message.error("采购单内容不能为空!");
+            this.$message.error("发货内容不能为空!");
             return;
           }
 
@@ -542,7 +465,7 @@
             if (action == 'confirm') {
               let idx = null;
               this.data.forEach((item, index) => {
-                  if (item.skuCode === row.skuCode) {
+                  if (item.id === row.id) {
                     idx = index;
                     return;
                   }
@@ -561,24 +484,29 @@
       // 下单
       saveObject() {
         let _order = JSON.parse(JSON.stringify(this.editObject));
+        _order.supplier = null;
         let _details = [];
         this.tableData.forEach(r => {
-          if (r.planCartonQty > 0) {
+          if (r.cartonQty > 0) {
             let _detail = {};
             _detail.productId = r.productId;
             _detail.cartonSpecId = r.cartonSpecId;
             _detail.numberOfCarton = r.numberOfCarton;
-            _detail.shippedCartonQty = r.planCartonQty;
+            _detail.shippedCartonQty = r.cartonQty;
             _detail.skuCode = r.product.skuCode;
             _detail.shippedNote = r.shippedNote;
+            _detail.shippedCartonQty = r.cartonQty;
+            _detail.procurementOrderId = r.procurementOrderId;
+            _detail.procurementOrderCode = r.procurementOrderCode;
+            _detail.procurementDeliveryPlanId = r.id;
+
             _details.push(_detail);
           }
         });
-       if(_details.length === 0){
-         this.$message.error('本次发货箱数总数不能为0');
-         return;
-       }
-
+        if (_details.length === 0) {
+          this.$message.error('本次发货箱数总数不能为0');
+          return;
+        }
 
         _order.shippedOrderItems = _details;
 

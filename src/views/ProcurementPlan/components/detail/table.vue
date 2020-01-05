@@ -137,35 +137,18 @@
                        fixed="right" align="center"></el-table-column>
 
        <el-table-column prop="recommendPurchaseCartonQty" sortable label="推荐采购箱数" width="120" v-if="this.primary.status === 0"
-                       fixed="right" align="center"></el-table-column>    
+                       fixed="right" align="center"></el-table-column>
 
       <el-table-column prop="cartonQty" sortable label="采购箱数" width="90"
                        fixed="right" align="center"></el-table-column>
 
-                   
+
 
       <el-table-column prop="amount" sortable label="金额" width="90"
                        fixed="right">
         <template slot-scope="scope">
           {{scope.row.amount, scope.row.product.currency ? scope.row.product.currency.symbolLeft : '' | currency}}
         </template>
-      </el-table-column>
-
-      <el-table-column prop="priority" label="优先级" sortable width="100" v-if="false">
-        <template slot-scope="scope">
-          {{ scope.row.priorityName }}
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="priorityNote" label="优先要求" width="130" v-if="false">
-
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="优先要求" width="250" trigger="hover">
-            <div v-html="scope.row.priorityNote"></div>
-            <span slot="reference">{{ scope.row.priorityNote ? scope.row.priorityNote.substr(0,15) : '' }}</span>
-          </el-popover>
-        </template>
-
       </el-table-column>
 
       <!--默认操作列-->

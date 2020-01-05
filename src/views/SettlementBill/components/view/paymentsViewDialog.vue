@@ -4,7 +4,7 @@
              class="ph-dialog"
              append-to-body
              v-if="dialogVisible"
-             width="80%"
+             width="90%"
              top="5vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">

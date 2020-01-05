@@ -1,18 +1,14 @@
 <template>
-
-  <orderTable v-if="isOrder" ref="infoTable" :type="type" :defaultFilters="filters"></orderTable>
-  <infoTable v-else ref="infoTable" :type="type" :defaultFilters="filters"></infoTable>
+  <infoTable ref="infoTable" :type="type" :defaultFilters="filters"></infoTable>
 
 </template>
 
 <script>
   import infoTable from './table'
-  import orderTable from './order/table'
 
   export default {
     components: {
-      infoTable,
-      orderTable
+      infoTable
     },
     props: {
       type: {

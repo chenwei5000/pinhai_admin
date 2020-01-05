@@ -13,12 +13,12 @@
       </el-collapse-item>
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 采购产品明细</div>
+        <div slot="title" class="title">2. 采购产品明细   [{{this.primary.procurementOrder.formatCreateTime}}]</div>
         <detailTable ref="detailTable" :primary="primary" v-if="primaryComplete"></detailTable>
       </el-collapse-item>
 
       <el-collapse-item name="receivedDetailTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 收货明细   [{{this.primary.formatLastModified}}]</div>
+        <div slot="title" class="title">3. 收货明细</div>
         <receivedDetailTable ref="receivedDetailTable" :primary="primary" v-if="primaryComplete"></receivedDetailTable>
       </el-collapse-item>
 
@@ -82,7 +82,7 @@
       },
       title() {
         return `预付款单 [${this.primary.code}]`;
-      }
+      },
     },
 
     data() {
@@ -107,7 +107,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrderAmount"];
+          let relations = ["supplier", "currency", "procurementOrder", "procurementOrderAmount","procurementShippedOrder"];
           //获取计划数据
           this.global.axios
             .get(`/financeBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)

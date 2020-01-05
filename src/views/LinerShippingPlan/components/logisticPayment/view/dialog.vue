@@ -6,7 +6,7 @@
              append-to-body
              class="ph-dialog"
              @close='closeDialog'
-             width="85%"
+             width="90%"
              top="2vh"
   >
 

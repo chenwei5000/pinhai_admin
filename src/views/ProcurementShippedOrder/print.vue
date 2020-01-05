@@ -7,7 +7,7 @@
     </div>
     <el-row style="margin-bottom: 10px">
       <el-col :span="12" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        发货单位：{{primary.procurementOrder.supplier.name}}
+        发货单位：{{primary.supplier.name}}
       </el-col>
       <el-col :span="12" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
         接收单位：品海科技 {{primary.warehouse.name}}
@@ -110,7 +110,7 @@
     data() {
       return {
         primaryId: null,
-        primary: {procurementOrder: {supplier: {name: ""}}, warehouse: {name: ""}},
+        primary: {supplier: {name: ""}, warehouse: {name: ""}},
         items: [],
         fullscreenLoading: true,
       }
@@ -130,7 +130,7 @@
 
           //获取计划数据
           let url = `/procurementShippedOrders/${this.primaryId}`;
-          url += "?relations=" + JSON.stringify(["procurementOrder", "procurementOrder.supplier", "warehouse"]);
+          url += "?relations=" + JSON.stringify(["supplier", "warehouse"]);
 
 
           _arr.push(this.global.axios

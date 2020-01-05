@@ -6,7 +6,7 @@
              append-to-body
              class="ph-dialog"
              @close='closeDialog'
-             width="85%"
+             width="90%"
              top="2vh"
   >
 
@@ -143,84 +143,6 @@
         this.logs = [];
         this.dialogVisible = false;
         this.primaryComplete = false;
-      },
-
-      onPayment() {
-        this.$refs.infoFrom.$refs.editObject.validate(valid => {
-            if (!valid) {
-              return false
-            }
-            let order = this.$refs.infoFrom.editObject;
-            let items = JSON.parse(JSON.stringify(this.$refs.itemTable.data));
-            let bills = JSON.parse(JSON.stringify(this.$refs.billTable.data));
-            let attachments = JSON.parse(JSON.stringify(this.$refs.attachment.attachments));
-            if (!items || items.length == 0) {
-              this.$message.error("请设置付款项目");
-              return false;
-            }
-            let payableAmount = 0;
-            items.forEach(r => {
-              payableAmount += r.pdAmount;
-            });
-            if (payableAmount < 0) {
-              this.$message.error("应付金额必须大于等于0");
-              return false;
-            }
-
-            // if (!bills || bills.length == 0) {
-            //   this.$message.error("请设置发票信息");
-            //   return false;
-            // }
-            // if (!attachments || attachments.length == 0) {
-            //   this.$message.error("请上传电子版发票");
-            //   return false;
-            // }
-
-            order.linerShippingPlanId = this.plan.id;
-            order.payableAmount = payableAmount;
-
-            // 付款项明细
-            order.listPaymentDetail = items;
-
-            // 发票明细
-            order.listInvoice = [];
-            bills.forEach(r => {
-              r.type = 'SH';
-              order.listInvoice.push(r);
-            });
-
-            // 附件
-            order.listAttachment = [];
-            attachments.forEach(r => {
-              order.listAttachment.push({id: r.id});
-            });
-
-            this.savePaymentOrder(order);
-          }
-        );
-      },
-
-      savePaymentOrder(order) {
-        const loading = this.$loading({
-          lock: true,
-          text: 'Loading',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        this.global.axios.post('/logisticPaymentBills', order)
-          .then(resp => {
-              let _newObject = resp.data;
-              loading.close();
-              this.$message.success('操作成功');
-              this.$emit("modifyCBEvent", _newObject);
-              this.closeDialog();
-            }
-          )
-          .catch(err => {
-            console.log(err);
-            loading.close();
-          })
       },
 
       /* 子组件编辑完成后相应事件 */

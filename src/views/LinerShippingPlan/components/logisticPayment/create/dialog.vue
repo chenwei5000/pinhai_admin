@@ -6,7 +6,7 @@
              append-to-body
              class="ph-dialog"
              @close='closeDialog'
-             width="85%"
+             width="90%"
              top="2vh"
   >
 
@@ -133,6 +133,7 @@
       onPayment() {
         this.$refs.infoFrom.$refs.editObject.validate(valid => {
             if (!valid) {
+              this.$message.error("请设置基本信息!");
               return false
             }
             let order = this.$refs.infoFrom.editObject;

@@ -13,23 +13,23 @@
               <i class="el-icon-date"></i> 确认交货日期
             </span>
             <keep-alive>
-              <phTab type="completionDate" ref="completionDate"/>
+              <unPlanTable ref="completionDate" />
             </keep-alive>
           </el-tab-pane>
 
           <el-tab-pane name="orderExecuting" lazy>
             <span slot="label">
-              <i class="el-icon-edit"></i> 采购单待发货
+              <i class="el-icon-edit"></i> 交货计划
             </span>
             <keep-alive>
-              <phTab type="orderExecuting" ref="orderExecuting"/>
+              <planTable ref="orderExecuting"/>
             </keep-alive>
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
           <el-tab-pane name="executing" lazy>
             <span slot="label">
-              <i class="el-icon-s-flag"></i> 发货单发货中
+              <i class="el-icon-s-flag"></i> 发货计划
             </span>
             <keep-alive>
               <phTab type="executing" ref="executing"/>
@@ -76,12 +76,16 @@
 
 <script>
   import phTab from './components/tab'
+  import unPlanTable from './components/deliveryPlan/unPlanTable'
+  import planTable from './components/deliveryPlan/planTable'
 
   const actionFlag = 's='
 
   export default {
 
     components: {
+      unPlanTable,
+      planTable,
       phTab
     },
 
@@ -90,8 +94,8 @@
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'executing')
-          : 'executing',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'completionDate')
+          : 'completionDate',
       }
     },
 

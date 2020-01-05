@@ -3,7 +3,7 @@
              append-to-body
              v-if="dialogVisible"
              class="ph-dialog"
-             width="70%"
+             width="80%"
              top="10vh"
              @close='closeDialog'
              :visible.sync="dialogVisible">
@@ -14,25 +14,17 @@
                ref="detailItem" label-position="right"
                label-width="120px"
                v-loading="loading"
+               inline-message
       >
         <el-row>
-          <el-col :md="10">
-            <el-form-item label="SKU" prop="skuCode">
-              <span v-if="!hasAdd" style="font-size: 12px">{{detailItem.skuCode}}</span>
-
-              <el-input v-else v-model.trim="detailItem.skuCode" size="mini"
-                        style="width: 200px" placeholder="请填写SKU" clearable>
-
-              </el-input>
-
-              <el-tooltip class="item" effect="light" content="输入产品SKU编码" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
+          <el-col :md="12">
+            <el-form-item label="SKU" prop="skuCode" size="mini">
+              <span style="font-size: 12px">{{detailItem.skuCode}}</span>
             </el-form-item>
           </el-col>
 
-          <el-col :md="14">
-            <el-form-item label="产品名" prop="productName">
+          <el-col :md="12">
+            <el-form-item label="产品名" prop="productName" size="mini">
               <span style="font-size: 12px">{{detailItem.productName}}</span>
             </el-form-item>
           </el-col>
@@ -40,11 +32,11 @@
         </el-row>
 
         <el-row>
-          <el-col :md="10">
-            <el-form-item label="箱规" prop="cartonSpecId">
+          <el-col :md="12">
+            <el-form-item label="箱规" prop="cartonSpecId" size="mini">
 
-              <el-select filterable size="mini" v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
-                         style="width: 200px">
+              <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
+                         style="width: 220px">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
                   :label="item.label" :value="item.value"
@@ -58,7 +50,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :md="14">
+          <el-col :md="12">
             <el-form-item label="装箱数" prop="numberOfCarton">
 
               <el-input-number v-model="detailItem.numberOfCarton"
@@ -79,9 +71,26 @@
         </el-row>
 
         <el-row>
-          <el-col :md="10">
-            <el-form-item label="应发箱数" prop="shippedCartonQty">
-              <el-input-number v-model="detailItem.shippedCartonQty"
+          <el-col :md="12">
+            <el-form-item label="交货日期" prop="deliveryTime">
+              <el-date-picker
+                v-model="detailItem.deliveryTime"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                type="date"
+                size="mini"
+                placeholder="交货日期"></el-date-picker>
+
+              <el-tooltip class="item" effect="light" content="交货日期" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="12">
+            <el-form-item label="交货箱数" prop="cartonQty">
+              <el-input-number v-model="detailItem.cartonQty"
                                size="mini"
                                style="width: 200px;"
                                :precision="3"
@@ -98,21 +107,21 @@
             </el-form-item>
           </el-col>
 
+
           <el-col :md="14">
-            <el-form-item :label="shippedQtyTitle" prop="shippedQty">
-              <span style="font-size: 12px">{{shippedQty}}</span>
+            <el-form-item label="交货件数" prop="qty">
+              <span style="font-size: 12px">{{qty}}</span>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row>
+        <el-row v-if="false">
           <el-col :md="24">
-            <el-form-item label="备注" prop="priorityNote">
+            <el-form-item label="备注" prop="remark">
               <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.shippedNote"
+                <el-input type="textarea" v-model="detailItem.remark"
                           maxlength="500"
                           show-word-limit
-                          size="mini"
                           rows="3"
                           cols="80"
                 ></el-input>
@@ -121,7 +130,7 @@
               <el-col :span="2">
 
                 <el-tooltip class="item" effect="light" placement="right">
-                  <div slot="content">发货备注</div>
+                  <div slot="content">交货备注</div>
                   <i class="el-icon-question">&nbsp;</i>
                 </el-tooltip>
 
@@ -134,9 +143,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="warning" size="mini" @click="onLoadProduct" v-if="hasAdd" :loading="confirmLoading">获取产品默认信息</el-button>
-      <el-button type="primary" size="mini" @click="onSave" :loading="confirmLoading">保 存</el-button>
-      <el-button @click="closeDialog" size="mini" >取 消</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">保 存</el-button>
+      <el-button @click="closeDialog" size="mini">取 消</el-button>
     </div>
 
   </el-dialog>
@@ -158,10 +166,10 @@
     computed: {
       dialogTitle() {
         if (this.hasAdd) {
-          return "添加发货计划明细";
+          return "添加交货计划";
         }
         else {
-          return "修改发货计划明细";
+          return "修改交货计划";
         }
       },
       hasAdd() {
@@ -170,11 +178,8 @@
       procurementBoxQtyTitle() {
         return `采购数量(${this.unit})`;
       },
-      shippedQtyTitle() {
-        return `应发${this.unit == '箱' ? '件' : this.unit}数`;
-      },
-      shippedQty() {
-        return this.calShippedQty();
+      qty() {
+        return this.calQty();
       }
     },
 
@@ -188,30 +193,34 @@
         confirmLoading: false,
 
         // 资源URL
-        url: "/warehouseAllocationItems",
-        relations: ["product", "cartonSpec"],  // 关联对象
+        url: "/procurementDeliveryPlans",
+        relations: ["product"],  // 关联对象
         //明细对象ID
         detailItemId: null,
         //明细对象
         detailItem: {},
+        //采购单明细
+        orderItem: {},
+
         cartonspecSelectOptions: [],
 
         unit: "箱",
 
         // 字段验证规则 TODO:
         rules: {
-          skuCode: [
-            validRules.required
-          ],
+          skuCode: [],
           cartonSpecId: [
             validRules.required
           ],
           numberOfCarton: [
             validRules.required
           ],
-          shippedCartonQty: [
+          cartonQty: [
             validRules.required
-          ]
+          ],
+          deliveryTime: [
+            validRules.required
+          ],
         },
       }
     },
@@ -247,10 +256,9 @@
               this.detailItem = data
               // 转字段
               this.detailItem.productName = data.product.name;
+              this.detailItem.skuCode= data.product.skuCode;
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              if (data.cartonSpecId == -3) { //原料采购
-                this.unit = data.product.unit;
-              }
+              this.detailItem.deliveryTime = data.formatDeliveryTime;
               this.$forceUpdate();
               this.loading = false
             })
@@ -261,20 +269,23 @@
         else {
           // 设置添加默认值
           this.detailItem = {
-            skuCode: '',
-            cartonSpecId: null,
-            numberOfCarton: null,
-            shippedCartonQty: 1,
-            warehouseAllocationId: this.primary.id
+            skuCode: this.orderItem.skuCode,
+            productName: this.orderItem.product.name,
+            cartonSpecId: this.orderItem.cartonSpecId + '',
+            numberOfCarton: this.orderItem.numberOfCarton,
+            procurementOrderId: this.orderItem.procurementOrderId,
+            procurementPlanId: this.orderItem.procurementPlanId,
+            deliveryTime: this.orderItem.procurementOrder.formatOtdTime,
+            supplierId: this.orderItem.procurementOrder.supplierId,
+            cartonQty: this.orderItem.unOrderCartonQty
           }
-
         }
       },
 
       // 计算发货件数
-      calShippedQty() {
-        if (this.detailItem.shippedCartonQty && this.detailItem.numberOfCarton) {
-          return (this.detailItem.shippedCartonQty * this.detailItem.numberOfCarton).toFixed(0);
+      calQty() {
+        if (this.detailItem.cartonQty && this.detailItem.numberOfCarton) {
+          return (this.detailItem.cartonQty * this.detailItem.numberOfCarton).toFixed(0);
         }
         else {
           return 0;
@@ -282,8 +293,9 @@
       },
 
       /* 开启弹出编辑框 需要传明细ID */
-      openDialog(detailItemId) {
-        this.detailItemId = detailItemId;
+      openDialog(planId, orderItem) {
+        this.detailItemId = planId;
+        this.orderItem = orderItem;
         this.dialogVisible = true;
         this.initData();
       },
@@ -298,36 +310,6 @@
         this.unit = "箱";
       },
 
-      onLoadProduct() {
-        if (!this.detailItem.skuCode) {
-          this.$message.error("请输入产品SKU");
-        }
-        else {
-          this.loading = true;
-          this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.skuCode}`;
-          this.global.axios
-            .get(url)
-            .then(resp => {
-              let res = resp.data
-              let data = res || {}
-
-              this.detailItem.cartonSpecId = data.cartonSpecId + '';
-              this.detailItem.numberOfCarton = data.numberOfCarton;
-              // 转字段
-              this.detailItem.productName = data.name;
-              if (data.cartonSpecId == -3) { //原料采购
-                this.unit = data.unit;
-              }
-              this.confirmLoading = false;
-              this.loading = false;
-            })
-            .catch(err => {
-              this.loading = false;
-              this.confirmLoading = false;
-            })
-        }
-      },
       // 保存
       onSave() {
         this.$refs.detailItem.validate(valid => {

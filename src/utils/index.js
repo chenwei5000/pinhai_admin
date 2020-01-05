@@ -463,8 +463,6 @@ export function parseLineBreak(text) {
 }
 
 export function getObjectValueByArr(arr, prop) {
-  console.log(arr);
-  console.log(prop);
   if (arr == null || arr.length == 0) {
     return null;
   }

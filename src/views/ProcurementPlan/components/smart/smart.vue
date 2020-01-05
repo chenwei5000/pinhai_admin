@@ -313,7 +313,6 @@
             {required: true, message: '必填', trigger: 'blur'}
           ],
           warehouseId: [
-            {required: true, message: '必填', trigger: 'blur'}
           ],
           safetyStockWeek: [
             {required: true, message: '必填', trigger: 'blur'}
