@@ -340,9 +340,9 @@
         let warehouses = [];
 
         if (this.primary.domesticStockWarehouses) {
-          if (this.primary.domesticStockWarehouses.indexOf(-99) !== false) {
-            warehouses.push({id: -99, name: '供货商(箱)'})
-          }
+          // if (this.primary.domesticStockWarehouses.indexOf(-99) !== false) {
+          //   warehouses.push({id: -99, name: '供货商(箱)'})
+          // }
 
           let url = `/warehouses?filters=${JSON.stringify({
             "groupOp": "AND",
