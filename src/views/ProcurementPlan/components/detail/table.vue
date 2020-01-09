@@ -125,7 +125,7 @@
       <el-table-column prop="shippedQty" label="发货件数" width="80" v-if="hasExecute" align="center"></el-table-column>
       <el-table-column prop="receivedQty" label="收货件数" width="80" v-if="hasExecute" align="center"></el-table-column>
 
-      <el-table-column prop="productName" label="名称" width="200"></el-table-column>
+      <el-table-column prop="product.name" label="名称" width="200"></el-table-column>
 
       <el-table-column prop="product.fnSku" label="FNSKU" min-width="120" align="center"></el-table-column>
       <el-table-column prop="product.vipLevel" label="Vip级别" width="100" align="center"></el-table-column>
