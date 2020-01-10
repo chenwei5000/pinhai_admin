@@ -52,7 +52,12 @@
       </el-collapse-item>
 
       <el-collapse-item name="logs" style="margin-top: 10px">
-        <div slot="title" class="title">5. 日志</div>
+        <div slot="title" class="title">5. 交货计划</div>
+        <deliveryPlanTable ref="deliveryPlanTable" :primary="primary" v-if="primaryComplete"></deliveryPlanTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="logs" style="margin-top: 10px">
+        <div slot="title" class="title">6. 日志</div>
         <logs @reloadCBEvent="reloadCBEvent" ref="logs" :logs="logs" v-if="logComplete"></logs>
       </el-collapse-item>
     </el-collapse>
@@ -76,6 +81,7 @@
   import {mapGetters} from 'vuex'
   import infoFrom from './form'
   import itemTable from '../detail/table'
+  import deliveryPlanTable from '../deliveryPlan/table'
   import attachment from './attachment'
   import logs from './logs';
   import person from './person'
@@ -91,6 +97,7 @@
     components: {
       infoFrom,
       itemTable,
+      deliveryPlanTable,
       attachment,
       person,
       phStatus,
