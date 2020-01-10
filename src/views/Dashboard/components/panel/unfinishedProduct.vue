@@ -1,7 +1,7 @@
 <template>
 
   <div class="card-panel">
-    <router-link to="/m2/Product_index">
+    <router-link to="/m2/Product_index?s=unfinished">
       <div class="card-header">
         产品信息不全
 
