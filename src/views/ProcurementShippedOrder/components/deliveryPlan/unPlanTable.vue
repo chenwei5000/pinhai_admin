@@ -29,12 +29,22 @@
                   placeholder="请输入名称"></el-input>
       </el-form-item>
 
-
       <el-form-item>
         <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
         <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </el-form>
+
+
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar
+      ref="tableToolBar"
+      :hasExport="hasExport"
+      :hasImport="hasImport"
+      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarImportData="onToolBarImportData"
+    >
+    </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -136,8 +146,12 @@
   import editDialog from './dialog'
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
+  import excelConfig from './excelConfig'
   import supplierModel from '@/api/supplier'
   import {getObjectValueByArr} from "../../../../utils";
+  import tableToolBar from '@/components/PhTableToolBar'
+  import {checkPermission} from "../../../../utils/permission";
+  import moment from 'moment'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -151,6 +165,7 @@
 
     components: {
       editDialog,
+      tableToolBar,
       phPercentage
     },
     props: {
@@ -163,8 +178,16 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
+
+      hasExport() {
+        return checkPermission('ProcurementDeliveryPlanResource_create');
+      },
+
+      hasImport() {
+        return checkPermission('ProcurementDeliveryPlanResource_create');
+      },
       hasEdit() {
-        return true;
+        return checkPermission('ProcurementDeliveryPlanResource_create');
       },
       hasOperation() {
         return this.hasEdit;
@@ -182,6 +205,7 @@
 
         // 多选记录对象
         selected: [],
+        maxUploadCount: 1,
 
         //分页
         size: 20,
@@ -192,8 +216,9 @@
 
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementOrderItems/listNoDeliveryPlans', // 资源URL
+        downloadUrl: "", //下载Url
         countUrl: '/procurementOrderItems/countNoDeliveryPlans', // 资源URL
-        relations: ["product", "procurementOrder", "procurementOrder.creator", "procurementOrder.supplier"],  // 关联对象
+        relations: ["product", "procurementOrder", "procurementOrder.creator", "procurementOrder.supplier", "product.cartonSpec"],  // 关联对象
         data: [],
         phSort: {prop: "procurementOrder.otdTime", order: "asc"},
         // 表格加载效果
@@ -298,7 +323,8 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - (this.$refs.tableToolBar ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
+          tableHeight = tableHeight - 84;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -384,6 +410,7 @@
         else {
           url += '?'
         }
+        let downloadUrl = url;
 
         if (countUrl.indexOf('?') > -1) {
           countUrl += '&'
@@ -428,6 +455,8 @@
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
         }
+
+        this.downloadUrl = downloadUrl + params;
 
         // 请求开始
         this.loading = true
@@ -553,6 +582,88 @@
       modifyCBEvent(object) {
         this.getList();
       },
+      /********************* 工具条按钮  ***************************/
+      onToolBarDownloadData() {
+        //获取数据
+        let downloadUrl = this.downloadUrl;
+        import('@/vendor/Export2ExcelPinHai').then(excel => {
+          this.loading = true;
+          excel.export_json_url_to_excel_with_formulae({
+            url: downloadUrl,
+            excelField: excelConfig.excelField,
+            filename: `交货计划-${parseTime(new Date(), '{y}-{m}-{d}')}`
+          });
+          this.loading = false;
+        })
+      },
+
+      uploadPromise(res) {
+        let url = '/procurementDeliveryPlans';
+        return this.global.axios.post(url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      formatDate(numb) {
+        const time = new Date((numb - 1) * 24 * 3600000 + 1)
+        time.setYear(time.getFullYear() - 70);
+        return moment(time).format('YYYY-MM-DD');
+      },
+
+      async onToolBarImportData(excelData) {
+
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.deliveryTime = this.formatDate(obj["交货日期"]);
+          _res.procurementOrderCode = obj["采购单编号"];
+          _res.supplierName = obj["供货商"];
+          _res.skuCode = obj["SKU编码"];
+          _res.cartonQty = obj["计划交货箱数"];
+          _res.cartonSpecCode = obj["箱规"];
+          _res.numberOfCarton = obj["装箱数"];
+          _res.remark = obj["备注"];
+          resData.push(_res);
+        });
+
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.success("导入成功");
+        this.getList();
+      }
     }
   }
 </script>
