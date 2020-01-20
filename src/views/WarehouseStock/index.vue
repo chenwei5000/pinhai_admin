@@ -45,6 +45,7 @@
           },
           columns: [
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200, fixed: 'left'},
+            {prop: 'fnSku', label: 'FN-SKU', 'min-width': 100},
             {prop: 'warehouseName', label: '仓库', 'min-width': 150},
             {prop: 'productName', label: '产品名', 'min-width': 220},
             {prop: 'cartonSpecCode', label: '箱规', 'min-width': 150},

@@ -1,53 +1,77 @@
 <template>
 
-  <!-- 修改弹窗 TODO: title -->
-  <el-dialog :title="title" v-if="dialogVisible"
-             :visible.sync="dialogVisible" style="padding-bottom: 40px"
-             class="ph-dialog" @close='closeDialog' fullscreen>
+  <el-dialog :title="dialogTitle"
+             append-to-body
+             v-if="dialogVisible"
+             width="90%"
+             class="ph-dialog"
+             top="20px"
+             @close='closeDialog'
+             :visible.sync="dialogVisible" fullscreen>
 
-    <el-row
-      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
-      <el-button type="success" size="small" icon="el-icon-s-claim" @click="onComplete">盘点完成</el-button>
-      <el-button size="small" @click="closeDialog">取 消</el-button>
+    <div class="ph-form">
+      <!-- 步骤条 TODO: -->
+      <el-steps :active="stepsActive" finish-status="success" align-center simple>
+        <el-step title="1.当前库存情况" icon="el-icon-s-opportunity"></el-step>
+        <el-step title="2.录入盘点数据" icon="el-icon-edit-outline"></el-step>
+        <el-step title="3.完成盘点" icon="el-icon-edit-outline"></el-step>
+      </el-steps>
 
-    </el-row>
+      <step1
+        style="margin-top: 10px"
+        v-if="stepsActive==0"
+        :primary="primary"
+        @step1CBEvent="step1CBEvent">
+      </step1>
 
-    <itemTable ref="itemTable" :primary="primary"></itemTable>
-    <h3>附件:</h3>
-    <attachment ref="attachment" :primary="primary"></attachment>
-    <saveDialog ref="saveDialog" @modifyCBEvent="modifyCBEvent"></saveDialog>
+      <step2
+        style="margin-top: 10px"
+        v-if="stepsActive==1"
+        :primary="primary"
+        @step2CBEvent="step2CBEvent">
+      </step2>
+
+      <step3
+        style="margin-top: 10px"
+        v-if="stepsActive==2"
+        :primary="primary"
+        @step2CBEvent="step2CBEvent">
+      </step3>
+
+    </div>
 
   </el-dialog>
 
 </template>
-<script>
 
-  import itemTable from './detailTable'
-  import attachment from './attachment'
-  import saveDialog from './saveDialog'
+<script>
+  import step1 from './step1';
+  import step2 from './step2';
+  import step3 from './step3';
 
   export default {
-
     components: {
-      itemTable,
-      attachment,
-      saveDialog
+      step1,
+      step2,
+      step3
     },
     props: {},
     computed: {
-      title() {
-        return '编辑盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
+      dialogTitle() {
+        return '执行盘点任务  ---  [' + this.primary.warehouse.name + ' ' + this.primary.formatLimitTime + "]";
       }
     },
 
     data() {
       return {
+        //Dialog 是否开启
         primaryId: null,  //主ID
         primary: {}, //主对象
-        dialogVisible: false, //Dialog 是否开启
-        activeNames: [], //折叠面板开启项
+        dialogVisible: false,
+        stepsActive: 0,
       }
     },
+
     created() {
     },
 
@@ -55,7 +79,10 @@
       this.$nextTick(() => {
       });
     },
+
     methods: {
+      /********************* 基础方法  *****************************/
+      //初始化加载数据 TODO:根据实际情况调整
       initData() {
         if (this.primaryId) {
           //获取计划数据
@@ -71,42 +98,36 @@
         }
       },
 
-      /* 开启弹出编辑框 需要传主键ID */
+      /* 开启弹出编辑框 需要传明细ID */
       openDialog(primaryId) {
         this.primaryId = primaryId;
         this.initData();
-        this.activeNames = ['infoFrom', 'itemTable'];
       },
+
       closeDialog() {
         this.primaryId = null;
         this.primary = {};
-        this.activeNames = [];
         this.dialogVisible = false;
+        this.stepsActive = 0;
+        this.$emit("modifyCBEvent", 0);
       },
 
-      /* 子组件编辑完成后相应事件 */
-      modifyCBEvent(object) {
-        // 继续向父组件抛出事件 修改成功刷新列表
-        this.$emit("modifyCBEvent", object);
-        this.closeDialog();
+      step1CBEvent(object) {
+        this.stepsActive = 1;
       },
-
-      //盘点完成
-      onComplete() {
-        // 明细对象
-        let details = this.$refs.itemTable.tableData;
-        this.$refs.saveDialog.openDialog(this.primary, details);
-      },
+      step2CBEvent(step) {
+        this.stepsActive = step;
+        if (step == 3) {
+          this.closeDialog();
+          this.$emit("modifyCBEvent", 0);
+        }
+      }
     }
   }
 </script>
 
 <style type="text/less" lang="scss" scoped>
 
-  .title {
-    font-size: 14px;
-    font-weight: bold;
-  }
 
 </style>
 

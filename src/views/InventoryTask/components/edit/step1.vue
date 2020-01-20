@@ -31,11 +31,7 @@
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
-
-      @onToolBarAdd="onToolBarAdd"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
       @onToolBarDownloadData="onToolBarDownloadData"
-      @onToolBarImportData="onToolBarImportData"
     >
     </tableToolBar>
 
@@ -52,43 +48,33 @@
       header-cell-class-name="ph-cell-header"
       :data="tableData"
       v-loading="loading"
+      @cell-dblclick="handleDblclick"
       show-summary
       :summary-method="getSummaries"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
+      <el-table-column prop="skuCode" label="SKU编码" width="200" align="center"></el-table-column>
+      <el-table-column prop="fnSku" label="FNSKU" width="100" align="center"></el-table-column>
+      <el-table-column prop="productName" label="产品名" min-width="200" align="center"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" min-width="120" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="cartonQty" label="库存箱数" width="180" fixed="right" align="center"></el-table-column>
+      <el-table-column prop="qty" label="库存件数" width="180" fixed="right" align="center"></el-table-column>
 
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200"></el-table-column>
-
-      <el-table-column prop="product.name" label="产品名" min-width="200">
-
-      </el-table-column>
-
-      <el-table-column prop="storageLocation.code" label="货位" width="100">DEFAULT</el-table-column>
-      <el-table-column prop="price" label="价格" width="80"></el-table-column>
-      <!--<el-table-column prop="warehouseStock.qty" label="系统库存(件数)" width="130"></el-table-column>-->
-      <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-        <template slot-scope="scope">
-          <el-input-number v-model="scope.row.checkedStock"
-                           size="mini"
-                           style="width: 120px;margin: 3px 0;"
-                           :precision="3"
-                           :min="0"
-                           :step="1"
-                           @change="onCheckedStock(scope.row)"
-                           :max="1000000" label="请填实际库存">
-          </el-input-number>
-
-        </template>
-      </el-table-column>
-      <!--<el-table-column prop="number" label="库存误差" width="90" fixed="right">-->
-
-      <!--</el-table-column>-->
     </el-table>
 
-    <!-- 编辑明细对话框 -->
-    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
-    </itemDialog>
+    <el-row>
+      <el-col :md="24">
+        <el-row type="flex" justify="center">
+          <el-button type="primary" style="margin-top: 15px"
+                     size="small"
+                     :loading="confirmLoading" @click="onNext">
+            下一步
+          </el-button>
+        </el-row>
+      </el-col>
+    </el-row>
 
   </div>
 
@@ -98,14 +84,13 @@
 <script>
 
   import {mapGetters} from 'vuex'
-  import {currency} from '@/utils'
+  import {currency,parseTime} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
-  import itemDialog from './detailDialog'
+  import {getObjectValueByArr} from "../../../../utils";
 
 
   export default {
     components: {
-      itemDialog,
       tableToolBar
     },
     props: {
@@ -127,22 +112,19 @@
       return {
         // 表格最大高度
         tableMaxHeight: this.device !== 'mobile' ? 500 : 40000000,
-
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
         //数据 TODO: 根据实际情况调整
-        url: "/inventoryTasks", // 资源URL
-        downloadUrl: '', //下载Url
-        primaryId: '',
+        url: '/warehouseStocks/stocks', // 资源URL
         filters: [
           {
-            field: "relevanceId",
+            field: "warehouseId",
             op: 'eq',
-            data: this.primary ? this.primary.id : -1
+            data: this.primary ? this.primary.warehouseId : -1
           }
         ],   //搜索对象
-        relations: ["product", "warehouseStock", "inventoryTaskItem","inventoryTask", "storageLocation"],  // 关联对象
+        relations: null,  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -150,10 +132,7 @@
 
         // 表格工具条配置
         toolbarConfig: {
-          hasExportTpl: true,
-          hasExport: true,
-          hasImport: true,
-          hasAdd: true,
+          hasExport: true
         }
       }
     },
@@ -189,7 +168,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 180;
+          tableHeight = tableHeight - 230;
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -202,13 +181,26 @@
       dangerClassName({row}) {
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'product.skuCode') {
+          if (column.property == 'skuCode') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;
@@ -216,7 +208,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'checkedStock' ) {
+          if (column.property == 'qty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -232,31 +224,31 @@
               sums[index] = 'N/A';
             }
           }
+
+          if (column.property == 'cartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
         });
 
         return sums;
       },
-      onUpdateData(row){
-        //更新数据
-        row.skuCode = row.product.skuCode;
-        this.global.axios.put(`/inventoryTaskItems/${row.id}`, row).then(resp => {
-          this.$message({
-            type: "success",
-            message: "数据更新成功！"
-          })
-
-        }).catch(err => {
-          console.log("更新数据失败")
-        })
-      },
-
-      onCheckedStock(row) {
-        this.onUpdateData(row);
-      },
 
       /*获取列表*/
       getList() {
-        let url = this.url + `/taskId/${this.primary.id}`;
+        let url = this.url;
         let params = '';
         if (!url) {
           console.warn('url 为空, 不发送请求');
@@ -310,30 +302,11 @@
         this.tableData = this.data;
       },
 
-      /********************* 工具条按钮  ***************************/
-      uploadPromise(res) {
-        let url = '/inventoryTaskItems';
-        return this.global.axios.post(url, res)
-          .then(resp => {
-          })
-          .catch(err => {
-          })
+      onNext() {
+        this.$emit("step1CBEvent", null);
       },
 
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.url + '/' +this.primaryId + "?pageSize=" + this.pageSize + "&currentPage=" + this.currentPage + "&relations=" + this.relations;
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "盘点任务-模版",
-            noExportProps: ['更新人', '更新时间'],
-            tpl: true,
-          })
-        })
-      },
+      /********************* 工具条按钮  ***************************/
       onToolBarDownloadData() {
         //获取数据
         let table = this.$refs.table;
@@ -358,7 +331,7 @@
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "盘点任务",
+            filename: `${this.primary.warehouse.name}-当前库存-${parseTime(new Date(), '{y}-{m}-{d}')}`,
             noExportProps: ['更新人', '更新时间'],
             params: params
           });
@@ -366,83 +339,6 @@
         })
       },
 
-      async onToolBarImportData(excelData) {
-        if (!excelData) {
-          this.$message.error("导入失败!");
-          return false;
-        }
-        let loading = this.$loading({
-          lock: true,
-          text: '导入数据中',
-          spinner: 'el-icon-upload',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
-        let table = this.$refs.table;
-        let columns = (table && table.columns) ? table.columns : [];
-        let header = [];
-        // 处理头部映射
-        excelData.header.forEach(_head => {
-          columns.forEach(_col => {
-            if (_head == _col.label) {
-              header[_head] = _col.property;
-            }
-          });
-        });
-
-        // 导入数据
-        let promiseArr = [];
-        let resData = [];
-
-        // 创建提交列表
-        excelData.results.forEach(obj => {
-          let _res = {};
-          excelData.header.forEach(_head => {
-
-            let prop = header[_head];
-            if (prop) {
-              if (prop.indexOf('.') !== false) {
-                let tmps = prop.split('.');
-                for (var i = 0; i < tmps.length; i++) {
-                  if (i === 0) {
-                    prop = tmps[0];
-                  }
-                  else {
-                    prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
-                  }
-                }
-              }
-              _res[prop] = obj[_head];
-            }
-          });
-          resData.push(_res);
-        });
-        for (var i = 0; i < resData.length; i++) {
-          //TODO 后台需要判断inventoryTaskItemId
-          resData[i].taskId = this.primary.id;
-          resData[i].skuCode = resData[i].productSkuCode;
-          promiseArr.push(this.uploadPromise(resData[i]));
-          if (promiseArr.length >= this.maxUploadCount) {
-            await Promise.all(promiseArr).then(obj => {
-              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i+1) + "]条";
-              promiseArr = [];
-            });
-            promiseArr = [];
-          }
-        }
-        if (promiseArr.length > 0) {
-          await Promise.all(promiseArr).then(obj => {
-            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
-          });
-        }
-        loading.close();
-        this.$message.success("导入成功");
-        this.getList();
-      },
-
-      onToolBarAdd() {
-        this.$refs.itemDialog.openDialog(this.primary.id);
-      },
     }
   }
 </script>

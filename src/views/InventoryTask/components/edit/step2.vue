@@ -2,13 +2,37 @@
 
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
+    <el-form inline
+             ref="editObject"
+             label-position="right"
+             label-width="120px"
+    >
+      <el-row>
+        <el-col :md="8">
+          <el-form-item label="编码:" prop="code">
+            <span style="font-size: 12px">{{primary.code}}</span>
+          </el-form-item>
+        </el-col>
 
+        <el-col :md="8">
+          <el-form-item label="仓库:" prop="warehouseId">
+            <span style="font-size: 12px">{{primary.warehouse.name}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="截止时间:" prop="formatLimitTime">
+            <span style="font-size: 12px">{{primary.formatLimitTime}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
 
     <!-- 表格工具条 添加、导入、导出等 -->
     <tableToolBar
       v-bind="toolbarConfig"
-      @onToolBarDownloadTpl="onToolBarDownloadTpl"
-      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarAdd="onToolBarAdd"
+      @onToolBarImportData="onToolBarImportData"
     >
     </tableToolBar>
 
@@ -34,17 +58,57 @@
       <el-table-column prop="product.skuCode" label="SKU编码" width="200" align="center"></el-table-column>
       <el-table-column prop="product.fnSku" label="FNSKU" width="100" align="center"></el-table-column>
       <el-table-column prop="product.name" label="产品名" min-width="200" align="center"></el-table-column>
+
       <el-table-column prop="cartonSpec.code" label="箱规" min-width="120" align="center"></el-table-column>
+
       <el-table-column prop="product.numberOfCarton" label="装箱数" min-width="100" align="center"></el-table-column>
 
       <el-table-column prop="cartonQty" label="实际盘点库存(箱数)" width="180" fixed="right" align="center">
+        <template slot-scope="scope">
+          {{ (scope.row.checkedStock / scope.row.numberOfCarton).toFixed(1) }}
+        </template>
       </el-table-column>
 
       <el-table-column prop="checkedStock" label="实际盘点库存(件数)" width="180" fixed="right" align="center">
-      </el-table-column>
+        <template slot-scope="scope">
+          <el-input-number v-model="scope.row.checkedStock"
+                           size="mini"
+                           style="width: 120px;margin: 3px 0;"
+                           :precision="0"
+                           :min="0"
+                           :step="1"
+                           @change="onCheckedStock(scope.row)"
+                           :max="1000000" label="请填实际库存">
+          </el-input-number>
 
+        </template>
+      </el-table-column>
+      <!--<el-table-column prop="number" label="库存误差" width="90" fixed="right">-->
+
+      <!--</el-table-column>-->
     </el-table>
 
+    <!-- 编辑明细对话框 -->
+    <itemDialog @modifyCBEvent="modifyCBEvent" ref="itemDialog" :primary="primary">
+    </itemDialog>
+
+
+    <el-row>
+      <el-col :md="12">
+        <el-row type="flex" justify="center">
+          <el-button type="warning" style="margin-top: 40px" size="small" @click="onBack">
+            < 上一步
+          </el-button>
+        </el-row>
+      </el-col>
+      <el-col :md="12">
+        <el-row type="flex" justify="center">
+          <el-button type="primary" style="margin-top: 40px" size="small" @click="onNext">
+            下一步 >
+          </el-button>
+        </el-row>
+      </el-col>
+    </el-row>
 
   </div>
 
@@ -56,10 +120,12 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import tableToolBar from '@/components/PhTableToolBar'
+  import itemDialog from './detailDialog'
 
 
   export default {
     components: {
+      itemDialog,
       tableToolBar
     },
     props: {
@@ -85,6 +151,8 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
+        maxUploadCount: 1,
+
         //数据 TODO: 根据实际情况调整
         url: "/inventoryTasks", // 资源URL
         downloadUrl: '', //下载Url
@@ -104,9 +172,7 @@
 
         // 表格工具条配置
         toolbarConfig: {
-          hasExportTpl: false,
-          hasExport: true,
-          hasImport: false,
+          hasImport: true,
           hasAdd: false,
         }
       }
@@ -116,12 +182,10 @@
     },
 
     mounted() {
-
       //全屏，表格高度处理
       window.onresize = () => {
         this.getTableHeight();
-      };
-
+      }
 
       this.$nextTick(() => {
         this.initData();
@@ -143,7 +207,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 180;
+          tableHeight = tableHeight - 250;
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -187,7 +251,7 @@
             }
           }
 
-          if ( column.property == 'checkedStock') {
+          if (column.property == 'checkedStock') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -206,6 +270,24 @@
         });
 
         return sums;
+      },
+
+      onUpdateData(row) {
+        //更新数据
+        row.skuCode = row.product.skuCode;
+        this.global.axios.put(`/inventoryTaskItems/${row.id}`, row).then(resp => {
+          this.$message({
+            type: "success",
+            message: "数据更新成功！"
+          })
+
+        }).catch(err => {
+          console.log("更新数据失败")
+        })
+      },
+
+      onCheckedStock(row) {
+        this.onUpdateData(row);
       },
 
       /*获取列表*/
@@ -266,58 +348,55 @@
 
       /********************* 工具条按钮  ***************************/
       uploadPromise(res) {
-        let url = this.url + '';
-        return this.global.axios.post(url, res)
+
+      },
+
+      onToolBarImportData(excelData) {
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.skuCode = obj["SKU编码"];
+          _res.checkedStock = obj["库存件数"];
+          _res.cartonSpecCode = obj["箱规"];
+          _res.numberOfCarton = obj["装箱数"];
+          resData.push(_res);
+        });
+
+        let url = `/inventoryTaskItems/importData/${this.primary.id}`;
+        this.global.axios.post(url, resData)
           .then(resp => {
+            loading.close();
+            this.$message.success("导入成功");
+            this.getList();
           })
           .catch(err => {
+            loading.close();
           })
       },
 
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.url + '/' +this.primaryId + "?pageSize=" + this.pageSize + "&currentPage=" + this.currentPage + "&relations=" + this.relations;
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "盘点任务-模版",
-            noExportProps: ['更新人', '更新时间'],
-            tpl: true,
-          })
-        })
+      onToolBarAdd() {
+        this.$refs.itemDialog.openDialog(this.primary.id);
       },
-      onToolBarDownloadData() {
-        //获取数据
-        let table = this.$refs.table;
-        let params = '';
 
-        let downloadUrl = this.url
-
-        if (!downloadUrl) {
-          console.warn('url 为空, 导出数据失败！')
-          return
-        }
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
-        }
-        import('@/vendor/Export2Excel').then(excel => {
-          this.loading = true;
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "盘点任务",
-            noExportProps: ['更新人', '更新时间'],
-            params: params
-          });
-          this.loading = false;
-        })
+      onNext() {
+        this.$emit("step2CBEvent", 2);
+      },
+      onBack() {
+        this.$emit("step2CBEvent", 0);
       },
     }
   }

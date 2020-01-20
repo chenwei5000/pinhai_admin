@@ -10,8 +10,7 @@
     </el-row>
 
     <itemTable ref="itemTable" :primary="primary"></itemTable>
-    <h3>附件:</h3>
-    <attachment ref="attachment" :primary="primary"></attachment>
+
   </el-dialog>
 
 </template>
