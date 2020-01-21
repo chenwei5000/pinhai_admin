@@ -67,6 +67,7 @@
               this.primary = res || {};
               this.primary.categoryId = res.categoryId + "";
               this.primary.cartonSpecId = res.cartonSpecId + "";
+              this.primary.currencyId = res.currencyId + "";
               this.primary.supplierId = res.supplierId + "";
               this.primary.vipLevel = res.vipLevel + "";
               this.dialogVisible = true;

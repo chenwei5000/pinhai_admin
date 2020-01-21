@@ -173,7 +173,7 @@
     </el-pagination>
 
 
-    <createDialog ref="createDialog"></createDialog>
+    <createDialog ref="createDialog" @modifyCBEvent="modifyCBEvent"></createDialog>
 
   </div>
 
@@ -690,7 +690,7 @@
 
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
       modifyCBEvent(object) {
-        this.getList();
+        this.$emit("modifyCBEvent", object);
       },
 
       onToolBarDelete() {

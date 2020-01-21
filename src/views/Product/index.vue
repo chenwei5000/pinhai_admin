@@ -11,7 +11,7 @@
             <i class="el-ph-icon-check-circle"></i> 有效的产品
           </span>
             <keep-alive>
-              <tab-pane type="valid"/>
+              <tab-pane type="valid" ref="valid" @modifyCBEvent="modifyCBEvent"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -20,7 +20,7 @@
             <i class="el-ph-icon-times-circle"></i> 关闭的产品
           </span>
             <keep-alive>
-              <tab-pane type="invalid"/>
+              <tab-pane type="invalid" ref="invalid" @modifyCBEvent="modifyCBEvent"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -29,7 +29,7 @@
               <i class="el-ph-icon-exclamation-circle"></i> 信息不全的产品
             </span>
             <keep-alive>
-              <tab-pane type="unfinished"/>
+              <tab-pane type="unfinished" ref="unfinished" @modifyCBEvent="modifyCBEvent"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -86,6 +86,12 @@
         let newUrl = location.origin + "/#" + queryPath + queryFlag + this.activeStatus;
         history.pushState(history.state, 'ph-table search', newUrl);
       },
+
+      modifyCBEvent(object) {
+        this.$refs.valid ? this.$refs.valid.onRefreshTable() : null;
+        this.$refs.invalid ? this.$refs.invalid.onRefreshTable() : null;
+        this.$refs.unfinished ? this.$refs.unfinished.onRefreshTable() : null;
+      }
     },
 
     // 观察data中的值发送变化后，调用

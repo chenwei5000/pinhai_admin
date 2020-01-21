@@ -79,7 +79,7 @@
           ],
           //修改或新增
           form: [
-            phFormItems.datadic("materialName", "类型", '请选择', "material"),
+            phFormItems.datadic("materialName", "类型", '请选择', "materialName"),
             {
               $type: 'input',
               $id: 'name',

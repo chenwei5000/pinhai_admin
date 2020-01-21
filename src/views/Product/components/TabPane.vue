@@ -1,6 +1,6 @@
 <template>
 
-  <productTable :type="type" :defaultFilters="filters"></productTable>
+  <productTable :type="type" ref="productTable" :defaultFilters="filters" @modifyCBEvent="modifyCBEvent"></productTable>
 
 </template>
 
@@ -35,7 +35,14 @@
         }
       }
     },
-    methods: {}
+    methods: {
+      modifyCBEvent(object) {
+        this.$emit("modifyCBEvent", object);
+      },
+      onRefreshTable() {
+        this.$refs.productTable.onRefreshTable();
+      },
+    }
   }
 </script>
 

@@ -636,14 +636,12 @@
       confirm() {
         this.$refs.createForm.validate(valid => {
           if (!valid) {
-            this.$emit("callback", null);
             return false;
           }
           let data = this.newProduct;
           data.productToMaterialTOs = JSON.parse(JSON.stringify(this.$refs.itemTable.tableData));
           if (!data.id) {
             this.$message.error("无效的产品ID");
-            this.$emit("callback", null);
             return false;
           }
 
@@ -655,10 +653,9 @@
               this.$message({type: 'success', message: '商品编辑成功'});
               let obj = resp.data;
               // 回传消息
-              this.$emit("callback", {type: 'sure', data: obj});
+              this.$emit("modifyCBEvent", {type: 'sure', data: obj});
             })
             .catch(err => {
-              this.$emit("callback", null);
             })
         });
       },
