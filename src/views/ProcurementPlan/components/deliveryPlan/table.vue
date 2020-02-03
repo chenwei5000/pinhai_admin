@@ -220,13 +220,6 @@
         if (this.relations && this.relations.length > 0) {
           this.downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
-
-        // 控制按钮
-        if ([0, 10, 100].indexOf(this.primary.status) > -1) {
-          this.hasDelete = false;
-          this.toolbarConfig.hasAdd = false;
-          this.toolbarConfig.hasImport = false;
-        }
       },
 
       /********************* 表格相关方法  ***************************/
@@ -348,6 +341,7 @@
         this.global.axios
           .get(url + params)
           .then(resp => {
+            this.loading = false
             let res = resp.data
             let data = res || []
 
@@ -355,7 +349,6 @@
             this.search()
 
             this.total = res.length || 0
-            this.loading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update

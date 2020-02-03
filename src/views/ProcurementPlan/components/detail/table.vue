@@ -144,7 +144,7 @@
 
 
 
-      <el-table-column prop="amount" sortable label="金额" width="90"
+      <el-table-column prop="amount" sortable label="金额" width="90" v-if="hasPrice"
                        fixed="right">
         <template slot-scope="scope">
           {{scope.row.amount, scope.row.product.currency ? scope.row.product.currency.symbolLeft : '' | currency}}
@@ -206,6 +206,10 @@
 
       hasExport() {
         return checkPermission('ProcurementPlanItemResource_export');
+      },
+
+      hasPrice() {
+        return checkPermission('PurchasePriceVisible');
       },
 
       hasImport() {
