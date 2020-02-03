@@ -208,16 +208,19 @@
                          filterable placeholder="请选择未完成采购计划处理方式">
 
                 <el-option label="不考虑" value="0"></el-option>
-                <el-option label="采购计划数量" value="1"></el-option>
-                <el-option label="已下采购单数量" value="2"></el-option>
-                <el-option label="已发货数量" value="3"></el-option>
-                <el-option label="已收货数量" value="4"></el-option>
+                <el-option label="计划数量" value="1"></el-option>
+                <el-option label="下单数量" value="2"></el-option>
+                <el-option label="发货数量" value="3"></el-option>
+                <el-option label="收货数量" value="4"></el-option>
 
               </el-select>
 
               <el-tooltip class="item" effect="light" placement="right">
-                <div slot="content">对当前没有结束的其它采购计划的处理方式。<BR/>
-                  例如：选择已发货数量。表示最终需要减去没有完成采购计划中，已经发货的数量。<BR/>
+                <div slot="content">排除未完成采购计划的方式<BR/>
+                  计划数量。表示最终需要减去没有完成采购计划中，商品下采购计划数量。<BR/>
+                  下单数量。表示最终需要减去没有完成采购计划中，商品已经下采购单的数量。<BR/>
+                  发货数量。表示最终需要减去没有完成采购计划中，商品已经发货的数量。<BR/>
+                  收货数量。表示最终需要减去没有完成采购计划中，商品已经收货的数量。<BR/>
                   具体各种状态数量可以在采购计划中查看。
                 </div>
                 <i class="el-icon-question">&nbsp;</i>
