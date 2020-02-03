@@ -205,6 +205,8 @@
             this.$message.success('操作成功！')
           }
           loading.close();
+        }).catch(err => {
+          loading.close();
         })
       },
 
