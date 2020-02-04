@@ -423,11 +423,13 @@
         // 根据偏移值计算接口正确的页数
         params += `pageSize=${size}&currentPage=${page}`
         searchParams += `pageSize=${size}&currentPage=${page}`
+        downloadParams += '1=1'
 
         // 处理排序
         if (this.phSort) {
           params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
           searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
+          downloadParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
         }
 
         // 处理查询
@@ -449,16 +451,16 @@
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-          downloadUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          downloadParams += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
 
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
-          downloadUrl += "&relations=" + JSON.stringify(this.relations);
+          downloadParams += "&relations=" + JSON.stringify(this.relations);
         }
 
-        this.downloadUrl = downloadUrl;
+        this.downloadUrl = downloadUrl + downloadParams;
 
         // 请求开始
         this.loading = true
