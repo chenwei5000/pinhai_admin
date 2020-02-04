@@ -449,14 +449,16 @@
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          downloadUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
 
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
+          downloadUrl += "&relations=" + JSON.stringify(this.relations);
         }
 
-        this.downloadUrl = downloadUrl + params;
+        this.downloadUrl = downloadUrl;
 
         // 请求开始
         this.loading = true
