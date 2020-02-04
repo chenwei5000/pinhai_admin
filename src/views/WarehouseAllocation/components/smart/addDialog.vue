@@ -77,7 +77,13 @@
         <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
 
         <el-table-column prop="cartonQty" label="库存箱数" width="85"></el-table-column>
-        <el-table-column prop="shippedCartonQty" label="发货箱数" width="130">
+        <el-table-column prop="shippedCartonQty" label="发货箱数" width="150" align="center">
+          <template slot="header" slot-scope="scope">
+            <span>发货箱数</span><BR/>
+            <el-button type="primary" size="mini" plain @click="onAll">全部</el-button>
+            <el-button type="success" size="mini" plain @click="onClear">清空</el-button>
+          </template>
+
           <template slot-scope="scope">
             <el-input-number v-model="scope.row.shippedCartonQty"
                              size="mini"
@@ -286,7 +292,6 @@
 
       /* 多选功能 */
       handleSelectionChange(val) {
-        val.shippedCartonQty = 100;
         this.selected = val;
       },
 
@@ -321,6 +326,19 @@
         else {
           return 0;
         }
+      },
+
+      onAll() {
+        this.tableData.forEach((item, index, arr) => {
+          arr[index].shippedCartonQty = item.cartonQty;
+          arr[index].shippedQty = item.qty;
+        });
+      },
+      onClear() {
+        this.tableData.forEach((item, index, arr) => {
+          arr[index].shippedCartonQty = 0;
+          arr[index].shippedQty = 0;
+        });
       },
 
       // 保存
