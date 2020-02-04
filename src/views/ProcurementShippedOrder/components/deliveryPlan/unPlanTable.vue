@@ -390,6 +390,7 @@
         let countUrl = this.countUrl
         let params = ''
         let searchParams = ''
+        let downloadParams = ''
         let size = this.size
         let page = this.page
 
