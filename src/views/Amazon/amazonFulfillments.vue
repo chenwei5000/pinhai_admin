@@ -28,7 +28,7 @@
           hasNew: false,
           hasEdit: false,
           hasDelete: false,
-          hasExportTpl: checkPermission('AmazonFulfillmentReportResource_list'),
+          hasExportTpl: false,
           hasExport: checkPermission('AmazonFulfillmentReportResource_list'),
           hasImport: false,
           url: '/amazonFulfillmentReports?filters='+JSON.stringify({"groupOp":"AND","rules":[{"field":"salesChannel","op":"bw","data": "Non-Amazon" }]}),
