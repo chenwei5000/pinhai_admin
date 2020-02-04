@@ -568,7 +568,7 @@
        */
       paginationSizes: {
         type: Array,
-        default: () => [20, 50, 100]
+        default: () => [20, 50, 100, 500, 1000]
       },
       /**
        * 分页组件的每页显示个数选择器默认选项，对应element-ui pagination的page-size属性

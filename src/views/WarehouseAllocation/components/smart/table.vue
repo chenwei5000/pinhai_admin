@@ -207,7 +207,7 @@
         let idx = null;
         let _tmp = JSON.parse(JSON.stringify(this.tableData));
         this.tableData.forEach((item, index, arr) => {
-          if (item.skuCode === object.skuCode) {
+          if (item.skuCode === object.skuCode ) {
             arr[index] = object;
             flag = false;
           }

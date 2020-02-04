@@ -30,14 +30,16 @@
       >
         <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
 
-        <el-table-column prop="product.skuCode" label="SKU" width="200">
+        <el-table-column prop="product.skuCode" label="SKU" width="186">
         </el-table-column>
 
-
-        <el-table-column prop="product.name" label="名称" width="256">
+        <el-table-column prop="product.fnSKu" label="FN-SKU" width="100">
         </el-table-column>
 
-        <el-table-column prop="product.model" label="规格型号" width="150">
+        <el-table-column prop="product.name" label="名称" width="200">
+        </el-table-column>
+
+        <el-table-column prop="product.model" label="规格型号" width="120">
           <template slot-scope="scope">
             {{scope.row.product.model}} , {{scope.row.product.color}}
           </template>
