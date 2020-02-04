@@ -33,6 +33,7 @@
           hasImport: false,
           url: '/amazonFulfillmentReports?filters='+JSON.stringify({"groupOp":"AND","rules":[{"field":"salesChannel","op":"bw","data": "Non-Amazon" }]}),
           countUrl: '#/amazonFulfillmentReports/count?filters='+JSON.stringify({"groupOp":"AND","rules":[{"field":"salesChannel","op":"bw","data": "Non-Amazon" }]}),
+          defalutSort: "&sort=shipmentDate&dir=desc",
           relations: null,
           tableAttrs: {
             "row-class-name": this.statusClassName
@@ -42,7 +43,7 @@
             {prop: 'shipmentId', label: 'Shipment Id',  "width": 120, fixed: 'left'},
             {prop: 'amazonOrderId', label: 'Amazon Order Id',  "width": 150},
             {prop: 'merchantOrderId', label: 'Merchant Order Id', "width": 120},
-            {prop: 'productName', label: 'Product Name', "width": 120},
+            {prop: 'productName', label: 'Product Name', "width": 250},
             {prop: 'sku', label: 'SKU', "width": 120},
             {prop: 'quantityShipped', label: 'Quantity', "width": 120},
             {prop: 'formatShipmentDate', label: 'Shipment Date', "width": 120},
