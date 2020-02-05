@@ -26,10 +26,8 @@
     data(){
       return {
         number: 0,
-        relations: ["procurementPlan","creator","currency","supplier","warehouse"] ,
-        filters:[
-          {"field": "status", "op": "in", "data": "3,4,5"}
-        ],
+        relations: null ,
+        filters: null,
       }
     },
 
@@ -50,7 +48,7 @@
 
     methods: {
       initData(){
-        let countUrl = "procurementOrders/count";
+        let countUrl = "/procurementOrderItems/countNoDeliveryPlans";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
         this.global.axios
