@@ -137,7 +137,9 @@
         }
         let ids = [];
         checkedNodes.forEach(node => {
-          ids.push(node.id);
+          if(node.children.length == 0) {
+            ids.push(node.id);
+          }
         });
         this.confirmLoading = false;
         // 继续向父组件抛出事件 修改成功刷新列表
