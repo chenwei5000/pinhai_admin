@@ -71,8 +71,8 @@
 
         // TODO 默认Tab激活状态
         activeStatus: location.href.indexOf(actionFlag) > -1
-          ? (this.$route.query.s !== null ? this.$route.query.s : 'shipped')
-          : 'shipped',
+          ? (this.$route.query.s !== null ? this.$route.query.s : 'executing')
+          : 'executing',
       }
     },
 

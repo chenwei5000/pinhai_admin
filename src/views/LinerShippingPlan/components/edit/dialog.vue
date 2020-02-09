@@ -55,7 +55,7 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改 -->
-          <el-tab-pane name="logisticPayment" lazy>
+          <el-tab-pane name="logisticPayment" lazy v-if="hasPayment">
             <span slot="label">
               <i class="el-icon-money"></i> 物流付款
             </span>
@@ -136,6 +136,9 @@
         }
 
         return checkPermission('LinerShippingPlanResource_postPlan');
+      },
+      hasPayment(){
+        return checkPermission('LogisticPaymentBillResource_list');
       }
     },
     mounted() {
