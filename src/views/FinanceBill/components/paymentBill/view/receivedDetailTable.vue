@@ -121,13 +121,8 @@
           {
             field: "procurementShippedOrderId",
             op: 'eq',
-            data: this.primary && this.primary.settlementBill.procurementOrder ? this.primary.settlementBill.procurementOrder.id : -1
-          },
-          {
-            field: "procurementShippedOrder_code",
-            op: 'eq',
-            data: this.primary && this.primary.settlementBill ? this.primary.settlementBill.warehouseOrderCode : '-1'
-          },
+            data: this.primary && this.primary.settlementBill.procurementShippedOrder ? this.primary.settlementBill.procurementShippedOrder.id : -1
+          }
         ],   //搜索对象
         relations: ["cartonSpec", "product", "procurementShippedOrder"],  // 关联对象
         data: [], // 从后台加载的数据
@@ -155,7 +150,6 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         this.loading = true;
-        console.log(this.primary)
       },
 
       /********************* 表格相关方法  ***************************/

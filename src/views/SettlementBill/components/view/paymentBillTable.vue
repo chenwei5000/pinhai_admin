@@ -150,10 +150,10 @@
       initData() {
         this.loading = true;
         if (this.primary) {
-
           let url = "/invoices";
           let filters = [
-            {"field": "paymentOrderId", "op": "eq", "data": this.primary.id}
+            {"field": "paymentOrderId", "op": "eq", "data": this.primary.id},
+            {"field": "type", "op": "eq", "data": 'PB'}
           ]
           url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
           url += "&sort=id&dir=asc";

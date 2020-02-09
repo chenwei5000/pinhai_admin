@@ -132,7 +132,6 @@
             op: 'eq',
             data: this.primary ? this.primary.id : -1
           },
-
           {
             field: "type",
             op: 'eq',
