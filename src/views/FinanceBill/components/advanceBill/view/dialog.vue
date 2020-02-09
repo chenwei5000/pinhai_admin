@@ -114,6 +114,7 @@
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
+
               this.dialogVisible = true;
               this.primaryComplete = true;
             })

@@ -31,7 +31,7 @@
       </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40">
-        <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
             style="width: 30px; height: 30px;margin-top: 5px"
@@ -123,13 +123,6 @@
         //数据 TODO: 根据实际情况调整
         url: "/procurementShippedOrderItems", // 资源URL
         downloadUrl: "", //下载Url
-        filters: [
-          {
-            field: "procurementShippedOrderId",
-            op: 'eq',
-            data: this.primary && this.primary.procurementOrder ? this.primary.procurementOrder.id : -1
-          }
-        ],   //搜索对象
         relations: ["cartonSpec", "product", "procurementShippedOrder"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
@@ -217,78 +210,45 @@
       /*获取列表*/
       getList() {
         let url = this.url;
-        let params = '';
-
-        console.log(this.primary)
+        let filters = null;
 
         if (!url) {
           console.warn('url 为空, 不发送请求')
           return
         }
 
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-
-        // 处理关联加载
-        if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
-        }
-
         // 请求开始
         this.loading = true
-        filters: [
+        filters = [
           {
-            field: "procurementShippedOrderId",
+            field: "procurementOrderId",
             op: 'eq',
-            data: this.primary  ? this.primary.procurementOrder.id: -1
+            data: this.primary && this.primary.procurementOrder ? this.primary.procurementOrder.id : -1
           }
         ],
 
-        //获取数据
-        this.global.axios
-          .get("/procurementShippedOrders" + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": [
-              {
-                field: "procurementOrderId",
-                op: 'eq',
-                data: this.primary  ? this.primary.procurementOrder.id: -1
+          //获取数据
+          this.global.axios
+            .get(this.url + "?filters=" + JSON.stringify({
+              "groupOp": "AND",
+              "rules": filters
+            }) + "&relations=" + JSON.stringify(this.relations))
+            .then(resp => {
+              if (this.primary.procurementOrderId = null) {
+                return null
               }
-            ]}))
-          .then(resp => {
-            let res = resp.data;
-            let orders = "";
-            res.forEach( item => {
-              orders = orders + item.id + ","
+              let res = resp.data
+              let data = res || []
+              this.data = data
+              this.search()
+              this.total = res.length || 0
+              this.loading = false
+              this.$emit('update', data, res)
             })
-            orders = orders.substr(0, orders.length - 1)
-            let filters = [
-              {
-                field: "procurementShippedOrderId",
-                op: 'in',
-                data: orders
-              }
-            ]
-            this.global.axios
-              .get(this.url + "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters})+"&relations=" + JSON.stringify(this.relations))
-              .then(resp => {
-                if(this.primary.procurementOrderId = null )
-                {
-                  return null
-                }
-                let res = resp.data
-                let data = res || []
-                this.data = data
-                this.search()
-                this.total = res.length || 0
-                this.loading = false
-                this.$emit('update', data, res)
-              })
-              .catch(err => {
-                this.$emit('error', err)
-                this.loading = false
-              })
-          })
+            .catch(err => {
+              this.$emit('error', err)
+              this.loading = false
+            })
       },
 
       /* 多选功能 */
