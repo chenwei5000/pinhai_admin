@@ -183,22 +183,11 @@
         show-summary
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
+        @cell-dblclick="handleDblclick"
         :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
         id="table"
       >
         <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.product.skuCode && scope.row.product.skuCode.length > 22">
-              <div v-html="scope.row.product.skuCode"></div>
-              <span slot="reference">{{
-              scope.row.product.skuCode ? scope.row.product.skuCode.length > 22 ? scope.row.product.skuCode.substr(0,20)+'..' : scope.row.product.skuCode : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.skuCode }}
-          </span>
-          </template>
         </el-table-column>
 
         <el-table-column prop="product.imgUrl" label="图片" width="40" >
@@ -215,18 +204,6 @@
         <el-table-column prop="product.supplier.name" label="供货商" width="100"></el-table-column>
 
         <el-table-column prop="productName" label="名称" width="200">
-          <template slot-scope="scope">
-            <el-popover placement="top-start" width="200" trigger="hover"
-                        v-if="scope.row.product.name && scope.row.product.name.length > 17">
-              <div v-html="scope.row.product.name"></div>
-              <span slot="reference">{{
-              scope.row.product.name ? scope.row.product.name.length > 17 ? scope.row.product.name.substr(0,15)+'..' : scope.row.product.name : ''
-              }}</span>
-            </el-popover>
-            <span v-else>
-            {{ scope.row.product.name }}
-            </span>
-          </template>
         </el-table-column>
 
         <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
@@ -306,6 +283,7 @@
   import currencyModel from '@/api/currency'
   import planDetailDialog from './planDetailDialog'
   import {checkPermission} from "../../../../utils/permission";
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -674,6 +652,19 @@
         });
 
         return sums;
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /* 多选功能 */

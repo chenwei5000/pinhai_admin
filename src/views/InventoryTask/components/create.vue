@@ -17,7 +17,7 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="仓库" prop="warehouseId" >
+            <el-form-item label="仓库" prop="warehouseId">
               <el-select v-model="newObject.warehouseId" size="mini" style="width: 220px" filterable="true">
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
@@ -74,7 +74,6 @@
 </template>
 
 <script>
-  import warehouseModel from '@/api/warehouse'
   import {intArrToStrArr} from '@/utils'
 
   export default {
@@ -122,29 +121,27 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        //this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions2();
         this.initWarehouseData();
 
         this.loading = false;
       },
 
       // 初始化仓库数据
-      initWarehouseData(val = null) {
-        if (!val) {
-          return;
-        }
+      initWarehouseData() {
         this.loading = true;
         let url = "/warehouses/permissions";
-        url += +val.join(",");
         this.global.axios.get(url)
           .then(resp => {
             let res = resp.data || [];
             this.warehouseSelectOptions = [];
             res.forEach(r => {
-              this.warehouseSelectOptions.push({
-                label: r.name,
-                value: r.id + ''
-              });
+              if (r.type == "工厂仓" || r.type == "普通" || r.type == "虚拟仓" || r.type == "原料仓") {
+                this.warehouseSelectOptions.push({
+                  label: r.name,
+                  value: r.id + ''
+                });
+              }
             });
             this.loading = false;
           })
@@ -153,8 +150,8 @@
           });
       },
 
-      clearData(){
-         this.newObject = {
+      clearData() {
+        this.newObject = {
           limitTime: null,
           warehouseId: null,
           note: null,
