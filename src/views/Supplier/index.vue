@@ -39,6 +39,7 @@
           hasEdit: checkPermission('SupplierResource_update'),
           hasDelete: checkPermission('SupplierResource_remove'),
           hasSetting: checkPermission('SupplierStockResource_list'),
+          hasExport: checkPermission('SupplierResource_export'),
 
           url: '/suppliers',
           relations: ["company"],  // 关联对象
