@@ -133,7 +133,7 @@
                 <el-input-number v-model="editObject.accountPeriod"
                                  @change="onAccountPeriodChange"
                                  style="width: 155px"
-                                 :min="1"
+                                 :min="0"
                                  :step="1"
                                  :max="365" size="mini" label="帐期">
                 </el-input-number>
