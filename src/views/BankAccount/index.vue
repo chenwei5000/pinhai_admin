@@ -44,9 +44,11 @@
           columns: [
             {width: 30,type: checkPermission('BankAccountResource_remove') ? 'selection' : '', hidden: !checkPermission('BankAccountResource_remove')},
             phColumns.id,
-            {prop: 'accountName', label: '户名', "min-width": 200},
-            {prop: 'accountCardHide', label: '银行卡号', "min-width": 160},
-            {prop: 'openingBank', label: '开户行', "min-width": 200},
+            {prop: 'accountName', label: '户名', "min-width": 120},
+            {prop: 'accountCardHide', label: '银行卡号', "min-width": 100},
+            {prop: 'openingBank', label: '开户行', "min-width": 120},
+            {prop: 'address', label: '银行地址', "min-width": 200},
+            {prop: 'swiftCode', label: 'SWIFT CODE', "min-width": 100},
             {prop: 'currencyId', label: '货币类型ID', hidden: 'false', "min-width": 120},
             {prop: 'currency.name', label: '币种', "min-width": 120},
             phColumns.creator,
@@ -77,7 +79,7 @@
               $id: 'accountCard',
               label: '银行卡号',
               $el: {
-                maxlength:"20",
+                maxlength:"40",
                 "show-word-limit": true,
                 placeholder: '请输入银行卡号'
               },
@@ -94,6 +96,26 @@
               },
               rules: [
                 validRules.required,
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'address',
+              label: '银行地址',
+              $el: {
+                placeholder: '请输入银行地址'
+              },
+              rules: [
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'swiftCode',
+              label: 'SWIFT CODE',
+              $el: {
+                placeholder: '请输入SWIFT CODE'
+              },
+              rules: [
               ]
             },
             {
