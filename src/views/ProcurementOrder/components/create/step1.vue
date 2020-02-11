@@ -456,7 +456,7 @@
         let url = "/warehouses";
         let filters = [
           {"field": "status", "op": "eq", "data": "1"},
-          {"field": "type", "op": "in", "data": "普通,原料仓,工厂仓"}
+          {"field": "type", "op": "in", "data": "普通,原料仓,工厂仓,虚拟仓"}
         ];
         url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
 
