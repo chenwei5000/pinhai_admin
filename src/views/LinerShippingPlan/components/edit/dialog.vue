@@ -15,6 +15,11 @@
         发布计划
       </el-button>
 
+      <el-button type="danger" size="small" icon="el-icon-delete" v-if="hasDelete" @click="onDelete">
+        删除
+      </el-button>
+
+
       <el-button size="small" @click="closeDialog">取 消</el-button>
 
     </el-row>
@@ -50,7 +55,7 @@
               <i class="el-icon-s-order"></i> 产品明细
             </span>
             <keep-alive>
-              <detail :primary="primary" @modifiedInfoCBEvent="onModifiedCBEvent" ></detail>
+              <detail :primary="primary" @modifiedInfoCBEvent="onModifiedCBEvent"></detail>
             </keep-alive>
           </el-tab-pane>
 
@@ -130,14 +135,22 @@
           return "编辑物流计划";
         }
       },
-      hasCommit(){
-        if([1,2,3,4].indexOf(this.primary.status) === -1){
+      hasCommit() {
+        if ([1, 2, 3, 4].indexOf(this.primary.status) === -1) {
           return false;
         }
 
         return checkPermission('LinerShippingPlanResource_postPlan');
       },
-      hasPayment(){
+
+      hasDelete() {
+        if ([1, 12].indexOf(this.primary.status) > -1) {
+          return true;
+        }
+        return checkPermission('LinerShippingPlanResource_delete');
+      },
+
+      hasPayment() {
         return checkPermission('LogisticPaymentBillResource_list');
       }
     },
@@ -235,8 +248,29 @@
         this.$emit("editCalendarEvent", obj, title);
       },
 
-      onCompleteAllocation(){
+      onCompleteAllocation() {
         this.$refs.allocationDialog.openDialog(this.primary);
+      },
+
+      onDelete() {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              let url = `${this.url}/${this.primaryId}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                this.$emit("deleteCalendarEvent", this.primaryId);
+                this.closeDialog();
+              })
+              .catch(err => {
+              })
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
     }
   };

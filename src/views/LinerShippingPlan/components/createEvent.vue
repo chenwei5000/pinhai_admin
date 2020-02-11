@@ -167,6 +167,20 @@
           </el-col>
         </el-row>
 
+        <el-row>
+          <el-col :md="12">
+            <el-form-item label="下次发柜时间" prop="nextDeliveryTime" ref="nextDeliveryTime">
+              <el-date-picker
+                size="mini"
+                v-model="plan.nextDeliveryTime"
+                type="datetime"
+                style="width: 200px"
+                placeholder="选择日期时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
 
         <el-row>
           <el-col :md="24">
@@ -235,8 +249,8 @@
         formVisible: false,
 
         plan: {
-          pallet: null,
-          oversize: null,
+          pallet: 0,
+          oversize: 0,
         },
 
         rules: {
@@ -325,7 +339,10 @@
         this.categorys = [];
         this.users = [];
         this.formVisible = false;
-        this.plan = {};
+        this.plan = {
+          pallet: 0,
+          oversize: 0,
+        };
       },
 
       createPlan() {

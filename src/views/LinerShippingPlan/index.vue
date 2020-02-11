@@ -160,6 +160,7 @@
     <editEvent
       ref="editEvent"
       @editCalendarEvent="editCalendarEvent"
+      @deleteCalendarEvent="deleteCalendarEvent"
     ></editEvent>
 
   </div>
@@ -447,8 +448,14 @@
             break;
           }
         }
-      }
-      ,
+      },
+      deleteCalendarEvent(id){
+        for (let i = 0; i < this.calendarEvents.length; i++) {
+          if (this.calendarEvents[i].id == id) {
+            this.calendarEvents.splice(i, 1);
+          }
+        }
+      },
       search() {
         this.$refs.searchForm.validate(valid => {
           if (!valid) {
