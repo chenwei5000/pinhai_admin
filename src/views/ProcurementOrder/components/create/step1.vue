@@ -179,7 +179,7 @@
         cell-class-name="ph-cell"
         header-cell-class-name="ph-cell-header"
         :data="tableData"
-        v-loading="loading"
+        v-loading="tableLoading"
         show-summary
         :summary-method="getSummaries"
         @selection-change="handleSelectionChange"
@@ -203,7 +203,7 @@
 
         <el-table-column prop="product.supplier.name" label="供货商" width="100"></el-table-column>
 
-        <el-table-column prop="productName" label="名称" width="200">
+        <el-table-column prop="product.name" label="名称" width="200">
         </el-table-column>
 
         <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
@@ -330,6 +330,7 @@
 
         // 表单加载状态
         loading: false,
+        tableLoading: false,
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
@@ -512,7 +513,7 @@
         }
 
         // 请求开始
-        this.loading = true
+        this.tableLoading = true
 
         //获取数据
         this.global.axios
@@ -540,7 +541,7 @@
             this.search();
 
             this.total = res.length || 0
-            this.loading = false
+            this.tableLoading = false
             /**
              * 请求返回, 数据更新后触发, 返回(data, resp) data是渲染table的数据, resp是请求返回的完整response
              * @event update
@@ -553,7 +554,7 @@
              * @event error
              */
             this.$emit('error', err)
-            this.loading = false
+            this.tableLoading = false
           })
       },
 
