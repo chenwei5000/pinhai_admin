@@ -266,7 +266,7 @@
           this.$message.error("请输入产品SKU");
         }
         else {
-          let url = `/products/sku/${detailItem.skuCode}` + "?relations=" + JSON.stringify(["cartonSpec", "category"]);
+          let url = `/products/sku?sku=${encodeURIComponent(detailItem.skuCode)}&relations=${JSON.stringify(["cartonSpec", "category"])}`;
           return this.global.axios
             .get(url)
             .then(resp => {

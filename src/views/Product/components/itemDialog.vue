@@ -179,7 +179,7 @@
         else {
           this.loading = true;
           this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.materialSkuCode}`;
+          let url = `/products/sku?sku=${encodeURIComponent(this.detailItem.materialSkuCode)}`;
           this.global.axios
             .get(url)
             .then(resp => {

@@ -235,6 +235,9 @@
             <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSmart">
               智能备货
             </el-button>
+            <el-button type="warring"  style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSmart">
+              手工备货
+            </el-button>
           </el-row>
         </el-col>
 

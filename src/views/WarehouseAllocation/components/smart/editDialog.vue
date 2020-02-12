@@ -236,7 +236,7 @@
         else {
           this.loading = true;
           this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.skuCode}`+ "?relations=" + JSON.stringify(["cartonSpec", "category"]);
+          let url = `/products/sku?sku=${encodeURIComponent(this.detailItem.skuCode)}&relations=${JSON.stringify(["cartonSpec", "category"])}`;
           this.global.axios
             .get(url)
             .then(resp => {

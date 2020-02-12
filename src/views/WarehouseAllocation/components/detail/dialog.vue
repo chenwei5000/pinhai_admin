@@ -305,7 +305,7 @@
         else {
           this.loading = true;
           this.confirmLoading = true;
-          let url = `/products/sku/${this.detailItem.skuCode}`;
+          let url = `/products/sku?sku=${encodeURIComponent(this.detailItem.skuCode)}`;
           this.global.axios
             .get(url)
             .then(resp => {
