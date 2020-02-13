@@ -24,6 +24,21 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="分类">
+        <el-select
+          v-model="searchParam.product_categoryId.value"
+          size="mini"
+          style="width: 120px"
+          filterable
+          placeholder="请选择分类">
+          <el-option
+            v-for="(item,idx) in categorySelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="SKU">
         <el-input size="mini" v-model="searchParam.product_skuCode.value" style="width: 150px"
                   placeholder="请输入名称"></el-input>
@@ -152,6 +167,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import {checkPermission} from "../../../../utils/permission";
   import moment from 'moment'
+  import categoryModel from '@/api/category'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -227,11 +243,13 @@
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
         supplierSelectOptions: [],
+        categorySelectOptions: [],
 
         searchParam: {
           procurementOrder_supplierId: {value: null, op: 'in', id: 'procurementOrder_supplierId'},
           product_skuCode: {value: null, op: 'eq', id: 'product_skuCode'},
           procurementOrder_code: {value: null, op: 'eq', id: 'procurementOrder_code'},
+          product_categoryId: {value: null, op: 'eq', id: 'product_categoryId'},
         },
 
         //弹窗
@@ -278,6 +296,9 @@
           if (params.procurementOrder_code) {
             this.searchParam.procurementOrder_code.value = params.procurementOrder_code;
           }
+          if (params.product_categoryId) {
+            this.searchParam.product_categoryId.value = params.product_categoryId;
+          }
         }
       }
 
@@ -294,6 +315,7 @@
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementOrderStatus');
         this.supplierSelectOptions = supplierModel.getSelectOptions();
+        this.categorySelectOptions = categoryModel.getMineSelectOptions();
 
         if (this.type === 'editing') {
         }
