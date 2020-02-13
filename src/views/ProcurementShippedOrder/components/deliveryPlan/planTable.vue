@@ -66,7 +66,7 @@
 
     <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd">
 
-      <el-col :md="24">
+      <el-col :md="18">
         <el-button v-if="hasAdd" type="primary" icon="el-icon-truck" @click="onDefaultAdd"
                    size="mini" id="table-add">
           创建发货计划
