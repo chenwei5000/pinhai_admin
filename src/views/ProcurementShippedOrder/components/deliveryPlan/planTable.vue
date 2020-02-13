@@ -36,6 +36,21 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="分类">
+        <el-select
+          v-model="searchParam.product_categoryId.value"
+          size="mini"
+          style="width: 120px"
+          filterable
+          placeholder="请选择分类">
+          <el-option
+            v-for="(item,idx) in categorySelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="SKU">
         <el-input size="mini" v-model="searchParam.product_skuCode.value" style="width: 150px"
                   placeholder="请输入名称"></el-input>
@@ -210,6 +225,7 @@
   import supplierModel from '@/api/supplier'
   import {getObjectValueByArr} from "../../../../utils";
   import createDialog from "../create/dialog"
+  import categoryModel from '@/api/category'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -281,11 +297,13 @@
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
         supplierSelectOptions: [],
+        categorySelectOptions: [],
 
         searchParam: {
           deliveryTime: {value: null, op: 'timeRange', id: 'deliveryTime'},
           status: {value: '0', op: 'eq', id: 'status'},
           supplierId: {value: null, op: 'in', id: 'supplierId'},
+          product_categoryId: {value: null, op: 'eq', id: 'product_categoryId'},
           product_skuCode: {value: null, op: 'eq', id: 'product_skuCode'},
           procurementOrder_code: {value: null, op: 'eq', id: 'procurementOrder_code'},
         },
@@ -328,6 +346,9 @@
           if (params.supplierId) {
             this.searchParam.supplierId.value = params.supplierId;
           }
+          if (params.product_categoryId) {
+            this.searchParam.product_categoryId.value = params.product_categoryId;
+          }
           if (params.product_skuCode) {
             this.searchParam.product_skuCode.value = params.product_skuCode;
           }
@@ -356,6 +377,7 @@
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementDeliveryPlanStatus');
         this.supplierSelectOptions = supplierModel.getSelectOptions();
+        this.categorySelectOptions = categoryModel.getMineSelectOptions();
         this.statusSelectOptions.unshift({label: '全部', value: null});
 
         if (this.type === 'editing') {
@@ -414,6 +436,7 @@
 
         //TODO:根据实际情况调整
         this.searchParam.supplierId.value = null;
+        this.searchParam.product_categoryId.value = null;
         this.searchParam.status.value = '0';
         this.searchParam.product_skuCode.value = null;
         this.searchParam.procurementOrder_code.value = null;
