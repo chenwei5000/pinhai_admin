@@ -66,14 +66,18 @@
 
     <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd">
 
-      <el-col :md="18">
+      <el-col :md="24">
         <el-button v-if="hasAdd" type="primary" icon="el-icon-truck" @click="onDefaultAdd"
                    size="mini" id="table-add">
           创建发货计划
         </el-button>
 
-      </el-col>
+        <el-button v-if="hasDelete" type="danger" icon="el-icon-delete" @click="onDefaultBatchDelete"
+                   size="mini" id="table-del">
+          删除
+        </el-button>
 
+      </el-col>
     </el-row>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
@@ -693,29 +697,29 @@
 
         let sid = null;
         let time = null;
-        this.selected.forEach(r=>{
-          if(sid == null){
-            sid= r.supplierId;
+        this.selected.forEach(r => {
+          if (sid == null) {
+            sid = r.supplierId;
           }
-          else{
-            if(sid != r.supplierId){
-                sid = false;
+          else {
+            if (sid != r.supplierId) {
+              sid = false;
             }
           }
-          if(time == null){
+          if (time == null) {
             time = r.deliveryTime;
           }
-          else{
-            if(time != r.deliveryTime){
+          else {
+            if (time != r.deliveryTime) {
               time = false;
             }
           }
         });
-        if(sid === false){
+        if (sid === false) {
           this.$message.error("一个发货计划对应一个供货商!");
           return false;
         }
-        if(time === false){
+        if (time === false) {
           this.$message.error("一个发货计划对应一个交货日期!");
           return false;
         }
@@ -725,6 +729,41 @@
       /* 行修改功能 */
       onDefaultEdit(row) {
         this.$refs.itemDialog.openDialog(row.id, {});
+      },
+
+      onDefaultBatchDelete() {
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              if (this.selected.length <= 0) {
+                this.$message.error("请选择要删除的行!");
+                done(false);
+                return;
+              }
+              // 多选模式
+              let ids = this.selected.map(v => v['id']).toString();
+              if (ids != '') {
+                this.loading = true;
+                this.global.axios
+                  .delete(this.url + '/' + ids)
+                  .then(resp => {
+                    this.$message({type: 'success', message: '删除成功'});
+                    this.getList()
+                    this.$emit("reloadCBEvent");
+
+                    this.loading = false;
+                  })
+                  .catch(er => {
+                    this.loading = false;
+                  })
+              }
+              done()
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
 
       /* 行删除功能 */
