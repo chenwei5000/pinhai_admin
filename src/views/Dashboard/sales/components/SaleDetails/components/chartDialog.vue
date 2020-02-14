@@ -66,6 +66,7 @@
         if (this.data.skuCode != null) {
           url += "&sku=" + this.data.skuCode;
         }
+        url += "&type=d";
         this.global.axios
           .get(url)
           .then(resp => {
