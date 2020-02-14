@@ -408,7 +408,7 @@
       initData() {
 
         this.initContractInfo();
-       
+
         this.initCategoryName();
 
 
@@ -477,11 +477,12 @@
           .get(url)
           .then(resp => {
             let res = resp.data
+            console.log(res);
             let data = res || []
             this.printObject = data[0] || {};
             this.initComplete = false;
-            this.printObject.demanderName = '深圳市品海电子商务有限公司';
-            this.printObject.demanderAddress = '深圳市龙岗区坂田街道永香路江南大厦二楼212室'; 
+            this.printObject.demanderName = this.primary.demanderName ? this.primary.demanderName : '深圳市品海电子商务有限公司';
+            this.printObject.demanderAddress = this.primary.demanderAddress ? this.primary.demanderAddress : '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
             this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
             this.printObject.supplierName = this.primary.supplier.companyName;
             this.printObject.supplierAddress = this.primary.supplier.address;
@@ -489,7 +490,7 @@
             if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null){
                this.$set(this.printObject, "effectiveDate", [this.printObject.effectiveDateStart, this.printObject.effectiveDateEnd]);
             }
-            
+
             this.initCategoryName();
           })
           .catch(err => {

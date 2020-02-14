@@ -710,7 +710,6 @@
           .then(resp => {
             let res = resp.data;
             let sales = res || [];
-            console.log(sales);
             this.data.forEach(data => {
               sales.forEach(sale => {
                 try {
