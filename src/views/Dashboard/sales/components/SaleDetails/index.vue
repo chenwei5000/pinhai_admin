@@ -201,7 +201,7 @@
         confirmLoading: false,
 
         // 分页
-        paginationSizes: [10, 20, 50],
+        paginationSizes: [20, 50, 100, 500, 1000],
         total: null,
         size: 10,
         page: 1,

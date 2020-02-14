@@ -214,7 +214,7 @@
         url: '/merchantManualSales',
 
         // 分页
-        paginationSizes: [20, 50, 100],
+        paginationSizes: [20, 50, 100, 500, 1000],
         total: null,
         size: 20,
         page: 1,

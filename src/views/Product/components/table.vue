@@ -273,7 +273,7 @@
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [20, 50, 100],
+        paginationSizes: [20, 50, 100, 500, 1000],
         total: 0,
 
         //数据

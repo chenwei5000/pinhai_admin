@@ -62,7 +62,7 @@
       <el-table-column label="操作" v-if="hasOperation" width="85" fixed="right" >
         <template slot-scope="scope">
 
-          <el-button size="mini" icon="el-icon-view" circle 
+          <el-button size="mini" icon="el-icon-view" circle
                      @click="onDefaultView(scope.row)" type="primary" id="ph-table-view">
           </el-button>
 
@@ -120,7 +120,7 @@
       editDialog
     },
     props: {
-  
+
     },
     computed: {
       ...mapGetters([
@@ -149,7 +149,7 @@
         size: 20,
         page: 1,
         layout: 'total, sizes, slot, prev, pager, next, jumper',
-        paginationSizes: [1, 20, 50, 100],
+        paginationSizes: [20, 50, 100, 500, 1000],
         total: 0,
 
         //抓数据 TODO: 根据实际情况调整
@@ -181,7 +181,7 @@
         }, {
           value: '1',
           label: '已完成'
-        }, 
+        },
         ],
       }
     },
