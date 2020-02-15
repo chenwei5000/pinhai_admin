@@ -9,8 +9,6 @@
     <!--面包条-->
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container"/>
 
-    <b v-if="process.env.NODE_ENV != 'production'" style="line-height: 50px;margin-left: 100px;">{{demoTitle}}环境</b>
-
     <!-- 右侧区块 -->
     <div class="right-menu">
 
