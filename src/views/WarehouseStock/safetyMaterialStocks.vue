@@ -151,7 +151,7 @@
           this.tableConfig.columns.push({prop: 'amazonTotalQty', label: '亚马逊成品(含在途)', 'min-width': 120});
           this.tableConfig.columns.push({prop: 'domesticStockQty', label: '国内成品库存', 'min-width': 120});
           this.tableConfig.columns.push({prop: 'domesticMaterialStockQty', label: '国内原料库存', 'min-width': 120});
-          this.tableConfig.columns.push({prop: 'supplierStockQty', label: '采购中库存', 'min-width': 80});
+          this.tableConfig.columns.push({prop: 'supplierMaterialStockQty', label: '采购中库存', 'min-width': 120});
         }).catch(err => {
 
         })
@@ -172,7 +172,7 @@
       search() {
         this.$refs.searchForm.validate(valid => {
           if (valid) {
-            this.tableConfig.url = `/stocks/safetyMaterialStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}&materialWarehoues=${this.param.materialWarehouse.join(",")}`
+            this.tableConfig.url = `/stocks/safetyMaterialStocks?category=${this.param.category.join(",")}&warehouse=${this.param.warehouse.join(",")}&materialWarehouse=${this.param.materialWarehouse.join(",")}`
             this.$refs.table1.getList();
           }
         })
