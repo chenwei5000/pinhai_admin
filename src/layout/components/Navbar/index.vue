@@ -1,6 +1,6 @@
 <template>
   <!-- 顶部导航条 -->
-  <div class="navbar">
+  <div class="navbar" :style="demoStyle">
 
     <!--菜单收/展工具-->
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container"
@@ -8,6 +8,8 @@
 
     <!--面包条-->
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container"/>
+
+    <b v-if="process.env.NODE_ENV != 'production'" style="line-height: 50px;margin-left: 100px;">{{demoTitle}}环境</b>
 
     <!-- 右侧区块 -->
     <div class="right-menu">
@@ -92,6 +94,7 @@
   import personalMsg from './personalMsg'
 
   import systemMode from '@/api/system'
+  import {demoStyle} from "../../../utils";
 
   export default {
     components: {
@@ -113,6 +116,12 @@
         return this.$store.state.user.user;
       },
 
+      demoStyle() {
+        return demoStyle();
+      },
+      demoTitle(){
+        return process.env.NODE_ENV;
+      },
       ...mapGetters([
         'sidebar',
         'device', 'rolePower'

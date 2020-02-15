@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+  <div class="sidebar-logo-container" :class="{'collapse':collapse}" :style="demoStyle">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" src="../../../assets/logo-s.png" class="sidebar-logo">
@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import {demoStyle} from "../../../utils";
+
 export default {
   name: 'SidebarLogo',
   props: {
@@ -22,9 +24,14 @@ export default {
       required: true
     }
   },
+  computed: {
+    demoStyle() {
+      return demoStyle();
+    },
+  },
   data() {
     return {
-      logo: '../../../assets/logo-s.png'
+      logo: '../../../assets/logo-s.png',
     }
   }
 }

@@ -481,3 +481,18 @@ export function getObjectValueByArr(arr, prop) {
   }
   return val;
 }
+
+export function demoStyle() {
+  if (process.env.NODE_ENV == 'demo') {
+    return 'background-color: #F56C6C';
+  }
+  else if (process.env.NODE_ENV == 'production') {
+    return '';
+  }
+  else if (process.env.NODE_ENV == 'test') {
+    return 'background-color: #409EFF';
+  }
+  else {
+    return 'background-color: #E6A23C';
+  }
+}
