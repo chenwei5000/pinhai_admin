@@ -66,7 +66,7 @@
         </el-col>
 
         <el-col :md="14">
-          <el-form-item label="款式" prop="categoryId">
+          <el-form-item label="款式" prop="groupName">
 
             <el-select v-model="editObject.groupName" style="width: 220px" size="mini" filterable multiple
                        :disabled="hasCategory"

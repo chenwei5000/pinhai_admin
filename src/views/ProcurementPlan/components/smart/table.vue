@@ -72,9 +72,11 @@
         <el-table-column prop="safetyWeek" label="备货周数" width="80" align="center"></el-table-column>
         <el-table-column prop="demandedCartonQty" sortable label="需求总量(箱)" width="120" align="center"></el-table-column>
         <el-table-column prop="sevenAmendQty" sortable label="7日销量(件)" width="120" align="center"></el-table-column>
-        <el-table-column prop="totalQty" sortable label="亚马逊含在途库存(件)" width="180" align="center"></el-table-column>
+        <el-table-column prop="totalQty" sortable label="亚马逊总库存(件)" width="180" align="center"></el-table-column>
+        <el-table-column prop="passageQty" sortable label="亚马逊在途库存(件)" width="180" align="center"></el-table-column>
+
         <el-table-column prop="domesticStockCartonQty" sortable label="国内库存(箱)" width="120" align="center"></el-table-column>
-        <el-table-column prop="unfinishedPlanCartonQty" sortable label="国内在途(箱)" width="120" align="center"></el-table-column>
+        <el-table-column prop="unfinishedPlanCartonQty" sortable label="未完成采购计划数(箱)" width="150" align="center"></el-table-column>
         <el-table-column prop="productName" label="名称" width="200"></el-table-column>
 
         <el-table-column prop="fnSku" label="FNSKU" min-width="120" align="center"></el-table-column>

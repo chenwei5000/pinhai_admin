@@ -50,6 +50,9 @@ class WorkBook {
     if(type == "n" && value == null){
        value = 0;
     }
+    if(type == "s" && value == null){
+      value = '';
+    }
 
     this.ws[location] = {
       t: type,

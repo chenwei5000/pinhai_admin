@@ -235,7 +235,10 @@
             <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSmart">
               智能备货
             </el-button>
-            <el-button type="warring"  style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSmart">
+            <el-button style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onDownload">
+              下载数据
+            </el-button>
+            <el-button type="success"  style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onCreate">
               手工备货
             </el-button>
           </el-row>
@@ -255,11 +258,12 @@
 
 <script>
   import categoryModel from '@/api/category'
-  import warehouseModel from '@/api/warehouse'
   import merchantModel from '@/api/merchant'
   import systemModel from '@/api/system'
   import {intArrToStrArr} from '@/utils'
   import itemTable from './table'
+  import excelConfig from './excelConfig'
+  import {parseTime} from "../../../../utils";
 
   export default {
     components: {itemTable},
@@ -436,6 +440,58 @@
 
           this.confirmLoading = false
         })
+      },
+
+      onCreate() {
+        this.$refs.smart.validate(valid => {
+          if (!valid) {
+            return;
+          }
+          this.loading = true;
+          this.confirmLoading = true;
+
+          //转义字段
+          let _object = JSON.parse(JSON.stringify(this.newObject));
+          _object.warehouseId = _object.warehouseId ? _object.warehouseId.join(",") : "";
+          _object.groupName = _object.groupName ? _object.groupName.join(",") : "";
+
+          this.global.axios.post("/procurementPlans", _object)
+            .then(resp => {
+              let _newObject = resp.data;
+              this.$message({type: 'success', message: '操作成功'});
+              this.loading = false;
+              this.confirmLoading = false;
+              // 回传消息
+              this.dialogVisible = false;
+              this.$emit("step1CBEvent", _newObject.id);
+            })
+            .catch(err => {
+              this.loading = false;
+              this.confirmLoading = false;
+            })
+
+        })
+      },
+
+      onDownload(){
+        this.$refs.smart.validate(valid => {
+          if (!valid) {
+            return;
+          }
+
+          let downloadUrl = `/amazonStocks/plans/${this.newObject.merchantId}?warehouse=${this.newObject.warehouseId.join(",")}&category=${this.newObject.categoryId.join(",")}&safetyStockWeek=${this.newObject.safetyStockWeek}&vip1SafetyStockWeek=${this.newObject.vip1SafetyStockWeek}&vip2SafetyStockWeek=${this.newObject.vip2SafetyStockWeek}&exclude=${this.newObject.handleMethod}`;
+          this.url += '&group=' + encodeURIComponent(this.newObject.groupName.join(","))
+
+          import('@/vendor/Export2ExcelPinHai').then(excel => {
+            this.loading = true;
+            excel.export_json_url_to_excel_with_formulae({
+              url: downloadUrl,
+              excelField: excelConfig.excelField,
+              filename: `采购计划-${parseTime(new Date(), '{y}-{m}-{d}')}`
+            });
+            this.loading = false;
+          })
+        });
       },
 
       /*

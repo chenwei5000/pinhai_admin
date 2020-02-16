@@ -116,9 +116,9 @@
       <el-table-column prop="systemSevenSaleQty" label="系统当前7日销量(件)" width="100" align="center"
                        v-if="this.primary.status === 0"></el-table-column>
       <el-table-column prop="sevenSalesCount" label="7日销量(件)" width="100" align="center"></el-table-column>
-      <el-table-column prop="amazonTotalStock" label="亚马逊含在途库存(件)" width="140" align="center"></el-table-column>
+      <el-table-column prop="amazonTotalStock" label="亚马逊总库存(件)" width="140" align="center"></el-table-column>
       <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100" align="center"></el-table-column>
-      <el-table-column prop="unfinishedPlanCartonQty" label="国内在途(箱)" width="100" align="center"></el-table-column>
+      <el-table-column prop="unfinishedPlanCartonQty" label="未完成采购计划数(箱)" width="150" align="center"></el-table-column>
 
       <el-table-column prop="qty" label="采购件数" width="80" align="center"></el-table-column>
 
@@ -704,16 +704,7 @@
         })
       },
 
-      uploadPromise(res) {
-        let url = this.url + '';
-        return this.global.axios.post(url, res)
-          .then(resp => {
-          })
-          .catch(err => {
-          })
-      },
-
-      async onToolBarImportData(excelData) {
+      onToolBarImportData(excelData) {
 
         if (!excelData) {
           this.$message.error("导入失败!");
@@ -727,7 +718,6 @@
         });
 
         // 导入数据
-        let promiseArr = [];
         let resData = [];
 
         // 创建提交列表
@@ -740,32 +730,22 @@
           _res.numberOfCarton = obj["装箱数"];
           _res.sevenSalesCount = obj["7日销量(件)"];
           _res.safetyStockWeek = obj["备货周数"];
-          _res.unfinishedPlanQty = obj["国内在途(箱)"];
-          _res.amazonTotalStock = obj["在途加亚马逊库存(件)"];
-          _res.domesticStockQty = obj["国内库存(箱)"];
+          _res.unfinishedPlanCartonQty = obj["未完成采购计划数(箱)"];
+          _res.amazonTotalStock = obj["亚马逊总库存(件)"];
+          _res.domesticStockCartonQty = obj["国内库存(箱)"];
           resData.push(_res);
         });
 
-        for (var i = 0; i < resData.length; i++) {
-          promiseArr.push(this.uploadPromise(resData[i]));
-          if (promiseArr.length >= this.maxUploadCount) {
-            await Promise.all(promiseArr).then(obj => {
-              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
-              promiseArr = [];
-            });
-            promiseArr = [];
-          }
-        }
-
-        if (promiseArr.length > 0) {
-          await Promise.all(promiseArr).then(obj => {
-            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
-          });
-        }
-
-        loading.close();
-        this.$message.success("导入成功");
-        this.getList();
+        let url = `${this.url}/importData/${this.primary.id}`;
+        return this.global.axios.post(url, resData)
+          .then(resp => {
+            loading.close();
+            this.$message.success("导入成功");
+            this.getList();
+          })
+          .catch(err => {
+            loading.close();
+          })
       }
     }
   }
