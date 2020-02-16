@@ -26,7 +26,7 @@ let excelField = [
   {'attrName': 'validateStockQty', 'type': 'n', 'name': '#有效库存(件)#'},
   {'attrName': 'domesticStockCartonQty', 'type': 'n', 'name': '#国内库存(箱)#'},
   {'attrName': 'replenishmentCartonQty', 'type': 'n', 'name': '#应发箱数#'},
-  {'attrName': 'boxVolume', 'type': 'n', 'name': '#单箱体积(m³)#'},
+  {'attrName': 'cartonSpecVolume', 'type': 'n', 'name': '#单箱体积(m³)#'},
   {
     'attrName': 'sumCartonVolume',
     'type': 'f',

@@ -737,7 +737,7 @@
         });
 
         let url = `${this.url}/importData/${this.primary.id}`;
-        return this.global.axios.post(url, resData)
+        this.global.axios.post(url, resData)
           .then(resp => {
             loading.close();
             this.$message.success("导入成功");

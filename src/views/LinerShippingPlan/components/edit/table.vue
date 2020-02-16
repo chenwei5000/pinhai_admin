@@ -804,18 +804,7 @@
         })
       },
 
-
-      uploadPromise(res) {
-        let url = this.url + '';
-        return this.global.axios.post(url, res)
-          .then(resp => {
-          })
-          .catch(err => {
-          })
-      },
-
-      async onToolBarImportData(excelData) {
-
+      onToolBarImportData(excelData) {
         if (!excelData) {
           this.$message.error("导入失败!");
           return false;
@@ -828,7 +817,6 @@
         });
 
         // 导入数据
-        let promiseArr = [];
         let resData = [];
 
         // 创建提交列表
@@ -848,26 +836,16 @@
           resData.push(_res);
         });
 
-        for (var i = 0; i < resData.length; i++) {
-          promiseArr.push(this.uploadPromise(resData[i]));
-          if (promiseArr.length >= this.maxUploadCount) {
-            await Promise.all(promiseArr).then(obj => {
-              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
-              promiseArr = [];
-            });
-            promiseArr = [];
-          }
-        }
-
-        if (promiseArr.length > 0) {
-          await Promise.all(promiseArr).then(obj => {
-            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
-          });
-        }
-
-        loading.close();
-        this.$message.success("导入成功");
-        this.getList();
+        let url = `${this.url}/importData/${this.primary.id}`;
+        this.global.axios.post(url, resData)
+          .then(resp => {
+            loading.close();
+            this.$message.success("导入成功");
+            this.getList();
+          })
+          .catch(err => {
+            loading.close();
+          })
       }
     }
   }
