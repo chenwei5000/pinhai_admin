@@ -14,9 +14,18 @@
 
       <el-row>
         <el-col :md="12">
-          <el-form-item label="开船日期">
-            <span style="font-size: 12px">{{newObject.formatEtdTime}}</span>
+          <el-form-item :label="newObject.type=='空运'? '航班时间' : '开船时间'" prop="etdTime">
+            <el-date-picker
+              size="mini"
+              v-model="newObject.etdTime"
+              type="datetime"
+              @input="updateInput"
+              @change="loadOtdTime"
+              style="width: 200px"
+              placeholder="选择日期时间">
+            </el-date-picker>
           </el-form-item>
+
         </el-col>
 
         <el-col :md="12">
@@ -29,35 +38,96 @@
       <el-row>
 
         <el-col :md="12">
-          <el-form-item label="分类">
-            <span style="font-size: 12px">{{newObject.categoryName}}</span>
+          <el-form-item label="分类" prop="categoryId">
+            <el-select
+              v-model="newObject.categoryId"
+              size="mini"
+              style="width: 200px"
+              @input="updateInput"
+              @change="changeCategory"
+              multiple
+              filterable
+              placeholder="请选择">
+              <el-option
+                v-for="(item , idx) in categorys"
+                :key="`${idx}-${item.value}`"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
 
         <el-col :md="12">
-          <el-form-item label="物流类型">
-            <span style="font-size: 12px">{{newObject.type}}</span>
+          <el-form-item label="运输方式" prop="type">
+            <el-select
+              v-model="newObject.type"
+              size="mini"
+              @input="updateInput"
+              @change="loadOtdTime"
+              style="width: 200px"
+              placeholder="请选择">
+              <el-option label="海运" value="海运"></el-option>
+              <el-option label="空运" value="空运"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :md="12">
-          <el-form-item label="发货港口">
-            <span style="font-size: 12px">{{newObject.portOfLoading}}</span>
+          <el-form-item :label="newObject.type=='空运'? '发货机场' : '发货港口'" prop="portOfLoading">
+            <el-select
+              v-model="newObject.portOfLoading"
+              size="mini"
+              style="width: 200px"
+              @input="updateInput"
+              @change="loadOtdTime"
+              placeholder="请选择">
+              <el-option
+                v-for="(item, idx) in harbours"
+                :key="`${idx}-${item.value}`"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
+
         <el-col :md="12">
-          <el-form-item label="收货区域">
-            <span style="font-size: 12px">{{newObject.toWarehouse ? newObject.toWarehouse.address : ''}}</span>
+          <el-form-item label="收货区域" prop="address">
+            <el-select
+              v-model="newObject.address"
+              size="mini"
+              style="width: 200px"
+              filterable
+              @change="loadOtdTime"
+              placeholder="请选择">
+              <el-option
+                key="美东"
+                label="美东"
+                value="美东"
+              ></el-option>
+              <el-option
+                key="美西"
+                label="美西"
+                value="美西"
+              ></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :md="12">
-          <el-form-item label="下次发柜时间" prop="nextDeliveryTime">
-            <span style="font-size: 12px">{{newObject.nextDeliveryTime | parseTime('{y}-{m}-{d}') }}</span>
+          <el-form-item label="下次发柜时间" prop="nextDeliveryTime" ref="nextDeliveryTime">
+            <el-date-picker
+              size="mini"
+              v-model="newObject.nextDeliveryTime"
+              type="datetime"
+              style="width: 200px"
+              placeholder="选择日期时间">
+            </el-date-picker>
           </el-form-item>
         </el-col>
 
@@ -197,6 +267,12 @@
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
+            <el-button style="margin-top: 15px"
+                       size="mini"
+                       :loading="confirmLoading" @click="onDownload">
+              下载数据
+            </el-button>
+
             <el-button type="primary" style="margin-top: 15px"
                        size="mini"
                        :loading="confirmLoading" @click="onSmart">
@@ -212,7 +288,9 @@
 
 <script>
   import validRules from '@/components/validRules'
+  import excelSaleConfig from './excelSaleConfig'
   import merchantModel from '@/api/merchant'
+  import harbourModel from "@/api/harbour";
   import {currency, parseTime} from '@/utils'
   import moment from 'moment';
 
@@ -264,6 +342,10 @@
         warehouseSelectOptions: [],
         merchantSelectOptions: [],
         groupSelectOptions: [],
+        categorys: [],
+        harbours: [],
+        fromWarehouses: [],
+        toWarehouses: [],
 
         // 字段验证规则 TODO:
         rules: {
@@ -296,11 +378,62 @@
         this.merchantSelectOptions = merchantModel.getSelectOptions();
         this.initWarehouseData(this.newObject.categoryId);
         this.initGroupData(this.newObject.categoryId);
+        // 港口信息
+        this.harbours = harbourModel.getSelectNameOptions();
+        this.initCategoryData();
+        this.newObject.address = this.newObject.toWarehouse ? this.newObject.toWarehouse.address : '美西';
         this.loadOtdTime();
+      },
+
+      // 初始化分类
+      initCategoryData() {
+        this.loading = true;
+        let url = "/categories/permissions?sort=code&order=asc";
+        this.global.axios.get(url)
+          .then(resp => {
+            let res = resp.data || [];
+            this.categorys = [];
+            res.forEach(r => {
+              this.categorys.push({
+                label: r.name,
+                value: r.id
+              });
+            });
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+          });
       },
 
       // 初始化仓库数据
       initWarehouseData(val = null) {
+        // 仓库信息
+        let warehousesUrl = `/warehouses?filters={"groupOp":"AND","rules":[{"field":"status","op":"eq","data":"1"}]}&sort=type asc,name`;
+        this.global.axios(warehousesUrl).then(data => {
+          if (data.status == 200) {
+            this.fromWarehouses = [];
+            this.toWarehouses = [];
+            data.data.forEach(warehouse => {
+              if (
+                warehouse.type == "工厂仓" ||
+                warehouse.type == "普通" ||
+                warehouse.type == "虚拟仓"
+              ) {
+                this.fromWarehouses.push({
+                  value: warehouse.id,
+                  label: warehouse.name
+                });
+              } else if (warehouse.type == "海外仓") {
+                this.toWarehouses.push({
+                  value: warehouse.id,
+                  label: warehouse.name
+                });
+              }
+            });
+          }
+        });
+
         if (!val) {
           return;
         }
@@ -356,7 +489,7 @@
       loadOtdTime() {
         let url = `/amazonStocks/shippings/otdTime?etdTime=${moment(this.newObject.etdTime).format("YYYY-MM-DD")}
         &portOfLoading=${this.newObject.portOfLoading}
-        &toWarehouse=${this.newObject.toWarehouse.address}
+        &toWarehouse=${this.newObject.address}
         &shipmentType=${this.newObject.type}`;
         this.global.axios.get(url)
           .then(data => {
@@ -375,6 +508,69 @@
           this.$emit("step1CBEvent", this.newObject);
         })
       },
+
+      onDownload() {
+        this.$refs.smart.validate(valid => {
+          if (!valid) {
+            return;
+          }
+
+          //获取数据
+          let downloadUrl = `/amazonStocks/shippings/${this.newObject.merchantId}`;
+
+          downloadUrl += "?warehouse=" + (this.newObject.warehouseId ? this.newObject.warehouseId.join(",") : 'all')  //出货仓库
+            + "&category=" + this.newObject.categoryId.join(",")     //品类
+            + "&etdTime=" + this.newObject.formatEtdTime      //发柜时间
+            + "&shipmentType=" + this.newObject.type    //物流类型
+            + "&portOfLoading=" + this.newObject.portOfLoading  //出货港口
+            + "&toWarehouse=" + this.newObject.toWarehouse.address;      //收货区域
+
+          if (this.newObject.groupName) {
+            downloadUrl += "&group=" + this.newObject.groupName.join(",");  //销售覆盖时间
+          }
+          if (this.newObject.vip0SoldOutTime) {
+            downloadUrl += "&vip0SoldOutTime=" + this.newObject.vip0SoldOutTime;  //销售覆盖时间
+          }
+          if (this.newObject.vip1SoldOutTime) {
+            downloadUrl += "&vip1SoldOutTime=" + this.newObject.vip1SoldOutTime;  //销售覆盖时间
+          }
+          if (this.newObject.vip2SoldOutTime) {
+            downloadUrl += "&vip2SoldOutTime=" + this.newObject.vip2SoldOutTime;  //销售覆盖时间
+          }
+          downloadUrl += "&exclude=0";  //销售覆盖时间
+
+          let saleExcelField = JSON.parse(JSON.stringify(excelSaleConfig.excelField));
+          this.warehouseSelectOptions.forEach(row => {
+            if (this.newObject.warehouseId != null && this.newObject.warehouseId.length > 0) {
+              this.newObject.warehouseId.forEach(w => {
+                if (w == row.value) {
+                  saleExcelField.push(
+                    {'attrName': `warehouseStocks.${row.value}`, 'type': 's', 'name': `#${row.label}库存#`}
+                  );
+                }
+              })
+            }
+          });
+
+          import('@/vendor/Export2ExcelPinHai').then(excel => {
+            this.loading = true;
+            excel.export_json_url_to_excel_with_formulae({
+              url: downloadUrl,
+              excelField: saleExcelField,
+              filename: `${this.newObject.type}-${this.newObject.portOfLoading}-${this.newObject.address}-出口-${moment(this.newObject.etdTime).format("YYYY-MM-DD-HH-mm")}`
+            });
+            this.loading = false;
+          })
+        })
+      },
+
+      changeCategory() {
+        this.initWarehouseData(this.newObject.categoryId);
+      },
+
+      updateInput(val) {
+        this.$forceUpdate();
+      }
     }
   }
 </script>

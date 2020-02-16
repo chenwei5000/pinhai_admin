@@ -112,6 +112,7 @@
                 size="mini"
                 style="width: 200px"
                 filterable
+                @change="loadOtdTime"
                 placeholder="请选择">
                 <el-option
                   v-for="(item, idx) in toWarehouses"
@@ -293,6 +294,8 @@
         let warehousesUrl = `/warehouses?filters={"groupOp":"AND","rules":[{"field":"status","op":"eq","data":"1"}]}&sort=type asc,name`;
         this.global.axios(warehousesUrl).then(data => {
           if (data.status == 200) {
+            this.fromWarehouses = [];
+            this.toWarehouses = [];
             data.data.forEach(warehouse => {
               if (
                 warehouse.type == "工厂仓" ||

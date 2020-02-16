@@ -27,7 +27,7 @@
       <el-table-column prop="groupName" label="款式" width="150"></el-table-column>
       <el-table-column prop="vipLevel" label="Vip级别" width="80"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-      <el-table-column prop="soldOutTime" label="销售覆盖时间" width="100"></el-table-column>
+      <el-table-column prop="formatSoldTime" label="销售覆盖时间" width="100"></el-table-column>
       <el-table-column prop="sevenAmendQty" label="7日销量（件)" width="100"></el-table-column>
       <el-table-column prop="logisticsWeek" label="运输周数" width="100"></el-table-column>
       <el-table-column prop="safetyWeek" label="销售周数" width="100"></el-table-column>
@@ -42,17 +42,15 @@
 
 
       <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100">
+      </el-table-column>
+
+      <el-table-column prop="domesticStocks" label="国内库存详情" width="180">
         <template slot-scope="scope">
-          <el-popover v-if="scope.row.domesticStockCartonQty > 0 " placement="top-start" title="国内库存(箱)" width="250"
-                      trigger="hover">
             <div v-html="br(scope.row.domesticStocks)"></div>
-            <span slot="reference">{{ scope.row.domesticStockCartonQty }}</span>
-          </el-popover>
-          <span v-else>{{ scope.row.domesticStockCartonQty }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name">
+      <el-table-column v-for="(item, index) in warehouses" :key="item.id" width="120" :label="item.name">
         <template slot-scope="scope">
           <span>{{ scope.row.warehouseStocks[item.id]}}</span>
         </template>
@@ -363,23 +361,8 @@
             let res = resp.data
             let data = res || []
 
-            this.data = [];
-            data.forEach(row => {
-              switch (row.vipLevel) {
-                case 0 :
-                  row.soldOutTime = this.primary.vip0SoldOutTime ? this.primary.vip0SoldOutTime : moment(new Date()).format("YYYY-MM-DD");
-                  break;
-                case 1 :
-                  row.soldOutTime = this.primary.vip1SoldOutTime ? this.primary.vip1SoldOutTime : moment(new Date()).format("YYYY-MM-DD");
-                  break;
-                case 2 :
-                  row.soldOutTime = this.primary.vip2SoldOutTime ? this.primary.vip2SoldOutTime : moment(new Date()).format("YYYY-MM-DD");
-                  break;
-              }
-              this.data.push(row);
-            })
-
-            this.search()
+            this.data = data;
+            this.search();
 
             this.total = res.length || 0
             this.loading = false
