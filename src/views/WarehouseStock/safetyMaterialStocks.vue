@@ -11,7 +11,7 @@
                    :model="param" ref="searchForm" id="filter-form"
                    @submit.native.prevent>
             <el-form-item label="分类" prop="category">
-              <el-select v-model="param.category" size="mini" multiple placeholder="请选择原料分类" @change="onChange">
+              <el-select v-model="param.category" size="mini" filterable multiple placeholder="请选择原料分类" @change="onChange">
                 <el-option
                   v-for="item in categories"
                   :key="item.value"
@@ -22,7 +22,7 @@
             </el-form-item>
 
             <el-form-item label="国内成品库存" prop="warehouse">
-              <el-select v-model="param.warehouse" size="mini" multiple placeholder="请选择成品仓库">
+              <el-select v-model="param.warehouse" size="mini" filterable multiple placeholder="请选择成品仓库">
                 <el-option
                   v-for="item in warehouses"
                   :key="item.value"
@@ -33,7 +33,7 @@
             </el-form-item>
 
             <el-form-item label="国内原料库存" prop="materialWarehouse">
-              <el-select v-model="param.materialWarehouse" size="mini" multiple placeholder="请选择原料仓库">
+              <el-select v-model="param.materialWarehouse" size="mini" filterable multiple placeholder="请选择原料仓库">
                 <el-option
                   v-for="item in materialWarehouses"
                   :key="item.value"
@@ -98,6 +98,7 @@
           hasPagination: false,
           hasDelete: false,
           hasEdit: false,
+          hasAdd: false,
           url: null,
           relations: ["safetyStocks"],
           countUrl: "",

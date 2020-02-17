@@ -15,7 +15,7 @@
 
             <el-form-item label="分类" prop="category">
               <el-select v-model="param.category" size="mini" style="width: 150px"
-                         multiple placeholder="请选择原料分类" @change="onChange">
+                         multiple filterable placeholder="请选择原料分类" @change="onChange">
                 <el-option
                   v-for="item in categories"
                   :key="item.value"
@@ -26,7 +26,7 @@
             </el-form-item>
 
             <el-form-item label="国内成品库存" prop="warehouse">
-              <el-select v-model="param.warehouse" size="mini" style="width: 150px" multiple placeholder="请选择仓库">
+              <el-select v-model="param.warehouse" size="mini" style="width: 150px" filterable multiple placeholder="请选择仓库">
                 <el-option
                   v-for="item in warehouses"
                   :key="item.value"
@@ -85,6 +85,7 @@
           hasPagination: false,
           hasDelete: false,
           hasEdit: false,
+          hasAdd: false,
           exportFileName: '成品安全库存',
           subHeight: 35,
 
