@@ -207,7 +207,7 @@
           this.$message.error("必须优先设置FBA ID");
           return false;
         }
-        let url = `${this.global.generateUrl('/linerShippingPlans/downloadPackageLabels')}/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
+        let url = `${this.global.generateUrl('/linerShippingPlans/downloadPackageLabels')}/${this.primary.linerShippingPlan.id}?accessToken=${this.$store.state.user.token}`;
         url += '&pageType=PackageLabel_Plain_Paper';
         window.open(url, '_blank');
         return false;
