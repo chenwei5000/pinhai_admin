@@ -14,6 +14,8 @@
         <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" size="small"  @click="onPrint">打印发货单</el-button>
       </router-link>
 
+      <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束发货计划</el-button>
+
       <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" size="small"  @click="onStatus">修改状态</el-button>
       <el-button @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
@@ -227,6 +229,12 @@
         this.primaryComplete=false;
         this.initData();
         this.$emit("modifyCBEvent");
+      },
+
+
+      //完成
+      onComplete() {
+        this.business('确认发货计划结束了吗?', 'complete', "操作成功!", "");
       },
 
       // 管理员修改状态
