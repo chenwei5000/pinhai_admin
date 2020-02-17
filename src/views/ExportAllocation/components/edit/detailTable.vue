@@ -29,6 +29,8 @@
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
       <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left"></el-table-column>
 
+      <el-table-column prop="product.fnSku" label="FN-SKU" width="100"></el-table-column>
+
       <el-table-column prop="product.imgUrl" label="图片" width="40">
         <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
           <el-image
@@ -41,33 +43,9 @@
       </el-table-column>
 
       <el-table-column prop="product.groupName" label="款式" width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
-            <div v-html="scope.row.product.groupName"></div>
-            <span slot="reference">{{
-              scope.row.product.groupName ? scope.row.product.groupName.length > 12 ? scope.row.product.groupName.substr(0,10)+'..' : scope.row.product.groupName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.groupName }}
-            </span>
-        </template>
       </el-table-column>
 
       <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
-        </template>
       </el-table-column>
 
       <el-table-column prop="product.model" label="型号" width="100"></el-table-column>
