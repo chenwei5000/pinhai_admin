@@ -16,6 +16,7 @@
 <script>
   import phSearchItems from '../../components/phSearchItems'
   import {checkPermission} from "../../utils/permission";
+  import warehouseModel from "../../api/warehouse";
 
   export default {
     data() {
@@ -55,7 +56,18 @@
           ],
 
           searchForm: [
-            phSearchItems.warehouseDomesticId(),
+            {
+              $type: 'select',
+              $id: 'warehouseId',
+              label: '仓库',
+              $el: {
+                op: 'eq',
+                size: "mini",
+                filterable: true,
+                placeholder: '请选择仓库'
+              },
+              $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
+            },
             phSearchItems.skuCode
           ]
         }
