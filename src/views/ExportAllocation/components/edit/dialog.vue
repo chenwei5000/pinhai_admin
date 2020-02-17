@@ -185,19 +185,21 @@
         this.$refs.itemTable.onAll();
       },
       onBoxCode() {
-        this.loading = true;
-        this.confirmLoading = true;
+
+        let loading = this.$loading({
+          lock: true,
+          text: '加载数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
 
         this.global.axios.put(`/warehouseAllocations/boxCode/${this.primaryId}`)
           .then(resp => {
             this.$message.success("箱码生成成功");
             this.$refs.itemTable.getList();
-            this.loading = false;
-            this.confirmLoading = false;
           })
           .catch(err => {
-            this.loading = false;
-            this.confirmLoading = false;
+            loading.close();
           })
       },
 
