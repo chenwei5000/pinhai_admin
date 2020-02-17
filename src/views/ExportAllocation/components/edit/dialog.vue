@@ -196,6 +196,7 @@
         this.global.axios.put(`/warehouseAllocations/boxCode/${this.primaryId}`)
           .then(resp => {
             this.$message.success("箱码生成成功");
+            loading.close();
             this.$refs.itemTable.getList();
           })
           .catch(err => {
