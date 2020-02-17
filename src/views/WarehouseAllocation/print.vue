@@ -30,7 +30,7 @@
         <el-table-column prop="product.skuCode" label="SKU" width="186">
         </el-table-column>
 
-        <el-table-column prop="product.fnSKu" label="FN-SKU" width="100">
+        <el-table-column prop="product.fnSku" label="FN-SKU" width="100">
         </el-table-column>
 
         <el-table-column prop="product.name" label="名称" width="200">
@@ -161,7 +161,7 @@
           // 处理关联加载
           itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec"]);
           //排序
-          itemsUrl + "&sort=sortNum&dir=asc"
+          itemsUrl += "&sort=sortNum&dir=asc"
 
           //获取数据
           _arr.push(this.global.axios
