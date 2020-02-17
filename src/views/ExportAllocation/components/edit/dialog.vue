@@ -23,7 +23,7 @@
         确认发货
       </el-button>
 
-      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="primary.status === 3" @click="onStatus">
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="false" @click="onStatus">
         修改状态
       </el-button>
 

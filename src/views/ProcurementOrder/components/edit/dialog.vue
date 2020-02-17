@@ -16,7 +16,7 @@
       <el-button type="primary" size="small" icon="el-icon-money" v-if="hasExecute" @click="onPayment">申请付款</el-button>
       <el-button type="primary" size="small" icon="el-icon-printer" v-if="hasPrint" @click="onPrint">打印合同</el-button>
 
-      <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束计划</el-button>
+      <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束采购单</el-button>
 
       <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态</el-button>
 
@@ -377,6 +377,7 @@
       },
       //完成
       onComplete() {
+        this.business('确认采购单完成了吗?', 'complete', "操作成功!", "");
       }
     }
   }
