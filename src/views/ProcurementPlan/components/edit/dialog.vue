@@ -349,6 +349,7 @@
       },
       //完成
       onComplete() {
+        this.business('确认该计划已经完成了吗?', 'complete', "操作成功!");
       }
     }
   }
