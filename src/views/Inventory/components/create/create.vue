@@ -149,7 +149,7 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
         this.typeSelection = phEnumModel.getSelectOptions('InventoryType');
         this.loading = false;
       },

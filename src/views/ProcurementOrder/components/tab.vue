@@ -40,14 +40,14 @@
           return {
             field: 'status',
             op: 'in',
-            data: "3,4,5,6,7,8,9,10,11"
+            data: "3,4,5,6,7,8,9"
           }
         }
         else if (this.type === 'complete') {
           return {
             field: 'status',
             op: 'in',
-            data: 11
+            data: "10,11"
           }
         }
         else if (this.type === 'all') {

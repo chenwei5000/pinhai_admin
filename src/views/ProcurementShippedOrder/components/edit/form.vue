@@ -235,7 +235,7 @@
           this.editObject.expectTime = this.editObject.formatExpectTime;
 
           //转化仓库
-          this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+          this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
           this.editObject.warehouseId = this.editObject.warehouseId + '';
           this.editObject.supplierId = this.editObject.supplierId + '';

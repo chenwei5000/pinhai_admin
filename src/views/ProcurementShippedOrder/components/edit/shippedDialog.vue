@@ -184,7 +184,7 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         //转化仓库
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
         this.editObject.warehouseId = this.editObject.warehouseId + '';
       },
 

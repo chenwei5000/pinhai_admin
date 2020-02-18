@@ -75,6 +75,7 @@
 
 <script>
   import {intArrToStrArr} from '@/utils'
+  import warehouseModel from "../../../api/warehouse";
 
   export default {
     components: {},
@@ -121,33 +122,8 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        //this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions2();
-        this.initWarehouseData();
-
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
         this.loading = false;
-      },
-
-      // 初始化仓库数据
-      initWarehouseData() {
-        this.loading = true;
-        let url = "/warehouses/permissions";
-        this.global.axios.get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.warehouseSelectOptions = [];
-            res.forEach(r => {
-              if (r.type == "工厂仓" || r.type == "普通" || r.type == "虚拟仓" || r.type == "原料仓") {
-                this.warehouseSelectOptions.push({
-                  label: r.name,
-                  value: r.id + ''
-                });
-              }
-            });
-            this.loading = false;
-          })
-          .catch(err => {
-            this.loading = false;
-          });
       },
 
       clearData() {

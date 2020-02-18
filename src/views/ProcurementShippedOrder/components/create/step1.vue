@@ -292,7 +292,7 @@
           this.editObject.supplier = this.primary[0].supplier;
           this.editObject.expectTime = this.primary[0].formatDeliveryTime;
 
-          this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+          this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
           this.getList();
           this.loading = false;

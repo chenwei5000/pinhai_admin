@@ -349,7 +349,7 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
       },
 
