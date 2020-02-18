@@ -145,7 +145,8 @@
 
         <el-collapse-item name="supplier">
           <div slot="title" class="title">采购信息</div>
-          <el-row>
+
+          <el-row v-if="hasSupplier">
             <el-col :md="10">
               <el-form-item label="供货商" size="mini" prop="supplierId">
                 <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.supplier.name}}</span>
@@ -169,6 +170,7 @@
               </el-form-item>
             </el-col>
           </el-row>
+
 
           <el-row v-if="hasPrice">
             <el-col :md="10">
@@ -434,7 +436,10 @@
       },
       hasPrice() {
         return checkPermission('PurchasePriceVisible');
-      }
+      },
+      hasSupplier() {
+        return checkPermission('SupplierVisible');
+      },
     },
 
     data() {

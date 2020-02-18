@@ -100,7 +100,7 @@
       <el-table-column prop="width" label="宽(Cm)" width="100" align="center"></el-table-column>
       <el-table-column prop="height" label="高(Cm)" width="100" align="center"></el-table-column>
       <el-table-column prop="volume" label="体积(Cm³)" sortable="custom" width="120" align="center"></el-table-column>
-      <el-table-column prop="supplier.name" label="供货商" min-width="100" v-if="hasPrice"
+      <el-table-column prop="supplier.name" label="供货商" min-width="100" v-if="hasSupplier"
                        align="center"></el-table-column>
       <el-table-column prop="currencyName" label="结算货币" min-width="100" v-if="hasPrice"
                        align="center"></el-table-column>
@@ -245,6 +245,9 @@
       },
       hasDelete() {
         return checkPermission('ProductResource_remove');
+      },
+      hasSupplier() {
+        return checkPermission('SupplierVisible');
       },
       hasPrice() {
         return checkPermission('PurchasePriceVisible');
