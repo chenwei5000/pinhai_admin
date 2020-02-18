@@ -19,6 +19,10 @@
         删除
       </el-button>
 
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">
+        修改状态
+      </el-button>
+
 
       <el-button size="small" @click="closeDialog">取 消</el-button>
 
@@ -96,10 +100,20 @@
     </div>
 
 
+    <phStatusDialog statusName="LinerShippingPlanStatus"
+                    @saveStatusCBEvent="saveStatusCBEvent"
+                    ref="phStatus"
+                    :objStatus="primary.status">
+
+    </phStatusDialog>
+
     <allocationDialog ref="allocationDialog">
     </allocationDialog>
 
+
   </el-dialog>
+
+
 </template>
 
 <script>
@@ -112,6 +126,7 @@
   import planModel from "@/api/linerShippingPlan";
   import allocationDialog from './allocationDialog';
   import {checkPermission} from "../../../../utils/permission";
+  import phStatusDialog from '../../../../components/PhStatus/index';
 
   export default {
     props: {},
@@ -123,7 +138,8 @@
       attachment,
       detail,
       logisticPayment,
-      allocationDialog
+      allocationDialog,
+      phStatusDialog,
     },
 
     computed: {
@@ -144,7 +160,7 @@
       },
 
       hasDelete() {
-        if ([1, 12].indexOf(this.primary.status) > -1) {
+        if ([1, 2, 12].indexOf(this.primary.status) > -1) {
           return true;
         }
         return checkPermission('LinerShippingPlanResource_delete');
@@ -152,6 +168,10 @@
 
       hasPayment() {
         return checkPermission('LogisticPaymentBillResource_list');
+      },
+
+      hasAdmin() {
+        return checkPermission('LinerShippingPlanResource_updateStatus');
       }
     },
     mounted() {
@@ -263,14 +283,42 @@
                 this.$emit("deleteCalendarEvent", this.primaryId);
                 this.closeDialog();
               })
-              .catch(err => {
-              })
+                .catch(err => {
+                })
               done();
             } else done()
           }
         }).catch(er => {
           /*取消*/
         })
+      },
+
+      // 管理员修改状态
+      onStatus() {
+        this.$refs.phStatus.openDialog();
+      },
+
+      saveStatusCBEvent(status) {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let url = `/linerShippingPlans/status/${this.primaryId}/${status}`;
+        this.global.axios.put(url)
+          .then(resp => {
+            console.log(resp);
+            this.$refs.phStatus.closeDialog();
+            this.$message.success('操作成功!');
+            loading.close();
+            let title = planModel.generateEventTitle(resp.data);
+            this.$emit("editCalendarEvent", resp.data, title);
+          })
+          .catch(err => {
+            loading.close();
+          });
       },
     }
   };
