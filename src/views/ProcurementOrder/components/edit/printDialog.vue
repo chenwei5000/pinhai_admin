@@ -282,7 +282,7 @@
             </fieldset>
 
 
-             <fieldset class="panel-heading">
+            <fieldset class="panel-heading">
               <legend class="panel-title">额外
                 <el-tooltip class="item" effect="light" size="mini" placement="right">
                   <div slot="content">
@@ -297,7 +297,7 @@
                   <el-form-item label="质量要求" prop="qualityRequirement">
                     <el-input v-model="printObject.qualityRequirement" type="textarea" rows="4"
                               name="qualityRequirement"
-                              style="width: 1000px" size="mini" placeholder="默认为： 参考合同附页" ></el-input>
+                              style="width: 1000px" size="mini" placeholder="默认为： 参考合同附页"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -321,7 +321,6 @@
 
   import {mapGetters} from 'vuex'
   import {parseTime} from '@/utils'
-  import validRules from '@/components/validRules'
 
   export default {
     components: {},
@@ -455,7 +454,7 @@
           })
       },
 
-       /*获取合同历史信息*/
+      /*获取合同历史信息*/
       initContractInfo() {
         let url = "/contractInfoHistories";
         let filters = [
@@ -477,20 +476,23 @@
           .get(url)
           .then(resp => {
             let res = resp.data
-            console.log(res);
             let data = res || []
-            this.printObject = data[0] || {};
+            this.printObject = data[0] || null;
             this.initComplete = false;
-            this.printObject.demanderName = this.primary.demanderName ? this.primary.demanderName : '深圳市品海电子商务有限公司';
-            this.printObject.demanderAddress = this.primary.demanderAddress ? this.primary.demanderAddress : '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
-            this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
-            this.printObject.supplierName = this.primary.supplier.companyName;
-            this.printObject.supplierAddress = this.primary.supplier.address;
-            this.printObject.currency = this.primary.currency.name;
-            if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null){
-               this.$set(this.printObject, "effectiveDate", [this.printObject.effectiveDateStart, this.printObject.effectiveDateEnd]);
+
+            if (this.printObject == null) {
+              this.printObject.demanderName = this.primary.demanderName ? this.primary.demanderName : '深圳市品海电子商务有限公司';
+              this.printObject.demanderAddress = this.primary.demanderAddress ? this.primary.demanderAddress : '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
+              this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
+              this.printObject.supplierName = this.primary.supplier.companyName;
+              this.printObject.supplierAddress = this.primary.supplier.address;
+              this.printObject.currency = this.primary.currency.name;
             }
 
+            if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null) {
+              this.$set(this.printObject, "effectiveDate", [this.printObject.effectiveDateStart, this.printObject.effectiveDateEnd]);
+            }
+            
             this.initCategoryName();
           })
           .catch(err => {
@@ -499,9 +501,9 @@
           })
       },
 
-      effectiveDateChange(){
-            this.$set(this.printObject, "effectiveDateStart", this.printObject.effectiveDate[0])
-            this.$set(this.printObject, "effectiveDateEnd", this.printObject.effectiveDate[1])
+      effectiveDateChange() {
+        this.$set(this.printObject, "effectiveDateStart", this.printObject.effectiveDate[0])
+        this.$set(this.printObject, "effectiveDateEnd", this.printObject.effectiveDate[1])
       },
 
       /* 开启弹出编辑框 需要传主键ID */
@@ -534,7 +536,7 @@
           this.$refs.detailItem.$el.submit();
         });
       },
-      updateInput(val){
+      updateInput(val) {
         this.$forceUpdate();
       }
     }
