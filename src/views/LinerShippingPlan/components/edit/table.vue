@@ -68,6 +68,7 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
+      @cell-dblclick="handleDblclick"
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
@@ -79,10 +80,10 @@
         width="30">
       </el-table-column>
 
-      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
+      <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40">
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -93,8 +94,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
-      <el-table-column prop="product.groupName" label="款式" width="150">
+      <el-table-column prop="product.category.name" label="分类" width="100" align="center"></el-table-column>
+      <el-table-column prop="product.groupName" label="款式" width="150" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" width="200" trigger="hover"
                       v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
@@ -109,47 +110,53 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.vipLevel" label="Vip级别" width="80" v-if="hasSale"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="130"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
-      <el-table-column prop="product.name" label="名称" width="200">
+      <el-table-column prop="product.vipLevel" label="Vip级别" width="80" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="130" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
+      <el-table-column prop="product.name" label="名称" width="200" align="center">
       </el-table-column>
-      <el-table-column prop="product.asin" label="ASIN" width="130"></el-table-column>
-      <el-table-column prop="product.fnSku" label="FNSKU" width="130"></el-table-column>
-      <el-table-column prop="product.grossWeight" label="产品重量(Kg)" width="130"></el-table-column>
-      <el-table-column prop="cartonSpec.grossWeight" label="箱子重量(Kg)" width="130"></el-table-column>
-      <el-table-column prop="cartonSpecSize" label="箱子尺寸" width="130"></el-table-column>
-      <el-table-column prop="cartonSpecVolume" label="箱子体积(m³)" width="130"></el-table-column>
-      <el-table-column prop="numberOfPallets" label="托盘装箱数" width="130"></el-table-column>
-      <el-table-column prop="nwoneCartonSpecWeight" label="单箱净重(Kg)" width="130"></el-table-column>
-      <el-table-column prop="gwoneCartonSpecWeight" label="单箱毛重(Kg)" width="130"></el-table-column>
+      <el-table-column prop="product.asin" label="ASIN" width="130" align="center"></el-table-column>
+      <el-table-column prop="product.fnSku" label="FNSKU" width="130" align="center"></el-table-column>
+      <el-table-column prop="product.grossWeight" label="产品重量(Kg)" width="130" align="center"></el-table-column>
+      <el-table-column prop="cartonSpec.grossWeight" label="箱子重量(Kg)" width="130" align="center"></el-table-column>
+      <el-table-column prop="cartonSpecSize" label="箱子尺寸" width="130" align="center"></el-table-column>
+      <el-table-column prop="cartonSpecVolume" label="箱子体积(m³)" width="130" align="center"></el-table-column>
+      <el-table-column prop="numberOfPallets" label="托盘装箱数" width="130" align="center"></el-table-column>
+      <el-table-column prop="nwoneCartonSpecWeight" label="单箱净重(Kg)" width="130" align="center"></el-table-column>
+      <el-table-column prop="gwoneCartonSpecWeight" label="单箱毛重(Kg)" width="130" align="center"></el-table-column>
 
-      <el-table-column prop="sevenSalesCount" label="7日销量（件)" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="sevenSalesCount" label="7日销量（件)" width="100" v-if="hasSale" align="center"></el-table-column>
       <el-table-column prop="soldOutTime" label="销售覆盖时间" width="100" v-if="hasSale">
         <template slot-scope="scope">
           <span>{{ scope.row.soldOutTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="logisticsWeek" label="运输周数" width="100" v-if="hasSale"></el-table-column>
-      <el-table-column prop="safetyWeek" label="销售周数" width="100" v-if="hasSale"></el-table-column>
-      <el-table-column prop="coverageWeek" label="覆盖周数" width="100" v-if="hasSale"></el-table-column>
-      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100" v-if="hasSale"></el-table-column>
-      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100" v-if="hasSale"></el-table-column>
-      <el-table-column prop="inStockQty" label="亚马逊在库库存(件)" width="120" v-if="hasSale"></el-table-column>
-      <el-table-column prop="amazonTotalStock" label="亚马逊总库存(件)" width="120" v-if="hasSale"></el-table-column>
-      <el-table-column prop="validateStockQty" label="有效库存(件)" width="100" v-if="hasSale"></el-table-column>
+      <el-table-column prop="logisticsWeek" label="运输周数" width="100" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="safetyWeek" label="销售周数" width="100" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="coverageWeek" label="覆盖周数" width="100" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="demandedCartonQty" label="需求总量(箱)" width="100" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="stockGapCartonQty" label="库存缺口(箱)" width="100" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="inStockQty" label="亚马逊在库库存(件)" width="120" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="amazonTotalStock" label="亚马逊总库存(件)" width="120" v-if="hasSale" align="center"></el-table-column>
+      <el-table-column prop="validateStockQty" label="有效库存(件)" width="100" v-if="hasSale" align="center"></el-table-column>
 
 
-      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100" v-if="hasSale">
+      <el-table-column prop="domesticStockCartonQty" label="国内库存(箱)" width="100" v-if="hasSale" align="center">
       </el-table-column>
 
 
-      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" v-if="hasSale">
+      <el-table-column v-for="(item, index) in warehouses" :key="item.id" :label="item.name" v-if="hasSale" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.domesticStocks ? JSON.parse(scope.row.domesticStocks)[item.id] : ''}}</span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="shippedCartonQty" label="实发箱数" width="90"
+                       align="center" sortable sort-by="cartonQty"></el-table-column>
+
+      <el-table-column prop="shippedQty" label="实发件数" width="90"
+                       align="center"></el-table-column>
 
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
       <el-table-column prop="cartonQty" label="应发箱数" width="90"
@@ -216,6 +223,7 @@
   import {checkPermission} from "@/utils/permission";
   import smartDialog from '../smart/dialog';
   import moment from 'moment';
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -383,6 +391,19 @@
         return '';
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
@@ -396,7 +417,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty') {
+          if (column.property == 'cartonQty' || column.property == 'shippedCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -413,7 +434,7 @@
             }
           }
 
-          if (column.property == 'qty') {
+          if (column.property == 'qty' || column.property == 'shippedQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
