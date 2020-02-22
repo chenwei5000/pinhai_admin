@@ -35,7 +35,7 @@
           {
             "field": "otdTime",
             "op": "timeRange",
-            "data": `${moment(new Date()).add(-91, 'days').format("YYYY-MM-DD")}, ${moment(new Date()).add(-1, 'days').format("YYYY-MM-DD")}`
+            "data": `${moment(new Date()).add(-181, 'days').format("YYYY-MM-DD")}, ${moment(new Date()).add(-1, 'days').format("YYYY-MM-DD")}`
           }
         ],
       }
@@ -56,7 +56,7 @@
       },
 
       currentDay(){
-        return moment(new Date()).add(-91, 'days').format("YYYY-MM-DD");
+        return moment(new Date()).add(-181, 'days').format("YYYY-MM-DD");
       },
       afterFiveDay(){
         return moment(new Date()).add(-1, 'days').format("YYYY-MM-DD");
