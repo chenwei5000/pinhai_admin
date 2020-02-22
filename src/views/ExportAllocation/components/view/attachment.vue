@@ -2,17 +2,21 @@
   <div>
     <el-upload
       class="upload-demo"
-      action=""
+      :action="uploadUrl"
       :on-preview="handlePreview"
-      :before-remove="handleBeforeRemove"
+      :before-remove="beforeRemove"
+      :on-success="handleSuccess"
       multiple
       :file-list="attachments">
+      <el-button class="button-new-tag" v-if="hasEdit" size="mini">+ 添加附件</el-button>
     </el-upload>
+
   </div>
 </template>
 
 <script>
   import {intArrToStrArr} from '@/utils'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {},
@@ -22,11 +26,18 @@
         default: {}
       }
     },
-    computed: {},
+    computed: {
+      hasEdit(){
+        return checkPermission('AttachmentFileResource_uploadWarehouseAllocation');
+      },
+      uploadUrl() {
+        return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
+      }
+    },
 
     data() {
       return {
-        url: "/attachments/linerShippingPlan",
+        url: "/attachments/warehouseAllocation",
         relations: ["creator"],
         filters: [
           {"field": "relevanceId", "op": "eq", "data": this.primary.id}
@@ -77,14 +88,45 @@
         }
       },
 
+      remove(file){
+        if (this.primary) {
+          ///attachments/procurementPlan/ff8080816c2e2a89016c855d7be40001?accessToken=MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg==
+          let url = `${this.global.generateUrl(this.url)}/${file.id}`;
+          this.global.axios
+            .delete(url)
+            .then(resp => {
+              this.$message.success("附件删除成功!");
+            })
+            .catch(err => {
+            });
+        }
+      },
+
       /********************* 操作按钮相关方法  ***************************/
+      //上传成功
+      handleSuccess() {
+        this.initData();
+      },
       // 预览
       handlePreview(file) {
         window.open(file.url, '_blank');
       },
-      handleBeforeRemove(file, fileList) {
-        this.$message.error("无法删除");
-        return false;
+      // 删除
+      beforeRemove(file, fileList) {
+        if(this.hasEdit == false){
+          this.$message.error("无删除权限!");
+          return false;
+        }
+        return this.$confirm(`确定移除 ${ file.name }？`, '提示', {//    type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              this.remove(file);
+              done(true);
+            } else {
+              done(false);
+            }
+          }
+        })
       }
     }
   }
@@ -102,5 +144,9 @@
     vertical-align: middle;
     padding: 0 10px;
   }
-</style>
 
+  .el-form-item {
+    //margin-bottom: 7px;
+  }
+
+</style>

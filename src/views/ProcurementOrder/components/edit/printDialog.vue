@@ -492,7 +492,7 @@
             if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null) {
               this.$set(this.printObject, "effectiveDate", [this.printObject.effectiveDateStart, this.printObject.effectiveDateEnd]);
             }
-            
+
             this.initCategoryName();
           })
           .catch(err => {

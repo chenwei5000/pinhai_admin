@@ -6,27 +6,30 @@
     <el-form :inline="true" :model="searchParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
 
-      <el-form-item label="调拨单编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px"
+      <el-form-item label="调拨编码">
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 160px"
                   placeholder="请输入"></el-input>
       </el-form-item>
+
+      <el-form-item label="FBA ID">
+        <el-input v-model="searchParam.linerShippingPlan_shipmentId.value" clearable size="mini" style="width: 160px"
+                  placeholder="请输入"></el-input>
+      </el-form-item>
+      <el-form-item label="提单号">
+        <el-input v-model="searchParam.linerShippingPlan_ladingBillNumber.value" clearable size="mini" style="width: 160px"
+                  placeholder="请输入"></el-input>
+      </el-form-item>
+
+      <el-form-item label="箱号">
+        <el-input v-model="searchParam.linerShippingPlan_boxNumber.value" clearable size="mini" style="width: 160px"
+                  placeholder="请输入"></el-input>
+      </el-form-item>
+
 
       <el-form-item label="发货仓库">
         <el-select filterable v-model="searchParam.fromWarehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
-          <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
-            :label="item.label" :value="item.value"
-            :key="idx"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="收货仓库">
-        <el-select filterable v-model="searchParam.toWarehouseId.value"
-                   size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 160px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -55,12 +58,12 @@
       :max-height="tableMaxHeight"
       v-loading="loading"
       @selection-change="handleSelectionChange"
-      @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       id="table"
     >
-      <el-table-column prop="linerShippingPlan.formatEtdTime" label="发船日期" width="150"></el-table-column>
+      <el-table-column prop="linerShippingPlan.formatEtdTime" label="发船日期" width="120" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-tag size="small"
                   :type="scope.row.status === 3
@@ -72,16 +75,18 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="code" label="调拨单编码" width="120"></el-table-column>
-      <el-table-column prop="linerShippingPlan.code" label="货柜编号" min-width="60"></el-table-column>
-      <el-table-column prop="linerShippingPlan.shipmentId" label="FBA ID" min-width="100"></el-table-column>
-      <el-table-column prop="linerShippingPlan.portOfLoading" label="发船港口" min-width="100"></el-table-column>
-      <el-table-column prop="linerShippingPlan.categoryName" label="出口品类" min-width="200"></el-table-column>
-      <el-table-column prop="fromWarehouse.name" label="发货仓库" width="120"></el-table-column>
-      <el-table-column prop="toWarehouse.name" label="收货仓库" width="120"></el-table-column>
-      <el-table-column prop="linerShippingPlan.destinationFulfillmentCenterId" label="收货仓库标识" width="120"></el-table-column>
-      <el-table-column prop="linerShippingPlan.merchandiser" label="负责人" width="120"></el-table-column>
-      <el-table-column prop="linerShippingPlan" label="出口信息" width="120">
+      <el-table-column prop="code" label="调拨单编码" width="120" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.code" label="货柜编号" min-width="90" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.portOfLoading" label="发船港口" min-width="100" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.categoryName" label="出口品类" min-width="200" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.shipmentId" label="FBA ID" min-width="120" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.ladingBillNumber" label="提单号" min-width="130" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.boxNumber" label="箱号" min-width="130" align="center"></el-table-column>
+      <el-table-column prop="fromWarehouse.name" label="发货仓库" width="120" align="center"></el-table-column>
+      <el-table-column prop="toWarehouse.name" label="收货仓库" width="120" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.destinationFulfillmentCenterId" label="收货仓库标识" width="120" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan.merchandiser" label="负责人" width="120" align="center"></el-table-column>
+      <el-table-column prop="linerShippingPlan" label="出口信息" width="180">
         <template slot-scope="scope">
             <span>
               船运公司: {{ scope.row.linerShippingPlan.carrier}}<br>
@@ -91,7 +96,7 @@
       </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="small" icon="el-icon-receiving" circle
@@ -118,6 +123,7 @@
       background
       :layout="layout"
       id="ph-table-page"
+      @cell-dblclick="handleDblclick"
       ref="pageForm"
     >
       <el-button icon="el-icon-refresh" @click="onRefreshTable" class="btn-prev" circle></el-button>
@@ -143,6 +149,7 @@
   import phEnumModel from '@/api/phEnum'
   import phPercentage from '@/components/PhPercentage/index'
   import warehouseModel from "../../../api/warehouse";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -221,6 +228,9 @@
         searchParam: {
           fromWarehouseId: {value: null, op: 'eq', id: 'fromWarehouseId'},
           toWarehouseId: {value: null, op: 'eq', id: 'toWarehouseId'},
+          linerShippingPlan_shipmentId: {value: null, op: 'in', id: 'linerShippingPlan_shipmentId'},
+          linerShippingPlan_ladingBillNumber: {value: null, op: 'in', id: 'linerShippingPlan_ladingBillNumber'},
+          linerShippingPlan_boxNumber: {value: null, op: 'in', id: 'linerShippingPlan_boxNumber'},
           code: {value: null, op: 'bw', id: 'code'},
         },
 
@@ -268,6 +278,15 @@
           }
           if (params.toWarehouseId) {
             this.searchParam.toWarehouseId.value = params.toWarehouseId;
+          }
+          if (params.linerShippingPlan_shipmentId) {
+            this.searchParam.linerShippingPlan_shipmentId.value = params.linerShippingPlan_shipmentId;
+          }
+          if (params.linerShippingPlan_ladingBillNumber) {
+            this.searchParam.linerShippingPlan_ladingBillNumber.value = params.linerShippingPlan_ladingBillNumber;
+          }
+          if (params.linerShippingPlan_boxNumber) {
+            this.searchParam.linerShippingPlan_boxNumber.value = params.linerShippingPlan_boxNumber;
           }
         }
       }
@@ -329,7 +348,9 @@
         this.searchParam.code.value = null;
         this.searchParam.fromWarehouseId.value = null;
         this.searchParam.toWarehouseId.value = null;
-
+        this.searchParam.linerShippingPlan_shipmentId.value = null;
+        this.searchParam.linerShippingPlan_ladingBillNumber.value = null;
+        this.searchParam.linerShippingPlan_boxNumber.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
@@ -344,41 +365,18 @@
          * @event reset
          */
         this.$emit('reset')
-
-        // this.$emit(
-        //   'update:customQuery',
-        //   Object.assign(this.customQuery, JSON.parse(this.initCustomQuery))
-        // )
       },
 
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整
       exempleFormatter(row, column) {
-        // 代码示例
-        // if (row.exemple === 0) {
-        //   return "0-普通"
-        // }
-        // else if (row.exemple === 1) {
-        //   return "1-热销"
-        //
-        // }
-        // else if (row.exemple === 2) {
-        //   return "2-爆款"
-        // }
-        // else {
-        //   return row.exemple;
-        // }
         return '';
       },
 
       /*报警样式 */
       //  TODO:根据实际情况调整
       dangerClassName({row}) {
-        // 代码示例 return 为css定义的样式 -row 结尾
-        // if (row.saleWeek == null || row.saleWeek == 0 || row.saleWeek - row.safetyStockWeek > 2) { //可售周数不足
-        //   return 'warning-row';
-        // }
         return '';
       },
 
@@ -529,6 +527,19 @@
         }
         this.page = 1;
         this.getList(true);
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /********************* 分页工具条相关方法  ***************************/

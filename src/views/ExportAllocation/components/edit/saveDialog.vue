@@ -21,7 +21,7 @@
                @submit.native.prevent
                v-loading="loading"
       >
-        <el-form-item label="本次应发：">
+        <el-form-item label="本次发货：">
           <span style="font-size: 12px">{{primary.allCartonQty}}箱, 合{{primary.allQty}}件</span>
         </el-form-item>
 
@@ -37,8 +37,8 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onSave" size="mini"  :loading="confirmLoading">确认</el-button>
-      <el-button @click="closeDialog" size="mini" >关 闭</el-button>
+      <el-button type="primary" @click="onSave" size="mini" :loading="confirmLoading">确认</el-button>
+      <el-button @click="closeDialog" size="mini">关 闭</el-button>
     </div>
 
   </el-dialog>
@@ -71,8 +71,7 @@
         loading: false,
         initComplete: false,
         confirmLoading: false,
-        rules: {
-        },
+        rules: {},
       }
     },
 
@@ -95,7 +94,7 @@
         this.primary.useTrayQty = 0;
         this.primary.allQty = 0;
         this.primary.allCartonQty = 0;
-        this.details.forEach(r=>{
+        this.details.forEach(r => {
           this.primary.useTrayQty = r.useTrayQty;
           this.primary.allQty += r.shippedQty;
           this.primary.allCartonQty += r.shippedCartonQty;
@@ -111,17 +110,21 @@
         this.dialogVisible = false;
       },
 
-      /* 子组件编辑完成后相应事件 */
-      onPaymentCBEvent(object) {
-        this.$emit("paymentCBEvent", object);
-      },
       /* 打印合同 */
       onSave() {
         this.$refs.detailItem.validate(valid => {
           if (!valid) {
             return false
           }
-          let _object = this.primary;
+          let _object = {};
+          _object.id = this.primary.id;
+          _object.useTrayQty = this.primary.useTrayQty;
+
+          let _details = [];
+          this.details.forEach(r => {
+            _details.push({id: r.id, shippedCartonQty: r.shippedCartonQty, skuCode: r.skuCode});
+          });
+          _object.warehouseAllocationItems = _details;
 
           const loading = this.$loading({
             lock: true,

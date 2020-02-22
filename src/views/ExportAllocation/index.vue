@@ -18,7 +18,7 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="shipped" lazy>
+          <el-tab-pane name="shipped" lazy v-if="false">
             <span slot="label">
               <i class="el-icon-s-flag"></i> 待收货
             </span>
@@ -28,7 +28,7 @@
           </el-tab-pane>
 
           <!-- TODO: name 根据实际情况修改  -->
-          <el-tab-pane name="complete" lazy>
+          <el-tab-pane name="complete" lazy v-if="false">
             <span slot="label">
               <i class="el-icon-s-claim"></i> 完成
             </span>

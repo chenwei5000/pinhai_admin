@@ -7,6 +7,47 @@
              label-position="right"
              label-width="120px"
     >
+
+      <el-row>
+        <el-col :md="8">
+          <el-form-item label="船期">
+            <span style="font-size: 12px">{{primary.linerShippingPlan.formatEtdTime}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="发货港口">
+            <span style="font-size: 12px">{{primary.linerShippingPlan.portOfLoading}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="发货仓库">
+            <span style="font-size: 12px">{{primary.fromWarehouse.name}}</span>
+          </el-form-item>
+        </el-col>
+
+      </el-row>
+
+      <el-row>
+        <el-col :md="8">
+          <el-form-item label="FBA ID">
+            <span style="font-size: 12px">{{primary.linerShippingPlan.shipmentId}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="提单号">
+            <span style="font-size: 12px">{{primary.linerShippingPlan.ladingBillNumber}}</span>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="8">
+          <el-form-item label="箱号">
+            <span style="font-size: 12px">{{primary.linerShippingPlan.boxNumber}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -23,16 +64,17 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left"></el-table-column>
+      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left" align="center"></el-table-column>
 
-      <el-table-column prop="product.fnSku" label="FN-SKU" width="100"></el-table-column>
+      <el-table-column prop="product.fnSku" label="FN-SKU" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40">
-        <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
+        <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
             style="width: 30px; height: 30px;margin-top: 5px"
@@ -42,28 +84,28 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.groupName" label="款式" width="150">
+      <el-table-column prop="product.groupName" label="款式" width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" min-width="200">
+      <el-table-column prop="product.name" label="产品名" min-width="200" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.model" label="型号" width="100"></el-table-column>
-      <el-table-column prop="product.color" label="颜色" width="120"></el-table-column>
-      <el-table-column prop="product.size" label="尺码" width="80"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
-      <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
+      <el-table-column prop="product.model" label="型号" width="100" align="center"></el-table-column>
+      <el-table-column prop="product.color" label="颜色" width="120" align="center"></el-table-column>
+      <el-table-column prop="product.size" label="尺码" width="80" align="center"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120" align="center"></el-table-column>
+      <el-table-column prop="boxCode" label="箱码" width="100" align="center"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="120"></el-table-column>
       <el-table-column prop="stock" label="库存量" width="100"></el-table-column>
-      <el-table-column prop="sufficientStock" label="库存满足" width="100"></el-table-column>
-      <el-table-column prop="cartonQty" label="计划箱数" width="100"></el-table-column>
-      <el-table-column prop="qty" label="计划件数" width="100"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="应发箱数" width="200" align="center">
+      <el-table-column prop="sufficientStock" label="库存满足" width="100" align="center"></el-table-column>
+      <el-table-column prop="cartonQty" label="计划箱数" width="100" align="center"></el-table-column>
+      <el-table-column prop="qty" label="计划件数" width="100" align="center"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="应发箱数" width="200" align="center" fixed="right">
 
         <template slot="header" slot-scope="scope">
           <span>本次应发箱数</span><BR/>
           <el-button type="primary" size="mini" plain @click="onAll">全部发货</el-button>
-          <el-button type="success" size="mini" plain @click="onClear">  清空</el-button>
+          <el-button type="success" size="mini" plain @click="onClear"> 清空</el-button>
         </template>
 
         <template slot-scope="scope">
@@ -80,21 +122,7 @@
         </template>
 
       </el-table-column>
-      <el-table-column prop="shippedQty" label="应发件数" width="100"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货数量" width="100"></el-table-column>
-
-      <el-table-column prop="shippedNote" label="备注" width="130">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" title="备注" width="250" trigger="hover"
-                      v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
-            <div v-html="scope.row.shippedNote"></div>
-            <span slot="reference">{{ scope.row.shippedNote ? scope.row.shippedNote.substr(0,8)+'..' : '' }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.receivedNote }}
-          </span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="shippedQty" label="应发件数" width="100" fixed="right" align="center"></el-table-column>
     </el-table>
   </div>
 
@@ -105,6 +133,7 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {},
@@ -196,6 +225,19 @@
         return '';
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
@@ -210,7 +252,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'shippedCartonQty' ) {
+          if (column.property == 'shippedCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -303,6 +345,12 @@
         this.tableData.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = item.cartonQty;
           arr[index].shippedQty = item.qty;
+          if(arr[index].stock >= arr[index].shippedCartonQty){
+            arr[index].sufficientStock = "是";
+          }
+          else{
+            arr[index].sufficientStock = "否";
+          }
         });
       },
 
@@ -310,10 +358,22 @@
         this.tableData.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = 0;
           arr[index].shippedQty = 0;
+          if(arr[index].stock >= arr[index].shippedCartonQty){
+            arr[index].sufficientStock = "是";
+          }
+          else{
+            arr[index].sufficientStock = "否";
+          }
         });
       },
       onShippedCartonQty(row) {
         row.shippedQty = (row.shippedCartonQty * row.numberOfCarton).toFixed(0);
+        if(row.stock >= row.shippedCartonQty){
+            row.sufficientStock = "是";
+        }
+        else{
+          row.sufficientStock = "否";
+        }
       }
     }
   }

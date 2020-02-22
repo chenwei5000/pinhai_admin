@@ -28,7 +28,7 @@
     },
     computed: {
       hasEdit(){
-        return checkPermission('ExportAllocationResource_update');
+        return checkPermission('AttachmentFileResource_uploadWarehouseAllocation');
       },
       uploadUrl() {
         return `${this.global.generateUrl(this.url)}/uploadFiles/${this.primary.id}?accessToken=${this.$store.state.user.token}`;

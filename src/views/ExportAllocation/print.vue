@@ -1,16 +1,16 @@
 <template>
   <div v-loading.fullscreen.lock="fullscreenLoading"
-       class="main-article" element-loading-text="调拨单">
+       class="main-article" element-loading-text="打印调拨单">
 
     <div class="article__heading">
-      <div class="article__heading__title">调拨单{{primary.code}}</div>
+      <div class="article__heading__title">出口调拨单{{primary.code}}</div>
     </div>
     <el-row style="margin-bottom: 10px">
       <el-col :span="12" style="text-align: left;padding-left: 5px;font-size: 12px;line-height: 150%;">
         发货仓库：{{primary.fromWarehouse.name}}
       </el-col>
       <el-col :span="12" style="text-align: right;padding-left: 5px;font-size: 12px;line-height: 150%;">
-        收货仓库： {{primary.toWarehouse.name}}
+        提单号：{{primary.linerShippingPlan.ladingBillNumber}}
       </el-col>
     </el-row>
 
@@ -27,15 +27,26 @@
       >
         <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
 
-        <el-table-column prop="product.skuCode" label="SKU" width="200">
+        <el-table-column prop="product.skuCode" label="SKU" width="186">
         </el-table-column>
 
-        <el-table-column prop="product.name" label="名称" width="256">
+        <el-table-column prop="product.fnSku" label="FN-SKU" width="100">
         </el-table-column>
 
-        <el-table-column prop="product.name" label="规格型号" width="150">
+        <el-table-column prop="product.name" label="名称" width="200">
+        </el-table-column>
+
+        <el-table-column prop="product.model" label="规格型号" width="120">
           <template slot-scope="scope">
             {{scope.row.product.model}} , {{scope.row.product.color}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="cartonSpecCode" label="箱规" width="80" v-if="false">
+          <template slot-scope="scope">
+            {{scope.row.cartonSpec? scope.row.cartonSpec.length : ""}}
+            *{{scope.row.cartonSpec? scope.row.cartonSpec.width : "" }}
+            *{{scope.row.cartonSpec? scope.row.cartonSpec.height : ""}}
           </template>
         </el-table-column>
 
@@ -54,50 +65,45 @@
           <el-table-column
             prop="shippedQty"
             label="数量"
-            align="center"
             width="60">
           </el-table-column>
 
           <el-table-column
             prop="shippedCartonQty"
             label="箱数"
-            align="center"
             width="60">
           </el-table-column>
 
         </el-table-column>
 
-        <el-table-column label="实收" align="center">
+        <el-table-column label="实发" align="center">
           <el-table-column
             label="数量"
-            align="center"
             width="60">
           </el-table-column>
 
           <el-table-column
             label="箱数"
-            align="center"
             width="60">
           </el-table-column>
         </el-table-column>
       </el-table>
 
-      <table width="100%" border="0" align="center" cellpadding="2" cellspacing="0" style="font-size:12px;
-        margin-bottom: 20px;">
+      <table width="100%" border="0" align="center" cellpadding="2" cellspacing="0" style="margin-bottom: 20px;">
         <tbody>
         <tr height="100">
-          <td align="center" width="90" style="border: 1px solid #000;border-top: 0;font-weight: bold">物流信息</td>
-          <td width="320" style="border: 1px solid #000;border-top: 0;">
-            物流单号: {{primary.tarckNumber ? primary.tarckNumber : '无'}} <BR/>
-            物流公司: {{primary.channel ? primary.channel : '无'}} <BR/>
-            车牌: {{primary.plateNumber ? primary.plateNumber : '无'}} <BR/>
-            联系人: {{primary.linkman ? primary.linkman : '无'}} <BR/>
-            电话: {{primary.tel ? primary.tel : '无'}} <BR/>
-            备注: {{primary.remark ? primary.remark : '无'}}
+          <td align="center" width="90" style="border: 1px solid #000;border-top: 0;">货柜信息</td>
+          <td width="320" style="font-size: 12px; border: 1px solid #000;border-top: 0;">
+            发船日期: {{primary.linerShippingPlan.formatEtdTime}}<BR/>
+            发货港口: {{primary.linerShippingPlan.portOfLoading}}<BR/>
+            出口品类: {{primary.linerShippingPlan.categoryName}}<BR/>
+            FBA ID: {{primary.linerShippingPlan.shipmentId}}<BR/>
+            提单号: {{primary.linerShippingPlan.ladingBillNumber}}<BR/>
+            箱号: {{primary.linerShippingPlan.boxNumber}}
           </td>
-          <td align="center" width="90" style="border: 1px solid #000;border-top: 0;font-weight: bold">检验结果</td>
+          <td align="center" width="90" style="border: 1px solid #000;border-top: 0;">检验结果</td>
           <td width="225" style="border: 1px solid #000;border-top: 0;">&nbsp;</td>
-          <td align="center" width="120" style="border: 1px solid #000;border-top: 0;font-weight: bold">经办人(签字)</td>
+          <td align="center" width="120" style="border: 1px solid #000;border-top: 0;">经办人(签字)</td>
           <td width="195" style="border: 1px solid #000;border-top: 0;">&nbsp;</td>
         </tr>
         </tbody>
@@ -114,7 +120,11 @@
     data() {
       return {
         primaryId: null,
-        primary: {warehouseAllocation: {fromWarehouse: {name: ""}}, toWarehouse: {name: ""}},
+        primary: {
+          fromWarehouse: {name: ""},
+          toWarehouse: {name: ""},
+          linerShippingPlan: {shipmentId: "", ladingBillNumber: ""}
+        },
         items: [],
         fullscreenLoading: true,
       }
@@ -132,9 +142,8 @@
 
           let _arr = [];
 
-          //获取计划数据
-          let url = `/warehouseAllocations/${this.primaryId}`;
-          url += "?relations=" + JSON.stringify(["team", "linerShippingPlan","fromWarehouse", "toWarehouse"]);
+          //获取调拨数据
+          let url = `/exportAllocations/${this.primaryId}?relations=${JSON.stringify(["linerShippingPlan", "fromWarehouse"])}`;
 
           _arr.push(this.global.axios
             .get(url)
@@ -146,7 +155,8 @@
             })
           );
 
-          let itemsUrl = `warehouseAllocationItems/`;
+
+          let itemsUrl = `warehouseAllocationItems/`
           // 处理查询
           itemsUrl += "?filters=" + JSON.stringify({
             "groupOp": "AND", "rules": [
@@ -158,16 +168,16 @@
             ]
           });
           // 处理关联加载
-          itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec"]);
+          itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec", "warehouseAllocation"]);
           //排序
-          itemsUrl + "&sort=sortNum&dir=asc"
+          itemsUrl += "&sort=sortNum&dir=asc"
 
           //获取数据
           _arr.push(this.global.axios
             .get(itemsUrl)
             .then(resp => {
-              let res = resp.data;
-              let data = res || [];
+              let res = resp.data
+              let data = res || []
               this.items = data;
             })
             .catch(err => {
@@ -252,7 +262,6 @@
 
   .article__heading__title {
     font-size: 26px;
-    margin-bottom: 10px;
     font-weight: normal;
     text-align: center;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;

@@ -18,13 +18,14 @@
       v-loading="loading"
       show-summary
       :summary-method="getSummaries"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
       <!--el-table-column prop="sortNum" type="index" label="序号" width="50" fixed="left"></el-table-column-->
-      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left"></el-table-column>
+      <el-table-column prop="product.skuCode" label="SKU编码" width="200" fixed="left" align="center"></el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40">
+      <el-table-column prop="product.imgUrl" label="图片" width="40" align="center">
         <template slot-scope="scope"  v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -35,51 +36,24 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.groupName" label="款式" width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.groupName && scope.row.product.groupName.length > 12">
-            <div v-html="scope.row.product.groupName"></div>
-            <span slot="reference">{{
-              scope.row.product.groupName ? scope.row.product.groupName.length > 12 ? scope.row.product.groupName.substr(0,10)+'..' : scope.row.product.groupName : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.groupName }}
-            </span>
-        </template>
+      <el-table-column prop="product.groupName" label="款式" width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" min-width="200">
-        <template slot-scope="scope">
-          <el-popover placement="top-start" width="200" trigger="hover"
-                      v-if="scope.row.product.name && scope.row.product.name.length > 18">
-            <div v-html="scope.row.product.name"></div>
-            <span slot="reference">{{
-              scope.row.product ? scope.row.product.name.length > 18 ? scope.row.product.name.substr(0,16)+'..' : scope.row.product.name : ''
-              }}</span>
-          </el-popover>
-          <span v-else>
-            {{ scope.row.product.name }}
-          </span>
-        </template>
+      <el-table-column prop="product.name" label="产品名" min-width="200" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.model" label="型号" width="100"></el-table-column>
-      <el-table-column prop="product.color" label="颜色" width="120"></el-table-column>
-      <el-table-column prop="product.size" label="尺码" width="80"></el-table-column>
-      <el-table-column prop="cartonSpecCode" label="箱规" width="120"></el-table-column>
-      <el-table-column prop="boxCode" label="箱码" width="100"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="120"></el-table-column>
-      <el-table-column prop="stock" label="库存量" width="100"></el-table-column>
-      <el-table-column prop="sufficientStock" label="库存满足" width="100"></el-table-column>
-      <el-table-column prop="cartonQty" label="计划箱数" width="100"></el-table-column>
-      <el-table-column prop="qty" label="计划件数" width="100"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="应发箱数" width="100"></el-table-column>
-      <el-table-column prop="shippedQty" label="应发件数" width="100"></el-table-column>
-      <el-table-column prop="receivedQty" label="收货数量" width="100"></el-table-column>
+      <el-table-column prop="product.model" label="型号" width="100" align="center"></el-table-column>
+      <el-table-column prop="product.color" label="颜色" width="120" align="center"></el-table-column>
+      <el-table-column prop="product.size" label="尺码" width="80" align="center"></el-table-column>
+      <el-table-column prop="cartonSpecCode" label="箱规" width="120" align="center"></el-table-column>
+      <el-table-column prop="boxCode" label="箱码" width="100" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="120" align="center"></el-table-column>
+      <el-table-column prop="cartonQty" label="计划箱数" width="100" align="center"></el-table-column>
+      <el-table-column prop="qty" label="计划件数" width="100" align="center"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="实发箱数" width="100" fixed="right" align="center"></el-table-column>
+      <el-table-column prop="shippedQty" label="实发件数" width="100" fixed="right" align="center"></el-table-column>
 
-      <el-table-column prop="shippedNote" label="备注" width="130">
+      <el-table-column prop="shippedNote" label="备注" width="130" v-if="false">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover"
                       v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
@@ -100,6 +74,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {},
@@ -160,6 +135,19 @@
       /********************* 表格相关方法  ***************************/
       //报警样式 TODO:根据实际情况调整
       dangerClassName({row}) {
+      },
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
 
       /*汇总数据*/
