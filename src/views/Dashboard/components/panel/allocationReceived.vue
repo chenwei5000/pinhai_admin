@@ -20,13 +20,19 @@
 
 <script>
   import CountTo from 'vue-count-to'
+
   export default {
-    data(){
+    data() {
       return {
         number: 0,
-        relations: ["fromWarehouse","toWarehouse"] ,
-        filters:[
-          {"field":"status","op":"in","data":4}
+        relations: ["fromWarehouse", "toWarehouse"],
+        filters: [
+          {"field": "status", "op": "in", "data": 4},
+          {
+            'field': 'needDeclare',
+            op: 'eq',
+            data: 0
+          }
         ],
       }
     },
@@ -40,14 +46,14 @@
       CountTo
     },
 
-    mounted(){
+    mounted() {
       this.$nextTick(() => {
         this.initData();
       })
     },
 
     methods: {
-      initData(){
+      initData() {
         let countUrl = "allocationReceiveds/count";
         countUrl += "?relations=" + JSON.stringify(this.relations);
         countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
