@@ -79,21 +79,18 @@
     </el-form>
 
 
-    <el-row class="table-tool" type="flex" justify="space-between" v-if="hasAdd">
-
-      <el-col :md="18">
-        <el-button v-if="hasAdd" type="primary" icon="el-icon-truck" @click="onDefaultAdd"
-                   size="mini" id="table-add">
-          创建发货计划
-        </el-button>
-
-        <el-button v-if="hasDelete" type="danger" icon="el-icon-delete" @click="onDefaultBatchDelete"
-                   size="mini" id="table-del">
-          删除
-        </el-button>
-
-      </el-col>
-    </el-row>
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar
+      ref="tableToolBar"
+      :hasAdd="hasAdd"
+      addTitle="创建发货计划"
+      :hasDelete="hasDelete"
+      :hasExport="hasExport"
+      @onToolBarAdd="onToolBarAdd"
+      @onToolBarDelete="onToolBarDelete"
+      @onToolBarDownloadData="onToolBarDownloadData"
+    >
+    </tableToolBar>
 
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
@@ -164,9 +161,14 @@
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80" align="center"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" min-width="80" align="center"></el-table-column>
 
-      <el-table-column prop="cartonQty" label="计划交货箱数" width="100" align="center" fixed="right"></el-table-column>
-      <el-table-column prop="qty" label="计划交货件数" width="100" align="center" fixed="right"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="发货箱数" width="100" align="center" v-if="false"></el-table-column>
+      <el-table-column prop="cartonQty" label="计划箱数" width="100" align="center"></el-table-column>
+      <el-table-column prop="qty" label="计划件数" width="100" align="center"></el-table-column>
+
+      <el-table-column prop="shippedCartonQty" label="已交货箱数" width="100" align="center"></el-table-column>
+      <el-table-column prop="shippedQty" label="已交货件数" width="100" align="center"></el-table-column>
+
+      <el-table-column prop="unCartonPlanQty" label="未交货箱数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="unPlanQty" label="未交货件数" width="100" align="center" fixed="right"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right" align="center">
@@ -221,7 +223,9 @@
   import {currency, parseTime} from '@/utils'
   import itemDialog from './planDialog'
   import phEnumModel from '@/api/phEnum'
+  import excelConfig from './excelPlanConfig'
   import phPercentage from '@/components/PhPercentage/index'
+  import tableToolBar from '@/components/PhTableToolBar'
   import supplierModel from '@/api/supplier'
   import {getObjectValueByArr} from "../../../../utils";
   import createDialog from "../create/dialog"
@@ -240,6 +244,7 @@
     components: {
       createDialog,
       itemDialog,
+      tableToolBar,
       phPercentage
     },
     props: {
@@ -264,6 +269,12 @@
       hasOperation() {
         return (this.hasEdit || this.hasDelete) && this.searchParam.status.value == '0';
       },
+      hasExport() {
+        return true;
+      },
+      hasSmart() {
+        return true;
+      },
       // 显示进度条
       hasCompleteness() {
         return false;
@@ -287,6 +298,7 @@
 
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementDeliveryPlans', // 资源URL
+        downloadUrl: "", //下载Url
         countUrl: '/procurementDeliveryPlans/count', // 资源URL
         relations: ["product", "cartonSpec", "creator", "procurementOrder", "supplier"],  // 关联对象
         data: [],
@@ -531,6 +543,7 @@
         let countUrl = this.countUrl
         let params = ''
         let searchParams = ''
+        let downloadParams = ''
         let size = this.size
         let page = this.page
 
@@ -552,6 +565,8 @@
           url += '?'
         }
 
+        let downloadUrl = url;
+
         if (countUrl.indexOf('?') > -1) {
           countUrl += '&'
         }
@@ -563,11 +578,13 @@
         // 根据偏移值计算接口正确的页数
         params += `pageSize=${size}&currentPage=${page}`
         searchParams += `pageSize=${size}&currentPage=${page}`
+        downloadParams += '1=1'
 
         // 处理排序
         if (this.phSort) {
           params += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
           searchParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
+          downloadParams += `&sort=${this.phSort.prop}&dir=${this.phSort.order}`
         }
 
         // 处理查询
@@ -589,12 +606,15 @@
 
         if (filters && filters.length > 0) {
           params += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
+          downloadParams += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
         }
 
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
           params += "&relations=" + JSON.stringify(this.relations);
+          downloadParams += "&relations=" + JSON.stringify(this.relations);
         }
+        this.downloadUrl = downloadUrl + downloadParams;
 
         // 请求开始
         this.loading = true
@@ -711,59 +731,82 @@
       },
 
       /********************* 操作按钮相关方法  ***************************/
-      /*创建发货计划*/
-      onDefaultAdd() {
-        if (this.selected == null || this.selected.length == 0) {
-          this.$message.error("请选择交货内容!");
-          return false;
-        }
-
-        let sid = null;
-        let time = null;
-        this.selected.forEach(r => {
-          if (sid == null) {
-            sid = r.supplierId;
-          }
-          else {
-            if (sid != r.supplierId) {
-              sid = false;
-            }
-          }
-          if (time == null) {
-            time = r.deliveryTime;
-          }
-          else {
-            if (time != r.deliveryTime) {
-              time = false;
-            }
-          }
-        });
-        if (sid === false) {
-          this.$message.error("一个发货计划对应一个供货商!");
-          return false;
-        }
-        if (time === false) {
-          this.$message.error("一个发货计划对应一个交货日期!");
-          return false;
-        }
-
-        this.$refs.createDialog.openDialog(JSON.parse(JSON.stringify(this.selected)));
-      },
       /* 行修改功能 */
       onDefaultEdit(row) {
         this.$refs.itemDialog.openDialog(row.id, {});
       },
 
-      onDefaultBatchDelete() {
+      /* 行删除功能 */
+      onDefaultDelete(row) {
         this.$confirm('确认删除吗', '提示', {
           type: 'warning',
           beforeClose: (action, instance, done) => {
             if (action == 'confirm') {
-              if (this.selected.length <= 0) {
-                this.$message.error("请选择要删除的行!");
-                done(false);
-                return;
+              let url = `${this.url}/${row.id}`;
+              this.global.axios.delete(url).then(resp => {
+                this.$message({type: 'success', message: '删除成功'});
+                let obj = resp.data;
+                this.getList();
+                this.$emit("reloadCBEvent");
+              })
+                .catch(err => {
+                })
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
+
+      /*创建发货计划*/
+      onToolBarAdd() {
+        if (this.selected == null || this.selected.length == 0) {
+          this.$confirm('您没有选择任何交货商品，如果您确认。将手工维护发货计划明细，是否继续？', '提示', {
+            type: 'warning',
+            beforeClose: (action, instance, done) => {
+              if (action == 'confirm') {
+                done();
+                this.$refs.createDialog.openDialog(JSON.parse(JSON.stringify(this.selected)));
+              } else done()
+            }
+          }).catch(er => {
+            /*取消*/
+          })
+        }
+        else {
+
+          let sid = null;
+          this.selected.forEach(r => {
+            if (sid == null) {
+              sid = r.supplierId;
+            }
+            else {
+              if (sid != r.supplierId) {
+                sid = false;
               }
+            }
+          });
+          if (sid === false) {
+            this.$message.error("一个发货计划对应一个供货商!");
+            return false;
+          }
+          this.$refs.createDialog.openDialog(JSON.parse(JSON.stringify(this.selected)));
+        }
+
+      },
+      /*批量删除*/
+      onToolBarDelete() {
+        if (this.selected.length <= 0) {
+          this.$message.error("请选择要删除的行!");
+          done(false);
+          return;
+        }
+
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
               // 多选模式
               let ids = this.selected.map(v => v['id']).toString();
               if (ids != '') {
@@ -789,26 +832,17 @@
         })
       },
 
-      /* 行删除功能 */
-      onDefaultDelete(row) {
-        this.$confirm('确认删除吗', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              let url = `${this.url}/${row.id}`;
-              this.global.axios.delete(url).then(resp => {
-                this.$message({type: 'success', message: '删除成功'});
-                let obj = resp.data;
-                this.getList();
-                this.$emit("reloadCBEvent");
-              })
-                .catch(err => {
-                })
-              done();
-            } else done()
-          }
-        }).catch(er => {
-          /*取消*/
+      onToolBarDownloadData() {
+        //获取数据
+        let downloadUrl = this.downloadUrl;
+        import('@/vendor/Export2ExcelPinHai').then(excel => {
+          this.loading = true;
+          excel.export_json_url_to_excel_with_formulae({
+            url: downloadUrl,
+            excelField: excelConfig.excelField,
+            filename: `交货计划-${parseTime(new Date(), '{y}-{m}-{d}')}`
+          });
+          this.loading = false;
         })
       },
 

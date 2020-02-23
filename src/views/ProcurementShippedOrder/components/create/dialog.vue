@@ -8,7 +8,8 @@
     <el-steps :active="stepsActive" finish-status="success" align-center simple>
       <el-step title="1.下单" icon="el-icon-shopping-cart-full"></el-step>
       <el-step title="2.附件" icon="el-icon-document"></el-step>
-      <el-step title="3.指派工作" icon="el-icon-s-custom"></el-step>>
+      <el-step title="3.指派工作" icon="el-icon-s-custom"></el-step>
+      >
     </el-steps>
 
     <!-- 智能备货组件 -->
@@ -55,7 +56,12 @@
       ]),
 
       title() {
-        return '创建发货计划 [' + this.primary[0].formatDeliveryTime + this.primary[0].supplier.name+ ']';
+        if (this.primary && this.primary.length > 0) {
+          return '创建发货计划 [' + this.primary[0].formatDeliveryTime + this.primary[0].supplier.name + ']';
+        }
+        else {
+          return '创建发货计划';
+        }
       }
     },
 
@@ -90,8 +96,8 @@
 
       closeDialog() {
         this.primary = {};
-        this.orderId=null,
-        this.stepsActive = 0;
+        this.orderId = null,
+          this.stepsActive = 0;
         this.dialogVisible = false;
         this.primaryComplete = false;
       },

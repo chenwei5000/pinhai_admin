@@ -71,14 +71,14 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="发货箱数" prop="cartonQty">
+            <el-form-item label="发货箱数" prop="shippedCartonQty">
 
-              <el-input-number v-model="detailItem.cartonQty"
+              <el-input-number v-model="detailItem.shippedCartonQty"
                                style="width: 175px;"
                                :precision="3"
                                :min="1"
                                :step="1"
-                               :max="1000000" label="发货箱数">
+                               :max="detailItem.cartonQty" label="发货箱数">
               </el-input-number>
 
               <el-tooltip class="item" effect="light" content="发货箱数,支持3位小数。" placement="right">
@@ -96,10 +96,24 @@
         </el-row>
 
         <el-row>
+          <el-col :md="10">
+            <el-form-item label="计划箱数" prop="cartonQty">
+              {{ detailItem.cartonQty }}
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
+            <el-form-item label="计划件数">
+              {{detailItem.qty}} 件
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
           <el-col :md="24">
-            <el-form-item label="备注" prop="priorityNote">
+            <el-form-item label="备注" prop="remark">
               <el-col :span="22">
-                <el-input type="textarea" v-model="detailItem.shippedNote"
+                <el-input type="textarea" v-model="detailItem.remark"
                           maxlength="500"
                           show-word-limit
                           rows="3"

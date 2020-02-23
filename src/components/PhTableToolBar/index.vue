@@ -8,22 +8,22 @@
     <el-col :md="18">
       <el-button v-if="hasAdd" type="primary" icon="el-icon-circle-plus" @click="onDefaultAdd"
                  size="mini" id="table-add">
-        新增
+        {{addTitle}}
       </el-button>
 
       <el-button v-if="hasDelete" type="danger" icon="el-icon-error" @click="onDefaultDelete"
                  size="mini">
-        删除
+        {{deleteTitle}}
       </el-button>
 
       <el-button v-if="hasSmart" type="primary"  icon="el-icon-circle-plus" @click="onDefaultSmart"
                  size="mini">
-        智能发柜
+        {{smartTitle}}
       </el-button>
 
       <el-button v-if="hasReload" type="warning" icon="el-icon-refresh-left" @click="onDefaultReload"
                  size="mini">
-        重新获取系统数据
+        {{reloadTitle}}
       </el-button>
 
     </el-col>
@@ -83,8 +83,23 @@
       hasSmart: {
         type: Boolean,
         default: false
-      }
-
+      },
+      smartTitle:{
+        type: String,
+        default: "智能发柜"
+      },
+      addTitle:{
+        type: String,
+        default: "新增"
+      },
+      deleteTitle:{
+        type: String,
+        default: "删除"
+      },
+      reloadTitle:{
+        type: String,
+        default: "重新获取系统数据"
+      },
     },
     mounted() {
       this.$nextTick(() => {

@@ -79,9 +79,6 @@
       <el-table-column prop="procurementBoxQty" sortable :label="procurementBoxQtyTitle"
                        min-width="110" align="center"></el-table-column>
 
-      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110" align="center"></el-table-column>
-      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110" align="center"></el-table-column>
-
       <el-table-column prop="remark" label="备注" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="备注" width="250" trigger="hover"
@@ -94,6 +91,9 @@
           </span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110" align="center" fixed="right"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right">
@@ -289,7 +289,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty') {
+          if (column.property == 'cartonQty' || column.property =='shippedCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -301,6 +301,23 @@
                 }
               }, 0);
               sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property =='shippedQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
             } else {
               sums[index] = 'N/A';
             }

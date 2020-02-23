@@ -45,9 +45,24 @@
 
           <el-row>
             <el-col :md="10">
-              <el-form-item label="发货厂商" prop="supplierId" size="mini">
-                <span style="font-size: 12px" v-if="editObject.supplier">{{editObject.supplier.name}}</span>
+              <el-form-item label="发货厂商" prop="supplierId" size="mini" v-if="editObject.supplier">
+                <span style="font-size: 12px">{{editObject.supplier.name}}</span>
               </el-form-item>
+
+              <el-form-item label="发货厂商" prop="supplierId" size="mini" v-else>
+                <el-select v-model="editObject.supplierId"
+                           @input="updateInput"
+                           style="width: 220px"
+                           filterable placeholder="请选择发货厂商">
+                  <el-option
+                    v-for="(item , idx)  in supplierSelectOptions"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="idx"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+
             </el-col>
 
             <el-col :md="14">
@@ -95,6 +110,14 @@
 
     <h4>产品详情</h4>
     <div class="ph-table" style="margin-top: 15px;">
+
+      <tableToolBar
+        ref="tableToolBar"
+        :hasImport="true"
+        @onToolBarImportData="onToolBarImportData"
+      >
+      </tableToolBar>
+
       <el-table
         ref="table"
         style="width: 100%"
@@ -135,26 +158,27 @@
         <el-table-column prop="cartonSpec.code" label="箱规" width="120" align="center"></el-table-column>
         <el-table-column prop="procurementOrder.code" label="采购单号" width="120" align="center"></el-table-column>
 
-        <el-table-column prop="cartonQty" label="采购箱数" width="90" align="center"></el-table-column>
+        <el-table-column prop="cartonQty" label="计划箱数" width="90" align="center"></el-table-column>
+        <el-table-column prop="qty" label="计划件数" width="90" align="center"></el-table-column>
         <el-table-column prop="remark" label="备注" width="130" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" title="备注" width="250" trigger="hover"
-                        v-if="scope.row.shippedNote && scope.row.shippedNote.length > 10">
-              <div v-html="scope.row.shippedNote"></div>
-              <span slot="reference">{{ scope.row.shippedNote ? scope.row.shippedNote.substr(0,8)+'..' : '' }}</span>
+                        v-if="scope.row.remark && scope.row.remark.length > 10">
+              <div v-html="scope.row.remark"></div>
+              <span slot="reference">{{ scope.row.remark ? scope.row.remark.substr(0,8)+'..' : '' }}</span>
             </el-popover>
             <span v-else>
-            {{ scope.row.shippedNote }}
+            {{ scope.row.remark }}
           </span>
           </template>
         </el-table-column>
 
         <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
 
-        <el-table-column prop="cartonQty" label="本次发货箱数" width="90"
+        <el-table-column prop="shippedCartonQty" label="本次发货箱数" width="90"
                          fixed="right" align="center"></el-table-column>
 
-        <el-table-column prop="qty" label="本次发货件数" width="90"
+        <el-table-column prop="shippedQty" label="本次发货件数" width="90"
                          fixed="right" align="center"></el-table-column>
 
         <!--默认操作列-->
@@ -203,11 +227,13 @@
   import supplierModel from '@/api/supplier'
   import planDetailDialog from './planDetailDialog'
   import {checkPermission} from "../../../../utils/permission";
+  import tableToolBar from '@/components/PhTableToolBar'
   import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
-      planDetailDialog
+      planDetailDialog,
+      tableToolBar
     },
     props: {
       primary: {
@@ -285,28 +311,39 @@
         if (this.primary) {
           //获取计划数据
           this.editObject = {}
+
+          this.data = [];
+
           // 采购单信息转化成发货单信息
-          this.editObject.name = this.primary[0].formatDeliveryTime + this.primary[0].supplier.name + '交货';
-          this.editObject.warehouseId = this.primary[0].procurementOrder.warehouseId + '';
-          this.editObject.supplierId = this.primary[0].supplierId + '';
-          this.editObject.supplier = this.primary[0].supplier;
-          this.editObject.expectTime = this.primary[0].formatDeliveryTime;
+          if (this.primary.length > 0) {
+            this.editObject.name = this.primary[0].formatDeliveryTime + this.primary[0].supplier.name + '交货';
+            this.editObject.warehouseId = this.primary[0].procurementOrder.warehouseId + '';
+            this.editObject.supplierId = this.primary[0].supplierId + '';
+            this.editObject.supplier = this.primary[0].supplier;
+            this.editObject.expectTime = this.primary[0].formatDeliveryTime;
+          }
+          this.primary.forEach(r => {
+            r.shippedCartonQty = r.cartonQty;
+            r.shippedQty = r.qty;
+            this.data.push(r);
+          })
 
           this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
           this.supplierSelectOptions = supplierModel.getSelectOptions();
+
           this.getList();
           this.loading = false;
         }
         else {
-          this.$message.error("无效的数据!");
+          this.getList();
+          this.editObject = {}
           this.loading = false;
         }
       },
 
       /********************* 表格相关方法  ***************************/
       /*获取列表*/
-      getList() {
-        this.data = this.primary;
+      getList(flg) {
         this.search();
         this.total = this.data.length || 0
         this.loading = false
@@ -356,9 +393,8 @@
           }
 
           if (column.property == 'cartonQty'
-            || column.property == 'orderCartonQty'
-            || column.property == 'noOrderCartonQty'
-            || column.property == 'planCartonQty') {
+            || column.property == 'shippedCartonQty'
+            || column.property == 'unCartonPlanQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -375,7 +411,7 @@
             }
           }
 
-          if (column.property == 'qty') {
+          if (column.property == 'qty' || column.property == 'unPlanQty' || column.property == 'shippedQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -481,21 +517,64 @@
         })
       },
 
+      onToolBarImportData(excelData) {
+
+        if (this.editObject.supplierId == null) {
+          this.$message.error("请选择供货商!");
+          return false;
+        }
+
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        // 导入数据
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          _res.skuCode = obj["SKU编码"];
+          _res.cartonQty = obj["本次发货箱数"];
+          _res.numberOfCarton = obj["装箱数"];
+          _res.remark = obj["备注"];
+          resData.push(_res);
+        });
+
+        let url = `/procurementDeliveryPlans/smartShipped/${this.editObject.supplierId}?relations=${JSON.stringify(["product", "cartonSpec", "creator", "procurementOrder", "supplier"])}`;
+
+        this.global.axios.put(url, resData)
+          .then(resp => {
+            this.data = resp.data || [];
+            loading.close();
+            this.getList();
+          })
+          .catch(err => {
+            loading.close();
+          })
+      },
+
       // 下单
       saveObject() {
         let _order = JSON.parse(JSON.stringify(this.editObject));
         _order.supplier = null;
         let _details = [];
         this.tableData.forEach(r => {
-          if (r.cartonQty > 0) {
+          if (r.shippedCartonQty > 0) {
             let _detail = {};
             _detail.productId = r.productId;
             _detail.cartonSpecId = r.cartonSpecId;
             _detail.numberOfCarton = r.numberOfCarton;
-            _detail.shippedCartonQty = r.cartonQty;
+            _detail.shippedCartonQty = r.shippedCartonQty;
             _detail.skuCode = r.product.skuCode;
-            _detail.shippedNote = r.shippedNote;
-            _detail.shippedCartonQty = r.cartonQty;
+            _detail.shippedNote = r.remark;
             _detail.procurementOrderId = r.procurementOrderId;
             _detail.procurementOrderCode = r.procurementOrderCode;
             _detail.procurementDeliveryPlanId = r.id;
