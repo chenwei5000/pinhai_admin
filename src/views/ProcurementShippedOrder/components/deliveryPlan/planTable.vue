@@ -486,7 +486,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty') {
+          if (column.property == 'cartonQty' || column.property == 'shippedCartonQty'  || column.property == 'unCartonPlanQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -503,7 +503,7 @@
             }
           }
 
-          if (column.property == 'qty') {
+          if (column.property == 'qty' || column.property == 'shippedQty' || column.property == 'unPlanQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

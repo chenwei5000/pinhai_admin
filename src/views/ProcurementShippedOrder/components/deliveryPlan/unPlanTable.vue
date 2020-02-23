@@ -77,6 +77,8 @@
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
       @cell-dblclick="handleDblclick"
+      show-summary
+      :summary-method="getSummaries"
       id="table"
     >
       <el-table-column prop="product.skuCode" label="SKU" sortable="custom" min-width="120" fixed="left" align="center">
@@ -551,6 +553,61 @@
                 this.$message.error("复制失败");
               })
         }
+      },
+
+
+      /*汇总数据*/
+      getSummaries(param) {
+        const {columns, data} = param;
+        const sums = [];
+
+        columns.forEach((column, index) => {
+
+          if (column.property == 'product.skuCode') {
+            const values = data.map(item => item[column.property]);
+            sums[index] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+
+            sums[index] = '合计: ' + sums[index] + ' 行';
+          }
+
+          if (column.property == 'cartonQty' || column.property == 'shippedCartonQty'  || column.property == 'orderCartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'qty' || column.property == 'shippedQty' || column.property == 'unPlanQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+        });
+
+        return sums;
       },
 
       /* 多选功能 */
