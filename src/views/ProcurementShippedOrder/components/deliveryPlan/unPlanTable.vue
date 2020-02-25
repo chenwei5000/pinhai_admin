@@ -113,6 +113,7 @@
       </el-table-column>
 
       <el-table-column prop="procurementOrder.code" label="采购编号" width="120" align="center"></el-table-column>
+      <el-table-column prop="product.name" label="产品名称" min-width="200" align="center"></el-table-column>
       <el-table-column prop="procurementOrder.name" label="采购单名称" min-width="150" align="center"></el-table-column>
 
       <el-table-column prop="cartonQty" label="采购箱数" width="100" align="center"></el-table-column>
