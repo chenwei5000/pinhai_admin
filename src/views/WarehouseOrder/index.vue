@@ -17,6 +17,9 @@
   import {checkPermission} from "../../utils/permission";
   import phEnumModel from '../../api/phEnum'
   import supplierModel from "../../api/supplier";
+  import currencyModel from "../../api/currency";
+  import cartonspecModel from "../../api/cartonspec";
+  import validRules from "../../components/validRules";
 
   export default {
     data() {
@@ -30,6 +33,7 @@
           hasNew: checkPermission('WarehouseOrderResource_create'),
           hasEdit: checkPermission('WarehouseOrderResource_update'),
           hasDelete: checkPermission('WarehouseOrderResource_remove'),
+
           // hasView: checkPermission('WarehouseOrderResource_get'),
           hasExport: true, //checkPermission('WarehouseOrderResource_export'),
 
@@ -65,6 +69,8 @@
             {prop: 'qty', label: '件数', 'min-width': 90, fixed: 'right'},
             {prop: 'usedQty', label: '消耗件数', 'min-width': 90, fixed: 'right'},
 
+
+
           ],
           // 搜索
           searchForm: [
@@ -75,6 +81,7 @@
               $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
               $el: {
                 op: 'eq',
+                style: 'width:160px',
                 filterable: true,
                 size: "mini",
                 placeholder: '请选择收货仓库'
@@ -85,6 +92,7 @@
               $id: 'code',
               label: '批次码',
               $el: {
+                style: 'width:160px',
                 op: 'bw',
                 size: "mini",
                 placeholder: '请输入批次码'
@@ -95,6 +103,7 @@
               $id: 'allocationCode',
               label: '调拨单',
               $el: {
+                style: 'width:160px',
                 op: 'bw',
                 size: "mini",
                 placeholder: '请输入调拨单编码'
@@ -106,11 +115,50 @@
               label: '类型',
               $options: phEnumModel.getSelectOptions("WarehouseOrderType"),
               $el: {
+                style: 'width:160px',
+                filterable: true,
                 op: 'eq',
                 size: "mini",
                 placeholder: '请选择类型'
               }
             },
+            {
+              $type: 'input',
+              $id: 'skuCode',
+              label: 'SKU编码',
+              $el: {
+                style: 'width:160px',
+                op: 'eq',
+                size: "mini",
+                placeholder: '请输入产品SKU编码'
+              }
+            },
+            {
+              $type: 'select',
+              $id: 'supplierId',
+              label: '供货商',
+              $options: supplierModel.getSelectOptions(),
+              $el: {
+                style: 'width:160px',
+                filterable: true,
+                op: 'eq',
+                size: "mini",
+                placeholder: '请选择类型'
+              }
+            },
+            {
+              $type: 'select',
+              $id: 'jobStatus',
+              label: '结算',
+              $options: phEnumModel.getSelectOptions("WarehouseOrderJobStatus"),
+              $el: {
+                style: 'width:160px',
+                op: 'eq',
+                size: "mini",
+                placeholder: '请选择类型'
+              }
+            },
+
             {
               $type: 'date-picker',
               $id: 'createTime',
@@ -129,34 +177,85 @@
                 'end-placeholder': '结束日期'
               }
             },
-            {
-              $type: 'select',
-              $id: 'supplierId',
-              label: '供货商',
-              $options: supplierModel.getSelectOptions(),
-              $el: {
-                op: 'eq',
-                size: "mini",
-                placeholder: '请选择类型'
-              }
-            },
-            {
-              $type: 'select',
-              $id: 'jobStatus',
-              label: '结算状态',
-              $options: phEnumModel.getSelectOptions("WarehouseOrderJobStatus"),
-              $el: {
-                op: 'eq',
-                size: "mini",
-                placeholder: '请选择类型'
-              }
-            },
-
-
           ],
           //修改或新增
           form: [
-            //
+            {
+              $type: 'select',
+              $id: 'currencyId',
+              label: '货币',
+              $el: {
+                filterable: true,
+                placeholder: '请选择货币,可筛选',
+                size: 'mini'
+              },
+              $options: currencyModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'price',
+              label: '采购价',
+              $el: {
+                placeholder: '请输入采购价'
+              },
+              rules: [
+                validRules.required,
+                validRules.number
+              ]
+            },
+            {
+              $type: 'select',
+              $id: 'cartonSpecId',
+              label: '箱规',
+              $el: {
+                filterable: true,
+                placeholder: '请选择箱规,可筛选',
+                size: 'mini'
+              },
+              $options: cartonspecModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'numberOfCarton',
+              label: '装箱数',
+              $el: {
+                placeholder: '请输入装箱数'
+              },
+              rules: [
+                validRules.required,
+                validRules.integer
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'qty',
+              label: '件数',
+              $el: {
+                placeholder: '请输入装箱数'
+              },
+              rules: [
+                validRules.required,
+                validRules.integer
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'usedQty',
+              label: '冲销数量',
+              $el: {
+                placeholder: '请输入冲销数量'
+              },
+              rules: [
+                validRules.required,
+                validRules.integer
+              ]
+            },
           ]
         }
       }
