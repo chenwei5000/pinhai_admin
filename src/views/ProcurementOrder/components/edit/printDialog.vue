@@ -234,6 +234,7 @@
                     <el-date-picker
                       v-model="printObject.deliveryTime"
                       name="deliveryTime"
+                      @input="updateInput"
                       type="date"
                       size="mini"
                       format="yyyy年M月d日"
@@ -255,6 +256,7 @@
                       v-model="printObject.effectiveDate"
                       @change="effectiveDateChange"
                       type="daterange"
+                      @input="updateInput"
                       size="mini"
                       format="yyyy年M月d日"
                       value-format="yyyy年M月d日"
@@ -294,10 +296,23 @@
 
               <el-row>
                 <el-col :md="24">
+                  <el-form-item label="结算要求" prop="paymentRequirement">
+                    <el-input v-model="printObject.paymentRequirement" type="textarea" rows="4"
+                              name="paymentRequirement"
+                              @input="updateInput"
+                              style="width: 800px" size="mini"
+                              placeholder="发货后供方需按要求开具增值税专用发票给需方， 款项发货后60天结算"></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+
+              <el-row>
+                <el-col :md="24">
                   <el-form-item label="质量要求" prop="qualityRequirement">
                     <el-input v-model="printObject.qualityRequirement" type="textarea" rows="4"
                               name="qualityRequirement"
-                              style="width: 1000px" size="mini" placeholder="默认为： 参考合同附页"></el-input>
+                              @input="updateInput"
+                              style="width: 800px" size="mini" placeholder="默认为： 参考合同附页"></el-input>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -407,14 +422,16 @@
       initData() {
 
         this.initContractInfo();
-
         this.initCategoryName();
-
-
       },
 
       /*获取明细列表*/
       initCategoryName() {
+        if (this.printObject != null && this.printObject.categoryName != null
+          && this.printObject.categoryName != '') {
+          return;
+        }
+
         let url = "/procurementOrderItems";
         let filters = [
           {
@@ -478,15 +495,45 @@
             let res = resp.data
             let data = res || []
             this.printObject = data[0] || null;
+            this.loading = false;
             this.initComplete = false;
 
             if (this.printObject == null) {
-              this.printObject.demanderName = this.primary.demanderName ? this.primary.demanderName : '深圳市品海电子商务有限公司';
-              this.printObject.demanderAddress = this.primary.demanderAddress ? this.primary.demanderAddress : '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
+              this.printObject = {};
+              this.printObject.demanderName = '深圳市品海电子商务有限公司';
+              this.printObject.demanderAddress = '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
               this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
               this.printObject.supplierName = this.primary.supplier.companyName;
               this.printObject.supplierAddress = this.primary.supplier.address;
               this.printObject.currency = this.primary.currency.name;
+              this.printObject.paymentRequirement = `发货后供方需按要求开具增值税专用发票给需方， 款项发货后${this.primary.accountPeriod}天结算`;
+              this.printObject.qualityRequirement = '参考合同附页';
+            }
+            else {
+              if (this.printObject.demanderName == null || this.printObject.demanderName == '') {
+                this.printObject.demanderName = '深圳市品海电子商务有限公司';
+              }
+              if (this.printObject.demanderAddress == null || this.printObject.demanderAddress == '') {
+                this.printObject.demanderName = '深圳市龙岗区坂田街道永香路江南大厦二楼212室';
+              }
+              if (this.printObject.demanderDeliveryAddress == null || this.printObject.demanderDeliveryAddress == '') {
+                this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
+              }
+              if (this.printObject.supplierName == null || this.printObject.supplierName == '') {
+                this.printObject.supplierName = this.primary.supplier.companyName;
+              }
+              if (this.printObject.supplierAddress == null || this.printObject.supplierAddress == '') {
+                this.printObject.supplierAddress = this.primary.supplier.address;
+              }
+              if (this.printObject.currency == null || this.printObject.currency == '') {
+                this.printObject.currency = this.primary.currency.name;
+              }
+              if (this.printObject.paymentRequirement == null || this.printObject.paymentRequirement == '') {
+                this.printObject.paymentRequirement = `发货后供方需按要求开具增值税专用发票给需方， 款项发货后${this.primary.accountPeriod}天结算`;
+              }
+              if (this.printObject.qualityRequirement == null || this.printObject.qualityRequirement == '') {
+                this.printObject.qualityRequirement = '参考合同附页';
+              }
             }
 
             if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null) {
