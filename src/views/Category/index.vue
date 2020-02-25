@@ -47,7 +47,7 @@
             {width: 30,type: checkPermission('CategoryResource_remove') ? 'selection' : '', hidden: !checkPermission('CategoryResource_remove')},
             {prop: 'name', label: '分类名称', 'min-width': 90, fixed: 'left'},
             {prop: 'materialName', label: '类型', width: 90},
-            {prop: 'user.name', label: '采购负责人', width: 90},
+            {prop: 'user.name', label: '采购执行', width: 90},
             {prop: 'harbour.name', label: '默认发货港口', width: 90},
             {
               prop: 'needMaterial',
@@ -95,10 +95,10 @@
             {
               $type: 'select',
               $id: 'userId',
-              label: '采购负责人',
+              label: '采购执行',
               $el: {
                 size: "mini",
-                placeholder: '请选择采购负责人,可筛选',
+                placeholder: '请选择采购执行,可筛选',
                 filterable: true
               },
               $options: userModel.getSelectOptions(),
