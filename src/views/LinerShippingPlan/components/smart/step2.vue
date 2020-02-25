@@ -268,6 +268,11 @@
             return 'danger-row';
           }
         }
+
+        if (row.replenishmentCartonQty - row.domesticStockCartonQty > 0) { //国内库存不足
+          return 'danger-row';
+        }
+
         return '';
       },
 
