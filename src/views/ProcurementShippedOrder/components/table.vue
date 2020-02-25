@@ -9,13 +9,20 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 150px" placeholder="请输入"></el-input>
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 180px" placeholder="请输入"></el-input>
       </el-form-item>
 
       <el-form-item label="物流单号">
-        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 150px"
+        <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 180px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
+
+      <el-form-item label="采购单编号">
+          <el-input v-model="searchParam.procurementOrderCode.value" clearable size="mini" style="width: 180px"
+                    placeholder="请输入采购单编号"></el-input>
+        </el-select>
+      </el-form-item>
+
 
       <el-form-item label="名称">
         <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 200px" placeholder="请输入名称"></el-input>
@@ -99,7 +106,6 @@
 
       <el-table-column prop="supplier.name" label="供货商" min-width="100"></el-table-column>
       <el-table-column prop="warehouse.name" label="收货仓库" min-width="100"></el-table-column>
-
       <el-table-column prop="shippedMsg" label="物流信息" min-width="200">
 
         <template slot-scope="scope">
@@ -278,6 +284,7 @@
           trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
           supplierId: {value: null, op: 'eq', id: 'supplierId'},
           warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          procurementOrderCode: {value: null, op: 'eq', id: 'procurementOrderCode'},
           status: {value: null, op: 'eq', id: 'status'},
           name: {value: null, op: 'bw', id: 'status'},
           code: {value: null, op: 'bw', id: 'code'},
@@ -334,6 +341,10 @@
           if (params.warehouseId) {
             this.searchParam.warehouseId.value = params.warehouseId;
           }
+          if (params.procurementOrderCode) {
+            this.searchParam.procurementOrderCode.value = params.procurementOrderCode;
+          }
+
         }
       }
 
@@ -396,6 +407,7 @@
         this.searchParam.supplierId.value = null;
         this.searchParam.warehouseId.value = null;
         this.searchParam.name.value = null;
+        this.searchParam.procurementOrderCode.value = null;
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
 
