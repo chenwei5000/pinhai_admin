@@ -92,6 +92,9 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="sumCartonSpecWeight" label="应发重量(Kg)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="应发体积(Cm³)" min-width="110" align="center"></el-table-column>
+
       <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110" align="center" fixed="right"></el-table-column>
       <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110" align="center" fixed="right"></el-table-column>
 
@@ -324,6 +327,23 @@
           }
 
           if (column.property == 'amount') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]);
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'sumCartonSpecWeight' || column.property == 'sumCartonVolume') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

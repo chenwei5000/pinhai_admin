@@ -169,6 +169,10 @@
       <el-table-column prop="shippedCartonQty" label="已交货箱数" width="100" align="center"></el-table-column>
       <el-table-column prop="shippedQty" label="已交货件数" width="100" align="center"></el-table-column>
 
+      <el-table-column prop="sumCartonSpecWeight" label="未交货重量(Kg)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="未交货体积(Cm³)" min-width="110" align="center"></el-table-column>
+
+
       <el-table-column prop="unCartonPlanQty" label="未交货箱数" width="100" align="center" fixed="right"></el-table-column>
       <el-table-column prop="unPlanQty" label="未交货件数" width="100" align="center" fixed="right"></el-table-column>
 
@@ -176,7 +180,7 @@
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right" align="center">
         <template slot-scope="scope">
 
-          <el-button v-if="scope.row.status == 0 && hasEdit" size="mini" icon="el-icon-edit" circle
+          <el-button v-if="(scope.row.status == 0 || scope.row.status == 1 || scope.row.status == 5) && hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
 
@@ -260,16 +264,16 @@
         'device', 'rolePower'
       ]),
       hasAdd() {
-        return true && this.searchParam.status.value == '0';
+        return this.searchParam.status.value == '0' || this.searchParam.status.value == '1' || this.searchParam.status.value == '5';
       },
       hasEdit() {
         return true;
       },
       hasDelete() {
-        return true;
+        return this.searchParam.status.value == '0';
       },
       hasOperation() {
-        return (this.hasEdit || this.hasDelete) && this.searchParam.status.value == '0';
+        return (this.hasEdit || this.hasDelete) && this.searchParam.status.value == '0' || this.searchParam.status.value == '1' || this.searchParam.status.value == '5';
       },
       hasExport() {
         return true;
@@ -521,6 +525,24 @@
               sums[index] = 'N/A';
             }
           }
+
+          if (column.property == 'sumCartonSpecWeight' || column.property == 'sumCartonVolume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]);
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
         });
 
         return sums;
