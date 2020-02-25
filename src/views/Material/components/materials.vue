@@ -65,6 +65,7 @@
             {prop: 'name', label: '原材料名称', 'min-width': 250},
             {prop: 'model', label: '型号'},
             {prop: 'color', label: '颜色'},
+            {prop: 'netWeight', label: '克重'},
             {prop: 'size', label: '尺码'},
             {prop: 'unit', label: '单位'},
             {prop: 'grossWeight', label: '毛重(Kg)', width: 80, hidden: true},
@@ -157,6 +158,18 @@
                 placeholder: '请输入颜色'
               },
             },
+            {
+              $type: 'input',
+              $id: 'netWeight',
+              label: '克重',
+              $el: {
+                placeholder: '请输入克重'
+              },
+              rules: [
+                validRules.number
+              ]
+            },
+
             {
               $type: 'input',
               $id: 'size',
