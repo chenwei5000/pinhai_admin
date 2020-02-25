@@ -24,7 +24,7 @@
       id="table"
     >
       <el-table-column prop="materialSkuCode" label="原料SKU" sortable min-width="150" fixed="left"></el-table-column>
-      <el-table-column prop="materialName" label="原料名称" min-width="200">
+      <el-table-column prop="material.name" label="原料名称" min-width="200">
       </el-table-column>
       <el-table-column prop="qty" label="数量" min-width="120"></el-table-column>
       <el-table-column prop="attritionRate" label="损耗率" min-width="80"></el-table-column>
