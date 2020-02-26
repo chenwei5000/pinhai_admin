@@ -1,5 +1,6 @@
 import XLSX from "xlsx";
 import global from '@/api/global'
+import {export_json_to_excel} from "./Export2Excel";
 
 require('script-loader!file-saver');
 
@@ -47,10 +48,10 @@ class WorkBook {
   }
 
   writeCellWithValue(location, type, value) {
-    if(type == "n" && value == null){
-       value = 0;
+    if (type == "n" && value == null) {
+      value = 0;
     }
-    if(type == "s" && value == null){
+    if (type == "s" && value == null) {
       value = '';
     }
 
@@ -100,7 +101,8 @@ class WorkBook {
 export function export_json_url_to_excel_with_formulae({
                                                          url,  //下载链接
                                                          excelField = [], //字段配置
-                                                         filename //导出文件名
+                                                         filename, //导出文件名
+                                                         tpl = false, //是否是模版
                                                        } = {}) {
   var excel = new WorkBook();
   excelField = excelField || [];
@@ -114,68 +116,81 @@ export function export_json_url_to_excel_with_formulae({
   });
   excel.addHeaderRow(header);
 
-  // 后台加载数据
-  global.axios.get(url).then(resp => {
-    let res = resp.data
-    let excelData = res || [];
 
-    try {
-      for (var row = 0; row < excelData.length; row++) {
-        const rowData = excelData[row];
+  if (tpl) {
+    let data = [];
+    export_json_to_excel({
+      header: header,
+      data,
+      filename: filename,
+      autoWidth: true,
+      bookType: 'xlsx'
+    })
+    return false;
+  } else {
+    // 后台加载数据
+    global.axios.get(url).then(resp => {
+      let res = resp.data
+      let excelData = res || [];
 
-        for (var col = 0; col < excelField.length; col++) {
-          var cell_ref = XLSX.utils.encode_cell({
-            r: row + 1,
-            c: col
-          });
-          const field = excelField[col];
+      try {
+        for (var row = 0; row < excelData.length; row++) {
+          const rowData = excelData[row];
 
-          if (field.type == 'f') { // 公式特殊处理
-            // 匹配列名
-            let formulae = field.formulae;
-            let rels = relation(formulae);
-            rels.forEach(source => {
-              let replaceStr = getLocation(findByName(source, excelField), row + 1);
-              formulae = replaceAll(formulae, source, replaceStr);
+          for (var col = 0; col < excelField.length; col++) {
+            var cell_ref = XLSX.utils.encode_cell({
+              r: row + 1,
+              c: col
             });
+            const field = excelField[col];
 
-            excel.writeCellWithFormulae(formulae, cell_ref);
-          }
-          else { //其它内容
-            // 解析值
-            let value = null;
-            if (field.attrName.indexOf(".") > -1) {
-              // 处理多级对象
-              let tmp = field.attrName.split(".");
-              let _obj = rowData;
-
-              tmp.forEach(obj => {
-                if (_obj[obj] != null) {
-                  _obj = _obj[obj];
-                } else {
-                  _obj = '';
-                }
+            if (field.type == 'f') { // 公式特殊处理
+              // 匹配列名
+              let formulae = field.formulae;
+              let rels = relation(formulae);
+              rels.forEach(source => {
+                let replaceStr = getLocation(findByName(source, excelField), row + 1);
+                formulae = replaceAll(formulae, source, replaceStr);
               });
-              value = _obj;
-            } else {
-              value = rowData[field.attrName];
+
+              excel.writeCellWithFormulae(formulae, cell_ref);
             }
-            excel.writeCellWithValue(cell_ref, field.type, value);
+            else { //其它内容
+              // 解析值
+              let value = null;
+              if (field.attrName.indexOf(".") > -1) {
+                // 处理多级对象
+                let tmp = field.attrName.split(".");
+                let _obj = rowData;
+
+                tmp.forEach(obj => {
+                  if (_obj[obj] != null) {
+                    _obj = _obj[obj];
+                  } else {
+                    _obj = '';
+                  }
+                });
+                value = _obj;
+              } else {
+                value = rowData[field.attrName];
+              }
+              excel.writeCellWithValue(cell_ref, field.type, value);
+            }
           }
         }
       }
-    }
-    catch (e) {
-      console.log(e);
-    }
+      catch (e) {
+        console.log(e);
+      }
 
-    excel.addSheet('Sheet1');
-    excel.cahngeRef(`A1:${getLocation(excelField.length - 1, excelData.length + 1)}`);
-    return excel.download(filename);
-  })
-    .catch(err => {
+      excel.addSheet('Sheet1');
+      excel.cahngeRef(`A1:${getLocation(excelField.length - 1, excelData.length + 1)}`);
+      return excel.download(filename);
+    })
+      .catch(err => {
 
-    });
+      });
+  }
 }
 
 

@@ -113,8 +113,10 @@
 
       <tableToolBar
         ref="tableToolBar"
+        :hasExportTpl="true"
         :hasImport="true"
         @onToolBarImportData="onToolBarImportData"
+        @onToolBarDownloadTpl="onToolBarDownloadTpl"
       >
       </tableToolBar>
 
@@ -228,7 +230,7 @@
   import planDetailDialog from './planDetailDialog'
   import {checkPermission} from "../../../../utils/permission";
   import tableToolBar from '@/components/PhTableToolBar'
-  import {getObjectValueByArr} from "../../../../utils";
+  import {getObjectValueByArr, parseTime} from "../../../../utils";
 
   export default {
     components: {
@@ -514,6 +516,23 @@
           }
         }).catch(er => {
           /*取消*/
+        })
+      },
+
+      onToolBarDownloadTpl() {
+        import('@/vendor/Export2ExcelPinHai').then(excel => {
+          this.loading = true;
+          excel.export_json_url_to_excel_with_formulae({
+            url: '',
+            excelField: [{'attrName': 'skuCode', 'type': 's', 'name': '#SKU编码#'},
+              {'attrName': 'numberOfCarton', 'type': 's', 'name': '#装箱数#'},
+              {'attrName': 'cartonQty', 'type': 's', 'name': '#本次发货箱数#'},
+              {'attrName': 'remark', 'type': 's', 'name': '#备注#'},
+            ],
+            filename: `发货计划-${parseTime(new Date(), '{y}-{m}-{d}')}`,
+            tpl: true,
+          });
+          this.loading = false;
         })
       },
 

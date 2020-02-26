@@ -320,7 +320,8 @@ export function export_el_table_to_excel({
 export function export_json_url_to_excel_with_formulae({
                                                          url,  //下载链接
                                                          excelField = [], //字段配置
-                                                         filename //导出文件名
+                                                         filename, //导出文件名
+                                                         tpl = false, //是否是模版
                                                        } = {}) {
 
   var ws_name = "SheetJS";
@@ -330,7 +331,6 @@ export function export_json_url_to_excel_with_formulae({
 
   // 写入标题
   let header = [];
-  console.log(excelField);
 
   excelField.forEach(r => {
     // 去掉头尾 #
@@ -342,35 +342,48 @@ export function export_json_url_to_excel_with_formulae({
   //let excel = new WorkBook()
   // 后天加载数据
 
-  let excelData = [];
-  global.axios.get(url)
-    .then(resp => {
-      let res = resp.data
-      excelData = res || []
-      excelData = excelData.map(v => excelField.map(j => {
-        let _val;
-        if (j.indexOf(".") > -1) {
-          let tmp = j.split(".");
-          let _obj = v;
-
-          tmp.forEach(obj => {
-            if (_obj[obj] != null) {
-              _obj = _obj[obj];
-            } else {
-              _obj = '';
-            }
-          });
-
-          _val = _obj;
-        } else {
-          _val = v[j];
-        }
-        return _val;
-      }));
+  if (tpl) {
+    let data = [];
+    export_json_to_excel({
+      header: header,
+      data,
+      filename: filename,
+      autoWidth: true,
+      bookType: 'xlsx'
     })
-    .catch(err => {
+    return false;
 
-    });
+  } else {
+    let excelData = [];
+    global.axios.get(url)
+      .then(resp => {
+        let res = resp.data
+        excelData = res || []
+        excelData = excelData.map(v => excelField.map(j => {
+          let _val;
+          if (j.indexOf(".") > -1) {
+            let tmp = j.split(".");
+            let _obj = v;
+
+            tmp.forEach(obj => {
+              if (_obj[obj] != null) {
+                _obj = _obj[obj];
+              } else {
+                _obj = '';
+              }
+            });
+
+            _val = _obj;
+          } else {
+            _val = v[j];
+          }
+          return _val;
+        }));
+      })
+      .catch(err => {
+
+      });
+  }
 }
 
 
