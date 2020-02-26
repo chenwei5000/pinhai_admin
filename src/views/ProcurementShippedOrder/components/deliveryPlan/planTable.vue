@@ -166,15 +166,15 @@
       <el-table-column prop="cartonQty" label="计划箱数" width="100" align="center"></el-table-column>
       <el-table-column prop="qty" label="计划件数" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="shippedCartonQty" label="已交货箱数" width="100" align="center"></el-table-column>
-      <el-table-column prop="shippedQty" label="已交货件数" width="100" align="center"></el-table-column>
+      <el-table-column prop="shippedCartonQty" label="已发货箱数" width="100" align="center"></el-table-column>
+      <el-table-column prop="shippedQty" label="已发货件数" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="sumCartonSpecWeight" label="未交货重量(Kg)" min-width="110" align="center"></el-table-column>
-      <el-table-column prop="sumCartonVolume" label="未交货体积(Cm³)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonSpecWeight" label="未发货重量(Kg)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="未发货体积(Cm³)" min-width="110" align="center"></el-table-column>
 
 
-      <el-table-column prop="unCartonPlanQty" label="未交货箱数" width="100" align="center" fixed="right"></el-table-column>
-      <el-table-column prop="unPlanQty" label="未交货件数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="unCartonPlanQty" label="未发货箱数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="unPlanQty" label="未发货件数" width="100" align="center" fixed="right"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="100" fixed="right" align="center">
@@ -526,7 +526,7 @@
             }
           }
 
-          if (column.property == 'sumCartonSpecWeight' || column.property == 'sumCartonVolume') {
+          if (column.property == 'sumCartonSpecWeight') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -537,7 +537,24 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index]);
+              sums[index] = currency(sums[index]) + ' Kg';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'sumCartonVolume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' Cm³';
             } else {
               sums[index] = 'N/A';
             }

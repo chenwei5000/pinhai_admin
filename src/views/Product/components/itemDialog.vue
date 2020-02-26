@@ -39,10 +39,10 @@
               <el-input-number v-model="detailItem.qty"
                                size="mini"
                                style="width: 200px;"
-                               :precision="0"
+                               :precision="3"
                                :min="1"
                                :step="1"
-                               :max="1000" label="请填写数量">
+                               :max="10000" label="请填写数量">
               </el-input-number>
 
               <el-tooltip class="item" effect="light" content="一个产品对应多少原料." placement="right">

@@ -33,6 +33,21 @@
 
         <el-row>
           <el-col :md="12">
+            <el-form-item label="计划箱数" prop="cartonQty" size="mini">
+              <span style="font-size: 12px">{{detailItem.cartonQty}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="12">
+            <el-form-item label="已发货箱数" prop="shippedCartonQty" size="mini">
+              <span style="font-size: 12px">{{detailItem.shippedCartonQty}}</span>
+            </el-form-item>
+          </el-col>
+
+        </el-row>
+
+        <el-row>
+          <el-col :md="12">
             <el-form-item label="箱规" prop="cartonSpecId" size="mini">
 
               <el-select filterable v-model="detailItem.cartonSpecId" placeholder="外箱包装材料规格,可筛选"
@@ -194,7 +209,7 @@
 
         // 资源URL
         url: "/procurementDeliveryPlans",
-        relations: ["product"],  // 关联对象
+        relations: ["product", "procurementOrderItem"],  // 关联对象
         //明细对象ID
         detailItemId: null,
         //明细对象
@@ -259,6 +274,9 @@
               this.detailItem.skuCode= data.product.skuCode;
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.deliveryTime = data.formatDeliveryTime;
+
+              console.log(this.detailItem);
+
               this.$forceUpdate();
               this.loading = false
             })
