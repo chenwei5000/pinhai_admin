@@ -119,6 +119,9 @@
       <el-table-column prop="cartonQty" label="采购箱数" width="100" align="center"></el-table-column>
       <el-table-column prop="orderCartonQty" label="已确认箱数" width="100" align="center"></el-table-column>
 
+      <el-table-column prop="unOrderCartonQty" label="未确认箱数" width="100" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="unOrderQty" label="未确认件数" width="100" align="center" fixed="right"></el-table-column>
+
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="50" fixed="right" align="center">
         <template slot-scope="scope">
@@ -573,7 +576,7 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'cartonQty' || column.property == 'shippedCartonQty'  || column.property == 'orderCartonQty') {
+          if (column.property == 'cartonQty' || column.property == 'shippedCartonQty' ||  column.property == 'unOrderCartonQty' || column.property == 'orderCartonQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -590,7 +593,7 @@
             }
           }
 
-          if (column.property == 'qty' || column.property == 'shippedQty' || column.property == 'unPlanQty') {
+          if (column.property == 'qty' || column.property == 'shippedQty' || column.property == 'unOrderQty' || column.property == 'unPlanQty') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {

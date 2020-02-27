@@ -45,11 +45,12 @@
 
 
     <!--编辑采购计划对话框-->
-    <editPlanDialog @modifyCBEvent="modifyPlanCBEvent" ref="editPlanDialog">
+    <editPlanDialog @modifyCBEvent="modifyCBEvent" ref="editPlanDialog">
     </editPlanDialog>
 
+
     <!--编辑采购创建对话框-->
-    <procurementOrderCreateDialog @modifyCBEvent="modifyPlanCBEvent" ref="procurementOrderCreateDialog">
+    <procurementOrderCreateDialog @modifyCBEvent="modifyCBEvent" ref="procurementOrderCreateDialog">
     </procurementOrderCreateDialog>
 
 
@@ -60,10 +61,6 @@
     <!--编辑对话框-->
     <paymentDialog ref="paymentDialog">
     </paymentDialog>
-
-    <!--编辑对话框-->
-    <procurementShippedOrderEditDialog ref="procurementShippedOrderEditDialog">
-    </procurementShippedOrderEditDialog>
 
     <!--采购单待发货->创建发货计划-编辑对话框-->
     <procurementShippedOrderExecutingDialog ref="procurementShippedOrderExecutingDialog">
@@ -101,12 +98,11 @@
 
 <script>
 
+  // 采购计划
   import editPlanDialog from '@/views/ProcurementPlan/components/edit/dialog';
+  // 采购单
   import procurementOrderCreateDialog from '@/views/ProcurementOrder/components/create/dialog';
-
-  import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
   import procurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
-  import procurementShippedOrderEditDialog from '@/views/ProcurementShippedOrder/components/order/dialog'
   import procurementShippedOrderExecutingDialog from '@/views/ProcurementShippedOrder/components/create/dialog'
   import procurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
   import procurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
@@ -116,6 +112,7 @@
   import financeBillPaymentDialog from '@/views/FinanceBill/components/paymentBill/payment/dialog'
   import settlementBillViewDialog from '@/views/SettlementBill/components/view/dialog'
   import logisticPaymentBillPaymentDialog from '@/views/FinanceBill/components/logisticPaymentBill/payment/dialog'
+  import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
 
 
   import {parseLineBreak} from '@/utils';
@@ -128,12 +125,20 @@
   }
 
   export default {
+
+    props: {
+      // 面板类型
+      panelType: {
+        type: String,
+        default: ''
+      }
+    },
+
     components: {
       editPlanDialog,
       procurementOrderCreateDialog,
       procurementOrderpaymentDialog,
       paymentDialog,
-      procurementShippedOrderEditDialog,
       procurementShippedOrderExecutingDialog,
       procurementShippedOrderExecutingEditDialog,
       procurementReceivedOrderEditDialog,
@@ -153,6 +158,7 @@
         url: '/userNotices',
         visibility: 'all',
         filters,
+        selTodo: {},
         todos: []
       }
     },
@@ -206,7 +212,65 @@
             .get(url)
             .then(resp => {
               let res = resp.data || [];
-              this.todos = res || [];
+              this.todos = [];
+              res.forEach(obj => {
+                if (obj && obj.notice) {
+                  if (this.panelType == '') {
+                    //通用
+                    this.todos.push(obj);
+                  }
+                  else if (this.panelType == 'sales') {
+                    // 销售
+                    if (obj.notice.targetType == "PROCUREMENT_PLAN" ||
+                        obj.notice.targetType == "LINERSHIPPING_PLAN") {
+                      this.todos.push(obj);
+                    }
+                  }
+                  else if (this.panelType == 'purchases') {
+                    // 采购
+                    if (obj.notice.targetType == "PROCUREMENT_PLAN" ||
+                      obj.notice.targetType == "LINERSHIPPING_PLAN" ||
+                      obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE" ||
+                      obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_AGREE" ||
+                      obj.notice.targetType == "PROCUREMENT_ORDER"
+                    ) {
+                      this.todos.push(obj);
+                    }
+                  }
+                  else if (this.panelType == 'documentary') {
+                    // 跟单
+                    this.todos.push(obj);
+                  }
+                  else if (this.panelType == 'finance') {
+                    // 财务
+                    this.todos.push(obj);
+                  }
+                  else if (this.panelType == 'stockManager') {
+                    // 库管
+                    this.todos.push(obj);
+                  }
+                  else {
+
+
+                    //obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_APPLY" ||
+                    // inventoryTask("INVENTORY_TASK", "盘点任务"),
+                    // procurementShippedOrder("PROCUREMENT_SHIPPED_ORDER", "采购发货单"),
+                    // warehouseAllocation("WAREHOUSE_ALLOCATION", "调拨单"),
+                    // returnOrder("RETURN_ORDER", "退货单"),
+                    // financeOrder("FINANCE_ORDER", "采购预付款账单"),
+                    // financeOrderFlowOver("FINANCE_ORDER_FLOW_OVER", "采购预付款账单-完成付款"),
+                    // dateConfirm("DATE_CONFIRM", "确认完成日期"),
+                    // shippedPlanSuccess("SHIPPED_PLAN_SUCCESS", "创建发货计划成功"),
+                    // shippedPlanImplement("SHIPPED_PLAN_IMPLEMENT","执行发货计划"),
+                    // procurementWarehouseSuccess("PROCUREMENT_WAREHOUSE_SUCCESS","确认收货"),
+                    // domesticAllocationConfirmShipped("DOMESTIC_ALLOCATION_CONFIRM","国内调拨执行发货"),
+                    // logisticPaymentOrderApply("LOGISTIC_PAYMENT_ORDER_APPLY", "物流付款单申请待确认"),
+                    // logisticPaymentOrderRefuse("LOGISTIC_PAYMENT_ORDER_REFUSE", "物流付款单申请拒绝"),
+                    // logisticPaymentOrderAgree("LOGISTIC_PAYMENT_ORDER_AGREE", "物流付款单已付款");
+
+                  }
+                }
+              });
             })
             .catch(err => {
 
@@ -220,37 +284,55 @@
           this.global.axios
             .put(this.url + '/read/' + val.id)
             .then(res => {
-              instance.confirmButtonLoading = false;
-              done();
+              if (instance) {
+                instance.confirmButtonLoading = false;
+                done();
+              }
               this.initData();
             })
             .catch(er => {
-              instance.confirmButtonLoading = false
+              if (instance) {
+                instance.confirmButtonLoading = false;
+              }
             })
         }
       },
       // 修改完成
-      modifyPlanCBEvent() {
-
+      modifyCBEvent() {
+        this.doComplete(this.selTodo);
       },
+      // 处理任务
       goTodo(val) {
+        this.selTodo = val;
         if (val && val.notice) {
+          // 采购计划 审核通过
           if (val.notice.targetType == "PROCUREMENT_PLAN") {
-            if (val.notice.action == "agree" && this.hasSales == false) {
+            // 采购面板，下采购单, TODO: 后台处理自动完成
+            if (this.panelType == 'purchases') {
               this.$refs.procurementOrderCreateDialog.openDialog(val.notice.target);
+              return false;
             }
             else {
+              // 审核采购、查看计划
               this.$refs.editPlanDialog.openDialog(val.notice.target);
+              this.doComplete(val);
+              return false;
             }
-            return;
-          }
-          //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
-          if (val.notice.targetType == "PROCUREMENT_ORDER") {
-            this.$refs.procurementShippedOrderEditDialog.openDialog(val.notice.target);
-            return;
           }
 
+          //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
+          if (val.notice.targetType == "PROCUREMENT_ORDER") {
+            this.$router.push({
+              path: '/m2/ProcurementShippedOrder_index',
+              query: {q: 'procurementOrder_code~PO20200221180001,'}
+            });
+            this.doComplete(val);
+            return false;
+          }
+
+          // 采购预付款申请
           if (val.notice.targetType == "FINANCE_ORDER") {
+            // 财务付款
             this.$refs.paymentDialog.openDialog(val.notice.target);
             return;
           }

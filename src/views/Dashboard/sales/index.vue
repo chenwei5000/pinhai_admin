@@ -72,7 +72,7 @@
       </el-col>
       <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}"
               style="margin-bottom:32px;">
-        <todo-list/>
+        <todo-list panelType="sales"/>
       </el-col>
     </el-row>
 
