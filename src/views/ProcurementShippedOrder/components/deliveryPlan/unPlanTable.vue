@@ -119,6 +119,9 @@
       <el-table-column prop="cartonQty" label="采购箱数" width="100" align="center"></el-table-column>
       <el-table-column prop="orderCartonQty" label="已确认箱数" width="100" align="center"></el-table-column>
 
+      <el-table-column prop="sumCartonSpecWeight" label="未确认重量(Kg)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="未确认体积(Cm³)" min-width="110" align="center"></el-table-column>
+
       <el-table-column prop="unOrderCartonQty" label="未确认箱数" width="100" align="center" fixed="right"></el-table-column>
       <el-table-column prop="unOrderQty" label="未确认件数" width="100" align="center" fixed="right"></el-table-column>
 
@@ -240,7 +243,7 @@
         url: '/procurementOrderItems/listNoDeliveryPlans', // 资源URL
         downloadUrl: "", //下载Url
         countUrl: '/procurementOrderItems/countNoDeliveryPlans', // 资源URL
-        relations: ["product", "procurementOrder", "procurementOrder.creator", "procurementOrder.supplier", "product.cartonSpec"],  // 关联对象
+        relations: ["product", "cartonSpec", "procurementOrder", "procurementOrder.creator", "procurementOrder.supplier", "product.cartonSpec"],  // 关联对象
         data: [],
         phSort: {prop: "procurementOrder.otdTime", order: "asc"},
         // 表格加载效果
@@ -605,6 +608,40 @@
                 }
               }, 0);
               sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'sumCartonSpecWeight') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' Kg';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'sumCartonVolume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' Cm³';
             } else {
               sums[index] = 'N/A';
             }
