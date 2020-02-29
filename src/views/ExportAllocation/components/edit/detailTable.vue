@@ -397,7 +397,7 @@
         this.data.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = item.cartonQty;
           arr[index].shippedQty = item.qty;
-          if (arr[index].stock >= arr[index].shippedCartonQty) {
+          if (arr[index].stock >= arr[index].shippedQty) {
             arr[index].sufficientStock = "是";
           }
           else {
@@ -411,7 +411,7 @@
         this.data.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = 0;
           arr[index].shippedQty = 0;
-          if (arr[index].stock >= arr[index].shippedCartonQty) {
+          if (arr[index].stock >= arr[index].shippedQty) {
             arr[index].sufficientStock = "是";
           }
           else {
