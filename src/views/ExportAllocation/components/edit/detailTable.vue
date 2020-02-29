@@ -3,7 +3,7 @@
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
     <el-form inline
-             ref="editObject"
+             ref="searchForm"
              label-position="right"
              label-width="120px"
     >
@@ -47,6 +47,22 @@
             <span style="font-size: 12px">{{primary.linerShippingPlan.boxNumber}}</span>
           </el-form-item>
         </el-col>
+      </el-row>
+
+      <el-row>
+        <el-form-item label="SKU">
+          <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" size="mini" clearable></el-input>
+        </el-form-item>
+
+        <el-form-item label="是否缺货">
+          <el-checkbox v-model="searchParam.outOfStock"></el-checkbox>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+          <el-button @click="resetSearch" size="mini">重置</el-button>
+        </el-form-item>
+
       </el-row>
     </el-form>
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
@@ -172,6 +188,10 @@
         relations: ["product", "cartonSpec", "warehouseAllocation"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
+        searchParam: {
+          skuCode: null,
+          outOfStock: null,
+        },
         // 表格加载效果
         loading: false
       }
@@ -340,7 +360,36 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
+        if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.product && item.product.skuCode.indexOf(this.searchParam.skuCode) !== -1) {
+                return true;
+              }
+            });
+        }
+
+        if (this.searchParam.outOfStock != null && this.searchParam.outOfStock) {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.sufficientStock == '否') {
+                return true;
+              }
+            });
+        }
       },
+
+      /*本地重置搜索*/
+      resetSearch() {
+        this.$refs.searchForm.resetFields();
+
+        //TODO:根据实际情况调整
+        this.searchParam.skuCode = null;
+        this.searchParam.outOfStock = null;
+
+        this.search();
+      },
+
       onAll() {
         this.tableData.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = item.cartonQty;
