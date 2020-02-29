@@ -246,6 +246,9 @@
       },
 
       handleDblclick(row, column, cell, event) {
+        if ('shippedCartonQty' == column.property) {
+          return
+        }
         let val = getObjectValueByArr(row, column.property);
         if (val) {
           this.$copyText(val)
@@ -359,7 +362,7 @@
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {
-        this.tableData = this.data;
+        this.tableData = JSON.parse(JSON.stringify(this.data));
         if (this.searchParam.skuCode != null && this.searchParam.skuCode != '') {
           this.tableData = this.tableData.filter(
             item => {
@@ -391,38 +394,48 @@
       },
 
       onAll() {
-        this.tableData.forEach((item, index, arr) => {
+        this.data.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = item.cartonQty;
           arr[index].shippedQty = item.qty;
-          if(arr[index].stock >= arr[index].shippedCartonQty){
+          if (arr[index].stock >= arr[index].shippedCartonQty) {
             arr[index].sufficientStock = "是";
           }
-          else{
+          else {
             arr[index].sufficientStock = "否";
           }
         });
+        this.tableData = this.data;
       },
 
       onClear() {
-        this.tableData.forEach((item, index, arr) => {
+        this.data.forEach((item, index, arr) => {
           arr[index].shippedCartonQty = 0;
           arr[index].shippedQty = 0;
-          if(arr[index].stock >= arr[index].shippedCartonQty){
+          if (arr[index].stock >= arr[index].shippedCartonQty) {
             arr[index].sufficientStock = "是";
           }
-          else{
+          else {
             arr[index].sufficientStock = "否";
           }
         });
+        this.tableData = this.data;
       },
       onShippedCartonQty(row) {
         row.shippedQty = (row.shippedCartonQty * row.numberOfCarton).toFixed(0);
-        if(row.stock >= row.shippedCartonQty){
-            row.sufficientStock = "是";
+        if (row.stock >= row.shippedQty) {
+          row.sufficientStock = "是";
         }
-        else{
+        else {
           row.sufficientStock = "否";
         }
+
+        this.data.forEach((item, index, arr) => {
+          if (arr[index].id == row.id) {
+            arr[index].shippedCartonQty = row.shippedCartonQty;
+            arr[index].shippedQty = row.shippedQty;
+            arr[index].sufficientStock = row.sufficientStock;
+          }
+        });
       }
     }
   }

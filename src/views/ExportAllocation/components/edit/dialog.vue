@@ -152,7 +152,7 @@
       //确认发货
       onComplete() {
         // 明细对象
-        let details = this.$refs.itemTable.tableData;
+        let details = this.$refs.itemTable.data;
         this.$refs.saveDialog.openDialog(this.primary, details);
       },
 

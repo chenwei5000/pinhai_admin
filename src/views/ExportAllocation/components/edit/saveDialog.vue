@@ -96,8 +96,8 @@
         this.primary.allCartonQty = 0;
         this.details.forEach(r => {
           this.primary.useTrayQty = r.useTrayQty;
-          this.primary.allQty += r.shippedQty;
-          this.primary.allCartonQty += r.shippedCartonQty;
+          this.primary.allQty += parseInt(r.shippedQty);
+          this.primary.allCartonQty += parseFloat(r.shippedCartonQty);
         });
 
         this.initData();
