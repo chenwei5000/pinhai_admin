@@ -135,21 +135,26 @@
       </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="80" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="150" fixed="right"  align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
+                     @click="onDefaultEdit(scope.row)" type="primary">
           </el-button>
-
           <el-button v-if="hasView" size="mini" icon="el-icon-view" circle
-                     @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-view">
+                     @click="onDefaultEdit(scope.row)" type="primary">
           </el-button>
-
           <el-button v-if="hasDelete" type="danger" size="mini"
-                     id="ph-table-del" icon="el-icon-delete" circle
+                      icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
+          <a target="_blank"
+             :href="global.generateUrl('/pdfs/productBarCode')+'/'+ scope.row.id + '?accessToken=' + $store.state.user.token">
+            <el-button size="mini" icon="el-icon-printer" circle type="success">
+            </el-button>
+          </a>
+
+
         </template>
       </el-table-column>
     </el-table>
