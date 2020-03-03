@@ -162,6 +162,7 @@
       <el-table-column prop="cartonSpec.code" label="箱规" min-width="100" align="center"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80" align="center"></el-table-column>
       <el-table-column prop="creator.name" label="创建人" min-width="80" align="center"></el-table-column>
+      <el-table-column prop="id" label="ID" sortable="custom" width="100" align="center"></el-table-column>
 
       <el-table-column prop="cartonQty" label="计划箱数" width="100" align="center"></el-table-column>
       <el-table-column prop="qty" label="计划件数" width="100" align="center"></el-table-column>
