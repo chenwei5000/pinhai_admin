@@ -12,7 +12,7 @@ let excelField = [
   {'attrName': 'demandedCartonQty', 'type': 'n', 'name': '#需求总量(箱)#'},
   {'attrName': 'amazonTotalStock', 'type': 'n', 'name': '#亚马逊总库存(件)#'},
   {'attrName': 'domesticStockCartonQty', 'type': 'n', 'name': '#国内库存(箱)#'},
-  {'attrName': 'unfinishedPlanQty', 'type': 'n', 'name': '#未完成采购计划数(箱)#'},
+  {'attrName': 'unfinishedPlanCartonQty', 'type': 'n', 'name': '#未完成采购计划数(箱)#'},
   {'attrName': 'cartonQty', 'type': 'n', 'name': '#采购箱数#'},
   {
     'attrName': '', 'type': 'f', 'name': '#采购件数-公式#',
