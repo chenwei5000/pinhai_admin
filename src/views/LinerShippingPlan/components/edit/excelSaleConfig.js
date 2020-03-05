@@ -32,7 +32,7 @@ let excelField = [
     'type': 'f',
     'name': '#应发体积(m³)#',
     'relation': ['#应发箱数#', '#单箱体积(m³)#'],
-    'formulae': 'ROUNDUP(#单箱体积(m³)#*#应发箱数#,2)'
+    'formulae': 'ROUND(#单箱体积(m³)#*#应发箱数#,8)'
   },
   {
     'attrName': 'sendNumFor',
