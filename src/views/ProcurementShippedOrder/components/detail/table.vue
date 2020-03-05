@@ -343,7 +343,7 @@
             }
           }
 
-          if (column.property == 'sumCartonSpecWeight' || column.property == 'sumCartonVolume') {
+          if (column.property == 'sumCartonSpecWeight') {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
@@ -354,7 +354,24 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index]);
+              sums[index] = currency(sums[index]) + ' Kg';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'sumCartonVolume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' Cm³';
             } else {
               sums[index] = 'N/A';
             }

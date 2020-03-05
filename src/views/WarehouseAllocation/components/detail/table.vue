@@ -58,9 +58,9 @@
       </el-table-column>
 
 
-      <el-table-column prop="sortNum" label="序号" width="50" align="center"></el-table-column>
+      <el-table-column prop="sortNum" label="序号" width="50" align="center" fixed="left"></el-table-column>
 
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
+      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150" fixed="left">
       </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40">
@@ -78,11 +78,12 @@
       </el-table-column>
 
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
-
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80" align="center"></el-table-column>
-      <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="90" align="center"></el-table-column>
-      <el-table-column prop="shippedQty" sortable label="调拨件数" min-width="90" align="center"></el-table-column>
       <el-table-column prop="stock" label="当前库存" min-width="90" align="center"></el-table-column>
+
+      <el-table-column prop="sumCartonSpecWeight" label="应发重量(Kg)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="应发体积(Cm³)" min-width="110" align="center"></el-table-column>
+
 
       <el-table-column prop="remark" label="备注" width="130">
         <template slot-scope="scope">
@@ -96,6 +97,9 @@
           </span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="shippedCartonQty" label="调拨箱数" min-width="90" align="center" fixed="right"></el-table-column>
+      <el-table-column prop="shippedQty" sortable label="调拨件数" min-width="90" align="center" fixed="right"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -334,6 +338,39 @@
             }
           }
 
+          if (column.property == 'sumCartonSpecWeight') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' Kg';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'sumCartonVolume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' Cm³';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
         });
 
         return sums;
