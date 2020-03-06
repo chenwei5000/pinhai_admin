@@ -300,13 +300,15 @@
               if (
                 warehouse.type == "工厂仓" ||
                 warehouse.type == "普通" ||
-                warehouse.type == "虚拟仓"
+                warehouse.type == "虚拟仓" ||
+                warehouse.type == "海外仓"
               ) {
                 this.fromWarehouses.push({
                   value: warehouse.id,
                   label: warehouse.name
                 });
-              } else if (warehouse.type == "海外仓") {
+              }
+              if (warehouse.type == "海外仓") {
                 this.toWarehouses.push({
                   value: warehouse.id,
                   label: warehouse.name
