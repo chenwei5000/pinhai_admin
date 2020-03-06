@@ -26,8 +26,8 @@
     data(){
       return {
         number: 0,
-        relations: null ,
-        filters: null,
+        relations: {} ,
+        filters: [],
       }
     },
 
@@ -49,8 +49,8 @@
     methods: {
       initData(){
         let countUrl = "/procurementOrderItems/countNoDeliveryPlans";
-        countUrl += "?relations=" + JSON.stringify(this.relations);
-        countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
+        //countUrl += "?relations=" + JSON.stringify(this.relations);
+        //countUrl += "&filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
         this.global.axios
           .get(countUrl)
           .then(resp => {

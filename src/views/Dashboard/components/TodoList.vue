@@ -48,10 +48,25 @@
     <editPlanDialog @modifyCBEvent="modifyCBEvent" ref="editPlanDialog">
     </editPlanDialog>
 
-
     <!--编辑采购创建对话框-->
-    <procurementOrderCreateDialog @modifyCBEvent="modifyCBEvent" ref="procurementOrderCreateDialog">
+    <procurementOrderCreateDialog @createCBEvent="modifyCBEvent" ref="procurementOrderCreateDialog">
     </procurementOrderCreateDialog>
+
+    <!--采购入库待收货-发货计划-> 执行发货-> 消息给对应采购单创建人、指派人-编辑对话框-->
+    <procurementReceivedOrderEditDialog @modifyCBEvent="modifyCBEvent" ref="procurementReceivedOrderEditDialog">
+    </procurementReceivedOrderEditDialog>
+
+    <!--查看采购入库完成状态对话框-->
+    <procurementReceivedOrderViewDialog ref="procurementReceivedOrderViewDialog">
+    </procurementReceivedOrderViewDialog>
+
+    <!--调拨入库-待收货-确认收货对话框框 -->
+    <allocationReceivedEditDialog @modifyCBEvent="modifyCBEvent" ref="allocationReceivedEditDialog">
+    </allocationReceivedEditDialog>
+
+    <!--弹窗:出口调拨-待发货-确认发货 -->
+    <exportAllocationEditDialog @modifyCBEvent="modifyCBEvent" ref="exportAllocationEditDialog">
+    </exportAllocationEditDialog>
 
 
     <!--预付款申请的编辑对话框-->
@@ -62,27 +77,6 @@
     <paymentDialog ref="paymentDialog">
     </paymentDialog>
 
-    <!--采购单待发货->创建发货计划-编辑对话框-->
-    <procurementShippedOrderExecutingDialog ref="procurementShippedOrderExecutingDialog">
-    </procurementShippedOrderExecutingDialog>
-
-    <!--发货单待执行界面 创建发货计划-编辑对话框-->
-    <procurementShippedOrderExecutingEditDialog ref="procurementShippedOrderExecutingEditDialog">
-    </procurementShippedOrderExecutingEditDialog>
-
-    <!--采购入库待收货-发货计划-> 执行发货-> 消息给对应采购单创建人、指派人-编辑对话框-->
-    <procurementReceivedOrderEditDialog ref="procurementReceivedOrderEditDialog">
-    </procurementReceivedOrderEditDialog>
-    <!--查看采购入库完成状态对话框-->
-    <procurementReceivedOrderViewDialog ref="procurementReceivedOrderViewDialog">
-    </procurementReceivedOrderViewDialog>
-    <!--调拨入库-待收货-确认收货对话框框 -->
-    <allocationReceivedEditDialog ref="allocationReceivedEditDialog">
-    </allocationReceivedEditDialog>
-
-    <!--弹窗:出口调拨-待发货-确认发货 -->
-    <exportAllocationEditDialog ref="exportAllocationEditDialog">
-    </exportAllocationEditDialog>
     <!--弹窗:确认采购付款单窗口-->
     <financeBillPaymentDialog ref="financeBillPaymentDialog">
     </financeBillPaymentDialog>
@@ -100,15 +94,18 @@
 
   // 采购计划
   import editPlanDialog from '@/views/ProcurementPlan/components/edit/dialog';
-  // 采购单
+  // 创建采购单
   import procurementOrderCreateDialog from '@/views/ProcurementOrder/components/create/dialog';
-  import procurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
-  import procurementShippedOrderExecutingDialog from '@/views/ProcurementShippedOrder/components/create/dialog'
-  import procurementShippedOrderExecutingEditDialog from '@/views/ProcurementShippedOrder/components/edit/dialog'
+  // 采购收货
   import procurementReceivedOrderEditDialog from '@/views/ProcurementReceivedOrder/components/edit/dialog'
+  // 采购收货查看
   import procurementReceivedOrderViewDialog from '@/views/ProcurementReceivedOrder/components/view/dialog'
+  // 调拨收货
   import allocationReceivedEditDialog from '@/views/AllocationReceived/components/edit/dialog'
+  // 出口调拨收货
   import exportAllocationEditDialog from '@/views/ExportAllocation/components/edit/dialog'
+  // 采购预付款
+  import procurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
   import financeBillPaymentDialog from '@/views/FinanceBill/components/paymentBill/payment/dialog'
   import settlementBillViewDialog from '@/views/SettlementBill/components/view/dialog'
   import logisticPaymentBillPaymentDialog from '@/views/FinanceBill/components/logisticPaymentBill/payment/dialog'
@@ -139,8 +136,6 @@
       procurementOrderCreateDialog,
       procurementOrderpaymentDialog,
       paymentDialog,
-      procurementShippedOrderExecutingDialog,
-      procurementShippedOrderExecutingEditDialog,
       procurementReceivedOrderEditDialog,
       procurementReceivedOrderViewDialog,
       allocationReceivedEditDialog,
@@ -221,33 +216,46 @@
                   }
                   else if (this.panelType == 'sales') {
                     // 销售
-                    if (obj.notice.targetType == "PROCUREMENT_PLAN" ||
-                        obj.notice.targetType == "LINERSHIPPING_PLAN") {
+                    if (obj.notice.targetType == "PROCUREMENT_PLAN" && obj.notice.action != "release") {
                       this.todos.push(obj);
                     }
                   }
                   else if (this.panelType == 'purchases') {
                     // 采购
-                    if (obj.notice.targetType == "PROCUREMENT_PLAN" ||
-                      obj.notice.targetType == "LINERSHIPPING_PLAN" ||
-                      obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE" ||
-                      obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_AGREE" ||
-                      obj.notice.targetType == "PROCUREMENT_ORDER"
+                    if (
+                      (obj.notice.targetType == "PROCUREMENT_PLAN" && obj.notice.action == "release") ||
+                      (obj.notice.targetType == "PROCUREMENT_ORDER" && obj.notice.action != "release")
                     ) {
                       this.todos.push(obj);
                     }
                   }
                   else if (this.panelType == 'documentary') {
                     // 跟单
-                    this.todos.push(obj);
+                    if (obj.notice.targetType == "PROCUREMENT_ORDER" ||
+                      (obj.notice.targetType == "PROCUREMENT_SHIPPED_ORDER" && obj.notice.action == "received")
+                    ) {
+                      this.todos.push(obj);
+                    }
                   }
                   else if (this.panelType == 'finance') {
                     // 财务
-                    this.todos.push(obj);
+                    if (obj.notice.targetType == "FINANCE_ORDER" ||
+                      obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT" ||
+                      obj.notice.targetType == "LOGISTIC_PAYMENT"
+                    ) {
+                      this.todos.push(obj);
+                    }
                   }
                   else if (this.panelType == 'stockManager') {
                     // 库管
-                    this.todos.push(obj);
+                    if (
+                      (obj.notice.targetType == "PROCUREMENT_SHIPPED_ORDER" && obj.notice.action == "shipped") ||
+                      obj.notice.targetType == "WAREHOUSE_ALLOCATION" ||
+                      obj.notice.targetType == "RETURN_ORDER" ||
+                      obj.notice.targetType == "LINERSHIPPING_PLAN"
+                    ) {
+                      this.todos.push(obj);
+                    }
                   }
                   else {
 
@@ -305,30 +313,97 @@
       goTodo(val) {
         this.selTodo = val;
         if (val && val.notice) {
-          // 采购计划 审核通过
+
+          // 采购计划
           if (val.notice.targetType == "PROCUREMENT_PLAN") {
-            // 采购面板，下采购单, TODO: 后台处理自动完成
+
+            // 采购面板，下采购单
             if (this.panelType == 'purchases') {
               this.$refs.procurementOrderCreateDialog.openDialog(val.notice.target);
               return false;
             }
-            else {
-              // 审核采购、查看计划
+
+            // 销售面板  审核采购、查看计划
+            if (this.panelType == 'sales') {
               this.$refs.editPlanDialog.openDialog(val.notice.target);
-              this.doComplete(val);
+
+              if (val.notice.action == "agree") {
+                this.doComplete(val);
+              }
               return false;
             }
           }
 
-          //采购单 -> 发布-> 发消息给 对应采购计划的创建人、指派人
+          //采购单
           if (val.notice.targetType == "PROCUREMENT_ORDER") {
-            this.$router.push({
-              path: '/m2/ProcurementShippedOrder_index',
-              query: {q: 'procurementOrder_code~PO20200221180001,'}
-            });
-            this.doComplete(val);
-            return false;
+            // 跟单面板
+            if (this.panelType == 'documentary') {
+              // 设置交期
+              if (val.notice.action == "release") {
+                var code = val.notice.content.match(/PO\d{14}/)[0];
+                this.$router.push({
+                  path: '/m2/ProcurementShippedOrder_index',
+                  query: {q: `procurementOrder_code~${code},`}
+                });
+                this.doComplete(val);
+              }
+              return false;
+            }
           }
+
+          // 发货单
+          if (val.notice.targetType == "PROCUREMENT_SHIPPED_ORDER") {
+            // 库管面板
+            if (this.panelType == 'stockManager') {
+              // 采购入库
+              if (val.notice.action == "shipped") {
+                this.$refs.procurementReceivedOrderEditDialog.openDialog(val.notice.target);
+              }
+            }
+
+            if (this.panelType == 'documentary') {
+              // 入库完成
+              if (val.notice.action == "received") {
+                this.$refs.procurementReceivedOrderViewDialog.openDialog(val.notice.target);
+                this.doComplete(val);
+              }
+              return false;
+            }
+          }
+
+          // 国内调拨单
+          if (val.notice.targetType == "WAREHOUSE_ALLOCATION") {
+            // 库管面板
+            if (this.panelType == 'stockManager') {
+              // 调拨发货处理
+              if (val.notice.action == "release") {
+                this.$router.push({
+                  path: '/m3/WarehouseAllocation_index'
+                });
+                this.doComplete(val);
+              }
+              // 调拨收货处理
+              if (val.notice.action == "shipped") {
+                this.$refs.allocationReceivedEditDialog.openDialog(val.notice.target);
+              }
+            }
+          }
+
+          // 物流计划
+          if (val.notice.targetType == "LINERSHIPPING_PLAN") {
+            // 库管面板
+            if (this.panelType == 'stockManager') {
+              // 调拨发货处理
+              if (val.notice.action == "release" || val.notice.action == "update") {
+                this.$refs.exportAllocationEditDialog.openDialog(val.notice.target);
+              }
+            }
+            else{
+
+            }
+          }
+
+
 
           // 采购预付款申请
           if (val.notice.targetType == "FINANCE_ORDER") {
@@ -357,34 +432,21 @@
             }
             return;
           }
-          if (val.notice.targetType == "DATE_CONFIRM") {
-            // 弹窗
-            this.$refs.procurementShippedOrderExecutingDialog.openDialog(val.notice.target);
-            return;
-          }
           if (val.notice.targetType == "SHIPPED_PLAN_SUCCESS") {
             // 弹窗
-            this.$refs.procurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
-            return;
-          }
-          if (val.notice.targetType == "SHIPPED_PLAN_IMPLEMENT") {
-            // 弹窗
-            this.$refs.procurementReceivedOrderEditDialog.openDialog(val.notice.target);
+            //this.$refs.procurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
             return;
           }
           //弹窗:采购入库 --- (完成状态)
           if (val.notice.targetType == "PROCUREMENT_WAREHOUSE_SUCCESS") {
-            this.$refs.procurementReceivedOrderViewDialog.openDialog(val.notice.target);
             return;
           }
           //弹窗:调拨入库-确认收货
           if (val.notice.targetType == "DOMESTIC_ALLOCATION_CONFIRM") {
-            this.$refs.allocationReceivedEditDialog.openDialog(val.notice.target);
             return;
           }
           //弹窗:出口调拨-待发货-确认发货
           if (val.notice.targetType == "LINERSHIPPING_PLAN") {
-            this.$refs.exportAllocationEditDialog.openDialog(val.notice.target);
             return;
           }
           //弹窗:确认采购付款单

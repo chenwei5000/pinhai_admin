@@ -227,6 +227,7 @@
       },
       onShippedCBEvent(object) {
         this.initData();
+        this.$emit("modifyCBEvent");
       },
 
       // 管理员修改状态
