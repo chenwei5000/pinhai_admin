@@ -68,23 +68,20 @@
     <exportAllocationEditDialog @modifyCBEvent="modifyCBEvent" ref="exportAllocationEditDialog">
     </exportAllocationEditDialog>
 
+    <!--采购预付款 付款 对话框-->
+    <advancePaymentDialog @modifyCBEvent="modifyCBEvent" ref="advancePaymentDialog">
+    </advancePaymentDialog>
 
-    <!--预付款申请的编辑对话框-->
-    <procurementOrderpaymentDialog ref="procurementOrderpaymentDialog">
-    </procurementOrderpaymentDialog>
+    <!--采购预付款 编辑 对话框-->
+    <advancePaymentEditDialog @modifyCBEvent="modifyCBEvent" ref="advancePaymentEditDialog">
+    </advancePaymentEditDialog>
 
-    <!--编辑对话框-->
-    <paymentDialog ref="paymentDialog">
-    </paymentDialog>
-
-    <!--弹窗:确认采购付款单窗口-->
-    <financeBillPaymentDialog ref="financeBillPaymentDialog">
+    <!--采购付款 付款 对话框-->
+    <financeBillPaymentDialog @modifyCBEvent="modifyCBEvent" ref="financeBillPaymentDialog">
     </financeBillPaymentDialog>
-    <!--弹窗:采购单-待结算-窗口-->
-    <settlementBillViewDialog ref="settlementBillViewDialog">
-    </settlementBillViewDialog>
-    <!--弹窗：物流付款单，财务确认付款-->
-    <logisticPaymentBillPaymentDialog ref="logisticPaymentBillPaymentDialog">
+
+    <!--物流付款 付款 对话框 -->
+    <logisticPaymentBillPaymentDialog @modifyCBEvent="modifyCBEvent" ref="logisticPaymentBillPaymentDialog">
     </logisticPaymentBillPaymentDialog>
 
   </div>
@@ -104,12 +101,14 @@
   import allocationReceivedEditDialog from '@/views/AllocationReceived/components/edit/dialog'
   // 出口调拨收货
   import exportAllocationEditDialog from '@/views/ExportAllocation/components/edit/dialog'
-  // 采购预付款
-  import procurementOrderpaymentDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
+  // 采购预付款 付款
+  import advancePaymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
+  // 采购预付款 编辑
+  import advancePaymentEditDialog from '@/views/ProcurementOrder/components/edit/paymentDialog'
+  // 采购付款 付款
   import financeBillPaymentDialog from '@/views/FinanceBill/components/paymentBill/payment/dialog'
-  import settlementBillViewDialog from '@/views/SettlementBill/components/view/dialog'
+  // 物流付款 付款
   import logisticPaymentBillPaymentDialog from '@/views/FinanceBill/components/logisticPaymentBill/payment/dialog'
-  import paymentDialog from '@/views/FinanceBill/components/advanceBill/payment/dialog'
 
 
   import {parseLineBreak} from '@/utils';
@@ -134,14 +133,13 @@
     components: {
       editPlanDialog,
       procurementOrderCreateDialog,
-      procurementOrderpaymentDialog,
-      paymentDialog,
+      advancePaymentEditDialog,
+      advancePaymentDialog,
       procurementReceivedOrderEditDialog,
       procurementReceivedOrderViewDialog,
       allocationReceivedEditDialog,
       exportAllocationEditDialog,
       financeBillPaymentDialog,
-      settlementBillViewDialog,
       logisticPaymentBillPaymentDialog
     },
     filters: {
@@ -224,6 +222,10 @@
                     // 采购
                     if (
                       (obj.notice.targetType == "PROCUREMENT_PLAN" && obj.notice.action == "release") ||
+                      (obj.notice.targetType == "FINANCE_ORDER" && obj.notice.action == "agree") ||
+                      (obj.notice.targetType == "FINANCE_ORDER" && obj.notice.action == "refuse") ||
+                      (obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT" && obj.notice.action == "agree") ||
+                      (obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT" && obj.notice.action == "refuse") ||
                       (obj.notice.targetType == "PROCUREMENT_ORDER" && obj.notice.action != "release")
                     ) {
                       this.todos.push(obj);
@@ -239,9 +241,10 @@
                   }
                   else if (this.panelType == 'finance') {
                     // 财务
-                    if (obj.notice.targetType == "FINANCE_ORDER" ||
-                      obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT" ||
-                      obj.notice.targetType == "LOGISTIC_PAYMENT"
+                    if (
+                      (obj.notice.targetType == "FINANCE_ORDER" && obj.notice.action == "commit") ||
+                      (obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT" && obj.notice.action == "commit") ||
+                      (obj.notice.targetType == "LOGISTIC_PAYMENT" && obj.notice.action == "commit")
                     ) {
                       this.todos.push(obj);
                     }
@@ -258,23 +261,6 @@
                     }
                   }
                   else {
-
-
-                    //obj.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_APPLY" ||
-                    // inventoryTask("INVENTORY_TASK", "盘点任务"),
-                    // procurementShippedOrder("PROCUREMENT_SHIPPED_ORDER", "采购发货单"),
-                    // warehouseAllocation("WAREHOUSE_ALLOCATION", "调拨单"),
-                    // returnOrder("RETURN_ORDER", "退货单"),
-                    // financeOrder("FINANCE_ORDER", "采购预付款账单"),
-                    // financeOrderFlowOver("FINANCE_ORDER_FLOW_OVER", "采购预付款账单-完成付款"),
-                    // dateConfirm("DATE_CONFIRM", "确认完成日期"),
-                    // shippedPlanSuccess("SHIPPED_PLAN_SUCCESS", "创建发货计划成功"),
-                    // shippedPlanImplement("SHIPPED_PLAN_IMPLEMENT","执行发货计划"),
-                    // procurementWarehouseSuccess("PROCUREMENT_WAREHOUSE_SUCCESS","确认收货"),
-                    // domesticAllocationConfirmShipped("DOMESTIC_ALLOCATION_CONFIRM","国内调拨执行发货"),
-                    // logisticPaymentOrderApply("LOGISTIC_PAYMENT_ORDER_APPLY", "物流付款单申请待确认"),
-                    // logisticPaymentOrderRefuse("LOGISTIC_PAYMENT_ORDER_REFUSE", "物流付款单申请拒绝"),
-                    // logisticPaymentOrderAgree("LOGISTIC_PAYMENT_ORDER_AGREE", "物流付款单已付款");
 
                   }
                 }
@@ -398,86 +384,112 @@
                 this.$refs.exportAllocationEditDialog.openDialog(val.notice.target);
               }
             }
-            else{
+            else {
 
             }
           }
-
-
 
           // 采购预付款申请
           if (val.notice.targetType == "FINANCE_ORDER") {
-            // 财务付款
-            this.$refs.paymentDialog.openDialog(val.notice.target);
-            return;
-          }
 
-          if (val.notice.targetType == "FINANCE_ORDER_FLOW_OVER") {
-            let relations = ["procurementOrder", "procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
-            try {
-              this.global.axios
-                .get(`/financeBills/${val.notice.target}?relations=${JSON.stringify(relations)}`)
-                .then(resp => {
-                  //console.log("aaaa=>", resp.data);
-                  if (resp.data && resp.data.procurementOrder) {
-                    this.$refs.procurementOrderpaymentDialog.openDialog(resp.data.procurementOrder);
-                  } else {
-                    this.$message.error("无效付款单!");
-                  }
-                })
-                .catch(err => {
-                });
-            } catch (e) {
-              console.log(e);
+            if (this.panelType == 'finance') {
+              // 财务付款
+              this.$refs.advancePaymentDialog.openDialog(val.notice.target);
+              return false;
             }
-            return;
+            // 采购面板，下采购单
+            if (this.panelType == 'purchases') {
+              if (val.notice.action == 'refuse') {
+                let relations = ["procurementOrder", "procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
+                try {
+                  this.global.axios
+                    .get(`/financeBills/${val.notice.target}?relations=${JSON.stringify(relations)}`)
+                    .then(resp => {
+                      if (resp.data && resp.data.procurementOrder) {
+                        this.$refs.advancePaymentEditDialog.openDialog(resp.data.procurementOrder);
+                      } else {
+                        this.$message.error("无效付款单!");
+                      }
+                    })
+                    .catch(err => {
+                    });
+                } catch (e) {
+                  console.log(e);
+                }
+                return false;
+              }
+              else if (val.notice.action == 'agree') {
+                let relations = ["procurementOrder", "procurementOrder.supplier", "procurementOrder.currency", "procurementOrder.creator"]
+                try {
+                  this.global.axios
+                    .get(`/financeBills/${val.notice.target}?relations=${JSON.stringify(relations)}`)
+                    .then(resp => {
+                      if (resp.data && resp.data.procurementOrder) {
+                        this.$refs.advancePaymentEditDialog.openDialog(resp.data.procurementOrder);
+                      } else {
+                        this.$message.error("无效付款单!");
+                      }
+                    })
+                    .catch(err => {
+                    });
+                } catch (e) {
+                  console.log(e);
+                }
+                this.doComplete(val);
+                return false;
+              }
+            }
           }
-          if (val.notice.targetType == "SHIPPED_PLAN_SUCCESS") {
-            // 弹窗
-            //this.$refs.procurementShippedOrderExecutingEditDialog.openDialog(val.notice.target);
-            return;
-          }
-          //弹窗:采购入库 --- (完成状态)
-          if (val.notice.targetType == "PROCUREMENT_WAREHOUSE_SUCCESS") {
-            return;
-          }
-          //弹窗:调拨入库-确认收货
-          if (val.notice.targetType == "DOMESTIC_ALLOCATION_CONFIRM") {
-            return;
-          }
-          //弹窗:出口调拨-待发货-确认发货
-          if (val.notice.targetType == "LINERSHIPPING_PLAN") {
-            return;
-          }
-          //弹窗:确认采购付款单
-          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_APPLY") {
-            this.$refs.financeBillPaymentDialog.openDialog(val.notice.target);
-            return;
-          }
-          //弹窗:待结算 详情
-          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_REFUSE") {
-            this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
-            return;
-          }
-          //弹窗：采购结算 详情
-          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT_AGREE") {
-            this.$refs.settlementBillViewDialog.openDialog(val.notice.target);
-            return;
-          }
-          //弹窗：物流付款单，财务确认付款
-          if (val.notice.targetType == "LOGISTIC_PAYMENT_ORDER_APPLY") {
-            this.$refs.logisticPaymentBillPaymentDialog.openDialog(val.notice.target);
-            return;
-          }
-          //弹窗：物流付款单，申请人查看是否通过
-          // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_REFUSE"){
 
-          // }
-          //弹窗：物流付款单，申请人查看是否通过
-          // if(val.notice.targetType =="LOGISTIC_PAYMENT_ORDER_AGREE"){
+          // 采购付款申请
+          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT") {
 
-          // }
+            if (this.panelType == 'finance') {
+              // 财务付款
+              this.$refs.financeBillPaymentDialog.openDialog(val.notice.target);
+              return false;
+            }
+            // 采购面板，查看付款请款
+            if (this.panelType == 'purchases') {
+              if (val.notice.action == 'refuse' || val.notice.action == 'agree') {
+                try {
+                  let relations = ["settlementBill"];
+                  //this.doComplete(val);
+                  this.global.axios
+                    .get(`/procurementPaymentOrders/${val.notice.target}?relations=${JSON.stringify(relations)}`)
+                    .then(resp => {
+                      if (resp.data && resp.data.settlementBill) {
 
+                        let code = resp.data.settlementBill.code;
+                        this.$router.push({
+                          path: '/m2/SettlementBill_index',
+                          query: {s:'all', q: `code~${code},`}
+                        });
+                        this.doComplete(val);
+
+                      } else {
+                        this.$message.error("无效付款单!");
+                      }
+                    })
+                    .catch(err => {
+                    });
+                } catch (e) {
+                  console.log(e);
+                }
+                return false;
+              }
+            }
+          }
+
+          // 物流付款申请
+          if (val.notice.targetType == "PROCUREMENT_ORDER_PAYMENT") {
+
+            if (this.panelType == 'finance') {
+              // 财务付款
+              this.$refs.logisticPaymentBillPaymentDialog.openDialog(val.notice.target);
+              return false;
+            }
+          }
         }
       },
       completeTodo(val) {

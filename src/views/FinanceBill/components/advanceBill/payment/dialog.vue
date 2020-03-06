@@ -198,7 +198,6 @@
 
       },
 
-
       refusePaymentOrder(order){
         const loading = this.$loading({
           lock: true,

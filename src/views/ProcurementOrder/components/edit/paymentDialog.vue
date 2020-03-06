@@ -11,7 +11,7 @@
 
     <div class="block" style="height: 420px;">
       <el-scrollbar style="height: 100%">
-        <payment ref="payment" :primary="primary" @paymentCBEvent="onPaymentCBEvent"></payment>
+        <payment ref="payment" :primary="primary" @modifyCBEvent="modifyCBEvent"></payment>
       </el-scrollbar>
     </div>
 
@@ -78,8 +78,8 @@
       },
 
       /* 子组件编辑完成后相应事件 */
-      onPaymentCBEvent(object) {
-        this.$emit("paymentCBEvent", object);
+      modifyCBEvent(object) {
+        this.$emit("modifyCBEvent", object);
       },
     }
   }
