@@ -9,10 +9,11 @@
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
       <router-link target="_blank" :to="'/allocationReceived/print?id='+primary.id">
-        <el-button v-if="hasPrint" type="primary" size="small" icon="el-icon-printer"  @click="onPrint">打印收货单</el-button>
+        <el-button v-if="hasPrint" type="primary" size="small" icon="el-icon-printer" @click="onPrint">打印收货单</el-button>
       </router-link>
 
-      <el-button v-if="hasReceived" type="success" size="small" icon="el-icon-s-claim" @click="onComplete">确认收货</el-button>
+      <el-button v-if="hasReceived" type="success" size="small" icon="el-icon-s-claim" @click="onComplete">确认收货
+      </el-button>
       <el-button size="small" @click="closeDialog">取 消</el-button>
     </el-row>
 
@@ -38,10 +39,10 @@
     },
     props: {},
     computed: {
-      hasPrint(){
+      hasPrint() {
         return checkPermission('AllocationReceivedResource_print');
       },
-      hasReceived(){
+      hasReceived() {
         return checkPermission('AllocationReceivedResource_received')
       },
       title() {
@@ -123,7 +124,17 @@
       onComplete() {
         // 明细对象
         let details = this.$refs.itemTable.tableData;
-        this.$refs.saveDialog.openDialog(this.primary, details);
+        let allQty = 0;
+
+        details.forEach(r => {
+          allQty += r.receivedQty;
+        });
+
+        if (allQty == 0) {
+          this.$message.error("收货总数量不能为0!");
+        } else {
+          this.$refs.saveDialog.openDialog(this.primary, details);
+        }
       },
 
       //打印收货单
