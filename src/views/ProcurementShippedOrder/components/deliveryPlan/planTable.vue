@@ -168,7 +168,7 @@
       <el-table-column prop="shippedQty" label="已发货件数" width="100" align="center"></el-table-column>
 
       <el-table-column prop="sumCartonSpecWeight" label="未发货重量(Kg)" min-width="110" align="center"></el-table-column>
-      <el-table-column prop="sumCartonVolume" label="未发货体积(Cm³)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="未发货体积(m³)" min-width="110" align="center"></el-table-column>
 
 
       <el-table-column prop="unCartonPlanQty" label="未发货箱数" width="100" align="center" fixed="right"></el-table-column>

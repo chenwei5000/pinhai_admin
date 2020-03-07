@@ -120,7 +120,7 @@
       <el-table-column prop="orderCartonQty" label="已确认箱数" width="100" align="center"></el-table-column>
 
       <el-table-column prop="sumCartonSpecWeight" label="未确认重量(Kg)" min-width="110" align="center"></el-table-column>
-      <el-table-column prop="sumCartonVolume" label="未确认体积(Cm³)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="未确认体积(m³)" min-width="110" align="center"></el-table-column>
 
       <el-table-column prop="unOrderCartonQty" label="未确认箱数" width="100" align="center" fixed="right"></el-table-column>
       <el-table-column prop="unOrderQty" label="未确认件数" width="100" align="center" fixed="right"></el-table-column>

@@ -93,7 +93,7 @@
       </el-table-column>
 
       <el-table-column prop="sumCartonSpecWeight" label="应发重量(Kg)" min-width="110" align="center"></el-table-column>
-      <el-table-column prop="sumCartonVolume" label="应发体积(Cm³)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="应发体积(m³)" min-width="110" align="center"></el-table-column>
 
       <el-table-column prop="shippedCartonQty" label="应发箱数" min-width="110" align="center" fixed="right"></el-table-column>
       <el-table-column prop="shippedQty" sortable :label="shippedQtyTitle" min-width="110" align="center" fixed="right"></el-table-column>

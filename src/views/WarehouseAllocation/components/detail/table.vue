@@ -82,7 +82,7 @@
       <el-table-column prop="stock" label="当前库存" min-width="90" align="center"></el-table-column>
 
       <el-table-column prop="sumCartonSpecWeight" label="应发重量(Kg)" min-width="110" align="center"></el-table-column>
-      <el-table-column prop="sumCartonVolume" label="应发体积(Cm³)" min-width="110" align="center"></el-table-column>
+      <el-table-column prop="sumCartonVolume" label="应发体积(m³)" min-width="110" align="center"></el-table-column>
 
 
       <el-table-column prop="remark" label="备注" width="130">
