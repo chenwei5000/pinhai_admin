@@ -14,12 +14,9 @@
           size="mini"
           v-model="searchParam.deliveryTime.value"
           format="yyyy-MM-dd"
-          style="width: 220px"
+          style="width: 150px"
           value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="交货日期"
-          end-placeholder="结束日期">
+          placeholder="交货日期">
         </el-date-picker>
 
       </el-form-item>
@@ -56,7 +53,7 @@
                   placeholder="请输入名称"></el-input>
       </el-form-item>
 
-      <el-form-item label="采购单编号">
+      <el-form-item label="采购单号">
         <el-input size="mini" v-model="searchParam.procurementOrder_code.value" style="width: 150px"
                   placeholder="请输入采购单编号"></el-input>
       </el-form-item>
