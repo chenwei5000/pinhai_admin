@@ -191,6 +191,11 @@
                      @click="onDefaultSetting(scope.row)">
           </el-button>
 
+          <el-button v-if="hasTpl" type="primary" size="mini"
+                     id="ph-table-tpl" icon="el-icon-document" circle
+                     @click="onDefaultTpl(scope.row)">
+          </el-button>
+
 
         </template>
       </el-table-column>
@@ -517,6 +522,11 @@
         type: Boolean,
         default: false
       },
+
+      hasTpl: {
+        type: Boolean,
+        default: false
+      },
       /**
        * 某行数据是否可以删除, 返回true表示可以, 控制的是单选时单行的删除按钮
        */
@@ -744,7 +754,7 @@
           return []
         }
       },
-      defalutSort:{
+      defalutSort: {
         type: String,
         default() {
           return null
@@ -824,7 +834,7 @@
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
       },
       hasOperation() {
-        return this.hasEdit || this.hasDelete || this.hasSetting || this.hasView;
+        return this.hasEdit || this.hasDelete || this.hasSetting || this.hasView || this.hasTpl;
       }
     },
 
@@ -905,10 +915,10 @@
 
         let url = this.url;
         let countUrl = null;
-        if(this.countUrl.indexOf("#") === 0){
-          countUrl = this.countUrl.replace("#","");
+        if (this.countUrl.indexOf("#") === 0) {
+          countUrl = this.countUrl.replace("#", "");
         }
-        else{
+        else {
           countUrl = this.url + this.countUrl;
         }
 
@@ -1388,6 +1398,10 @@
 
       onDefaultSetting(row) {
         this.$emit("onSetting", row);
+        return false;
+      },
+      onDefaultTpl(row) {
+        this.$emit("onTpl", row);
         return false;
       },
       handleDblclick(row, column, cell, event) {

@@ -10,13 +10,13 @@
              @close='closeDialog'
              :visible.sync="dialogVisible">
 
-    <div class="block" style="height: 480px;">
+    <div class="block" style="height: 490px;">
       <el-scrollbar style="height: 100%">
 
         <div class="ph-table">
 
           <!-- 编辑表单 TODO:-->
-          <el-form :rules="rules" :model="printObject" status-icon inline
+          <el-form :rules="rules" :model="primary" status-icon inline
                    ref="detailItem" label-position="right"
                    label-width="120px"
                    inline-message
@@ -36,34 +36,8 @@
 
               <el-row>
                 <el-col :md="10">
-                  <el-form-item label="公司名称" prop="demanderName">
-                    <el-input v-model.trim="printObject.demanderName"
-                              maxlength="100"
-                              show-word-limit
-                              name="demanderName"
-                              @input="updateInput"
-                              style="width: 200px" size="mini" placeholder="请填写需求方公司名称" clearable>
-
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :md="14">
-                  <el-form-item label="公司地址" prop="demanderAddress">
-                    <el-input v-model.trim="printObject.demanderAddress"
-                              maxlength="200"
-                              name="demanderAddress"
-                              show-word-limit
-                              @input="updateInput"
-                              style="width: 300px" size="mini" placeholder="请填写需求方公司地址" clearable></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-
-              <el-row>
-                <el-col :md="10">
                   <el-form-item label="联系人" prop="demanderLinkMan">
-                    <el-input v-model.trim="printObject.demanderLinkMan"
+                    <el-input v-model.trim="primary.demanderLinkMan"
                               maxlength="20"
                               name="demanderLinkMan"
                               show-word-limit
@@ -74,7 +48,7 @@
 
                 <el-col :md="14">
                   <el-form-item label="联系电话" prop="demanderLinkMethod">
-                    <el-input v-model.trim="printObject.demanderLinkMethod"
+                    <el-input v-model.trim="primary.demanderLinkMethod"
                               maxlength="20"
                               name="demanderLinkMethod"
                               show-word-limit
@@ -87,7 +61,7 @@
               <el-row>
                 <el-col :md="23">
                   <el-form-item label="收货地址" prop="demanderDeliveryAddress">
-                    <el-input v-model.trim="printObject.demanderDeliveryAddress"
+                    <el-input v-model.trim="primary.demanderDeliveryAddress"
                               maxlength="200"
                               name="demanderDeliveryAddress"
                               show-word-limit
@@ -111,7 +85,7 @@
               <el-row>
                 <el-col :md="10">
                   <el-form-item label="公司名称" prop="supplierName">
-                    <el-input v-model.trim="printObject.supplierName"
+                    <el-input v-model.trim="primary.supplierName"
                               maxlength="100"
                               name="supplierName"
                               show-word-limit
@@ -122,7 +96,7 @@
 
                 <el-col :md="14">
                   <el-form-item label="公司地址" prop="supplierAddress">
-                    <el-input v-model.trim="printObject.supplierAddress"
+                    <el-input v-model.trim="primary.supplierAddress"
                               maxlength="200"
                               name="supplierAddress"
                               show-word-limit
@@ -135,7 +109,7 @@
               <el-row>
                 <el-col :md="10">
                   <el-form-item label="联系人" prop="supplierLinkMan">
-                    <el-input v-model.trim="printObject.supplierLinkMan"
+                    <el-input v-model.trim="primary.supplierLinkMan"
                               maxlength="20"
                               name="supplierLinkMan"
                               show-word-limit
@@ -146,7 +120,7 @@
 
                 <el-col :md="14">
                   <el-form-item label="联系电话" prop="supplierLinkMethod">
-                    <el-input v-model.trim="printObject.supplierLinkMethod"
+                    <el-input v-model.trim="primary.supplierLinkMethod"
                               maxlength="20"
                               name="supplierLinkMethod"
                               show-word-limit
@@ -159,7 +133,7 @@
               <el-row>
                 <el-col :md="10">
                   <el-form-item label="收款银行" prop="supplierBankName">
-                    <el-input v-model.trim="printObject.supplierBankName"
+                    <el-input v-model.trim="primary.supplierBankName"
                               maxlength="20"
                               name="supplierBankName"
                               show-word-limit
@@ -170,7 +144,7 @@
 
                 <el-col :md="14">
                   <el-form-item label="收款户名" prop="supplierBankAccountName">
-                    <el-input v-model.trim="printObject.supplierBankAccountName"
+                    <el-input v-model.trim="primary.supplierBankAccountName"
                               maxlength="20"
                               name="supplierBankAccountName"
                               show-word-limit
@@ -183,7 +157,7 @@
               <el-row>
                 <el-col :md="24">
                   <el-form-item label="收款账号" prop="supplierBankAccount">
-                    <el-input v-model.trim="printObject.supplierBankAccount"
+                    <el-input v-model.trim="primary.supplierBankAccount"
                               maxlength="20"
                               name="supplierBankAccount"
                               show-word-limit
@@ -205,73 +179,9 @@
               </legend>
 
               <el-row>
-                <el-col :md="10">
-                  <el-form-item label="采购品类" prop="categoryName">
-                    <el-input v-model.trim="printObject.categoryName"
-                              maxlength="20"
-                              name="categoryName"
-                              show-word-limit
-                              @input="updateInput"
-                              style="width: 200px" size="mini" placeholder="请填写采购品类" clearable></el-input>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :md="14">
-                  <el-form-item label="结算货币" prop="currency">
-                    <el-input v-model.trim="printObject.currency"
-                              maxlength="20"
-                              name="currency"
-                              show-word-limit
-                              @input="updateInput"
-                              style="width: 300px" size="mini" placeholder="请填写结算货币" clearable></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-
-              <el-row>
-                <el-col :md="10">
-                  <el-form-item label="交货时间" prop="deliveryTime">
-                    <el-date-picker
-                      v-model="printObject.deliveryTime"
-                      name="deliveryTime"
-                      @input="updateInput"
-                      type="date"
-                      size="mini"
-                      format="yyyy年M月d日"
-                      value-format="yyyy年M月d日"
-                      placeholder="选择交货时间">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :md="14">
-
-                  <el-input type="hidden" style="display: none" v-model="printObject.effectiveDateStart"
-                            name="effectiveDateStart"></el-input>
-                  <el-input type="hidden" style="display: none" v-model="printObject.effectiveDateEnd"
-                            name="effectiveDateEnd"></el-input>
-
-                  <el-form-item label="生效日期" prop="effectiveDate">
-                    <el-date-picker
-                      v-model="printObject.effectiveDate"
-                      @change="effectiveDateChange"
-                      type="daterange"
-                      @input="updateInput"
-                      size="mini"
-                      format="yyyy年M月d日"
-                      value-format="yyyy年M月d日"
-                      range-separator="至"
-                      start-placeholder="开始日期"
-                      end-placeholder="结束日期">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-
-              <el-row>
                 <el-col :md="23">
                   <el-form-item label="签约地址" prop="signAddress">
-                    <el-input v-model.trim="printObject.signAddress"
+                    <el-input v-model.trim="primary.signAddress"
                               maxlength="200"
                               name="signAddress"
                               show-word-limit
@@ -281,23 +191,10 @@
                 </el-col>
               </el-row>
 
-            </fieldset>
-
-
-            <fieldset class="panel-heading">
-              <legend class="panel-title">额外
-                <el-tooltip class="item" effect="light" size="mini" placement="right">
-                  <div slot="content">
-                    采购合同相关要求。
-                  </div>
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-              </legend>
-
               <el-row>
                 <el-col :md="24">
                   <el-form-item label="结算要求" prop="paymentRequirement">
-                    <el-input v-model="printObject.paymentRequirement" type="textarea" rows="4"
+                    <el-input v-model="primary.paymentRequirement" type="textarea" rows="4"
                               name="paymentRequirement"
                               @input="updateInput"
                               style="width: 800px" size="mini"
@@ -309,7 +206,7 @@
               <el-row>
                 <el-col :md="24">
                   <el-form-item label="质量要求" prop="qualityRequirement">
-                    <el-input v-model="printObject.qualityRequirement" type="textarea" rows="4"
+                    <el-input v-model="primary.qualityRequirement" type="textarea" rows="4"
                               name="qualityRequirement"
                               @input="updateInput"
                               style="width: 800px" size="mini" placeholder="默认为： 参考合同附页"></el-input>
@@ -324,7 +221,7 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="onPrint" :loading="confirmLoading">生成合同</el-button>
+      <el-button type="primary" @click="onSave" :loading="confirmLoading">保存</el-button>
       <el-button @click="closeDialog">关 闭</el-button>
     </div>
 
@@ -346,14 +243,15 @@
         'rolePower'
       ]),
       title() {
-        return '打印采购合同';
+        return `${this.supplier.name}采购合同模版`;
       }
     },
 
     data() {
       return {
         primary: {}, //主对象
-        printObject: {},
+        primaryId: null,
+        supplier: {name: ''},
         dialogVisible: false, //Dialog 是否开启
         loading: false,
         initComplete: false,
@@ -420,70 +318,12 @@
     },
     methods: {
       initData() {
-
         this.initContractInfo();
-        this.initCategoryName();
       },
 
-      /*获取明细列表*/
-      initCategoryName() {
-        if (this.printObject != null && this.printObject.categoryName != null
-          && this.printObject.categoryName != '') {
-          return;
-        }
-
-        let url = "/procurementOrderItems";
-        let filters = [
-          {
-            field: "procurementOrderId",
-            op: 'eq',
-            data: this.primary ? this.primary.id : -1
-          }
-        ]
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        let relations = ["product", "product.category"]
-        url += "&relations=" + JSON.stringify(relations);
-
-        // 请求开始
-        this.loading = true;
-
-        //获取数据
-        this.global.axios
-          .get(url)
-          .then(resp => {
-            let res = resp.data
-            let data = res || []
-            let cates = [];
-
-            data.forEach(r => {
-              if (cates.indexOf(r.product.category.name) === -1) {
-                cates.push(r.product.category.name);
-              }
-            });
-            this.printObject.categoryName = cates.join(",");
-
-            this.loading = false
-            this.initComplete = true;
-          })
-          .catch(err => {
-            this.loading = false
-            this.initComplete = true;
-          })
-      },
-
-      /*获取合同历史信息*/
+      /*获取合同信息*/
       initContractInfo() {
-        let url = "/contractInfoHistories";
-        let filters = [
-          {
-            field: "procurementOrderId",
-            op: 'eq',
-            data: this.primary ? this.primary.id : -1
-          }
-        ]
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        // let relations = ["product", "product.category"]
-        // url += "&relations=" + JSON.stringify(relations);
+        let url = `/procurementContractTpls/${this.primaryId}`;
 
         // 请求开始
         this.loading = true;
@@ -493,75 +333,56 @@
           .get(url)
           .then(resp => {
             let res = resp.data
-            let data = res || []
-            this.printObject = data[0] || null;
+            this.primary = res || null;
             this.loading = false;
-            this.initComplete = false;
+            this.initComplete = true;
 
-            if (this.printObject == null) {
-              this.printObject = {};
-              this.printObject.demanderName = this.primary.company.fullName;
-              this.printObject.demanderAddress =  this.primary.company.address;
-              this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
-              this.printObject.supplierName = this.primary.supplier.companyName;
-              this.printObject.supplierAddress = this.primary.supplier.address;
-              this.printObject.currency = this.primary.currency.name;
-              this.printObject.paymentRequirement = `发货后供方需按要求开具增值税专用发票给需方， 款项发货后${this.primary.accountPeriod}天结算`;
-              this.printObject.qualityRequirement = '参考合同附页';
+            console.log(this.primary);
+            console.log(this.supplier);
+
+            if (this.primary == null) {
+              this.primary = {};
+              this.primary.demanderDeliveryAddress = '';
+              this.primary.supplierName = this.supplier.companyName;
+              this.primary.supplierAddress = this.supplier.address;
+              this.primary.paymentRequirement = `发货后供方需按要求开具增值税专用发票给需方， 款项发货后60天结算`;
+              this.primary.qualityRequirement = '参考合同附页';
             }
             else {
-              if (this.printObject.demanderName == null || this.printObject.demanderName == '') {
-                this.printObject.demanderName = this.primary.company.fullName;
+              if (this.primary.demanderDeliveryAddress == null) {
+                this.primary.demanderDeliveryAddress == '';
               }
-              if (this.printObject.demanderAddress == null || this.printObject.demanderAddress == '') {
-                this.printObject.demanderAddress = this.primary.company.address;
+              if (this.primary.supplierName == null || this.primary.supplierName == '') {
+                this.primary.supplierName = this.supplier.companyName;
               }
-              if (this.printObject.demanderDeliveryAddress == null || this.printObject.demanderDeliveryAddress == '') {
-                this.printObject.demanderDeliveryAddress = this.primary.warehouse.address;
+              if (this.primary.supplierAddress == null || this.primary.supplierAddress == '') {
+                this.primary.supplierAddress = this.supplier.address;
               }
-              if (this.printObject.supplierName == null || this.printObject.supplierName == '') {
-                this.printObject.supplierName = this.primary.supplier.companyName;
+              if (this.primary.paymentRequirement == null || this.primary.paymentRequirement == '') {
+                this.primary.paymentRequirement = `发货后供方需按要求开具增值税专用发票给需方， 款项发货后60天结算`;
               }
-              if (this.printObject.supplierAddress == null || this.printObject.supplierAddress == '') {
-                this.printObject.supplierAddress = this.primary.supplier.address;
-              }
-              if (this.printObject.currency == null || this.printObject.currency == '') {
-                this.printObject.currency = this.primary.currency.name;
-              }
-              if (this.printObject.paymentRequirement == null || this.printObject.paymentRequirement == '') {
-                this.printObject.paymentRequirement = `发货后供方需按要求开具增值税专用发票给需方， 款项发货后${this.primary.accountPeriod}天结算`;
-              }
-              if (this.printObject.qualityRequirement == null || this.printObject.qualityRequirement == '') {
-                this.printObject.qualityRequirement = '参考合同附页';
+              if (this.primary.qualityRequirement == null || this.primary.qualityRequirement == '') {
+                this.primary.qualityRequirement = '参考合同附页';
               }
             }
-
-            if (this.printObject.effectiveDateStart != null && this.printObject.effectiveDateEnd != null) {
-              this.$set(this.printObject, "effectiveDate", [this.printObject.effectiveDateStart, this.printObject.effectiveDateEnd]);
-            }
-
-            this.initCategoryName();
           })
           .catch(err => {
             this.loading = false
             this.initComplete = true;
           })
-      },
-
-      effectiveDateChange() {
-        this.$set(this.printObject, "effectiveDateStart", this.printObject.effectiveDate[0])
-        this.$set(this.printObject, "effectiveDateEnd", this.printObject.effectiveDate[1])
       },
 
       /* 开启弹出编辑框 需要传主键ID */
-      openDialog(primary) {
-        this.primary = primary;
+      openDialog(primaryId, supplier) {
+        this.primaryId = primaryId
+        this.supplier = supplier;
         this.initData();
         this.dialogVisible = true;
       },
       closeDialog() {
         this.primary = {};
-        this.printObject = {};
+        this.supplier = {name: ''};
+        this.primaryId = null;
         this.dialogVisible = false;
       },
 
@@ -570,17 +391,26 @@
         this.$emit("paymentCBEvent", object);
       },
       /* 打印合同 */
-      onPrint() {
+      onSave() {
         this.$refs.detailItem.validate(valid => {
           if (!valid) {
             return false
           }
-          let url = `${this.global.generateUrl("/pdfs/purchaseContract")}/${this.primary.id}?accessToken=${this.$store.state.user.token}`;
-          let form = this.$refs.detailItem.$el;
-          form.action = url;
-          form.method = "POST";
-          form.target = "_blank";
-          this.$refs.detailItem.$el.submit();
+          let url = `/procurementContractTpls/${this.primaryId}`;
+
+          this.global.axios.post(url, this.primary)
+            .then(resp => {
+              let _newObject = resp.data;
+              this.$message({type: 'success', message: '操作成功'});
+              this.loading = false;
+              this.confirmLoading = false;
+              this.$emit("modifyCBEvent", _newObject);
+              this.closeDialog();
+            })
+            .catch(err => {
+              this.loading = false;
+              this.confirmLoading = false;
+            })
         });
       },
       updateInput(val) {

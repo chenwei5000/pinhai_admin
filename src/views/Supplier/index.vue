@@ -5,6 +5,7 @@
         <ph-table
           v-bind="tableConfig"
           @onSetting="onSetting"
+          @onTpl="onTpl"
         >
         </ph-table>
       </div>
@@ -12,6 +13,10 @@
 
     <stockDialog ref="stockDialog">
     </stockDialog>
+
+
+    <tplDialog ref="tplDialog">
+    </tplDialog>
 
   </div>
 </template>
@@ -24,10 +29,12 @@
   import validRules from '../../components/validRules'
   import {checkPermission} from "../../utils/permission";
   import stockDialog from './components/stockDialog'
+  import tplDialog from './components/tplDialog'
 
   export default {
     components: {
-      stockDialog
+      stockDialog,
+      tplDialog
     },
 
     data() {
@@ -39,6 +46,7 @@
           hasEdit: checkPermission('SupplierResource_update'),
           hasDelete: checkPermission('SupplierResource_remove'),
           hasSetting: checkPermission('SupplierStockResource_list'),
+          hasTpl: checkPermission('SupplierResource_update'),
           hasExport: checkPermission('SupplierResource_export'),
 
           url: '/suppliers',
@@ -47,10 +55,14 @@
             "row-class-name": this.statusClassName
           },
           //工具按钮
-          operationAttrs: {width: '120', fixed: 'right'},
+          operationAttrs: {width: '180', fixed: 'right'},
 
           columns: [
-            {width: 30,type: checkPermission('SupplierResource_remove') ? 'selection' : '', hidden: !checkPermission('PositionResource_remove')},
+            {
+              width: 30,
+              type: checkPermission('SupplierResource_remove') ? 'selection' : '',
+              hidden: !checkPermission('PositionResource_remove')
+            },
             phColumns.id,
             {prop: 'code', label: '编码', "width": 100},
             {prop: 'name', label: '简称', "min-width": 150},
@@ -200,6 +212,9 @@
       },
       onSetting(row) {
         this.$refs.stockDialog.openDialog(row.id, row.name);
+      },
+      onTpl(row) {
+        this.$refs.tplDialog.openDialog(row.id, row);
       }
     },
 
