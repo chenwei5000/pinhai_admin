@@ -58,6 +58,24 @@
             </el-col>
 
             <el-col :md="8">
+              <el-form-item label="购买方" prop="companyId">
+                <el-select v-model="editObject.companyId" size="mini"
+                           filterable placeholder="请选择供货商">
+                  <el-option
+                    v-for="(item , idx) in companySelectOptions"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="idx"
+                  ></el-option>
+                </el-select>
+
+                <el-tooltip class="item" effect="light" content="产品供货商，从哪个厂商采购。" placement="right">
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+
+            <el-col :md="8">
               <el-form-item label="收货仓库" prop="warehouseId">
                 <el-select v-model="editObject.warehouseId" size="mini"
                            filterable placeholder="请选择收货仓库">
@@ -70,20 +88,6 @@
                 </el-select>
 
                 <el-tooltip class="item" effect="light" content="采购的商品接收的仓库" placement="right">
-                  <i class="el-icon-question">&nbsp;</i>
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-
-            <el-col :md="8">
-              <el-form-item label="名称" prop="name">
-                <el-input v-model.trim="editObject.name"
-                          maxlength="100"
-                          show-word-limit
-                          size="mini"
-                          style="width: 200px" placeholder="请填写名称" clearable></el-input>
-
-                <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
                   <i class="el-icon-question">&nbsp;</i>
                 </el-tooltip>
               </el-form-item>
@@ -146,12 +150,14 @@
           </el-row>
 
           <el-row>
-            <el-col :md="24">
+
+            <el-col :md="8">
               <el-form-item label="期望交货日期" prop="otdTime">
                 <el-date-picker
                   v-model="editObject.otdTime"
                   type="date"
                   size="mini"
+                  style="width: 175px"
                   placeholder="选择日期">
                 </el-date-picker>
 
@@ -160,6 +166,21 @@
                 </el-tooltip>
               </el-form-item>
             </el-col>
+
+            <el-col :md="12">
+              <el-form-item label="名称" prop="name">
+                <el-input v-model.trim="editObject.name"
+                          maxlength="200"
+                          show-word-limit
+                          size="mini"
+                          style="width: 300px" placeholder="请填写名称" clearable></el-input>
+
+                <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
+                  <i class="el-icon-question">&nbsp;</i>
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+
           </el-row>
 
         </fieldset>
@@ -190,7 +211,7 @@
         <el-table-column prop="product.skuCode" label="SKU" sortable width="150" fixed="left">
         </el-table-column>
 
-        <el-table-column prop="product.imgUrl" label="图片" width="40" >
+        <el-table-column prop="product.imgUrl" label="图片" width="40">
           <template slot-scope="scope" v-if="scope.row.product.imgUrl">
             <el-image
               :z-index="10000"
@@ -266,7 +287,7 @@
     <el-row>
       <el-col :md="24">
         <el-row type="flex" justify="center">
-          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" size="mini"  @click="onSave"
+          <el-button type="primary" style="margin-top: 15px" :loading="confirmLoading" size="mini" @click="onSave"
                      v-if="hasEdit">
             下单
           </el-button>
@@ -284,6 +305,7 @@
   import planDetailDialog from './planDetailDialog'
   import {checkPermission} from "../../../../utils/permission";
   import {getObjectValueByArr} from "../../../../utils";
+  import companyManagementModel from "../../../../api/companyManagement";
 
   export default {
     components: {
@@ -314,7 +336,7 @@
         }
         return checkPermission('ProcurementOrderItemResource_remove');
       },
-      hasPrice(){
+      hasPrice() {
         return checkPermission('PurchasePriceVisible');
       }
     },
@@ -338,6 +360,7 @@
         supplierSelectOptions: [],
         warehouseSelectOptions: [],
         settlementMethodSelectOptions: [],
+        companySelectOptions: [],
         currencySelectOptions: [],
         selCurrency: {},
 
@@ -357,6 +380,9 @@
           supplierId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
+          companyId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
           warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
@@ -370,6 +396,9 @@
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
           name: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          otdTime: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },
@@ -416,8 +445,13 @@
           this.editObject.warehouseId = null;
           this.editObject.accountPeriod = 60;
           this.editObject.settlementMethod = '3';
+          this.editObject.companyId = this.editObject.companyId == null ? null : this.editObject.companyId + '';
+
           // 付款方式
           this.settlementMethodSelectOptions = phEnumModel.getSelectOptions('SettlementMethod');
+          // 购买方
+          this.companySelectOptions = companyManagementModel.getSelectSelfOptions();
+
           this.initCurrencData();
           this.initSupplierData();
           this.initWarehouseData();
@@ -829,8 +863,8 @@
             _detail.cartonQty = r.purchaseOrderCartonQty;
             _detail.skuCode = r.product.skuCode;
             _detail.price = r.product.price;
-            _detail.supplierId=_order.supplierId;
-            _detail.otdTime=_order.otdTime;
+            _detail.supplierId = _order.supplierId;
+            _detail.otdTime = _order.otdTime;
             _details.push(_detail);
           }
         });

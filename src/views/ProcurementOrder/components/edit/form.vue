@@ -28,21 +28,6 @@
         </el-row>
       </fieldset>
 
-      <fieldset class="panel-heading">
-        <legend class="panel-title">期望交货日期
-          <el-tooltip class="item" effect="light" placement="right">
-            <div slot="content">
-              采购单预计的交货日期，由跟单确认
-            </div>
-            <i class="el-icon-question">&nbsp;</i>
-          </el-tooltip>
-        </legend>
-
-        <el-row>
-            <span style="font-size: 12px">{{ editObject.formatOtdTime ? editObject.formatOtdTime : '无'}}</span>
-        </el-row>
-      </fieldset>
-
       <fieldset class="panel-heading" style="margin-top: 15px">
         <legend class="panel-title">采购单信息
           <el-tooltip class="item" effect="light" placement="right">
@@ -57,6 +42,24 @@
           <el-col :md="8">
             <el-form-item label="供货商" prop="supplierId">
               <span style="font-size: 12px">{{editObject.supplier.name}}</span>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="8">
+            <el-form-item label="购买方" prop="companyId">
+              <el-select v-model="editObject.companyId" size="mini"
+                         filterable placeholder="请选择供货商">
+                <el-option
+                  v-for="(item , idx) in companySelectOptions"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="idx"
+                ></el-option>
+              </el-select>
+
+              <el-tooltip class="item" effect="light" content="产品供货商，从哪个厂商采购。" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
             </el-form-item>
           </el-col>
 
@@ -78,18 +81,6 @@
             </el-form-item>
           </el-col>
 
-          <el-col :md="8">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model.trim="editObject.name" size="mini"
-                        maxlength="100"
-                        show-word-limit
-                        style="width: 200px" placeholder="请填写名称" clearable></el-input>
-
-              <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
-                <i class="el-icon-question">&nbsp;</i>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
         </el-row>
 
         <el-row>
@@ -145,12 +136,44 @@
           </el-col>
         </el-row>
 
+        <el-row>
+          <el-col :md="8">
+            <el-form-item label="期望交货日期" prop="otdTime">
+              <el-date-picker
+                v-model="editObject.otdTime"
+                type="date"
+                size="mini"
+                style="width: 175px"
+                placeholder="选择日期">
+              </el-date-picker>
+
+              <el-tooltip class="item" effect="light" content="采购单预计在该日期前完成" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="12">
+            <el-form-item label="名称" prop="name">
+              <el-input v-model.trim="editObject.name" size="mini"
+                        maxlength="200"
+                        show-word-limit
+                        style="width: 300px" placeholder="请填写名称" clearable></el-input>
+
+              <el-tooltip class="item" effect="light" content="采购单名称默认使用计划名称" placement="right">
+                <i class="el-icon-question">&nbsp;</i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
       </fieldset>
 
       <el-row>
         <el-col :md="24">
           <el-row type="flex" justify="center">
-            <el-button v-if="hasEdit" type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onSave">
+            <el-button v-if="hasEdit" type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading"
+                       @click="onSave">
               保存基本信息
             </el-button>
           </el-row>
@@ -168,6 +191,7 @@
   import phEnumModel from '@/api/phEnum'
   import currencyModel from '@/api/currency'
   import {checkPermission} from "../../../../utils/permission";
+  import companyManagementModel from "../../../../api/companyManagement";
 
   export default {
     components: {},
@@ -183,7 +207,7 @@
         if ([0, 8].indexOf(this.primary.status) > -1) {
           return false;
         }
-        if(!checkPermission('ProcurementOrderResource_update')){
+        if (!checkPermission('ProcurementOrderResource_update')) {
           return false;
         }
         return true;
@@ -209,6 +233,7 @@
         warehouseSelectOptions: [],
         settlementMethodSelectOptions: [],
         currencySelectOptions: [],
+        companySelectOptions: [],
         selCurrency: {},
 
         // 编辑对象 TODO
@@ -227,6 +252,9 @@
           supplierId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
+          companyId: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
           warehouseId: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
@@ -237,6 +265,9 @@
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
           accountPeriod: [
+            {required: true, message: '必须输入', trigger: 'blur'}
+          ],
+          otdTime: [
             {required: true, message: '必须输入', trigger: 'blur'}
           ],
         },
@@ -264,9 +295,13 @@
 
           // 转化数据
           this.editObject.settlementMethod = this.editObject.settlementMethod + '';
+          this.editObject.companyId = this.editObject.companyId == null ? null : this.editObject.companyId + '';
 
           // 付款方式
           this.settlementMethodSelectOptions = phEnumModel.getSelectOptions('SettlementMethod');
+          // 购买方
+          this.companySelectOptions = companyManagementModel.getSelectSelfOptions();
+
           this.initCurrencData();
           this.initWarehouseData();
 
@@ -322,16 +357,21 @@
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
       onSave() {
-        this.$confirm('注意保存基本信息只会修改对应的参数，您是否继续？', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action == 'confirm') {
-              done();
-              this.modifyObject();
-            } else done()
+        this.$refs.editObject.validate(valid => {
+          if (!valid) {
+            return;
           }
-        }).catch(er => {
-          /*取消*/
+          this.$confirm('注意保存基本信息只会修改对应的参数，您是否继续？', '提示', {
+            type: 'warning',
+            beforeClose: (action, instance, done) => {
+              if (action == 'confirm') {
+                done();
+                this.modifyObject();
+              } else done()
+            }
+          }).catch(er => {
+            /*取消*/
+          })
         })
       },
 
