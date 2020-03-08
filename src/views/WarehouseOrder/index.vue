@@ -38,7 +38,7 @@
           hasExport: true, //checkPermission('WarehouseOrderResource_export'),
 
           url: '/warehouseOrders',
-          relations: ["product", "warehouse", "supplier", "cartonSpec", "storageLocation", "currency"],
+          relations: ["product", "procurementOrder", "warehouse", "supplier", "cartonSpec", "storageLocation", "currency", "procurementOrder.company"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -54,6 +54,7 @@
             {prop: 'allocationCode', label: '调拨单', 'min-width': 130},
             {prop: 'typeName', label: '类型', 'min-width': 100},
             /*{prop: 'storageLocation.code', label: '存放货位', 'min-width': 100},*/
+            {prop: 'procurementOrder.company.abbreviation', label: '购买方', 'min-width': 100},
             {prop: 'supplier.name', label: '供货商', 'min-width': 100},
             {prop: 'product.skuCode', label: 'SKU编码', 'min-width': 150},
             {prop: 'product.name', label: '产品名', 'min-width': 150},
