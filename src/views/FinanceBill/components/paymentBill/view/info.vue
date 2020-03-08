@@ -12,6 +12,13 @@
     >
 
       <el-row>
+
+        <el-col :md="6">
+          <el-form-item label="购买方">
+            <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.company.abbreviation}}</span>
+          </el-form-item>
+        </el-col>
+
         <el-col :md="6">
           <el-form-item label="供货商">
             <span style="font-size: 12px">{{this.editObject.supplier.name}}</span>
@@ -21,12 +28,6 @@
         <el-col :md="6">
           <el-form-item label="采购单编码">
             <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.code}}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="采购单">
-            <span style="font-size: 12px">{{this.editObject.settlementBill.procurementOrder.name}}</span>
           </el-form-item>
         </el-col>
 

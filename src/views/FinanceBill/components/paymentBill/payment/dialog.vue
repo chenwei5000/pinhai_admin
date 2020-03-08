@@ -119,7 +119,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"];
+          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder", "settlementBill.procurementOrder.company"];
           //获取计划数据
           this.global.axios
             .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)
