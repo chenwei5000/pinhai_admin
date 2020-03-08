@@ -107,7 +107,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrderAmount","procurementShippedOrder"];
+          let relations = ["supplier", "currency", "procurementOrder", "procurementOrderAmount","procurementShippedOrder", "procurementOrder.company"];
           //获取计划数据
           this.global.axios
             .get(`/financeBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
