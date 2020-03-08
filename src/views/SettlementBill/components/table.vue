@@ -69,8 +69,10 @@
       :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
+      <el-table-column prop="procurementOrder.company.abbreviation" label="购买方" width="120" fixed="left">
+      </el-table-column>
 
+      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
       </el-table-column>
 
       <el-table-column prop="code" label="编码" width="140"></el-table-column>
@@ -260,7 +262,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/settlementBills', // 资源URL
         countUrl: '/settlementBills/count', // 资源URL
-        relations: ["supplier", "currency", "procurementOrder"],  // 关联对象
+        relations: ["supplier", "currency", "procurementOrder", "procurementOrder.company"],  // 关联对象
         data: [],
         phSort: {prop: "latestPaymentTime", order: "asc"},
 
