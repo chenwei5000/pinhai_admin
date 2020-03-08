@@ -29,7 +29,7 @@
             </el-form-item>
 
 
-            <el-form-item label="供货商">
+            <el-form-item label="供货商" v-if="hasNotSales">
               <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
                          placeholder="请选择供货商">
                 <el-option
@@ -130,6 +130,7 @@
   import supplierModel from '@/api/supplier'
   import categoryModel from '@/api/category'
   import {getObjectValueByArr} from "../../utils";
+  import {checkNotRole} from "../../utils/permission";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -154,6 +155,9 @@
       ...mapGetters([
         'device', 'rolePower'
       ]),
+      hasNotSales() {
+        return checkNotRole("销售");
+      },
       hasExport() {
         return true;
       }

@@ -41,4 +41,28 @@ export function checkRole(value) {
   }
 }
 
+export function checkNotRole(value) {
+  if (value && value.length > 0) {
+    const userInfo = store.getters && store.getters.userInfo;
+    if (userInfo && userInfo.roles) {
+      let flg = true;
+      userInfo.roles.forEach(role => {
+        if (role.name == '系统管理员') {
+          flg = true;
+        }
+        if (role.name == '公司管理员') {
+          flg = true;
+        }
+        if (role.name == value) {
+          flg = false;
+        }
+      })
+      return flg;
+    }
+    return false;
+  } else {
+    return false;
+  }
+}
+
 

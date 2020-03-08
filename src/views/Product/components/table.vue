@@ -120,6 +120,8 @@
       <el-table-column prop="newGoods" v-if="unfinishedHide" label="新品" min-width="100"
                        :formatter='row => (row.newGoods === 1 ? "是" : "否")' align="center"></el-table-column>
 
+      <el-table-column prop="id" label="ID" min-width="80" align="center"></el-table-column>
+
       <el-table-column prop="lastModified" sortable="custom" label="修改时间" min-width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lastModified | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
