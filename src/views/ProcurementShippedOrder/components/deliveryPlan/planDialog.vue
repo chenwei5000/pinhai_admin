@@ -271,7 +271,7 @@
               this.detailItem = data
               // 转字段
               this.detailItem.productName = data.product.name;
-              this.detailItem.skuCode= data.product.skuCode;
+              this.detailItem.skuCode = data.product.skuCode;
               this.detailItem.cartonSpecId = data.cartonSpecId + '';
               this.detailItem.deliveryTime = data.formatDeliveryTime;
 
@@ -286,10 +286,12 @@
         }
         else {
           // 设置添加默认值
+          console.log(this.orderItem);
           this.detailItem = {
             skuCode: this.orderItem.skuCode,
             productName: this.orderItem.product.name,
-            cartonSpecId: this.orderItem.cartonSpecId + '',
+            cartonSpecId: (this.orderItem.cartonSpecId < 0 && this.orderItem.product.cartonSpecId > 0)
+              ? this.orderItem.product.cartonSpecId + '' : this.orderItem.cartonSpecId + '',
             numberOfCarton: this.orderItem.numberOfCarton,
             procurementOrderId: this.orderItem.procurementOrderId,
             procurementPlanId: this.orderItem.procurementPlanId,
