@@ -68,7 +68,26 @@
               },
               $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
             },
-            phSearchItems.skuCode
+            {
+              $type: 'input',
+              $id: 'skuCode',
+              label: 'SKU编码',
+              $el: {
+                op: 'eq',
+                size: "mini",
+                placeholder: '请输入SKU编码'
+              }
+            },
+            {
+              $type: 'input',
+              $id: 'productName',
+              label: '产品名',
+              $el: {
+                op: 'bw',
+                size: "mini",
+                placeholder: '请输入产品名'
+              }
+            }
           ]
         }
       }
