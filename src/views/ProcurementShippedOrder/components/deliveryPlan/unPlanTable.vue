@@ -767,7 +767,6 @@
           _res.remark = obj["备注"];
           resData.push(_res);
         });
-        return;
 
         for (var i = 0; i < resData.length; i++) {
           promiseArr.push(this.uploadPromise(resData[i]));
