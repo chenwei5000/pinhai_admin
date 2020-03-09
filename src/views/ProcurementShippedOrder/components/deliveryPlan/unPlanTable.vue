@@ -732,7 +732,7 @@
       },
 
       formatDate(numb) {
-        const time = new Date((numb - 1) * 24 * 3600000 + 1)
+        const time = new Date((numb - 2) * 24 * 3600000 + 1);
         time.setYear(time.getFullYear() - 70);
         return moment(time).format('YYYY-MM-DD');
       },
@@ -767,6 +767,7 @@
           _res.remark = obj["备注"];
           resData.push(_res);
         });
+        return;
 
         for (var i = 0; i < resData.length; i++) {
           promiseArr.push(this.uploadPromise(resData[i]));
