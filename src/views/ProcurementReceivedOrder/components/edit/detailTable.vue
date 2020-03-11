@@ -63,6 +63,8 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="product.fnSku" label="FN SKU" width="100" align="center"></el-table-column>
+
       <el-table-column prop="product.name" label="产品名" min-width="200" align="center">
       </el-table-column>
 
