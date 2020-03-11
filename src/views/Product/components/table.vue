@@ -22,6 +22,10 @@
         <el-input v-model="productParam.skuCode.value" size="mini" placeholder="请输入SKU"></el-input>
       </el-form-item>
 
+      <el-form-item label="FNSKU">
+        <el-input v-model="productParam.fnSku.value" size="mini" placeholder="请输入FNSKU"></el-input>
+      </el-form-item>
+
       <el-form-item label="名称">
         <el-input v-model="productParam.name.value" size="mini" placeholder="请输入名称"></el-input>
       </el-form-item>
@@ -301,6 +305,7 @@
         productParam: {
           categoryId: {value: null, op: 'eq', id: 'categoryId'},
           skuCode: {value: null, op: 'bw', id: 'skuCode'},
+          fnSku: {value: null, op: 'eq', id: 'fnSku'},
           name: {value: null, op: 'bw', id: 'name'},
           groupName: {value: null, op: 'bw', id: 'groupName'},
         },
@@ -344,6 +349,9 @@
         }
         if (params.skuCode) {
           this.productParam.skuCode.value = params.skuCode;
+        }
+        if (params.fnSku) {
+          this.productParam.fnSku.value = params.fnSku;
         }
         if (params.name) {
           this.productParam.name.value = params.name;
@@ -523,6 +531,7 @@
         this.$refs.searchForm.resetFields();
         this.productParam.categoryId.value = null;
         this.productParam.skuCode.value = null;
+        this.productParam.fnSku.value = null;
         this.productParam.name.value = null;
         this.productParam.groupName.value = null;
         this.page = 1
