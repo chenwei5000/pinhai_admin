@@ -286,7 +286,6 @@
         }
         else {
           // 设置添加默认值
-          console.log(this.orderItem);
           this.detailItem = {
             skuCode: this.orderItem.skuCode,
             productName: this.orderItem.product.name,

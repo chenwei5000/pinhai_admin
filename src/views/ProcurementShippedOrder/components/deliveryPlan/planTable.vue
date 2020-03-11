@@ -14,9 +14,12 @@
           size="mini"
           v-model="searchParam.deliveryTime.value"
           format="yyyy-MM-dd"
-          style="width: 150px"
+          style="width: 220px"
           value-format="yyyy-MM-dd"
-          placeholder="交货日期">
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
         </el-date-picker>
 
       </el-form-item>
