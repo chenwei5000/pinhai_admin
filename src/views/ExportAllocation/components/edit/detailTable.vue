@@ -53,6 +53,9 @@
         <el-form-item label="SKU">
           <el-input v-model="searchParam.skuCode" placeholder="请输入SKU" size="mini" clearable></el-input>
         </el-form-item>
+        <el-form-item label="FNSKU">
+          <el-input v-model="searchParam.fnSku" placeholder="请输入FNSKU" size="mini" clearable></el-input>
+        </el-form-item>
 
         <el-form-item label="是否缺货">
           <el-checkbox v-model="searchParam.outOfStock"></el-checkbox>
@@ -191,6 +194,7 @@
         searchParam: {
           skuCode: null,
           outOfStock: null,
+          fnSku: null,
         },
         // 表格加载效果
         loading: false
@@ -372,6 +376,15 @@
             });
         }
 
+        if (this.searchParam.fnSku != null && this.searchParam.fnSku != '') {
+          this.tableData = this.tableData.filter(
+            item => {
+              if (item.product && item.product.fnSku.indexOf(this.searchParam.fnSku) !== -1) {
+                return true;
+              }
+            });
+        }
+
         if (this.searchParam.outOfStock != null && this.searchParam.outOfStock) {
           this.tableData = this.tableData.filter(
             item => {
@@ -388,6 +401,7 @@
 
         //TODO:根据实际情况调整
         this.searchParam.skuCode = null;
+        this.searchParam.fnSku = null;
         this.searchParam.outOfStock = null;
 
         this.search();
