@@ -208,10 +208,7 @@
                          filterable placeholder="请选择未完成采购计划处理方式">
 
                 <el-option label="不考虑" value="0"></el-option>
-                <el-option label="计划数量" value="1"></el-option>
-                <el-option label="下单数量" value="2"></el-option>
-                <el-option label="发货数量" value="3"></el-option>
-                <el-option label="收货数量" value="4"></el-option>
+                <el-option label="未交货数量" value="5"></el-option>
 
               </el-select>
 
@@ -303,7 +300,7 @@
           merchantId: null,
           warehouseId: null,
           groupName: null,
-          handleMethod: "3",
+          handleMethod: "5",
           safetyStockWeek: null,
           vip1SafetyStockWeek: null,
           vip2SafetyStockWeek: null,
