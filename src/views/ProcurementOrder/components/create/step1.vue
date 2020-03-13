@@ -60,6 +60,7 @@
             <el-col :md="8">
               <el-form-item label="购买方" prop="companyId">
                 <el-select v-model="editObject.companyId" size="mini"
+                           @change="updateInput"
                            filterable placeholder="请选择供货商">
                   <el-option
                     v-for="(item , idx) in companySelectOptions"
@@ -78,6 +79,7 @@
             <el-col :md="8">
               <el-form-item label="收货仓库" prop="warehouseId">
                 <el-select v-model="editObject.warehouseId" size="mini"
+                           @change="updateInput"
                            filterable placeholder="请选择收货仓库">
                   <el-option
                     v-for="(item , idx)  in warehouseSelectOptions"
@@ -98,7 +100,7 @@
           <el-row>
             <el-col :md="8">
               <el-form-item label="结算方式" prop="settlementMethod">
-                <el-select v-model="editObject.settlementMethod" @change="onSettlementMethodChange" size="mini"
+                <el-select v-model="editObject.settlementMethod" @change="updateInput" size="mini"
                            filterable placeholder="请选择结算方式">
                   <el-option
                     v-for="(item , idx)  in settlementMethodSelectOptions"
@@ -135,7 +137,7 @@
             <el-col :md="8">
               <el-form-item label="帐期" prop="accountPeriod">
                 <el-input-number v-model="editObject.accountPeriod"
-                                 @change="onAccountPeriodChange"
+                                 @change="updateInput"
                                  style="width: 155px"
                                  :min="0"
                                  :step="1"
@@ -157,6 +159,7 @@
                   v-model="editObject.otdTime"
                   type="date"
                   size="mini"
+                  @input="updateInput"
                   style="width: 175px"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -171,6 +174,7 @@
               <el-form-item label="名称" prop="name">
                 <el-input v-model.trim="editObject.name"
                           maxlength="200"
+                          @input="updateInput"
                           show-word-limit
                           size="mini"
                           style="width: 300px" placeholder="请填写名称" clearable></el-input>
@@ -735,15 +739,9 @@
         this.search();
         this.$forceUpdate();
       },
-      /* 修改结算方式 */
-      onSettlementMethodChange() {
+      updateInput(val) {
         this.$forceUpdate();
       },
-      /* 帐期修改 */
-      onAccountPeriodChange() {
-        this.$forceUpdate();
-      },
-
       /********************* 操作按钮相关方法  ***************************/
       /* 保存对象 */
       onSave() {
@@ -852,6 +850,7 @@
         _order.accountPeriod = this.editObject.accountPeriod;
         _order.name = this.editObject.name;
         _order.otdTime = this.editObject.otdTime;
+        _order.companyId = this.editObject.companyId;
 
         let _details = [];
         this.tableData.forEach(r => {
