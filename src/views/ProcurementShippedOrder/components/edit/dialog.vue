@@ -7,17 +7,28 @@
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
-      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" size="small" @click="onWithdraw">撤回</el-button>
-      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="small"  @click="onShipped">执行发货</el-button>
+      <el-button type="warning" icon="el-icon-refresh-left" v-if="hasWithdraw" size="small" @click="onWithdraw">撤回
+      </el-button>
+      <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="small" @click="onShipped">执行发货
+      </el-button>
+
+      <el-button type="warning" size="small" icon="el-icon-brush" v-if="hasExecute" @click="onBoxCode">生成箱码</el-button>
+
+      <a target="_blank"
+         :href="global.generateUrl('/pdfs/shippedPackageLabels')+'/'+ primary.id + '?accessToken=' + $store.state.user.token">
+        <el-button type="primary" size="small" v-if="hasExecute" icon="el-icon-download">下载箱贴</el-button>
+      </a>
 
       <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute">
-        <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" size="small"  @click="onPrint">打印发货单</el-button>
+        <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" size="small">打印发货单</el-button>
       </router-link>
 
-      <el-button type="success" size="small"  icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束发货计划</el-button>
+      <el-button type="success" size="small" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束发货计划
+      </el-button>
 
-      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" size="small"  @click="onStatus">修改状态</el-button>
-      <el-button @click="closeDialog" size="small" >取 消</el-button>
+      <el-button type="danger" icon="el-icon-s-opportunity" v-if="hasAdmin" size="small" @click="onStatus">修改状态
+      </el-button>
+      <el-button @click="closeDialog" size="small">取 消</el-button>
     </el-row>
 
     <!-- 折叠面板 -->
@@ -99,8 +110,8 @@
           return false;
         }
       },
-      hasShipped(){
-        if (this.primary.status == 3 ){
+      hasShipped() {
+        if (this.primary.status == 3) {
           if (!checkPermission('ProcurementShippedOrderResource_shippedOrder')) {
             return false;
           }
@@ -226,15 +237,33 @@
         this.$refs.shippedDialog.openDialog(this.primary);
       },
       onShippedCBEvent(object) {
-        this.primaryComplete=false;
+        this.primaryComplete = false;
         this.initData();
         this.$emit("modifyCBEvent");
       },
 
-
       //完成
       onComplete() {
         this.business('确认发货计划结束了吗?', 'complete', "操作成功!", "");
+      },
+
+      onBoxCode() {
+        let loading = this.$loading({
+          lock: true,
+          text: '加载数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        this.global.axios.put(`/procurementShippedOrders/boxCode/${this.primaryId}`)
+          .then(resp => {
+            this.$message.success("箱码生成成功");
+            loading.close();
+            this.$refs.itemTable.getList();
+          })
+          .catch(err => {
+            loading.close();
+          })
       },
 
       // 管理员修改状态

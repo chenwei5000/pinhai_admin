@@ -190,13 +190,8 @@
           <el-form-item label="未完成采购计划处理方式" prop="handleMethod">
             <el-select v-model="editObject.handleMethod" style="width: 220px" size="mini"
                        filterable placeholder="请选择未完成采购计划处理方式">
-
               <el-option label="不考虑" value="0"></el-option>
-              <el-option label="采购计划数量" value="1"></el-option>
-              <el-option label="已下采购单数量" value="2"></el-option>
-              <el-option label="已发货数量" value="3"></el-option>
-              <el-option label="已收货数量" value="4"></el-option>
-
+              <el-option label="未交货数量" value="3"></el-option>
             </el-select>
 
             <el-tooltip class="item" effect="light" placement="right">

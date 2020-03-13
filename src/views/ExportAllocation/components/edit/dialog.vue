@@ -14,7 +14,7 @@
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
 
 
-      <el-button type="warning" size="small" icon="el-icon-orange" v-if="primary.status === 3" @click="onBoxCode">生成箱码
+      <el-button type="warning" size="small" icon="el-icon-brush" v-if="primary.status === 3" @click="onBoxCode">生成箱码
       </el-button>
 
       <el-button type="primary" size="small" icon="el-icon-download" @click="downloadAmazonPackageLabels">下载箱贴

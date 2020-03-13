@@ -131,7 +131,7 @@
           //获取计划数据
           let url = `/procurementShippedOrders/${this.primaryId}`;
           url += "?relations=" + JSON.stringify(["supplier", "warehouse"]);
-
+          url += "&sort=sortNum&dir=asc";
 
           _arr.push(this.global.axios
             .get(url)
