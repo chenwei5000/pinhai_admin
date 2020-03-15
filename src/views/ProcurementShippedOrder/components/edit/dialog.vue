@@ -12,15 +12,15 @@
       <el-button type="success" icon="el-icon-s-claim" v-if="hasShipped" size="small" @click="onShipped">执行发货
       </el-button>
 
-      <el-button type="warning" size="small" icon="el-icon-brush" v-if="hasExecute" @click="onBoxCode">生成箱码</el-button>
+      <el-button type="warning" size="small" icon="el-icon-brush" v-if="hasPackageLabel" @click="onBoxCode">生成箱码</el-button>
 
       <a target="_blank"
          :href="global.generateUrl('/pdfs/shippedPackageLabels')+'/'+ primary.id + '?accessToken=' + $store.state.user.token">
-        <el-button type="primary" size="small" v-if="hasExecute" icon="el-icon-download">下载箱贴</el-button>
+        <el-button type="primary" size="small" v-if="hasPackageLabel" icon="el-icon-download">下载箱贴</el-button>
       </a>
 
       <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute">
-        <el-button type="primary" icon="el-icon-printer" v-if="hasExecute" size="small">打印发货单</el-button>
+        <el-button type="primary" icon="el-icon-printer" v-if="hasPackageLabel" size="small">打印发货单</el-button>
       </router-link>
 
       <el-button type="success" size="small" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">结束发货计划
@@ -105,6 +105,17 @@
             return false;
           }
           return true;
+        }
+        else {
+          return false;
+        }
+      },
+      hasPackageLabel() {
+        if ([3].indexOf(this.primary.status) > -1) {
+          if (this.hasExecute && checkPermission('PdfResource_shippedPackageLabels')) {
+            return true;
+          }
+          return false;
         }
         else {
           return false;
