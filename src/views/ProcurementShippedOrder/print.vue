@@ -30,20 +30,15 @@
         <el-table-column prop="product.skuCode" label="SKU" width="200">
         </el-table-column>
 
+        <el-table-column prop="product.fnSku" label="FNSKU" width="90">
+        </el-table-column>
+
         <el-table-column prop="product.name" label="名称" width="166">
         </el-table-column>
 
         <el-table-column prop="product.name" label="规格型号" width="150">
           <template slot-scope="scope">
             {{scope.row.product.model}} , {{scope.row.product.color}}
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="cartonSpecCode" label="箱规" width="90">
-          <template slot-scope="scope">
-            {{scope.row.cartonSpec? scope.row.cartonSpec.length : ""}}
-            *{{scope.row.cartonSpec? scope.row.cartonSpec.width : "" }}
-            *{{scope.row.cartonSpec? scope.row.cartonSpec.height : ""}}
           </template>
         </el-table-column>
 
@@ -131,7 +126,6 @@
           //获取计划数据
           let url = `/procurementShippedOrders/${this.primaryId}`;
           url += "?relations=" + JSON.stringify(["supplier", "warehouse"]);
-          url += "&sort=sortNum&dir=asc";
 
           _arr.push(this.global.axios
             .get(url)
@@ -158,7 +152,7 @@
           // 处理关联加载
           itemsUrl += "&relations=" + JSON.stringify(["product", "cartonSpec"]);
           //排序
-          itemsUrl + "&sort=sortNum&dir=asc"
+          itemsUrl += "&sort=sortNum&dir=asc";
 
           //获取数据
           _arr.push(this.global.axios

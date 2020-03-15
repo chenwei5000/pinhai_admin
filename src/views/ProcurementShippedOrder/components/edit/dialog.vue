@@ -16,7 +16,7 @@
 
       <a target="_blank"
          :href="global.generateUrl('/pdfs/shippedPackageLabels')+'/'+ primary.id + '?accessToken=' + $store.state.user.token">
-        <el-button type="primary" size="small" v-if="false" icon="el-icon-download">下载箱贴</el-button>
+        <el-button type="primary" size="small" v-if="hasExecute" icon="el-icon-download">下载箱贴</el-button>
       </a>
 
       <router-link target="_blank" :to="'/procurementShippedOrder/print?id='+primary.id" v-if="hasExecute">
