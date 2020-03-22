@@ -51,7 +51,7 @@
           hasExport: checkPermission('SupplierResource_export'),
 
           url: '/suppliers',
-          relations: ["company"],  // 关联对象
+          relations: ["company","leader"],  // 关联对象
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
@@ -67,6 +67,7 @@
             phColumns.id,
             {prop: 'code', label: '编码', "width": 100},
             {prop: 'name', label: '简称', "min-width": 150},
+            {prop: 'leader.name', label: '跟单负责人', "min-width": 100},
             {prop: 'companyName', label: '公司名称', "min-width": 200},
             {prop: 'city', label: '所在城市', "min-width": 100},
             {prop: 'region', label: '管理区域', "min-width": 100},
