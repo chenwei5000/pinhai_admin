@@ -30,6 +30,7 @@
   import {checkPermission} from "../../utils/permission";
   import stockDialog from './components/stockDialog'
   import tplDialog from './components/tplDialog'
+  import userModel from "../../api/user";
 
   export default {
     components: {
@@ -152,6 +153,20 @@
                 validRules.required
               ],
               $options: datadicModel.getSelectOptions('region')
+            },
+            {
+              $type: 'select',
+              $id: 'leaderId',
+              label: '跟单负责人',
+              $el: {
+                size: "mini",
+                placeholder: '请选择跟单负责人,可筛选',
+                filterable: true
+              },
+              $options: userModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
             },
             {
               $type: 'input',
