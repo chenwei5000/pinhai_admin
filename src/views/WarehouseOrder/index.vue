@@ -135,6 +135,17 @@
               }
             },
             {
+              $type: 'input',
+              $id: 'productName',
+              label: '产品名',
+              $el: {
+                style: 'width:160px',
+                op: 'eq',
+                size: "mini",
+                placeholder: '请输入产品名'
+              }
+            },
+            {
               $type: 'select',
               $id: 'supplierId',
               label: '供货商',
