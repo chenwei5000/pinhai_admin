@@ -37,6 +37,10 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="采购计划编号">
+        <el-input size="mini" clearable v-model="searchParam.planCode.value" style="width: 150px" placeholder="请输入编码"></el-input>
+      </el-form-item>
+
      <el-form-item label="期望交货日期">
         <el-date-picker
           size="mini"
@@ -126,6 +130,8 @@
 
       <el-table-column prop="formatOtdTime" label="期望交货日期" width="100" align="center"></el-table-column>
 
+      <el-table-column prop="procurementPlan.code" label="采购计划编码" width="120" align="center"></el-table-column>
+
       <el-table-column prop="procurementPlan.note" label="交货要求" width="130" align="center">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="交货要求" width="250" trigger="hover"
@@ -138,7 +144,6 @@
           </span>
         </template>
       </el-table-column>
-
 
       <el-table-column prop="creator.name" label="创建人" width="80" align="center"></el-table-column>
 
@@ -317,6 +322,7 @@
           status: {value: null, op: 'eq', id: 'status'},
           otdTime: {value: null, op: 'timeRange', id: 'otdTime'},
           code: {value: null, op: 'bw', id: 'name'},
+          planCode: {value: null, op: 'eq', id: 'planCode'},
         },
 
         //弹窗
@@ -368,6 +374,9 @@
           }
           if (params.code) {
             this.searchParam.code.value = params.code;
+          }
+          if (params.planCode) {
+            this.searchParam.planCode.value = params.planCode;
           }
         }
       }
@@ -458,6 +467,7 @@
         this.searchParam.status.value = null;
         this.searchParam.otdTime.value = null;
         this.searchParam.code.value = null;
+        this.searchParam.planCode.value = null;
 
         // 重置url
         history.replaceState(history.state, '', location.href.replace(queryPattern, ''))
