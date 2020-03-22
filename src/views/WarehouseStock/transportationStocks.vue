@@ -57,6 +57,11 @@
 
             <el-form-item label="SKU">
               <el-input size="mini" v-model="searchParam.product_skuCode.value" style="width: 150px"
+                        placeholder="请输入SKU"></el-input>
+            </el-form-item>
+
+            <el-form-item label="产品名称">
+              <el-input size="mini" v-model="searchParam.product_name.value" style="width: 150px"
                         placeholder="请输入名称"></el-input>
             </el-form-item>
 
@@ -194,6 +199,7 @@
           supplierId: {value: null, op: 'in', id: 'supplierId'},
           product_categoryId: {value: null, op: 'eq', id: 'product_categoryId'},
           product_skuCode: {value: null, op: 'eq', id: 'product_skuCode'},
+          product_name: {value: null, op: 'bw', id: 'product_name'},
         },
 
         // 记录修改的那一行
@@ -230,6 +236,9 @@
           }
           if (params.product_skuCode) {
             this.searchParam.product_skuCode.value = params.product_skuCode;
+          }
+          if (params.product_name) {
+            this.searchParam.product_name.value = params.product_name;
           }
           if (params.deliveryTime) {
             this.searchParam.deliveryTime.value = params.deliveryTime;
@@ -293,6 +302,7 @@
         this.searchParam.supplierId.value = null;
         this.searchParam.product_categoryId.value = null;
         this.searchParam.product_skuCode.value = null;
+        this.searchParam.product_name.value = null;
         this.searchParam.deliveryTime.value = null;
 
         // 重置url
