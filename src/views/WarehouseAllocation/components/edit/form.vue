@@ -92,7 +92,7 @@
 
       <el-col :md="10">
         <el-form-item label="电话" prop="tel">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.linkman}}</span>
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.tel}}</span>
 
           <el-input v-else v-model="editObject.tel"
                     style="width: 220px" placeholder="请填写电话" size="mini" clearable></el-input>
