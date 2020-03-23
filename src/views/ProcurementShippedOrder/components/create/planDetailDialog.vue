@@ -36,6 +36,7 @@
 
               <el-select filterable
                          v-model="detailItem.cartonSpecId"
+                         size="mini"
                          placeholder="外箱包装材料规格,可筛选">
                 <el-option
                   v-for="(item,idx) in cartonspecSelectOptions"
@@ -58,6 +59,7 @@
                                :min="1"
                                :step="1"
                                style="width: 150px;"
+                               size="mini"
                                :max="100000" label="装箱数">
               </el-input-number>
 
@@ -71,14 +73,15 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="发货箱数" prop="shippedCartonQty">
+            <el-form-item label="本次发货箱数" prop="shippedCartonQty">
 
               <el-input-number v-model="detailItem.shippedCartonQty"
                                style="width: 175px;"
                                :precision="3"
                                :min="1"
                                :step="1"
-                               :max="detailItem.cartonQty" label="发货箱数">
+                               size="mini"
+                               :max="detailItem.unCartonPlanQty" label="发货箱数">
               </el-input-number>
 
               <el-tooltip class="item" effect="light" content="发货箱数,支持3位小数。" placement="right">
@@ -89,7 +92,7 @@
           </el-col>
 
           <el-col :md="14">
-            <el-form-item label="发货件数">
+            <el-form-item label="本次发货件数">
               {{orderQty}} 件
             </el-form-item>
           </el-col>
@@ -97,7 +100,21 @@
 
         <el-row>
           <el-col :md="10">
-            <el-form-item label="计划箱数" prop="cartonQty">
+            <el-form-item label="未发货箱数">
+              {{ detailItem.unCartonPlanQty }}
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="14">
+            <el-form-item label="未发货件数">
+              {{detailItem.unPlanQty}} 件
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :md="10">
+            <el-form-item label="计划箱数">
               {{ detailItem.cartonQty }}
             </el-form-item>
           </el-col>
@@ -108,6 +125,8 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+
 
         <el-row>
           <el-col :md="24">
@@ -192,7 +211,7 @@
             validRules.required,
             validRules.integer
           ],
-          cartonQty: [
+          shippedCartonQty: [
             validRules.required,
             validRules.number
           ]
@@ -236,7 +255,7 @@
 
       // 计算下单件数
       calOrderQty() {
-        return (this.detailItem.cartonQty * this.detailItem.numberOfCarton).toFixed(0);
+        return (this.detailItem.shippedCartonQty * this.detailItem.numberOfCarton).toFixed(0);
       },
 
       // 保存

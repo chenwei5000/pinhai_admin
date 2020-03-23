@@ -160,8 +160,8 @@
         <el-table-column prop="cartonSpec.code" label="箱规" width="120" align="center"></el-table-column>
         <el-table-column prop="procurementOrder.code" label="采购单号" width="120" align="center"></el-table-column>
 
-        <el-table-column prop="cartonQty" label="计划箱数" width="90" align="center"></el-table-column>
-        <el-table-column prop="qty" label="计划件数" width="90" align="center"></el-table-column>
+        <el-table-column prop="unCartonPlanQty" label="未发货箱数" width="90" align="center"></el-table-column>
+        <el-table-column prop="unPlanQty" label="未发货件数" width="90" align="center"></el-table-column>
         <el-table-column prop="remark" label="备注" width="130" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" title="备注" width="250" trigger="hover"
@@ -324,9 +324,10 @@
             this.editObject.supplier = this.primary[0].supplier;
             this.editObject.expectTime = this.primary[0].formatDeliveryTime;
           }
+          console.log(this.primary);
           this.primary.forEach(r => {
-            r.shippedCartonQty = r.cartonQty;
-            r.shippedQty = r.qty;
+            r.shippedCartonQty = r.unCartonPlanQty;
+            r.shippedQty = r.unPlanQty;
             this.data.push(r);
           })
 
