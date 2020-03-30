@@ -98,7 +98,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrder.company"];
+          let relations = ["supplier", "currency", "procurementOrder", "procurementOrder.company", "procurementOrder.creator"];
           //获取计划数据
           this.global.axios
             .get(`/settlementBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
@@ -157,14 +157,15 @@
               return false;
             }
 
-            if (!bills || bills.length == 0) {
+            /*if (!bills || bills.length == 0) {
               this.$message.error("请设置发票信息");
               return false;
             }
             if (!attachments || attachments.length == 0) {
               this.$message.error("请上传电子版发票");
               return false;
-            }
+            }*/
+            
             let order = {};
             order.settlementBillId = settlementBill.id;
             order.payableAmount = payableAmount;

@@ -107,6 +107,12 @@
             <span style="font-size: 12px">{{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
+
+        <el-col :md="6">
+          <el-form-item label="负责人">
+            <span style="font-size: 12px">{{this.editObject.procurementOrder.creator.name}}</span>
+          </el-form-item>
+        </el-col>
       </el-row>
 
 

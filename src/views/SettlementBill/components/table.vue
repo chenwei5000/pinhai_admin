@@ -144,6 +144,9 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="procurementOrder.creator.name" label="负责人" width="100">
+      </el-table-column>
+
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
@@ -262,7 +265,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/settlementBills', // 资源URL
         countUrl: '/settlementBills/count', // 资源URL
-        relations: ["supplier", "currency", "procurementOrder", "procurementOrder.company"],  // 关联对象
+        relations: ["supplier", "currency", "procurementOrder", "procurementOrder.company", "procurementOrder.creator"],  // 关联对象
         data: [],
         phSort: {prop: "latestPaymentTime", order: "asc"},
 
