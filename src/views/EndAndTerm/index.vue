@@ -28,6 +28,16 @@
           </el-select>
         </el-form-item>
         <el-form-item size="mini">
+          <el-date-picker
+            v-model="searchParam.timeRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :default-time="['2020-03-11','2020-01-23']"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item size="mini">
           <el-button size="mini" @click="getTableData()" type="primary">查询</el-button>
           <el-button size="mini" @click="reset" type="info">重置</el-button>
         </el-form-item>
@@ -51,11 +61,12 @@
           ></el-table-column>
           <el-table-column prop="supplierId" label="供货商ID" v-if="false"></el-table-column>
           <el-table-column prop="supplierName" label="供货商" width="150" align="center"></el-table-column>
-          <el-table-column prop="price" label="平均价" align="center"></el-table-column>
-          <el-table-column prop="cartonQty" label="应发箱数" width="100%" align="center"></el-table-column>
-          <el-table-column prop="qty" label="应发件数" align="center"></el-table-column>
-          <el-table-column prop="sumCartonSpecWeight" label="应发毛重(Kg)" align="center"></el-table-column>
-          <el-table-column prop="cartonSpecVolume" label="应发体积(m³)" align="center"></el-table-column>
+          <el-table-column prop="productName" label="产品名" align="center"></el-table-column>
+          <el-table-column prop="initialStage" label="期初" align="center"></el-table-column>
+          <el-table-column prop="initialEnd" label="期末" width="100%" align="center"></el-table-column>
+          <el-table-column prop="eoutTotal" label="出口总数" align="center"></el-table-column>
+          <el-table-column prop="inTotal" label="入库总数" align="center"></el-table-column>
+          <el-table-column prop="inventory" label="剩余库存" align="center"></el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
@@ -81,14 +92,17 @@ export default {
     return {
       searchParam: {
         skuCode: "",
-        supplierId: { value: null, op: "in", id: "supplierId" }
+        supplierId: { value: null, op: "in", id: "supplierId" },
+        timeRange: ""
       },
       tableData: [],
       supplierSelectOptions: [],
       currentPage: 1,
       pageSize: 20,
       total: 0,
-      loading: false
+      loading: false,
+      startDate: "",
+      endDate: ""
     };
   },
   computed: {},
@@ -104,7 +118,7 @@ export default {
       let filters = [];
       if (this.searchParam.skuCode != null && this.searchParam.skuCode !== "") {
         filters.push({
-          field: "skuCode",
+          field: "sku_Code",
           op: "equal",
           data: `${this.searchParam.skuCode}`
         });
@@ -114,7 +128,7 @@ export default {
         this.searchParam.supplierId.value !== ""
       ) {
         filters.push({
-          field: "supplier_id",
+          field: "s.id",
           op: "equal",
           data: `${this.searchParam.supplierId.value}`
         });
@@ -123,19 +137,37 @@ export default {
       let sorts = [];
       sorts.push({ propName: "p.last_modified", orderType: "asc" });
 
+      let nowdays = new Date();
+      let year = nowdays.getFullYear();
+      let month = nowdays.getMonth();
+      if (month == 0) {
+        month = 12;
+        year = year - 1;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      let myDate = new Date(year, month, 0);
+      let startDate = year + "-" + month + "-01 00:00:00"; //上个月第一天
+      let endDate = year + "-" + month + "-" + myDate.getDate() + " 23:59:59"; //上个月最后一天
+      this.startDate = startDate;
+      this.endDate = endDate;
+      console.log(startDate);
+      console.log(endDate);
       this.global
         .axios({
           header: {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/linerShippingPlanItemVOCount",
+          url: "/report/firstAndLastCount",
           method: "GET",
           params: {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
             filters: JSON.stringify(filters),
-            sorts: JSON.stringify(sorts)
+            startTime: startDate,
+            endTime: endDate
           }
         })
         .then(res => {
@@ -148,13 +180,14 @@ export default {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/linerShippingPlanItemVOList",
+          url: "/report/firstAndLastList",
           method: "GET",
           params: {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
             filters: JSON.stringify(filters),
-            sorts: JSON.stringify(sorts)
+            startTime: startDate,
+            endTime: endDate
           }
         })
         .then(res => {
@@ -165,6 +198,7 @@ export default {
     reset() {
       this.searchParam.skuCode = "";
       this.searchParam.supplierId.value = "";
+      this.searchParam.timeRange = "";
       this.getTableData();
     },
     handleSizeChange(val) {
