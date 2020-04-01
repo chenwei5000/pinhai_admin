@@ -1,10 +1,10 @@
 <template>
-  <el-card >
+  <el-card>
     <div class="form-class">
       <el-form :inline="true" inline-message>
-        <el-form-item label="请求地址" size="mini">
+        <el-form-item label="SKU编码" size="mini">
           <el-input
-            placeholder="请输入请求地址"
+            placeholder="请输入SKU编码"
             size="mini"
             v-model="searchParam.skuCode"
             @keyup.enter.native="getTableData"
@@ -121,6 +121,10 @@ export default {
           data: `${this.searchParam.supplierId.value}`
         });
       }
+
+      let sorts = []
+      sorts.push({"propName":"p.last_modified","orderType":"asc"})
+
       this.global
         .axios({
           header: {
@@ -132,7 +136,8 @@ export default {
           params: {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
-            filters: JSON.stringify(filters)
+            filters: JSON.stringify(filters),
+            sorts: JSON.stringify(sorts)
           }
         })
         .then(res => {
@@ -150,7 +155,8 @@ export default {
           params: {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
-            filters: JSON.stringify(filters)
+            filters: JSON.stringify(filters),
+            sorts: JSON.stringify(sorts)
           }
         })
         .then(res => {
@@ -160,6 +166,7 @@ export default {
     },
     reset() {
       this.searchParam.skuCode = "";
+      this.searchParam.supplierId.value = ''
       this.getTableData();
     },
     handleSizeChange(val) {
@@ -194,5 +201,4 @@ export default {
   line-height: 26px !important;
   color: #333; */
 }
-
 </style>
