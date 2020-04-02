@@ -129,7 +129,7 @@ export default {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/linerShippingPlanItemVOCount",
+          url: "/report/findCustomsDeclarationCount",
           method: "GET",
           params: {
             currentPage: this.currentPage,
@@ -148,7 +148,7 @@ export default {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/linerShippingPlanItemVOList",
+          url: "/report/findCustomsDeclarationList",
           method: "GET",
           params: {
             currentPage: this.currentPage,

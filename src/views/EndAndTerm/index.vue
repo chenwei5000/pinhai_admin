@@ -34,7 +34,8 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            :default-time="['2020-03-11','2020-01-23']"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :default-value="['2020-03-11','2020-01-23']"
           ></el-date-picker>
         </el-form-item>
         <el-form-item size="mini">
@@ -93,7 +94,7 @@ export default {
       searchParam: {
         skuCode: "",
         supplierId: { value: null, op: "in", id: "supplierId" },
-        timeRange: ""
+        timeRange: ["2020-03-22  00:00:00", "2020-03-23  00:00:00"]
       },
       tableData: [],
       supplierSelectOptions: [],
@@ -152,15 +153,14 @@ export default {
       let endDate = year + "-" + month + "-" + myDate.getDate() + " 23:59:59"; //上个月最后一天
       this.startDate = startDate;
       this.endDate = endDate;
-      console.log(startDate);
-      console.log(endDate);
+
       this.global
         .axios({
           header: {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/firstAndLastCount",
+          url: "/report/findBeginEndOfPeriodCount",
           method: "GET",
           params: {
             currentPage: this.currentPage,
@@ -172,6 +172,7 @@ export default {
         })
         .then(res => {
           this.total = res.data;
+          console.log(this.searchParam.timeRange);
         });
 
       this.global
@@ -180,7 +181,7 @@ export default {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/firstAndLastList",
+          url: "/report/findBeginEndOfPeriodList",
           method: "GET",
           params: {
             currentPage: this.currentPage,
@@ -198,7 +199,6 @@ export default {
     reset() {
       this.searchParam.skuCode = "";
       this.searchParam.supplierId.value = "";
-      this.searchParam.timeRange = "";
       this.getTableData();
     },
     handleSizeChange(val) {
