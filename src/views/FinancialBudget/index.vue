@@ -2,15 +2,6 @@
   <el-card>
     <div class="form-class">
       <el-form :inline="true" inline-message>
-        <el-form-item label="SKU编码" size="mini">
-          <el-input
-            placeholder="请输入SKU编码"
-            size="mini"
-            v-model="searchParam.skuCode"
-            @keyup.enter.native="getTableData"
-            clearable
-          ></el-input>
-        </el-form-item>
         <el-form-item label="供货商" size="mini">
           <el-select
             size="mini"
@@ -27,6 +18,16 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item size="mini" label="最晚付款时间" label-width="120px">
+          <el-date-picker
+            v-model="searchParam.latestPaymentTime"
+            type="date"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            style="width: 150px"
+            placeholder="请选择日期"
+          ></el-date-picker>
+        </el-form-item>
         <el-form-item size="mini">
           <el-button size="mini" @click="getTableData()" type="primary">查询</el-button>
           <el-button size="mini" @click="reset" type="info">重置</el-button>
@@ -40,22 +41,15 @@
           v-loading="loading"
           element-loading-text="页面正在玩命加载中..."
           element-loading-spinner="el-icon-loading"
-          height="500"
+          show-summary
+          :summary-method="getSummaries"
+          height="470"
+          class="tableClass"
         >
-          <el-table-column
-            prop="skuCode"
-            label="SKU编码"
-            min-width="100px"
-            width="300"
-            align="center"
-          ></el-table-column>
           <el-table-column prop="supplierId" label="供货商ID" v-if="false"></el-table-column>
-          <el-table-column prop="supplierName" label="供货商" width="150" align="center"></el-table-column>
-          <el-table-column prop="price" label="平均价" align="center"></el-table-column>
-          <el-table-column prop="cartonQty" label="应发箱数" width="100%" align="center"></el-table-column>
-          <el-table-column prop="qty" label="应发件数" align="center"></el-table-column>
-          <el-table-column prop="sumCartonSpecWeight" label="应发毛重(Kg)" align="center"></el-table-column>
-          <el-table-column prop="cartonSpecVolume" label="应发体积(m³)" align="center"></el-table-column>
+          <el-table-column prop="supplierName" label="供货商" align="center"></el-table-column>
+          <el-table-column prop="symbolLeft" label="单价左侧符号" align="center" v-if="false"></el-table-column>
+          <el-table-column prop="unpaidAmount" label="未付金额" align="center"></el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
@@ -65,7 +59,7 @@
           :page-size="pageSize"
           :total="total"
           background
-          style="text-align: right; padding: 10px 0"
+          style="margin-top:40px;text-align: right; padding: 10px 10px 10px 10px"
           layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
       </div>
@@ -81,14 +75,16 @@ export default {
     return {
       searchParam: {
         skuCode: "",
-        supplierId: { value: null, op: "in", id: "supplierId" }
+        supplierId: { value: null, op: "in", id: "supplierId" },
+        latestPaymentTime: ""
       },
       tableData: [],
       supplierSelectOptions: [],
       currentPage: 1,
       pageSize: 20,
       total: 0,
-      loading: false
+      loading: false,
+      unpaidAmount: ""
     };
   },
   computed: {},
@@ -102,13 +98,7 @@ export default {
       this.supplierSelectOptions = supplierModel.getSelectOptions();
       this.loading = true;
       let filters = [];
-      if (this.searchParam.skuCode != null && this.searchParam.skuCode !== "") {
-        filters.push({
-          field: "skuCode",
-          op: "like",
-          data: `%${this.searchParam.skuCode}%`
-        });
-      }
+
       if (
         this.searchParam.supplierId.value != null &&
         this.searchParam.supplierId.value !== ""
@@ -120,8 +110,16 @@ export default {
         });
       }
 
-      let sorts = [];
-      sorts.push({ propName: "p.sku_code", orderType: "asc" });
+      if (
+        this.searchParam.latestPaymentTime != null &&
+        this.searchParam.latestPaymentTime !== ""
+      ) {
+        filters.push({
+          field: "latestPaymentTime",
+          op: "le",
+          data: `${this.searchParam.latestPaymentTime}`
+        });
+      }
 
       this.global
         .axios({
@@ -129,13 +127,13 @@ export default {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/findCustomsDeclarationCount",
+          url: "/report/findFinancialBudgetCount",
           method: "GET",
           params: {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
             filters: JSON.stringify(filters),
-            sorts: JSON.stringify(sorts)
+            sorts: ""
           }
         })
         .then(res => {
@@ -148,23 +146,43 @@ export default {
             "TK-Authorization":
               "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
           },
-          url: "/report/findCustomsDeclarationList",
+          url: "/report/findFinancialBudgetList",
           method: "GET",
           params: {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
             filters: JSON.stringify(filters),
-            sorts: JSON.stringify(sorts)
+            sorts: ""
           }
         })
         .then(res => {
           this.tableData = res.data;
           this.loading = false;
         });
+
+      this.global
+        .axios({
+          header: {
+            "TK-Authorization":
+              "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
+          },
+          url: "/report/findFinancialBudgetCurrencySummary",
+          method: "GET",
+          params: {
+            currentPage: this.currentPage,
+            pageSize: this.pageSize,
+            filters: JSON.stringify(filters),
+            sorts: ""
+          }
+        })
+        .then(res => {
+          this.unpaidAmount = res.data;
+        });
     },
     reset() {
       this.searchParam.skuCode = "";
       this.searchParam.supplierId.value = "";
+      this.searchParam.latestPaymentTime = "";
       this.getTableData();
     },
     handleSizeChange(val) {
@@ -176,6 +194,35 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.getTableData();
+    },
+
+    // 汇总数据
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "合计";
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (column.property == "unpaidAmount") {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          let a = this.unpaidAmount.usd + "\r\n" + this.unpaidAmount.cny;
+          console.log(a);
+          sums[1] = a;
+          console.log(sums[1]);
+          sums[index];
+        }
+      });
+      return sums;
     }
   }
 };
@@ -183,7 +230,7 @@ export default {
 
 <style scoped type="text/less" lang="scss">
 .form-class {
-  padding: 0px 15px;
+  padding: 0px 20px 1px 10px;
   font-size: 12px;
   position: relative;
   border-bottom: 1px solid #f6f6f6;
@@ -192,5 +239,18 @@ export default {
   /* font-weight: bold !important;
   line-height: 26px !important;
   color: #333; */
+}
+.el-table {
+  overflow: visible !important;
+}
+.tableClass {
+  th {
+    padding: 0px !important;
+    height: 30px;
+  }
+  td {
+    padding: 0px !important;
+    height: 30px;
+  }
 }
 </style>

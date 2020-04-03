@@ -11,7 +11,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item label="供货商" size="mini">
+        <el-form-item label="供货商" size="mini" label-width="60px">
           <el-select
             size="mini"
             filterable
@@ -27,15 +27,15 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item size="mini">
+        <el-form-item size="mini" label="日期" label-width="60px"> 
           <el-date-picker
-            v-model="searchParam.timeRange"
+            v-model="searchParam.visitDate.value"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            format="yyyy-MM-dd"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-value="['2020-03-11','2020-01-23']"
           ></el-date-picker>
         </el-form-item>
         <el-form-item size="mini">
@@ -87,6 +87,7 @@
 
 <script>
 import supplierModel from "@/api/supplier";
+import moment from "moment";
 
 export default {
   data() {
@@ -94,7 +95,7 @@ export default {
       searchParam: {
         skuCode: "",
         supplierId: { value: null, op: "in", id: "supplierId" },
-        timeRange: ["2020-03-22  00:00:00", "2020-03-23  00:00:00"]
+        visitDate: { value: null, op: "timeRange" }
       },
       tableData: [],
       supplierSelectOptions: [],
@@ -107,10 +108,10 @@ export default {
     };
   },
   computed: {},
-  created() {
+  created() {},
+  mounted() {
     this.getTableData();
   },
-  mounted() {},
 
   methods: {
     getTableData() {
@@ -120,8 +121,8 @@ export default {
       if (this.searchParam.skuCode != null && this.searchParam.skuCode !== "") {
         filters.push({
           field: "sku_Code",
-          op: "equal",
-          data: `${this.searchParam.skuCode}`
+          op: "like",
+          data: `%${this.searchParam.skuCode}%`
         });
       }
       if (
@@ -154,6 +155,19 @@ export default {
       this.startDate = startDate;
       this.endDate = endDate;
 
+      let a = moment(new Date(this.startDate)).format("YYYY-MM-DD hh:mm:ss");
+      let b = moment(new Date(this.endDate)).format("YYYY-MM-DD hh:mm:ss");
+
+      // this.searchParam.visitDate.value = [a, b];
+
+      if (
+        this.searchParam.visitDate.value === null ||
+        this.searchParam.visitDate.value === ""
+      ) {
+        this.searchParam.visitDate.value = [a, b];
+      }
+      console.log(this.searchParam.visitDate.value);
+
       this.global
         .axios({
           header: {
@@ -166,13 +180,12 @@ export default {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
             filters: JSON.stringify(filters),
-            startTime: startDate,
-            endTime: endDate
+            startTime: this.searchParam.visitDate.value[0],
+            endTime: this.searchParam.visitDate.value[1]
           }
         })
         .then(res => {
           this.total = res.data;
-          console.log(this.searchParam.timeRange);
         });
 
       this.global
@@ -187,8 +200,8 @@ export default {
             currentPage: this.currentPage,
             pageSize: this.pageSize,
             filters: JSON.stringify(filters),
-            startTime: startDate,
-            endTime: endDate
+            startTime: this.searchParam.visitDate.value[0],
+            endTime: this.searchParam.visitDate.value[1]
           }
         })
         .then(res => {
@@ -217,7 +230,7 @@ export default {
 
 <style scoped type="text/less" lang="scss">
 .form-class {
-  padding: 0px 15px;
+  padding: 0px 20px 1px 10px;
   font-size: 12px;
   position: relative;
   border-bottom: 1px solid #f6f6f6;
