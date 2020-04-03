@@ -13,10 +13,10 @@
       v-loading="loading"
     >
       <fieldset class="panel-heading">
-        <legend class="panel-title">盘亏盘盈单</legend>
+        <legend class="panel-title">{{typeName}}</legend>
 
         <el-row>
-          <el-col :md="12">
+          <el-col :md="24">
             <el-form-item label="仓库" prop="warehouseId" size="mini">
               <el-select
                 v-model="newObject.warehouseId"
@@ -26,19 +26,6 @@
               >
                 <el-option
                   v-for="(item , idx)  in warehouseSelectOptions"
-                  :label="item.label"
-                  :value="item.value"
-                  :key="idx"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :md="12">
-            <el-form-item label="类型" prop="type" size="mini">
-              <el-select v-model="newObject.type" style="width: 180px" filterable placeholder="类型">
-                <el-option
-                  v-for="(item , idx)  in typeSelection"
                   :label="item.label"
                   :value="item.value"
                   :key="idx"
@@ -95,15 +82,7 @@ export default {
   props: {},
   computed: {
     typeName() {
-      if (this.newObject.type == null) {
-        return "盘亏盘盈单";
-      }
-      if (this.newObject.type == "iin") {
-        return "盘盈单";
-      }
-      if (this.newObject.type == "iout") {
-        return "盘亏单";
-      }
+      return "领料单";
     }
   },
 
@@ -116,17 +95,14 @@ export default {
 
       // 选择框 TODO:
       warehouseSelectOptions: [],
-      typeSelection: [],
       // 新对象  TODO:
       newObject: {
         warehouseId: null,
-        type: null,
         comments: null
       },
       // 字段验证规则 TODO:
       rules: {
-        warehouseId: [{ required: true, message: "必须输入", trigger: "blur" }],
-        type: [{ required: true, message: "必须输入", trigger: "blur" }]
+        warehouseId: [{ required: true, message: "必须输入", trigger: "blur" }]
       }
     };
   },
@@ -143,8 +119,7 @@ export default {
     initData() {
       this.loading = true;
       // 加载选择框数据
-      this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
-      this.typeSelection = phEnumModel.getSelectOptions("InventoryType");
+      this.warehouseSelectOptions = warehouseModel.getSelectMaterialOptions();
       this.loading = false;
     },
     /********************* 操作按钮相关方法  ***************************/
@@ -157,7 +132,7 @@ export default {
         }
         let detailItems = this.$refs.itemTable.tableData;
         if (!detailItems || detailItems.length == 0) {
-          this.$message.error("盘亏盘盈单内容不能为空!");
+          this.$message.error("领料单内容不能为空!");
           return;
         }
         this.saveObject(detailItems);
@@ -166,7 +141,7 @@ export default {
 
     saveObject(detailItems) {
       let _order = JSON.parse(JSON.stringify(this.newObject));
-      _order.inventoryItemTOs = detailItems;
+      _order.materialRequisitionItemTOs = detailItems;
 
       const loading = this.$loading({
         lock: true,
@@ -176,7 +151,7 @@ export default {
       });
 
       this.global.axios
-        .post("/inventories", _order)
+        .post("/materialRequisitions", _order)
         .then(resp => {
           loading.close();
           this.$message.success(this.typeName + "创建成功");

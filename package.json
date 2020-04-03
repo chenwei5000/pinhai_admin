@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "tankai": "export NODE_ENV=tankai && vue-cli-service serve --mode tankai",
+    "fisher": "vue-cli-service serve --mode fisher",
     "build:prod": "vue-cli-service build",
     "build:demo": "export NODE_ENV=demo && vue-cli-service build --mode demo",
     "build:test": "export NODE_ENV=test && vue-cli-service build --mode test",
