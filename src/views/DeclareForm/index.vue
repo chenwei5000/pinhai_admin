@@ -40,7 +40,9 @@
           v-loading="loading"
           element-loading-text="页面正在玩命加载中..."
           element-loading-spinner="el-icon-loading"
-          height="500"
+          height="470"
+          show-summary
+          :summary-method="getSummaries"
         >
           <el-table-column
             prop="skuCode"
@@ -57,6 +59,7 @@
           <el-table-column prop="sumCartonSpecWeight" label="应发毛重(Kg)" align="center"></el-table-column>
           <el-table-column prop="cartonSpecVolume" label="应发体积(m³)" align="center"></el-table-column>
         </el-table>
+
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -65,7 +68,7 @@
           :page-size="pageSize"
           :total="total"
           background
-          style="text-align: right; padding: 10px 0"
+          style="margin-top:40px; text-align: right; padding: 10px 0"
           layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
       </div>
@@ -88,7 +91,8 @@ export default {
       currentPage: 1,
       pageSize: 20,
       total: 0,
-      loading: false
+      loading: false,
+      summary: {}
     };
   },
   computed: {},
@@ -159,6 +163,25 @@ export default {
         })
         .then(res => {
           this.tableData = res.data;
+        });
+
+      this.global
+        .axios({
+          header: {
+            "TK-Authorization":
+              "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
+          },
+          url: "/report/findCustomsDeclarationCurrencySummary",
+          method: "GET",
+          params: {
+            currentPage: this.currentPage,
+            pageSize: this.pageSize,
+            filters: JSON.stringify(filters),
+            sorts: JSON.stringify(sorts)
+          }
+        })
+        .then(res => {
+          this.summary = res.data;
           this.loading = false;
         });
     },
@@ -176,12 +199,81 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.getTableData();
+    },
+
+    getSummaries(param) {
+      console.log(this.summary);
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "合计";
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (column.property == "cartonQty") {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index];
+        }
+
+        if (column.property == "qty") {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index];
+        }
+
+        if (column.property == "sumCartonSpecWeight") {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index];
+        }
+
+        if (column.property == "cartonSpecVolume") {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[0] = this.summary.total
+          sums[3] = this.summary.cartonQty;
+          sums[4] = this.summary.qty;
+          sums[5] = this.summary.sumCartonSpecWeight;
+          sums[6] = this.summary.cartonSpecVolume;
+          sums[index];
+        }
+      });
+      return sums;
     }
   }
 };
 </script>
 
 <style scoped type="text/less" lang="scss">
+.el-table {
+  overflow: visible !important;
+}
 .form-class {
   padding: 0px 15px;
   font-size: 12px;
