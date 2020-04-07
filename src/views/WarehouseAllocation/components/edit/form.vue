@@ -59,7 +59,7 @@
 
       <el-col :md="14">
         <el-form-item label="物流公司" prop="channel">
-          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.trackNumber}}</span>
+          <span v-if="!hasEdit" style="font-size: 12px">{{editObject.channel}}</span>
           <el-input v-else v-model="editObject.channel"
                     style="width: 220px" placeholder="请填写公司"   size="mini" clearable></el-input>
         </el-form-item>
