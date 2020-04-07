@@ -124,7 +124,7 @@
             <el-form-item label="帐期" prop="accountPeriod">
               <el-input-number v-model="editObject.accountPeriod" size="mini"
                                style="width: 155px"
-                               :min="1"
+                               :min="0"
                                :step="1"
                                :max="365" label="帐期">
               </el-input-number>
