@@ -218,9 +218,7 @@ export default {
             }
           }, 0);
           let a = this.unpaidAmount.usd + "\r\n" + this.unpaidAmount.cny;
-          console.log(a);
           sums[1] = a;
-          console.log(sums[1]);
           sums[index];
         }
       });

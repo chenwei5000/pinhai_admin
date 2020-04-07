@@ -204,7 +204,6 @@ export default {
     },
 
     getSummaries(param) {
-      console.log(this.summary);
       const { columns, data } = param;
       const sums = [];
       columns.forEach((column, index) => {
