@@ -45,7 +45,7 @@
             size="small"
             icon="el-icon-edit"
             circle
-            @click="onDefaultEdit(scope.row)"
+            @click="onDefaultEdit(scope.$index, scope.row)"
             type="primary"
             id="ph-table-edit"
           ></el-button>
@@ -167,7 +167,8 @@ export default {
 
     /********************* 操作按钮相关方法  ***************************/
     /* 行修改功能 */
-    onDefaultEdit(row) {
+    onDefaultEdit(index, row) {
+      row.detailItemId = index + 1;
       this.$refs.itemDialog.openDialog(row);
     },
 
