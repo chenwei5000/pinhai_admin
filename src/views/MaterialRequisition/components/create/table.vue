@@ -32,7 +32,7 @@
 
       <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="productName" label="产品名" min-width="200"></el-table-column>
+      <el-table-column prop="productName" label="原料名" min-width="200"></el-table-column>
 
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
@@ -108,7 +108,7 @@ export default {
   data() {
     return {
       exportFileName: "领料单明细",
-      tplNoExportProps: ["图片", "产品名", "箱规", "装箱数"],
+      tplNoExportProps: ["图片", "原料名", "箱规", "装箱数"],
       maxUploadCount: 20,
       selected: [],
       // 选择项
@@ -250,7 +250,7 @@ export default {
 
     uploadPromise(detailItem) {
       if (!detailItem.skuCode) {
-        this.$message.error("请输入产品SKU");
+        this.$message.error("请输入原料SKU");
       } else {
         let url = `/products/sku?sku=${encodeURIComponent(
           detailItem.skuCode

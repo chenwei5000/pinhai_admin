@@ -20,6 +20,7 @@
         label-position="right"
         label-width="120px"
         v-loading="loading"
+        :inline-message="inlineMessage"
       >
         <el-row>
           <el-col :md="10">
@@ -59,7 +60,7 @@
                 ></el-option>
               </el-select>
 
-              <el-tooltip class="item" effect="light" content="产品外箱包装材料规格。" placement="right">
+              <el-tooltip class="item" effect="light" content="原料包装材料规格。" placement="right">
                 <i class="el-icon-question">&nbsp;</i>
               </el-tooltip>
             </el-form-item>
@@ -152,6 +153,7 @@ export default {
       // 表单加载状态
       loading: false,
       // 点击按钮之后，按钮锁定不可在点
+      inlineMessage: true,
       confirmLoading: false,
 
       cartonspecSelectOptions: [],
@@ -168,7 +170,14 @@ export default {
         skuCode: [validRules.required],
         cartonSpecId: [validRules.required],
         numberOfCarton: [validRules.required],
-        number: [validRules.required]
+        number: [validRules.required],
+        productName: [
+          {
+            required: true,
+            message: "不能为空，通过点击获得原材料默认信息获得",
+            trigger: "blur"
+          }
+        ]
       }
     };
   },
