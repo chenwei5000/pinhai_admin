@@ -166,7 +166,8 @@ export default {
       rules: {
         skuCode: [validRules.required],
         cartonSpecId: [validRules.required],
-        numberOfCarton: [validRules.required]
+        numberOfCarton: [validRules.required],
+        number: [validRules.required]
       }
     };
   },
@@ -228,6 +229,7 @@ export default {
             this.detailItem.numberOfCarton = data.numberOfCarton;
             this.detailItem.cartonSpecCode = data.cartonSpecCode;
             this.detailItem.imgUrl = data.imgUrl;
+            this.detailItem.number = 1;
 
             // 转字段
             this.detailItem.productName = data.name;
