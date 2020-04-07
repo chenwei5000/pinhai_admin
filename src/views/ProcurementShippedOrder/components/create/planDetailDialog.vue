@@ -78,7 +78,7 @@
               <el-input-number v-model="detailItem.shippedCartonQty"
                                style="width: 175px;"
                                :precision="3"
-                               :min="1"
+                               :min="0"
                                :step="1"
                                size="mini"
                                :max="detailItem.unCartonPlanQty" label="发货箱数">

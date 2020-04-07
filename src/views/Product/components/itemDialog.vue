@@ -40,7 +40,7 @@
                                size="mini"
                                style="width: 200px;"
                                :precision="3"
-                               :min="1"
+                               :min="0"
                                :step="1"
                                :max="10000" label="请填写数量">
               </el-input-number>
@@ -56,8 +56,8 @@
               <el-input-number v-model="detailItem.attritionRate"
                                size="mini"
                                style="width: 200px;"
-                               :precision="1"
-                               :min="1"
+                               :precision="2"
+                               :min="0"
                                :step="1"
                                :max="100" label="请填写损耗率">
               </el-input-number>
