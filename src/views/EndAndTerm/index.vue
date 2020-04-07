@@ -27,7 +27,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item size="mini" label="日期" label-width="60px"> 
+        <el-form-item size="mini" label="日期" label-width="60px">
           <el-date-picker
             v-model="searchParam.visitDate.value"
             type="daterange"
@@ -41,6 +41,7 @@
         <el-form-item size="mini">
           <el-button size="mini" @click="getTableData()" type="primary">查询</el-button>
           <el-button size="mini" @click="reset" type="info">重置</el-button>
+          <el-button size="mini" @click="exportToExcel" type="danger" icon="el-icon-download">导出</el-button>
         </el-form-item>
       </el-form>
       <div>
@@ -52,6 +53,7 @@
           element-loading-text="页面正在玩命加载中..."
           element-loading-spinner="el-icon-loading"
           height="500"
+          ref="table"
         >
           <el-table-column
             prop="skuCode"
@@ -223,6 +225,17 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.getTableData();
+    },
+    exportToExcel() {
+      import("@/vendor/Export2Excel").then(excel => {
+        this.loading = true;
+        excel.export_el_table_to_excel({
+          table: this.$refs.table,
+          downloadUrl: `/report/findBeginEndOfPeriodList?currentPage=1&pageSize=1500&filters=[]&startTime=${this.searchParam.visitDate.value[0]}&endTime=${this.searchParam.visitDate.value[1]}`,
+          filename: "期初期末报表-内容"
+        });
+        this.loading = false;
+      });
     }
   }
 };
