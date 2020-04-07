@@ -161,12 +161,14 @@ export default {
       detailItemId: null,
       //明细对象
       detailItem: {},
+      copyOfDetailItem: null,
 
       // 字段验证规则 TODO:
       rules: {
         skuCode: [validRules.required],
         cartonSpecId: [validRules.required],
-        numberOfCarton: [validRules.required]
+        numberOfCarton: [validRules.required],
+        number: [validRules.required]
       }
     };
   },
@@ -187,19 +189,27 @@ export default {
     /* 开启弹出编辑框 需要传明细ID */
     openDialog(detailItem) {
       if (detailItem) {
-        this.detailItemId = detailItem.id;
+        this.detailItemId = detailItem.detailItemId;
         this.detailItem = detailItem;
+        this.copyOfDetailItem = JSON.parse(JSON.stringify(detailItem));
       }
       this.dialogVisible = true;
       this.initData();
     },
 
     closeDialog() {
+      if (this.copyOfDetailItem !== null) {
+        this.detailItem.skuCode = this.copyOfDetailItem.skuCode;
+        this.detailItem.cartonSpecCode = this.copyOfDetailItem.cartonSpecCode;
+        this.detailItem.numberOfCarton = this.copyOfDetailItem.numberOfCarton;
+        this.detailItem.productName = this.copyOfDetailItem.productName;
+      }
       this.dialogVisible = false;
       this.loading = false;
       this.confirmLoading = false;
       this.detailItemId = null;
       this.detailItem = {};
+      this.copyOfDetailItem = null;
     },
 
     onLoadProduct() {
@@ -214,7 +224,6 @@ export default {
         this.global.axios
           .get(url)
           .then(resp => {
-            console.log(resp);
             let res = resp.data;
             let data = res || {};
             if (data.material !== 1) {
@@ -228,6 +237,7 @@ export default {
             this.detailItem.numberOfCarton = data.numberOfCarton;
             this.detailItem.cartonSpecCode = data.cartonSpecCode;
             this.detailItem.imgUrl = data.imgUrl;
+            this.detailItem.number = 1;
 
             // 转字段
             this.detailItem.productName = data.name;

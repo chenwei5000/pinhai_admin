@@ -218,7 +218,7 @@ export default {
     /********************* 基础方法  *****************************/
     //初始化数据 TODO:根据实际情况调整
     initData() {
-      this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+      this.warehouseSelectOptions = warehouseModel.getSelectMaterialOptions();
     },
 
     // 获取表格的高度
