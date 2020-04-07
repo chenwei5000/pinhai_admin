@@ -100,7 +100,7 @@
 
               <el-input-number v-model="detailItem.product.price"
                                :precision="2"
-                               :min="1"
+                               :min="0"
                                :step="1"
                                style="width: 175px;"
                                :max="1000000" label="采购价">
@@ -118,7 +118,7 @@
               <el-input-number v-model="detailItem.purchaseOrderCartonQty"
                                style="width: 175px;"
                                :precision="3"
-                               :min="1"
+                               :min="0"
                                :step="1"
                                :max="1000000" label="采购箱数">
               </el-input-number>
