@@ -31,6 +31,7 @@
         <el-form-item size="mini">
           <el-button size="mini" @click="getTableData()" type="primary">查询</el-button>
           <el-button size="mini" @click="reset" type="info">重置</el-button>
+          <el-button size="mini" @click="exportToExcel" type="danger" icon="el-icon-download">导出</el-button>
         </el-form-item>
       </el-form>
       <div>
@@ -45,6 +46,7 @@
           :summary-method="getSummaries"
           height="470"
           class="tableClass"
+          ref="table"
         >
           <el-table-column prop="supplierId" label="供货商ID" v-if="false"></el-table-column>
           <el-table-column prop="supplierName" label="供货商" align="center"></el-table-column>
@@ -216,13 +218,23 @@ export default {
             }
           }, 0);
           let a = this.unpaidAmount.usd + "\r\n" + this.unpaidAmount.cny;
-          console.log(a);
           sums[1] = a;
-          console.log(sums[1]);
           sums[index];
         }
       });
       return sums;
+    },
+    exportToExcel() {
+      import("@/vendor/Export2Excel").then(excel => {
+        this.loading = true;
+        excel.export_el_table_to_excel({
+          table: this.$refs.table,
+          downloadUrl:
+            "/report/findFinancialBudgetList?currentPage=1&pageSize=500",
+          filename: "财务预算-内容"
+        });
+        this.loading = false;
+      });
     }
   }
 };

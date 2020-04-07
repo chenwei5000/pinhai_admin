@@ -30,6 +30,7 @@
         <el-form-item size="mini">
           <el-button size="mini" @click="getTableData()" type="primary">查询</el-button>
           <el-button size="mini" @click="reset" type="info">重置</el-button>
+          <el-button size="mini" @click="exportToExcel" type="danger" icon="el-icon-download">导出</el-button>
         </el-form-item>
       </el-form>
       <div>
@@ -43,6 +44,7 @@
           height="470"
           show-summary
           :summary-method="getSummaries"
+          ref="table"
         >
           <el-table-column
             prop="skuCode"
@@ -202,7 +204,6 @@ export default {
     },
 
     getSummaries(param) {
-      console.log(this.summary);
       const { columns, data } = param;
       const sums = [];
       columns.forEach((column, index) => {
@@ -256,7 +257,7 @@ export default {
               return prev;
             }
           }, 0);
-          sums[0] = this.summary.total
+          sums[0] = this.summary.total;
           sums[3] = this.summary.cartonQty;
           sums[4] = this.summary.qty;
           sums[5] = this.summary.sumCartonSpecWeight;
@@ -265,6 +266,17 @@ export default {
         }
       });
       return sums;
+    },
+    exportToExcel() {
+      import("@/vendor/Export2Excel").then(excel => {
+        this.loading = true;
+        excel.export_el_table_to_excel({
+          table: this.$refs.table,
+          downloadUrl: '/report/findCustomsDeclarationList?currentPage=1&pageSize=500',
+          filename: "报关报表-内容",
+        });
+        this.loading = false;
+      });
     }
   }
 };
