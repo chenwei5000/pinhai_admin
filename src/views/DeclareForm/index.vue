@@ -41,7 +41,7 @@
           v-loading="loading"
           element-loading-text="页面正在玩命加载中..."
           element-loading-spinner="el-icon-loading"
-          height="470"
+          height="460"
           show-summary
           :summary-method="getSummaries"
           ref="table"
