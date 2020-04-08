@@ -85,7 +85,7 @@
                                size="mini"
                                style="width: 200px;"
                                :precision="3"
-                               :min="1"
+                               :min="0"
                                :step="1"
                                :max="1000000" label="请填写应发箱数">
               </el-input-number>

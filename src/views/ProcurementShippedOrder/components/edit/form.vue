@@ -92,7 +92,7 @@
 
       <el-col :md="10">
         <el-form-item v-if="!hasEdit" label="电话" prop="tel">
-          <span  style="font-size: 12px">{{editObject.linkman}}</span>
+          <span  style="font-size: 12px">{{editObject.tel}}</span>
         </el-form-item>
       </el-col>
 
