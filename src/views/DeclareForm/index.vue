@@ -41,7 +41,7 @@
           v-loading="loading"
           element-loading-text="页面正在玩命加载中..."
           element-loading-spinner="el-icon-loading"
-          height="470"
+          height="460"
           show-summary
           :summary-method="getSummaries"
           ref="table"
@@ -94,7 +94,8 @@ export default {
       pageSize: 20,
       total: 0,
       loading: false,
-      summary: {}
+      summary: {},
+      filters: ""
     };
   },
   computed: {},
@@ -125,6 +126,8 @@ export default {
           data: `${this.searchParam.supplierId.value}`
         });
       }
+
+      this.filters = JSON.stringify(filters);
 
       let sorts = [];
       sorts.push({ propName: "p.sku_code", orderType: "asc" });
@@ -272,8 +275,10 @@ export default {
         this.loading = true;
         excel.export_el_table_to_excel({
           table: this.$refs.table,
-          downloadUrl: '/report/findCustomsDeclarationList?currentPage=1&pageSize=500',
-          filename: "报关报表-内容",
+          downloadUrl: `/report/findCustomsDeclarationList?currentPage=1&pageSize=500&filters=${[
+            encodeURI(this.filters)
+          ]}`,
+          filename: "报关报表-内容"
         });
         this.loading = false;
       });

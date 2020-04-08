@@ -52,7 +52,7 @@
           v-loading="loading"
           element-loading-text="页面正在玩命加载中..."
           element-loading-spinner="el-icon-loading"
-          height="500"
+          height="460"
           ref="table"
         >
           <el-table-column
@@ -106,7 +106,8 @@ export default {
       total: 0,
       loading: false,
       startDate: "",
-      endDate: ""
+      endDate: "",
+      filters: ""
     };
   },
   computed: {},
@@ -138,6 +139,8 @@ export default {
         });
       }
 
+      this.filters = JSON.stringify(filters);
+
       let sorts = [];
       sorts.push({ propName: "p.last_modified", orderType: "asc" });
 
@@ -168,7 +171,6 @@ export default {
       ) {
         this.searchParam.visitDate.value = [a, b];
       }
-      console.log(this.searchParam.visitDate.value);
 
       this.global
         .axios({
@@ -231,7 +233,11 @@ export default {
         this.loading = true;
         excel.export_el_table_to_excel({
           table: this.$refs.table,
-          downloadUrl: `/report/findBeginEndOfPeriodList?currentPage=1&pageSize=1500&filters=[]&startTime=${this.searchParam.visitDate.value[0]}&endTime=${this.searchParam.visitDate.value[1]}`,
+          downloadUrl: `/report/findBeginEndOfPeriodList?currentPage=1&pageSize=1500&filters=${[
+            encodeURI(this.filters)
+          ]}&startTime=${this.searchParam.visitDate.value[0]}&endTime=${
+            this.searchParam.visitDate.value[1]
+          }`,
           filename: "期初期末报表-内容"
         });
         this.loading = false;
