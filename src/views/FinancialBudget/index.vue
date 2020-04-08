@@ -44,7 +44,7 @@
           element-loading-spinner="el-icon-loading"
           show-summary
           :summary-method="getSummaries"
-          height="470"
+          height="460"
           class="tableClass"
           ref="table"
         >
@@ -86,7 +86,8 @@ export default {
       pageSize: 20,
       total: 0,
       loading: false,
-      unpaidAmount: ""
+      unpaidAmount: "",
+      filters: ''
     };
   },
   computed: {},
@@ -122,6 +123,8 @@ export default {
           data: `${this.searchParam.latestPaymentTime}`
         });
       }
+
+      this.filters = JSON.stringify(filters);
 
       this.global
         .axios({
@@ -229,8 +232,9 @@ export default {
         this.loading = true;
         excel.export_el_table_to_excel({
           table: this.$refs.table,
-          downloadUrl:
-            "/report/findFinancialBudgetList?currentPage=1&pageSize=500",
+          downloadUrl: `/report/findFinancialBudgetList?currentPage=1&pageSize=500&filters=${[
+            encodeURI(this.filters)
+          ]}`,
           filename: "财务预算-内容"
         });
         this.loading = false;
