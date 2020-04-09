@@ -19,9 +19,9 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
+      <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" min-width="200"></el-table-column>
+      <el-table-column prop="productName" label="原料名" min-width="200"></el-table-column>
       <el-table-column prop="cartonSpec.code" label="箱规" min-width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
 
