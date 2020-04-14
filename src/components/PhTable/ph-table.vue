@@ -1613,33 +1613,10 @@
   }
 </script>
 
-<style type="text/less" lang="scss" scoped>
-
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
+<style type="text/less" lang="scss" scoped>css
 
   .ph-table {
-
     padding: 10px 15px;
-
     .ms-tree-space {
       position: relative;
       top: 1px;
