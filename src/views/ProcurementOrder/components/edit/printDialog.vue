@@ -429,6 +429,7 @@
       initCategoryName() {
         if (this.printObject != null && this.printObject.categoryName != null
           && this.printObject.categoryName != '') {
+          this.initComplete = true;
           return;
         }
 
