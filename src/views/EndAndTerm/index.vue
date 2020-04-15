@@ -1,262 +1,224 @@
 <template>
-  <el-card>
-    <div class="form-class">
-      <el-form :inline="true" inline-message>
-        <el-form-item label="SKU编码" size="mini">
-          <el-input
-            placeholder="请输入SKU编码"
-            size="mini"
-            v-model="searchParam.skuCode"
-            @keyup.enter.native="getTableData"
-            clearable
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="供货商" size="mini" label-width="60px">
-          <el-select
-            size="mini"
-            filterable
-            v-model="searchParam.supplierId.value"
-            style="width: 120px"
-            placeholder="请选择供货商"
-          >
-            <el-option
-              v-for="(item,idx) in supplierSelectOptions"
-              :label="item.label"
-              :value="item.value"
-              :key="idx"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item size="mini" label="日期" label-width="60px">
-          <el-date-picker
-            v-model="searchParam.visitDate.value"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item size="mini">
-          <el-button size="mini" @click="getTableData()" type="primary">查询</el-button>
-          <el-button size="mini" @click="reset" type="info">重置</el-button>
-          <el-button size="mini" @click="exportToExcel" type="danger" icon="el-icon-download">导出</el-button>
-        </el-form-item>
-      </el-form>
-      <div>
-        <el-table
-          :data="tableData"
-          border
-          stripe
-          v-loading="loading"
-          element-loading-text="页面正在玩命加载中..."
-          element-loading-spinner="el-icon-loading"
-          height="460"
-          ref="table"
+  <div class="app-container">
+    <div class="ph-card">
+      <div class="ph-card-body">
+        <ph-table
+          v-bind="tableConfig"
         >
-          <el-table-column
-            prop="skuCode"
-            label="SKU编码"
-            min-width="100px"
-            width="300"
-            align="center"
-          ></el-table-column>
-          <el-table-column prop="supplierId" label="供货商ID" v-if="false"></el-table-column>
-          <el-table-column prop="supplierName" label="供货商" width="150" align="center"></el-table-column>
-          <el-table-column prop="productName" label="产品名" align="center"></el-table-column>
-          <el-table-column prop="initialStage" label="期初" align="center"></el-table-column>
-          <el-table-column prop="initialEnd" label="期末" width="100%" align="center"></el-table-column>
-          <el-table-column prop="eoutTotal" label="出口总数" align="center"></el-table-column>
-          <el-table-column prop="inTotal" label="入库总数" align="center"></el-table-column>
-          <el-table-column prop="inventory" label="剩余库存" align="center"></el-table-column>
-        </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          :total="total"
-          background
-          style="text-align: right; padding: 10px 0"
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+        </ph-table>
       </div>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script>
-import supplierModel from "@/api/supplier";
-import moment from "moment";
+  import phColumns from '../../components/phColumns'
+  import warehouseModel from '../../api/warehouse'
+  import {checkPermission} from "../../utils/permission";
+  import currencyModel from "../../api/currency";
+  import cartonspecModel from "../../api/cartonspec";
+  import validRules from "../../components/validRules";
+  import moment from 'moment';
 
-export default {
-  data() {
-    return {
-      searchParam: {
-        skuCode: "",
-        supplierId: { value: null, op: "in", id: "supplierId" },
-        visitDate: { value: null, op: "timeRange" }
+  export default {
+    data() {
+      return {
+        title: '出入库记录',
+        tableConfig: {
+          exportFileName: '出入库记录',
+          noExportProps: ['结算状态', 'ID'],
+          paginationSize: 50,
+          //权限控制
+          hasNew: false,
+          hasEdit: false,
+          hasDelete: false,
+          hasView: false,
+          hasExport: true,
+
+          url: '/report/findBeginEndOfPeriodList',
+          countUrl: null,
+          relations: [],
+          tableAttrs: {
+            "row-class-name": this.statusClassName
+          },
+          hasOperation: false,
+          hasNew: false,
+          hasDelete: false,
+          'default-sort': "{prop: 'createTime', order: 'descending'}",
+          //列表
+          columns: [
+            {prop: 'formatCreateTime', label: '创建时间', 'min-width': 140, fixed: 'left'},
+            {prop: 'warehouse.name', label: '收货仓库', 'min-width': 90},
+            {prop: 'code', label: '批次码', 'min-width': 130},
+            {prop: 'allocationCode', label: '调拨单', 'min-width': 130},
+            {prop: 'typeName', label: '类型', 'min-width': 100},
+            /*{prop: 'storageLocation.code', label: '存放货位', 'min-width': 100},*/
+            {prop: 'procurementOrder.company.abbreviation', label: '购买方', 'min-width': 100},
+            {prop: 'supplier.name', label: '供货商', 'min-width': 100},
+            {prop: 'product.skuCode', label: 'SKU编码', 'min-width': 150},
+            {prop: 'product.name', label: '产品名', 'min-width': 150},
+            {prop: 'numberOfCarton', label: '装箱数', 'min-width': 90},
+
+            {prop: 'currency.name', label: '结算货币', 'min-width': 100, hidden: !checkPermission('PurchasePriceVisible')},
+            phColumns.price,
+            phColumns.amount,
+            phColumns.jobStatus,
+            phColumns.id,
+
+            {prop: 'cartonQty', label: '箱数', 'min-width': 90, fixed: 'right'},
+            {prop: 'qty', label: '件数', 'min-width': 90, fixed: 'right'},
+            {prop: 'usedQty', label: '消耗件数', 'min-width': 90, fixed: 'right'},
+
+
+          ],
+          // 搜索
+          searchForm: [
+            {
+              $type: 'select',
+              $id: 'warehouseId',
+              label: '仓库',
+              $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
+              $el: {
+                op: 'eq',
+                style: 'width:160px',
+                filterable: true,
+                size: "mini",
+                placeholder: '请选择仓库'
+              }
+            },
+            {
+              $type: 'date-picker',
+              $id: 'reportDate',
+              label: '日期',
+              $default: `${moment(new Date()).startOf('month').format("YYYY-MM-DD")}|${moment(new Date()).endOf('month').format("YYYY-MM-DD")}`,
+              $el: {
+                style: 'width:220px',
+                op: 'timeRange',
+                size: "mini",
+                format: 'yyyy-MM-dd',
+                'value-format': 'yyyy-MM-dd',
+                type: 'daterange',
+                'range-separator': '|',
+                'start-placeholder': '开始日期',
+                'end-placeholder': '结束日期'
+              }
+            },
+            {
+              $type: 'input',
+              $id: 'skuCode',
+              label: 'SKU编码',
+              $el: {
+                style: 'width:160px',
+                op: 'eq',
+                size: "mini",
+                placeholder: '请输入产品SKU编码'
+              }
+            },
+            {
+              $type: 'input',
+              $id: 'productName',
+              label: '产品名',
+              $el: {
+                style: 'width:160px',
+                op: 'eq',
+                size: "mini",
+                placeholder: '请输入产品名'
+              }
+            },
+          ],
+          //修改或新增
+          form: [
+            {
+              $type: 'select',
+              $id: 'currencyId',
+              label: '货币',
+              $el: {
+                filterable: true,
+                placeholder: '请选择货币,可筛选',
+                size: 'mini'
+              },
+              $options: currencyModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'price',
+              label: '采购价',
+              $el: {
+                placeholder: '请输入采购价'
+              },
+              rules: [
+                validRules.required,
+                validRules.number
+              ]
+            },
+            {
+              $type: 'select',
+              $id: 'cartonSpecId',
+              label: '箱规',
+              $el: {
+                filterable: true,
+                placeholder: '请选择箱规,可筛选',
+                size: 'mini'
+              },
+              $options: cartonspecModel.getSelectOptions(),
+              rules: [
+                validRules.required
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'numberOfCarton',
+              label: '装箱数',
+              $el: {
+                placeholder: '请输入装箱数'
+              },
+              rules: [
+                validRules.required,
+                validRules.integer
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'qty',
+              label: '件数',
+              $el: {
+                placeholder: '请输入装箱数'
+              },
+              rules: [
+                validRules.required,
+                validRules.integer
+              ]
+            },
+            {
+              $type: 'input',
+              $id: 'usedQty',
+              label: '冲销数量',
+              $el: {
+                placeholder: '请输入冲销数量'
+              },
+              rules: [
+                validRules.required,
+                validRules.integer
+              ]
+            },
+          ]
+        }
+      }
+    },
+    computed: {},
+    methods: {
+      statusClassName({row}) {
+        return '';
       },
-      tableData: [],
-      supplierSelectOptions: [],
-      currentPage: 1,
-      pageSize: 20,
-      total: 0,
-      loading: false,
-      startDate: "",
-      endDate: "",
-      filters: ""
-    };
-  },
-  computed: {},
-  created() {},
-  mounted() {
-    this.getTableData();
-  },
-
-  methods: {
-    getTableData() {
-      this.supplierSelectOptions = supplierModel.getSelectOptions();
-      this.loading = true;
-      let filters = [];
-      if (this.searchParam.skuCode != null && this.searchParam.skuCode !== "") {
-        filters.push({
-          field: "sku_Code",
-          op: "like",
-          data: `%${this.searchParam.skuCode}%`
-        });
-      }
-      if (
-        this.searchParam.supplierId.value != null &&
-        this.searchParam.supplierId.value !== ""
-      ) {
-        filters.push({
-          field: "s.id",
-          op: "equal",
-          data: `${this.searchParam.supplierId.value}`
-        });
-      }
-
-      this.filters = JSON.stringify(filters);
-
-      let sorts = [];
-      sorts.push({ propName: "p.last_modified", orderType: "asc" });
-
-      let nowdays = new Date();
-      let year = nowdays.getFullYear();
-      let month = nowdays.getMonth();
-      if (month == 0) {
-        month = 12;
-        year = year - 1;
-      }
-      if (month < 10) {
-        month = "0" + month;
-      }
-      let myDate = new Date(year, month, 0);
-      let startDate = year + "-" + month + "-01 00:00:00"; //上个月第一天
-      let endDate = year + "-" + month + "-" + myDate.getDate() + " 23:59:59"; //上个月最后一天
-      this.startDate = startDate;
-      this.endDate = endDate;
-
-      let a = moment(new Date(this.startDate)).format("YYYY-MM-DD hh:mm:ss");
-      let b = moment(new Date(this.endDate)).format("YYYY-MM-DD hh:mm:ss");
-
-      // this.searchParam.visitDate.value = [a, b];
-
-      if (
-        this.searchParam.visitDate.value === null ||
-        this.searchParam.visitDate.value === ""
-      ) {
-        this.searchParam.visitDate.value = [a, b];
-      }
-
-      this.global
-        .axios({
-          header: {
-            "TK-Authorization":
-              "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
-          },
-          url: "/report/findBeginEndOfPeriodCount",
-          method: "GET",
-          params: {
-            currentPage: this.currentPage,
-            pageSize: this.pageSize,
-            filters: JSON.stringify(filters),
-            startTime: this.searchParam.visitDate.value[0],
-            endTime: this.searchParam.visitDate.value[1]
-          }
-        })
-        .then(res => {
-          this.total = res.data;
-        });
-
-      this.global
-        .axios({
-          header: {
-            "TK-Authorization":
-              "MUQ5RjMwRjcwMUE0NkUwRkUxNkUyMkNDNkZFNDNBOTEsMg=="
-          },
-          url: "/report/findBeginEndOfPeriodList",
-          method: "GET",
-          params: {
-            currentPage: this.currentPage,
-            pageSize: this.pageSize,
-            filters: JSON.stringify(filters),
-            startTime: this.searchParam.visitDate.value[0],
-            endTime: this.searchParam.visitDate.value[1]
-          }
-        })
-        .then(res => {
-          this.tableData = res.data;
-          this.loading = false;
-        });
     },
-    reset() {
-      this.searchParam.skuCode = "";
-      this.searchParam.supplierId.value = "";
-      this.getTableData();
-    },
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1;
-      this.getTableData();
-    },
-    // 当前页
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.getTableData();
-    },
-    exportToExcel() {
-      import("@/vendor/Export2Excel").then(excel => {
-        this.loading = true;
-        excel.export_el_table_to_excel({
-          table: this.$refs.table,
-          downloadUrl: `/report/findBeginEndOfPeriodList?currentPage=1&pageSize=1500&filters=${[
-            encodeURI(this.filters)
-          ]}&startTime=${this.searchParam.visitDate.value[0]}&endTime=${
-            this.searchParam.visitDate.value[1]
-          }`,
-          filename: "期初期末报表-内容"
-        });
-        this.loading = false;
-      });
-    }
+    watch: {}
   }
-};
 </script>
 
-<style scoped type="text/less" lang="scss">
-.form-class {
-  padding: 0px 20px 1px 10px;
-  font-size: 12px;
-  position: relative;
-  border-bottom: 1px solid #f6f6f6;
-  color: #333;
-  border-radius: 2px 2px 0 0;
-  /* font-weight: bold !important;
-  line-height: 26px !important;
-  color: #333; */
-}
+<style scoped>
+
+
 </style>

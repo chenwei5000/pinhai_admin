@@ -589,27 +589,6 @@
 
 <style type="text/less" lang="scss" scoped>
 
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
   .el-form-item__content {
     /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
       width: 230px !important;

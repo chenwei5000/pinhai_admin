@@ -915,11 +915,13 @@
 
         let url = this.url;
         let countUrl = null;
-        if (this.countUrl.indexOf("#") === 0) {
-          countUrl = this.countUrl.replace("#", "");
-        }
-        else {
-          countUrl = this.url + this.countUrl;
+        if (this.countUrl != null) {
+          if (this.countUrl.indexOf("#") === 0) {
+            countUrl = this.countUrl.replace("#", "");
+          }
+          else {
+            countUrl = this.url + this.countUrl;
+          }
         }
 
         let params = ''
@@ -939,11 +941,13 @@
           url += '?'
         }
 
-        if (countUrl.indexOf('?') > -1) {
-          countUrl += '&'
-        }
-        else {
-          countUrl += '?'
+        if (countUrl != null) {
+          if (countUrl.indexOf('?') > -1) {
+            countUrl += '&'
+          }
+          else {
+            countUrl += '?'
+          }
         }
 
         // 处理分页信息
@@ -1006,19 +1010,21 @@
         this.downloadUrl = url + params;
 
         //获取列表数量数据
-        this.global.axios
-          .get(countUrl + params)
-          .then(resp => {
-            let res = resp.data
-            this.total = res || 0;
-          })
-          .catch(err => {
-            /**
-             * 请求数据失败，返回err对象
-             * @event error
-             */
-            this.$emit('error', err)
-          })
+        if (countUrl != null) {
+          this.global.axios
+            .get(countUrl + params)
+            .then(resp => {
+              let res = resp.data
+              this.total = res || 0;
+            })
+            .catch(err => {
+              /**
+               * 请求数据失败，返回err对象
+               * @event error
+               */
+              this.$emit('error', err)
+            })
+        }
 
         //获取列表数据
         this.global.axios
@@ -1031,6 +1037,10 @@
             // 树形结构逻辑
             if (this.isTree) {
               this.data = this.tree2Array(data, this.expandAll)
+            }
+
+            if (countUrl == null) {
+              this.total = data.length;
             }
 
             this.loading = false
@@ -1614,42 +1624,41 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>css
+.ph-table {
+  padding: 10px 15px;
+  .ms-tree-space {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    width: 18px;
+    height: 14px;
 
-  .ph-table {
-    padding: 10px 15px;
-    .ms-tree-space {
-      position: relative;
-      top: 1px;
-      display: inline-block;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1;
-      width: 18px;
-      height: 14px;
-
-      &
-      ::before {
-        content: '';
-      }
-
-    }
-
-    .tree-ctrl {
-      position: relative;
-      cursor: pointer;
-      color: #2196F3;
-    }
-
-    @keyframes treeTableShow {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+    &
+    ::before {
+      content: '';
     }
 
   }
+
+  .tree-ctrl {
+    position: relative;
+    cursor: pointer;
+    color: #2196F3;
+  }
+
+  @keyframes treeTableShow {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+}
 
 </style>
