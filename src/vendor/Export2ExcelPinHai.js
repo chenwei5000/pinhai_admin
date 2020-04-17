@@ -1,6 +1,7 @@
 import XLSX from "xlsx";
 import global from '@/api/global'
 import {export_json_to_excel} from "./Export2Excel";
+//import xlsxStyle from "xlsx-style";
 
 require('script-loader!file-saver');
 
@@ -41,10 +42,15 @@ function s2ab(s) {
 class WorkBook {
   constructor() {
     this.wb = XLSX.utils.book_new();
+    this.SheetNames = [];
+    this.Sheets = {};
   }
 
-  addHeaderRow(headerRowName) {
-    this.ws = XLSX.utils.aoa_to_sheet([headerRowName]);
+  addHeaderRow(headerRowName, merges = []) {
+    this.ws = XLSX.utils.aoa_to_sheet(headerRowName);
+    if (merges != null && merges.length > 0) {
+      this.ws['!merges'] = merges;
+    }
   }
 
   writeCellWithValue(location, type, value) {
@@ -101,6 +107,7 @@ class WorkBook {
 export function export_json_url_to_excel_with_formulae({
                                                          url,  //下载链接
                                                          excelField = [], //字段配置
+                                                         excelMerges = [], //合并的表头
                                                          filename, //导出文件名
                                                          tpl = false, //是否是模版
                                                        } = {}) {
@@ -110,12 +117,28 @@ export function export_json_url_to_excel_with_formulae({
 
   // 写入标题
   let header = [];
+  let idx = 0;
+  let merges = [];
+
+  if (excelMerges != null && excelMerges.length > 0) {
+    header[idx] = [];
+    excelMerges.forEach(r => {
+      header[idx].push(r.title);
+      if (r.merge != null) {
+        merges.push(r.merge);
+      }
+    })
+    idx++;
+  }
+
+
+  header[idx] = [];
   excelField.forEach(r => {
     // 去掉头尾 #
-    header.push(r.name.slice(1, -1));
+    header[idx].push(r.name.slice(1, -1));
   });
-  excel.addHeaderRow(header);
 
+  excel.addHeaderRow(header, merges);
 
   if (tpl) {
     let data = [];
@@ -139,7 +162,7 @@ export function export_json_url_to_excel_with_formulae({
 
           for (var col = 0; col < excelField.length; col++) {
             var cell_ref = XLSX.utils.encode_cell({
-              r: row + 1,
+              r: row + header.length,
               c: col
             });
             const field = excelField[col];

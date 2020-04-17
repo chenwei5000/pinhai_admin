@@ -174,6 +174,7 @@
   import moment from 'moment';
   import warehouseModel from "../../../api/warehouse";
   import tableToolBar from '@/components/PhTableToolBar'
+  import excelConfig from './warehouseExcelConfig'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -612,15 +613,21 @@
       onToolBarDownloadData() {
         //获取数据
         let downloadUrl = this.downloadUrl;
-        import('@/vendor/Export2ExcelPinHai').then(excel => {
-          this.loading = true;
-          excel.export_json_url_to_excel_with_formulae({
-            url: downloadUrl,
-            excelField: excelConfig.excelField,
-            filename: `${this.primary.name}采购计划`
-          });
-          this.loading = false;
-        })
+        if (downloadUrl) {
+          import('@/vendor/Export2ExcelPinHai').then(excel => {
+            this.loading = true;
+            excel.export_json_url_to_excel_with_formulae({
+              url: downloadUrl,
+              excelMerges: excelConfig.excelMerges,
+              excelField: excelConfig.excelField,
+              filename: '库存商品进销存报表'
+            });
+            this.loading = false;
+          })
+        }
+        else{
+          this.$message.error("请先选择仓库、日期！");
+        }
       },
 
     }
