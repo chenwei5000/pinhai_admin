@@ -37,11 +37,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="采购计划编号">
-        <el-input size="mini" clearable v-model="searchParam.planCode.value" style="width: 150px" placeholder="请输入编码"></el-input>
-      </el-form-item>
-
-     <el-form-item label="期望交货日期">
+     <el-form-item label="交货日期">
         <el-date-picker
           size="mini"
           v-model="searchParam.otdTime.value"
@@ -258,10 +254,10 @@
         }
       },
       hasStatus(){
-        if (this.type === 'complete' || this.type === 'editing') {
+        if (this.type === 'complete' || this.type === 'editing' || this.type === 'executing') {
           return false;
         }
-        if (this.type === 'all' || this.type === 'executing') {
+        if (this.type === 'all' ) {
           return true;
         }
       },

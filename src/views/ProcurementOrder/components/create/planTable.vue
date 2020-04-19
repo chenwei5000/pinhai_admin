@@ -10,11 +10,11 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" v-model="searchParam.code.value" style="width: 110px" placeholder="请输入编码"></el-input>
+        <el-input size="mini" v-model="searchParam.code.value" style="width: 180px" placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">
-        <el-input size="mini" v-model="searchParam.name.value" style="width: 110px" placeholder="请输入名称"></el-input>
+        <el-input size="mini" v-model="searchParam.name.value" style="width: 180px" placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="期望交货日期">
@@ -24,7 +24,7 @@
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
           type="daterange"
-          range-separator="-"
+          range-separator="|"
           start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>

@@ -9,9 +9,9 @@
              inline-message
              @submit.native.prevent>
 
-      <el-form-item label="编码">
+      <el-form-item label="编号">
         <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px"
-                  placeholder="请输入编码"></el-input>
+                  placeholder="请输入编号"></el-input>
       </el-form-item>
 
       <el-form-item label="名称">

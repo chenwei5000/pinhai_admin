@@ -9,20 +9,13 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 180px" placeholder="请输入"></el-input>
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 180px" placeholder="请输入编码"></el-input>
       </el-form-item>
 
       <el-form-item label="物流单号">
         <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 180px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
-
-      <el-form-item label="采购单编号">
-          <el-input v-model="searchParam.procurementOrderCode.value" clearable size="mini" style="width: 180px"
-                    placeholder="请输入采购单编号"></el-input>
-        </el-select>
-      </el-form-item>
-
 
       <el-form-item label="名称">
         <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 200px" placeholder="请输入名称"></el-input>
