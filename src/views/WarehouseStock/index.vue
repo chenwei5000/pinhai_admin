@@ -80,6 +80,17 @@
             },
             {
               $type: 'input',
+              $id: 'fnSku',
+              label: 'FNSKU',
+              $el: {
+                op: 'eq',
+                size: "mini",
+                style: "width:120px;",
+                placeholder: '请输入FNSKU编码'
+              }
+            },
+            {
+              $type: 'input',
               $id: 'productName',
               label: '产品名',
               $el: {
