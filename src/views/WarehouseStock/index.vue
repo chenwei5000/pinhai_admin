@@ -17,6 +17,7 @@
   import phSearchItems from '../../components/phSearchItems'
   import {checkPermission} from "../../utils/permission";
   import warehouseModel from "../../api/warehouse";
+  import {currency} from "../../utils";
 
   export default {
     data() {
@@ -36,7 +37,7 @@
 
           url: '/warehouseStocks/stocks', // 资源URL
           countUrl: '/count',
-          relations: ["warehouse"],//关联数据字典
+          relations: ["warehouse", "cartonSpec"],//关联数据字典
           hasView: false,
           hasOperation: false,
 
@@ -51,6 +52,7 @@
             {prop: 'productName', label: '产品名', 'min-width': 220},
             {prop: 'cartonSpecCode', label: '箱规', 'min-width': 150},
             {prop: 'numberOfCarton', label: '装箱数', width: 90},
+            {prop: 'volume', label: '体积(m³)', 'min-width': 100, align: "center"},
             {prop: 'qty', label: '库存件数', width: 90},
             {prop: 'cartonQty', label: '库存箱数', fixed: 'right', width: 90}
           ],
@@ -106,6 +108,10 @@
 
     computed: {},
 
+    filters: {
+      currency: currency
+    },
+
     methods: {
       /*汇总数据*/
       getSummaries(param) {
@@ -151,6 +157,23 @@
                 }
               }, 0);
               sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'volume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' m³';
             } else {
               sums[index] = 'N/A';
             }
