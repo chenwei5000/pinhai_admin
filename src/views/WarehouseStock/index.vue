@@ -68,7 +68,7 @@
                 filterable: true,
                 placeholder: '请选择仓库'
               },
-              $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
+              $options: warehouseModel.getSelectDomesticAndMaterialOptions(true),
             },
             {
               $type: 'input',
