@@ -331,8 +331,8 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
-        this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticOptions(true);
-        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
+        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
       },
 
       // 获取表格的高度

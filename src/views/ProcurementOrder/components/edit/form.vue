@@ -69,8 +69,8 @@
                          filterable placeholder="请选择收货仓库">
                 <el-option
                   v-for="(item , idx) in warehouseSelectOptions"
-                  :label="item.name"
-                  :value="item.id"
+                  :label="item.label"
+                  :value="item.value"
                   :key="idx"
                 ></el-option>
               </el-select>
@@ -192,6 +192,7 @@
   import currencyModel from '@/api/currency'
   import {checkPermission} from "../../../../utils/permission";
   import companyManagementModel from "../../../../api/companyManagement";
+  import warehouseModel from "../../../../api/warehouse";
 
   export default {
     components: {},
@@ -296,6 +297,7 @@
           // 转化数据
           this.editObject.settlementMethod = this.editObject.settlementMethod + '';
           this.editObject.companyId = this.editObject.companyId == null ? null : this.editObject.companyId + '';
+          this.editObject.warehouseId = this.editObject.warehouseId == null ? null : this.editObject.warehouseId + '';
 
           // 付款方式
           this.settlementMethodSelectOptions = phEnumModel.getSelectOptions('SettlementMethod');
@@ -315,26 +317,7 @@
 
       // 初始化仓库数据
       initWarehouseData() {
-        this.loading = true;
-        let url = "/warehouses";
-        let filters = [
-          {"field": "status", "op": "eq", "data": "1"},
-          {"field": "type", "op": "in", "data": "普通,原料仓,工厂仓,虚拟仓"}
-        ];
-        url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-
-        this.global.axios.get(url)
-          .then(resp => {
-            let res = resp.data || [];
-            this.warehouseSelectOptions = [];
-            res.forEach(r => {
-              this.warehouseSelectOptions.push(r);
-            });
-            this.loading = false;
-          })
-          .catch(err => {
-            this.loading = false;
-          });
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
       },
 
       // 初始化货币数据

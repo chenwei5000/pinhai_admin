@@ -22,7 +22,7 @@
           <el-select v-else v-model="editObject.fromWarehouseId" style="width: 220px"  size="mini"
                      filterable placeholder="请选择发货仓库">
             <el-option
-              v-for="(item , idx)  in warehouseSelectOptions"
+              v-for="(item , idx)  in fromWarehouseSelectOptions"
               :label="item.label"
               :value="item.value"
               :key="idx"
@@ -37,7 +37,7 @@
           <el-select v-else v-model="editObject.toWarehouseId" style="width: 220px"  size="mini"
                      filterable placeholder="请选择收货仓库">
             <el-option
-              v-for="(item , idx)  in warehouseSelectOptions"
+              v-for="(item , idx)  in toWarehouseSelectOptions"
               :label="item.label"
               :value="item.value"
               :key="idx"
@@ -191,7 +191,8 @@
         initComplete: false,
 
         // 选择框 TODO:
-        warehouseSelectOptions: [],
+        fromWarehouseSelectOptions: [],
+        toWarehouseSelectOptions: [],
 
         // 编辑对象 TODO
         editObject: {},
@@ -233,7 +234,8 @@
           this.editObject.expectTime = this.editObject.formatExpectTime;
 
           //转化仓库
-          this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+          this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+          this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
           this.editObject.fromWarehouseId = this.editObject.fromWarehouseId + '';
           this.editObject.toWarehouseId = this.editObject.toWarehouseId + '';
 

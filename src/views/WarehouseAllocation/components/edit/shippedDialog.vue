@@ -28,7 +28,7 @@
               <el-select v-model="editObject.fromWarehouseId" size="mini" style="width: 220px"
                          filterable placeholder="请选择发货仓库">
                 <el-option
-                  v-for="(item , idx)  in warehouseSelectOptions"
+                  v-for="(item , idx)  in fromWarehouseSelectOptions"
                   :label="item.label"
                   :value="item.value"
                   :key="idx"
@@ -44,7 +44,7 @@
               <el-select v-model="editObject.toWarehouseId" size="mini" style="width: 220px"
                          filterable placeholder="请选择收货仓库">
                 <el-option
-                  v-for="(item , idx)  in warehouseSelectOptions"
+                  v-for="(item , idx)  in toWarehouseSelectOptions"
                   :label="item.label"
                   :value="item.value"
                   :key="idx"
@@ -169,7 +169,9 @@
         // 点击按钮之后，按钮锁定不可在点
         confirmLoading: false,
 
-        warehouseSelectOptions: [],
+        // 选择框 TODO:
+        fromWarehouseSelectOptions: [],
+        toWarehouseSelectOptions: [],
 
         //明细对象ID
         editObject: {},
@@ -217,7 +219,8 @@
       //初始化加载数据 TODO:根据实际情况调整
       initData() {
         //转化仓库
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
         this.editObject.fromWarehouseId = this.editObject.fromWarehouseId + '';
         this.editObject.toWarehouseId = this.editObject.toWarehouseId + '';
 
