@@ -22,7 +22,7 @@
                    size="mini"
                    style="width: 120px" placeholder="请选择">
           <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
+            v-for="(item,idx) in fromWarehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -34,7 +34,7 @@
                    size="mini"
                    style="width: 120px" placeholder="请选择">
           <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
+            v-for="(item,idx) in toWarehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -258,7 +258,8 @@
         //搜索 TODO: 根据实际情况调整
         statusSelectOptions: [],
         supplierSelectOptions: [],
-        warehouseSelectOptions: [],
+        fromWarehouseSelectOptions: [],
+        toWarehouseSelectOptions: [],
         searchParam: {
           trackNumber: {value: null, op: 'bw', id: 'trackNumber'},
           fromWarehouseId: {value: null, op: 'eq', id: 'warehouseId'},
@@ -303,14 +304,8 @@
           this.phSort.order = params.dir ? params.dir : this.phSort.order
 
           //TODO:根据实际情况调整
-          if (params.categoryId) {
-            this.searchParam.categoryId.value = params.categoryId;
-          }
-          if (params.limitTime) {
-            this.searchParam.limitTime.value = params.limitTime;
-          }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
+          if (params.trackNumber) {
+            this.searchParam.trackNumber.value = params.trackNumber;
           }
           if (params.status) {
             this.searchParam.status.value = params.status;
@@ -318,14 +313,11 @@
           if (params.code) {
             this.searchParam.code.value = params.code;
           }
-          if (params.supplierId) {
-            this.searchParam.supplierId.value = params.supplierId;
+          if (params.fromWarehouseId) {
+            this.searchParam.fromWarehouseId.value = params.fromWarehouseId;
           }
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
-          }
-          if (params.name) {
-            this.searchParam.name.value = params.name;
+          if (params.toWarehouseId) {
+            this.searchParam.toWarehouseId.value = params.toWarehouseId;
           }
         }
       }
@@ -341,7 +333,8 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
         this.statusSelectOptions = phEnumModel.getSelectOptions('WarehouseAllocationStatus');
       },
 

@@ -29,7 +29,7 @@
               <el-select size="mini" v-model="newObject.fromWarehouseId" style="width: 180px"
                          filterable placeholder="请选择发货仓库">
                 <el-option
-                  v-for="(item , idx)  in warehouseSelectOptions"
+                  v-for="(item , idx)  in fromWarehouseSelectOptions"
                   :label="item.label"
                   :value="item.value"
                   :key="idx"
@@ -43,7 +43,7 @@
               <el-select size="mini" v-model="newObject.toWarehouseId" style="width: 180px"
                          filterable placeholder="请选择收货仓库">
                 <el-option
-                  v-for="(item , idx)  in warehouseSelectOptions"
+                  v-for="(item , idx)  in toWarehouseSelectOptions"
                   :label="item.label"
                   :value="item.value"
                   :key="idx"
@@ -110,7 +110,8 @@
         confirmLoading: false,
 
         // 选择框 TODO:
-        warehouseSelectOptions: [],
+        toWarehouseSelectOptions: [],
+        fromWarehouseSelectOptions: [],
         // 新对象  TODO:
         newObject: {
           expectTime: null,
@@ -144,7 +145,8 @@
       initData() {
         this.loading = true;
         // 加载选择框数据
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
         this.loading = false;
       },
       /********************* 操作按钮相关方法  ***************************/

@@ -26,7 +26,7 @@
                    size="mini"
                    style="width: 150px" placeholder="请选择">
           <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
+            v-for="(item,idx) in fromWarehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -38,7 +38,7 @@
                    size="mini"
                    style="width: 150px" placeholder="请选择">
           <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
+            v-for="(item,idx) in toWarehouseSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -255,7 +255,8 @@
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
-        warehouseSelectOptions: [],
+        toWarehouseSelectOptions: [],
+        fromWarehouseSelectOptions: [],
         statusSelectOptions: [],
 
         searchParam: {
@@ -330,7 +331,8 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
+        this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticOptions(true);
+        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticOptions();
       },
 
       // 获取表格的高度
