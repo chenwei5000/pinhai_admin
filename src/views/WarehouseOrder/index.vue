@@ -79,7 +79,7 @@
               $type: 'select',
               $id: 'warehouseId',
               label: '收货仓库',
-              $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
+              $options: warehouseModel.getSelectDomesticAndMaterialOptions(true),
               $el: {
                 op: 'eq',
                 style: 'width:160px',

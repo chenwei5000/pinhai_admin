@@ -334,7 +334,7 @@
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('ProcurementShippedOrderStatus');
         this.supplierSelectOptions = supplierModel.getSelectOptions();
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
       },
 
       // 获取表格的高度
