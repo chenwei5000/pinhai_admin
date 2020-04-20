@@ -324,7 +324,6 @@
             this.editObject.supplier = this.primary[0].supplier;
             this.editObject.expectTime = this.primary[0].formatDeliveryTime;
           }
-          console.log(this.primary);
           this.primary.forEach(r => {
             r.shippedCartonQty = r.unCartonPlanQty;
             r.shippedQty = r.unPlanQty;

@@ -222,7 +222,7 @@
       //初始化数据 TODO:根据实际情况调整
       initData() {
         this.statusSelectOptions = phEnumModel.getSelectOptions('InventoryStatus');
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
 
       },
 

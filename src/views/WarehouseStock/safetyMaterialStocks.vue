@@ -76,8 +76,8 @@
           materialWarehouse: '',
         },
         categories: categoryModel.getMineSelectMaterialOptions(),
-        warehouses: warehouseModel.getSelectDomesticOptions(),
-        materialWarehouses: warehouseModel.getSelectMaterialOptions(),
+        warehouses: warehouseModel.getSelectDomesticOptions(true),
+        materialWarehouses: warehouseModel.getSelectMaterialOptions(true),
 
         rules: {
           category: [
