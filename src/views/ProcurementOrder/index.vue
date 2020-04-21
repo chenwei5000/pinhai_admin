@@ -109,7 +109,7 @@
         return {
           field: 'status',
           op: 'in',
-          data: "2,3 "
+          data: "2,3"
         }
       }
     },

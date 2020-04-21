@@ -40,7 +40,9 @@
           url: '/warehouseOrders',
           relations: ["product", "procurementOrder", "warehouse", "supplier", "cartonSpec", "storageLocation", "currency", "procurementOrder.company"],
           tableAttrs: {
-            "row-class-name": this.statusClassName
+            "row-class-name": this.statusClassName,
+            "show-summary" : true,
+            "summary-method" : this.getSummaries
           },
           hasOperation: false,
           hasNew: false,
@@ -276,6 +278,77 @@
     methods: {
       statusClassName({row}) {
           return '';
+      },
+
+      /*汇总数据*/
+      getSummaries(param) {
+
+        const {columns, data} = param;
+        const sums = [];
+
+        columns.forEach((column, index) => {
+          if (column.property == 'formatCreateTime') {
+            const values = data.map(item => item[column.property]);
+            sums[index] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+            sums[index] = '合计: ' + sums[index] + ' 行';
+          }
+
+          if (column.property == 'cartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'qty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'volume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' m³';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+        });
+
+        return sums;
       },
     },
     watch: {}
