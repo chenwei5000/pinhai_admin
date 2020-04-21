@@ -146,7 +146,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
-
+    name: '采购在途库存',
     components: {
       tableToolBar
     },

@@ -48,7 +48,7 @@
   const actionFlag = 's='
 
   export default {
-
+    name: '调拨入库',
     components: {
       phTab,
     },

@@ -12,7 +12,7 @@
               <i class="el-icon-circle-plus-outline"></i> 创建盘点任务
             </span>
             <keep-alive>
-              <phCreate @createCBEvent="createCBEvent" ref= "create"></phCreate>
+              <phCreate @createCBEvent="createCBEvent" ref="create"></phCreate>
             </keep-alive>
           </el-tab-pane>
 
@@ -63,6 +63,7 @@
   const actionFlag = 's=';
 
   export default {
+    name: '盘点任务',
 
     components: {
       phTab,
@@ -82,8 +83,8 @@
     },
 
     computed: {
-      hasNew(){
-         return checkPermission('InventoryTaskResource_create');
+      hasNew() {
+        return checkPermission('InventoryTaskResource_create');
       }
     },
 
@@ -100,7 +101,7 @@
 
       /* 创建成功之后回调，刷新草稿状态列表列表 TODO: */
       createCBEvent() {
-       this.activeStatus = "inventorying";
+        this.activeStatus = "inventorying";
       }
     },
 

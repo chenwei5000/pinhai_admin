@@ -22,6 +22,7 @@
   import validRules from "../../components/validRules";
 
   export default {
+    name: '出入库记录',
     data() {
       return {
         title: '出入库记录',

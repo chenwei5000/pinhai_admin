@@ -73,6 +73,7 @@
   const actionFlag = 's='
 
   export default {
+    name: '国内调拨',
 
     components: {
       phTab,

@@ -63,6 +63,7 @@
   const actionFlag = 's=';
 
   export default {
+    name: '盘亏盘盈单',
 
     components: {
       phTab,
@@ -82,8 +83,8 @@
     },
 
     computed: {
-       hasNew(){
-         return checkPermission('InventoryResource_create');
+      hasNew() {
+        return checkPermission('InventoryResource_create');
       }
     },
 
