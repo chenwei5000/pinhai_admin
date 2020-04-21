@@ -13,10 +13,10 @@
 
 <script>
   import phColumns from '../../components/phColumns'
-  import {checkPermission} from "../../utils/permission";
   import phEnumModel from '@/api/phEnum'
 
   export default {
+    name: '采购计划历史',
     data() {
       return {
         title: '物流计划历史',

@@ -59,6 +59,7 @@
 
   const actionFlag = 's='
   export default {
+    name: '采购结算',
     components: {
       phTab
     },

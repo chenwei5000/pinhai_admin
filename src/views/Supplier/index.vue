@@ -33,6 +33,7 @@
   import userModel from "../../api/user";
 
   export default {
+    name: '供货商管理',
     components: {
       stockDialog,
       tplDialog
@@ -51,7 +52,7 @@
           hasExport: checkPermission('SupplierResource_export'),
 
           url: '/suppliers',
-          relations: ["company","leader"],  // 关联对象
+          relations: ["company", "leader"],  // 关联对象
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
