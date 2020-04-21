@@ -184,7 +184,7 @@
     </el-pagination>
 
     <!--编辑对话框-->
-    <viewDialog ref="viewDialog">
+    <viewDialog @modifyCBEvent="modifyCBEvent" ref="viewDialog">
     </viewDialog>
 
     <!--查看对话框-->

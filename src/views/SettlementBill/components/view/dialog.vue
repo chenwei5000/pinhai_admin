@@ -4,6 +4,20 @@
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible" class="ph-dialog" @close='closeDialog'
              fullscreen>
 
+    <el-row
+      style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;"
+      v-if="primaryComplete">
+
+      <el-button type="success" size="small" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">完成结算申报
+      </el-button>
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态
+      </el-button>
+      <el-button type="danger" size="small" icon="el-icon-delete" v-if="hasAdmin" @click="onDelete">删除</el-button>
+
+      <el-button size="small" @click="closeDialog">取 消</el-button>
+
+    </el-row>
+
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
 
@@ -23,6 +37,8 @@
       </el-collapse-item>
     </el-collapse>
 
+    <phStatus statusName="SettlementBillStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
+              :objStatus="primary.status"></phStatus>
   </el-dialog>
 
 </template>
@@ -33,12 +49,15 @@
   import infoFrom from './form'
   import detailTable from './detailTable'
   import paymentsTable from './paymentsTable'
+  import {checkPermission} from "../../../../utils/permission";
+  import phStatus from '@/components/PhStatus'
 
   export default {
     components: {
       infoFrom,
       detailTable,
-      paymentsTable
+      paymentsTable,
+      phStatus
     },
     props: {},
     computed: {
@@ -48,7 +67,7 @@
       ]),
 
       hasExecute() {
-        if ([2, 3, 4, 5, 6, 7].indexOf(this.primary.status) > -1) {
+        if ([0].indexOf(this.primary.status) > -1) {
           return true;
         }
         else {
@@ -56,7 +75,7 @@
         }
       },
       hasAdmin() {
-        return true;
+        return checkPermission('ProcurementPlanResource_updateStatus');
       },
       title() {
         return `结算单 [${this.primary.code}]`;
@@ -141,7 +160,7 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
 
-        let url = `/procurementPlans/status/${this.primaryId}/${status}`;
+        let url = `/settlementBills/status/${this.primaryId}/${status}`;
         this.global.axios.put(url)
           .then(resp => {
             this.$refs.phStatus.closeDialog();
@@ -169,13 +188,12 @@
                 background: 'rgba(0, 0, 0, 0.7)'
               });
 
-              let url = `/procurementPlans/${bAction}/${this.primaryId}`;
+              let url = `/settlementBills/${bAction}/${this.primaryId}`;
               this.global.axios.put(url, note ? note : ' ')
                 .then(resp => {
                   done();
                   this.$message.success(message);
                   loading.close();
-                  this.$refs.auditing.closeDialog();
                   this.initData();
                   // 继续向父组件抛出事件 修改成功刷新列表
                   this.$emit("modifyCBEvent");
@@ -191,46 +209,46 @@
         })
       },
 
-
-      // 提交审核
-      saveAuditCBEvent(note, type) {
-        //提交审核
-        if (type == 'commit') {
-          this.business('确认将该计划提交给上级审核吗?', 'commit', "提交成功,请耐心等待上级处理!", note);
-        }
-        //同意审核
-        else if (type == 'agree') {
-          this.business('确认同意该计划吗?', 'agree', "操作成功!", note);
-        }
-        //拒绝审核
-        else if (type == 'refuse') {
-          this.business('确认拒绝该计划吗?', 'refuse', "操作成功!", note);
-        }
-      },
-
-      onCommit() {
-        this.$refs.auditing.openDialog('commit');
-      },
-
-      onAgree() {
-        this.$refs.auditing.openDialog('agree');
-      },
-
-      onRefuse() {
-        this.$refs.auditing.openDialog('refuse');
-      },
       //撤回
       onWithdraw() {
-        this.business('确认撤回该计划吗?', 'withdraw', "操作成功!");
-      },
-      //交接
-      onHandover() {
-      },
-      //分享
-      onShare() {
+        this.business('确认撤回该结算单吗?', 'withdraw', "操作成功!");
       },
       //完成
       onComplete() {
+        this.business('确认该结算单已经申报完成了吗?', 'commitComplete', "操作成功!");
+      },
+      onDelete() {
+        this.$confirm("确认要删除该结算单吗?", '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+              });
+
+              let url = `/settlementBills/${this.primaryId}`;
+              this.global.axios
+                .delete(url)
+                .then(resp => {
+                  done();
+                  this.$message.success('操作成功');
+                  loading.close();
+                  // 继续向父组件抛出事件 修改成功刷新列表
+                  this.$emit("modifyCBEvent");
+                  this.closeDialog();
+                })
+                .catch(err => {
+                  loading.close();
+                });
+              done();
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       }
     }
   }

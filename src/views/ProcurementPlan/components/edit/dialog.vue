@@ -25,7 +25,6 @@
 
     </el-row>
 
-
     <!-- 折叠面板 -->
     <el-collapse v-model="activeNames">
 
