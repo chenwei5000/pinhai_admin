@@ -172,7 +172,6 @@
   import dayGridPlugin from "@fullcalendar/daygrid";
   import timeGridPlugin from "@fullcalendar/timegrid";
   import interactionPlugin from "@fullcalendar/interaction";
-  import dateFormat from "dateformat";
   import {parseTime} from '@/utils';
   import qs from 'qs';
   import harbourModel from '@/api/harbour';
@@ -193,6 +192,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
+    name: '物流计划',
     components: {
       fullCalendar: fullCalendar,
       createEvent: createEvent,
@@ -449,7 +449,7 @@
           }
         }
       },
-      deleteCalendarEvent(id){
+      deleteCalendarEvent(id) {
         for (let i = 0; i < this.calendarEvents.length; i++) {
           if (this.calendarEvents[i].id == id) {
             this.calendarEvents.splice(i, 1);

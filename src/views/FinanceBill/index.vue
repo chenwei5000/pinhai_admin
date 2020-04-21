@@ -12,7 +12,7 @@
               <i class="el-icon-coin"></i> 采购预付款单
             </span>
             <keep-alive>
-              <advanceTab type="advanceBill" ref="advanceBill" />
+              <advanceTab type="advanceBill" ref="advanceBill"/>
             </keep-alive>
           </el-tab-pane>
 
@@ -50,6 +50,7 @@
 
   const actionFlag = 's='
   export default {
+    name: '付款管理',
     components: {
       advanceTab,
       paymentTab,

@@ -91,8 +91,10 @@
             <el-table-column prop="stockSoldOutTime" label="库售罄时间" width="80" align="center"></el-table-column>
             <el-table-column prop="allSoldOutTime" label="途售罄时间" width="80" align="center"></el-table-column>
             <el-table-column prop="containerSoldOutTime" label="途断货日期" width="80" align="center"></el-table-column>
-            <el-table-column prop="containerSoldOutDay" label="途断货天数" width="80" fixed="right" align="center"></el-table-column>
-            <el-table-column prop="containerSoldOutCartonQty" label="途缺口箱数" width="80" fixed="right" align="center"></el-table-column>
+            <el-table-column prop="containerSoldOutDay" label="途断货天数" width="80" fixed="right"
+                             align="center"></el-table-column>
+            <el-table-column prop="containerSoldOutCartonQty" label="途缺口箱数" width="80" fixed="right"
+                             align="center"></el-table-column>
 
             <el-table-column label="操作"
                              no-export="true"
@@ -151,6 +153,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
+    name: '产品在途断货情况',
     components: {
       chartDialog,
       stockSituationDialog,

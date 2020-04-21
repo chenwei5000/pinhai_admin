@@ -59,6 +59,7 @@
   const actionFlag = 's=';
 
   export default {
+    name: '出口调拨',
 
     components: {
       phTab,

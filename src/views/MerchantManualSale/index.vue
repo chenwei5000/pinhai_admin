@@ -192,6 +192,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
+    name: '设置销量',
     components: {
       tableToolBar,
       chartDialog,
@@ -271,7 +272,7 @@
       hasSetting() {
         return true;
       },
-      hasImport(){
+      hasImport() {
         return true;
       }
     },
@@ -432,7 +433,7 @@
         this.$refs.chartDialog.openDialog(row);
       },
 
-      modifyCBEvent(resp){
+      modifyCBEvent(resp) {
         this.tableData.forEach((item, index, arr) => {
           if (item.skuCode === resp.skuCode) {
             arr[index].formatLastModified = resp.formatLastModified;
@@ -504,7 +505,7 @@
           _res.skuCode = obj["SKU编码"];
           _res.sevenSaleQty = obj["7日人工销量"];
           _res.merchantId = this.fromParent.merchantId;
-          if(_res.sevenSaleQty != null && _res.sevenSaleQty != '') {
+          if (_res.sevenSaleQty != null && _res.sevenSaleQty != '') {
             resData.push(_res);
           }
         });

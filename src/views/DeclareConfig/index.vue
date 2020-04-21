@@ -19,6 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '报关配置',
     data() {
       return {
         title: '报关配置',

@@ -18,6 +18,7 @@
   import harbourModel from '@/api/harbour'
 
   export default {
+    name: '物流计划历史',
     data() {
       return {
         title: '物流计划历史',

@@ -29,6 +29,7 @@
   import setting from './components/setting'
 
   export default {
+    name: '用户管理',
     components: {
       setting
     },
