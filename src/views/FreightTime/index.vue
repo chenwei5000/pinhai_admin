@@ -21,6 +21,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '货运时间配置',
     data() {
       return {
         title: '货运时间配置',
@@ -41,7 +42,11 @@
           },
           //列表
           columns: [
-            {width: 30,type: checkPermission('FreightTimeResource_remove') ? 'selection' : '', hidden: !checkPermission('FreightTimeResource_remove')},
+            {
+              width: 30,
+              type: checkPermission('FreightTimeResource_remove') ? 'selection' : '',
+              hidden: !checkPermission('FreightTimeResource_remove')
+            },
             {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 120},
             {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 120},
             {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 120},
@@ -59,7 +64,7 @@
               $options: harbourModel.getSelectOptions(),
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 style: "width:130px",
                 placeholder: '请选择发货港口'
               }
@@ -71,7 +76,7 @@
               $options: shippingMethodModel.getSelectOptions(),
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 style: "width:130px",
                 placeholder: '请选择物流方式'
               }
@@ -83,7 +88,7 @@
               $options: harbourModel.getSelectOptions(),
               $el: {
                 op: 'eq',
-                size:"mini",
+                size: "mini",
                 style: "width:130px",
                 placeholder: '请输入收货港口'
               }

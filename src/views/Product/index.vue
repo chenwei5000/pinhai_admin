@@ -56,6 +56,7 @@
   const statusFlag = 's='
 
   export default {
+    name: '产品管理',
     components: {tabPane, createFrom},
 
     data() {

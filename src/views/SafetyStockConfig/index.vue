@@ -19,6 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '安全库存配置',
     data() {
       return {
         types: [],
@@ -40,7 +41,11 @@
           },
           //表格内容显示
           columns: [
-            {width: 30, type: checkPermission('SafetyStockConfigResource_remove') ? 'selection' : '', hidden: !checkPermission('SafetyStockConfigResource_remove')},
+            {
+              width: 30,
+              type: checkPermission('SafetyStockConfigResource_remove') ? 'selection' : '',
+              hidden: !checkPermission('SafetyStockConfigResource_remove')
+            },
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 90, fixed: 'left'},
             {prop: 'typeName', label: '类型', 'min-width': 80},
             {prop: 'vip0SafetyStockWeek', label: 'Vip0普通', 'min-width': 80},

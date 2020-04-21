@@ -24,6 +24,7 @@
 
 
   export default {
+    name: '分类管理',
     data() {
       return {
         title: '分类列表',

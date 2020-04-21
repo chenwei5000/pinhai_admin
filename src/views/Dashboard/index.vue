@@ -75,7 +75,6 @@
   import defaultDashboard from './default/index'
   import {checkRole} from "../../utils/permission";
 
-
   export default {
     name: 'Dashboard',
     components: {

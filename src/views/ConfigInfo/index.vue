@@ -59,6 +59,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '基础配置',
     data() {
       return {
         title: '基础配置',

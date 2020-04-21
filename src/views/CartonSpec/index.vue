@@ -22,6 +22,7 @@
 
 
   export default {
+    name: '包装材料',
     data() {
       return {
         title: '包装材料列表',

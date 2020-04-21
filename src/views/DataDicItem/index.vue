@@ -20,6 +20,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '数据字典',
     data() {
       return {
         title: '数据字典',

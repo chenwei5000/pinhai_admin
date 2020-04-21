@@ -19,6 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '货币管理',
     data() {
       return {
         title: '货币管理',

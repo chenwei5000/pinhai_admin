@@ -23,6 +23,7 @@
 
 
   export default {
+    name: '收款账户',
     data() {
       return {
         title: '收款账户',

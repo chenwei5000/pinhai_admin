@@ -19,6 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '公司管理',
     data() {
       return {
       title: '公司管理',

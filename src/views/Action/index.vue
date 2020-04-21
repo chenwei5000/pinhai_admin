@@ -20,6 +20,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: '操作管理',
     data() {
       return {
         title: '操作列表',
