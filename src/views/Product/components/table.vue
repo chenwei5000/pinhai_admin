@@ -141,7 +141,7 @@
       </el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="150" fixed="right"  align="center">
+      <el-table-column label="操作" v-if="hasOperation" width="150" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -151,7 +151,7 @@
                      @click="onDefaultEdit(scope.row)" type="primary">
           </el-button>
           <el-button v-if="hasDelete" type="danger" size="mini"
-                      icon="el-icon-delete" circle
+                     icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
           <a target="_blank"
@@ -829,36 +829,36 @@
         excelData.results.forEach(obj => {
           let _res = {};
           _res.skuCode = obj["SKU"];
-          _res.groupName = obj["款式"];
           _res.name = obj["名称"];
+          _res.categoryName = obj["分类"];
+          _res.groupName = obj["款式"];
           _res.model = obj["型号"];
           _res.color = obj["颜色"];
           _res.grossWeight = obj["净重(Kg)"];
           _res.length = obj["长(Cm)"];
           _res.width = obj["宽(Cm)"];
           _res.height = obj["高(Cm)"];
-          _res.numberOfCarton = obj["装箱数"];
-          _res.leadDay = obj["交期(天)"];
-          _res.categoryName = obj["分类"];
-          _res.currencyName = obj["结算货币"];
           _res.supplierName = obj["供货商"];
+          _res.currencyName = obj["结算货币"];
           _res.price = obj["采购价"];
+          _res.cartonSpecName = obj["箱规"];
+          _res.numberOfCarton = obj["装箱数"];
+          _res.asin = obj["ASIN"];
+          _res.fnSku = obj["FN-SKU"];
+          _res.vipLevel = obj["Vip级别"];
+          _res.oversize = obj["超大"];
+          _res.newGoods = obj["新品"];
+          _res.status = obj["状态"];
 
+          _res.leadDay = obj["交期(天)"];
           _res.brand = obj["品牌"];
           _res.brandType = obj["品牌类型"];
           _res.preferentialDuties = obj["出口享惠类型"];
           _res.texture = obj["材质"];
-          //_res.declareLength = obj["分类"];
-          //_res.declareWidth = obj["分类"];
-          //_res.declareHeight = obj["分类"];
           _res.purpose = obj["用途"];
           _res.origin = obj["产地"];
           _res.invoiceTitle = obj["开票抬头"];
           _res.invoiceUnit = obj["开票单位"];
-          _res.cartonSpecName = obj["箱规"];
-          _res.vipLevel = obj["Vip级别"];
-          _res.oversize = obj["超大"];
-          _res.newGoods = obj["新品"];
 
           resData.push(_res);
         });
