@@ -32,25 +32,11 @@
 
       <el-table-column prop="skuCode" label="SKU" sortable min-width="150" fixed="left"></el-table-column>
 
-      <el-table-column prop="imgUrl" label="图片" width="40">
-        <template slot-scope="scope" v-if="scope.row.imgUrl">
-          <el-image
-            :z-index="10000"
-            style="width: 30px; height: 30px;margin-top: 5px"
-            :src="scope.row.imgUrl"
-            :preview-src-list="[scope.row.imgUrl.replace('_SL75_','_SL500_')]"
-            lazy
-          ></el-image>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="productName" label="产品名" min-width="200"></el-table-column>
+      <el-table-column prop="productName" label="原料名" min-width="200"></el-table-column>
 
       <el-table-column prop="cartonSpecCode" label="箱规" min-width="120"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" min-width="80"></el-table-column>
-
-      <el-table-column prop="cartonQty" :label="typeName+'箱数'" min-width="90"></el-table-column>
-      <el-table-column prop="number" :label="typeName+'件数'" min-width="90"></el-table-column>
+      <el-table-column prop="number" :label="'米数'" min-width="90"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" no-export="true" width="120" fixed="right">
@@ -59,7 +45,7 @@
             size="small"
             icon="el-icon-edit"
             circle
-            @click="onDefaultEdit(scope.row)"
+            @click="onDefaultEdit(scope.$index, scope.row)"
             type="primary"
             id="ph-table-edit"
           ></el-button>
@@ -102,15 +88,7 @@ export default {
   computed: {
     ...mapGetters(["device", "rolePower"]),
     typeName() {
-      if (this.primary == null || this.primary.type == null) {
-        return "";
-      }
-      if (this.primary.type == "iin") {
-        return "盘盈";
-      }
-      if (this.primary.type == "iout") {
-        return "盘亏";
-      }
+      return "领料单";
     },
     hasAdd() {
       return true;
@@ -129,8 +107,8 @@ export default {
 
   data() {
     return {
-      exportFileName: "盘亏盘盈明细",
-      tplNoExportProps: ["图片", "产品名", "箱规", "装箱数"],
+      exportFileName: "领料单明细",
+      tplNoExportProps: ["图片", "原料名", "箱规", "装箱数"],
       maxUploadCount: 20,
       selected: [],
       // 选择项
@@ -189,7 +167,8 @@ export default {
 
     /********************* 操作按钮相关方法  ***************************/
     /* 行修改功能 */
-    onDefaultEdit(row) {
+    onDefaultEdit(index, row) {
+      row.detailItemId = index + 1;
       this.$refs.itemDialog.openDialog(row);
     },
 
@@ -229,11 +208,7 @@ export default {
     /********************* 工具条按钮  ***************************/
     onDefaultAdd() {
       if (this.primary == null || this.primary.warehouseId == null) {
-        this.$message.error("请选择盘点仓库!");
-        return false;
-      }
-      if (this.primary == null || this.primary.type == null) {
-        this.$message.error("请选择盘点类型!");
+        this.$message.error("请选择原料仓库!");
         return false;
       }
       this.$refs.itemDialog.openDialog(null);
@@ -258,7 +233,6 @@ export default {
       //获取数据
       let table = this.$refs.table;
       let downloadUrl = this.downloadUrl;
-      this.tplNoExportProps.push(this.typeName + "件数");
 
       import("@/vendor/Export2Excel").then(excel => {
         excel.export_el_table_to_excel({
@@ -276,7 +250,7 @@ export default {
 
     uploadPromise(detailItem) {
       if (!detailItem.skuCode) {
-        this.$message.error("请输入产品SKU");
+        this.$message.error("请输入原料SKU");
       } else {
         let url = `/products/sku?sku=${encodeURIComponent(
           detailItem.skuCode
@@ -290,19 +264,8 @@ export default {
             detailItem.cartonSpecId = data.cartonSpecId + "";
             detailItem.numberOfCarton = data.numberOfCarton;
             detailItem.cartonSpecCode = data.cartonSpecCode;
-            detailItem.imgUrl = data.imgUrl;
-
             // 转字段
             detailItem.productName = data.name;
-
-            if (detailItem.cartonQty && detailItem.numberOfCarton) {
-              detailItem.number = (
-                detailItem.cartonQty * detailItem.numberOfCarton
-              ).toFixed(0);
-            } else {
-              detailItem.number = 0;
-            }
-
             this.modifyCBEvent(detailItem);
           })
           .catch(err => {});
@@ -356,7 +319,7 @@ export default {
             _res[prop] = obj[_head];
           }
         });
-        _res["cartonQty"] = obj["箱数"];
+        _res["number"] = obj["米数"];
         resData.push(_res);
       });
       for (var i = 0; i < resData.length; i++) {

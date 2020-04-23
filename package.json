@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "tankai": "export NODE_ENV=tankai && vue-cli-service serve --mode tankai",
+    "fisher": "vue-cli-service serve --mode fisher",
     "build:prod": "vue-cli-service build",
     "build:demo": "export NODE_ENV=demo && vue-cli-service build --mode demo",
     "build:test": "export NODE_ENV=test && vue-cli-service build --mode test",
@@ -83,8 +84,7 @@
     "vue-splitpane": "1.0.4",
     "vuedraggable": "2.20.0",
     "vuex": "3.1.0",
-    "xlsx": "0.14.1",
-    "xlsx-style": "^0.8.13"
+    "xlsx": "0.14.1"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",

@@ -11,7 +11,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  //font-family: "宋体","Microsoft YaHei", "黑体", Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  //font-family: "宋体", "Microsoft YaHei", "黑体", Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
 
 label {
@@ -202,163 +202,143 @@ aside {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
 }
 
-// 品海Table
+// Table
 .ph-table {
-
-  /deep/ .el-table {
-    font-size: 12px;
-    /deep/ .ph-header-small {
-      font-size: 20px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(250, 236, 216) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(250, 236, 216) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ .ph-cell {
-      padding: 0 2px !important;
-      font-size: 12px !important;
-    }
-    /deep/ .cell {
-      line-height: 100% !important;
-      padding: 3px 2px !important;
-      min-height: 24px;
-
-    }
-
-    /deep/ .ph-cell-header {
-      font-size: 12px !important;
-      font-weight: bold !important;
-      padding: 2px 5px !important;
-      line-height: 26px;
-      color: #333;
-    }
-    /deep/ .el-table--medium th, .el-table--medium td{
-      padding: 3px;
-    }
-    /deep/ .caret-wrapper{
-      height: 22px;
-      width: 14px;
-    }
-    /deep/ .sort-caret.ascending{
-      top: 0;
-    }
-    /deep/ .sort-caret.descending{
-      bottom: 0;
-    }
-    /deep/ .el-table__footer .is-leaf{
-      font-weight: bold;
-      padding: 5px 0 !important;
-    }
-
-    /deep/ .el-textarea__inner {
-      font-size: 12px !important;
-    }
-
-  }
-
-  .el-form {
-    /deep/ .el-form-item__label {
-      font-size: 12px !important;
-      font-weight: bold !important;
-      line-height: 26px !important;
-      color: #333;
-    }
-    /deep/ .el-form-item__content {
-      line-height: 26px !important;
-    }
-
-    /deep/ .el-form-item {
-      margin-bottom: 5px !important;
-    }
-    /deep/ .panel-title {
-      font-size: 13px !important;
-    }
-    /deep/ .el-input__inner {
-      font-size: 12px !important;
-    }
-    /deep/ .el-textarea__inner {
-      font-size: 12px !important;
-    }
-  }
+  padding: 10px 15px;
 }
 
-.ph-card {
-  .el-tabs {
-    /deep/ .el-tabs__item span {
-      font-size: 13px !important;
-    }
-  }
-  /deep/ .el-steps {
-    padding: 5px 8% !important;
-
-    /deep/ .el-step__title {
-      font-size: 13px;
-    }
-  }
+.ph-cell-header {
+  font-size: 12px !important;
+  font-weight: bold !important;
+  padding: 2px 5px !important;
+  line-height: 26px;
+  color: #333;
 }
 
-.ph-form {
-  .el-form {
-    /deep/ .el-form-item__label {
-      font-size: 12px !important;
-      font-weight: bold !important;
-      line-height: 26px !important;
-      color: #333;
-    }
-    /deep/ .el-form-item__content {
-      line-height: 26px !important;
-    }
-    /deep/ .el-form-item {
-      margin-bottom: 5px !important;
-    }
-    /deep/ .panel-title {
-      font-size: 13px !important;
-    }
-    /deep/ .el-input__inner {
-      font-size: 12px !important;
-    }
-    /deep/ .el-textarea__inner {
-      font-size: 12px !important;
-    }
-  }
-
-  /deep/ .el-upload-list__item-name {
-    font-size: 12px !important;
-  }
-  /deep/ .el-timeline {
-    font-size: 12px !important;
-  }
+.cell {
+  line-height: 100% !important;
+  padding: 3px 2px !important;
+  min-height: 24px;
 }
 
-.ph-dialog {
-  /deep/ .el-dialog__body {
-    padding: 10px 20px;
-  }
-  /deep/ .el-dialog__header {
-    padding: 10px 20px;
-  }
-  .el-tabs {
-    /deep/ .el-tabs__item span {
-      font-size: 13px !important;
-    }
-  }
-  /deep/ .el-steps {
-    padding: 5px 8% !important;
-
-    /deep/ .el-step__title {
-      font-size: 13px;
-    }
-  }
+.ph-header-small {
+  font-size: 12px !important;
 }
+
+.ph-cell {
+  padding: 0 2px !important;
+  font-size: 12px !important;
+}
+
+.el-table {
+  font-size: 12px;
+}
+
+tr.warning-row {
+  background: rgb(250, 236, 216) !important;
+}
+
+tr.warning-row td {
+  background: rgb(250, 236, 216) !important;
+}
+
+tr.danger-row {
+  background: rgb(253, 226, 226) !important;
+}
+
+tr.danger-row td {
+  background: rgb(253, 226, 226) !important;
+}
+
+
+
+.el-table--medium th, .el-table--medium td {
+  padding: 3px;
+}
+
+.el-table .caret-wrapper {
+  height: 22px;
+  width: 14px;
+}
+
+.el-table .caret-wrapper .sort-caret.ascending {
+  top: 0;
+}
+
+.el-table .caret-wrapper .sort-caret.descending {
+  bottom: 0;
+}
+
+.el-table__footer .is-leaf {
+  font-weight: bold;
+  padding: 5px 0 !important;
+}
+
+.el-textarea__inner {
+  font-size: 12px !important;
+}
+
+// FORM
+.el-form-item__label {
+  font-size: 12px !important;
+  font-weight: bold !important;
+  line-height: 26px !important;
+  color: #333;
+}
+
+.el-form-item__content {
+  line-height: 26px !important;
+}
+
+.el-form-item {
+  margin-bottom: 5px !important;
+}
+
+.el-form .panel-title {
+  font-size: 13px !important;
+}
+
+.el-input__inner {
+  font-size: 12px !important;
+  line-height: 100% !important
+}
+
+.el-textarea__inner {
+  font-size: 12px !important;
+}
+
+.el-upload-list__item-name {
+  font-size: 12px !important;
+}
+
+.el-timeline {
+  font-size: 12px !important;
+}
+
+// Tabs
+.el-tabs__item span {
+  font-size: 13px !important;
+}
+
+.el-steps {
+  padding: 5px 8% !important;
+}
+
+.el-step__title {
+  font-size: 13px;
+}
+
+.el-step.is-simple .el-step__title {
+  font-size: 13px;
+}
+
+
+// Dialog
+.el-dialog__body {
+  padding: 10px 20px;
+}
+
+.el-dialog__header {
+  padding: 10px 20px;
+}
+

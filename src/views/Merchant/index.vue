@@ -121,6 +121,62 @@
                 placeholder: '请输入联系电话'
               },
             },
+            {
+              $type: 'input',
+              $id: 'accessKey',
+              label: 'Access Key',
+              $el: {
+                placeholder: '请输入Access Key'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'secretKey',
+              label: 'Secret Key',
+              $el: {
+                placeholder: '请输入Secret Key'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'appName',
+              label: 'App Name',
+              $el: {
+                placeholder: '请输入App Name'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'appVersion',
+              label: 'App Version',
+              $el: {
+                placeholder: '请输入App Version'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'apiUrl',
+              label: 'Api Url',
+              $el: {
+                placeholder: '请输入Api Url'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'sellerId',
+              label: 'Seller Id',
+              $el: {
+                placeholder: '请输入Seller Id'
+              },
+            },
+            {
+              $type: 'input',
+              $id: 'marketPlace',
+              label: 'Market Place',
+              $el: {
+                placeholder: '请输入Market Place'
+              },
+            },
             phFromItems.status()
           ]
         }
