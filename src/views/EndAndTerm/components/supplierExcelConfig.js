@@ -182,7 +182,7 @@ let excelMerges = [
 
 let excelField = [
   {'attrName': 'skuCode', 'type': 's', 'name': '#SKU编码#'},
-  {'attrName': 'warehouseName', 'type': 's', 'name': '#仓库#'},
+  {'attrName': 'supplierName', 'type': 's', 'name': '#供货商#'},
   {'attrName': 'productName', 'type': 's', 'name': '#产品名#'},
   {'attrName': 'currencyName', 'type': 's', 'name': '#货币#'},
 

@@ -94,6 +94,8 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="merchantName" label="销售渠道" min-width="150" align="center"></el-table-column>
+
       <el-table-column prop="name" label="名称" min-width="250" align="center"></el-table-column>
       <el-table-column prop="category.name" label="分类" width="80" align="center"></el-table-column>
       <el-table-column prop="groupName" v-if="unfinishedHide" label="款式" width="80" align="center"></el-table-column>
@@ -295,7 +297,7 @@
         countUrl: this.type === 'unfinished' ? '/products/countUnfinishs' : '/products/count', // 资源URL
         downloadUrl: this.type === 'unfinished' ? '/products/unfinishs' : '/products', // 资源URL
 
-        relations: ["category", "supplier", "cartonSpec", "currency", "declareConfig"],  // 关联对象
+        relations: ["category", "merchant", "supplier", "cartonSpec", "currency", "declareConfig"],  // 关联对象
         data: [],
         phSort: {prop: "skuCode", order: "asc"},
         loading: false,
@@ -833,6 +835,7 @@
           _res.categoryName = obj["分类"];
           _res.groupName = obj["款式"];
           _res.model = obj["型号"];
+          _res.merchantName = obj["销售渠道"];
           _res.color = obj["颜色"];
           _res.grossWeight = obj["净重(Kg)"];
           _res.length = obj["长(Cm)"];

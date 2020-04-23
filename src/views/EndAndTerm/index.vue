@@ -12,10 +12,19 @@
               <i class="el-icon-s-home"></i> 仓库维度
             </span>
             <keep-alive>
-              <phTab type="warehouse" ref="warehouseTable"/>
+              <warehouseTable ref="warehouseTable" type="warehouse"></warehouseTable>
             </keep-alive>
           </el-tab-pane>
 
+          <!-- TODO: name 根据实际情况修改  -->
+          <el-tab-pane name="supplier" class="fontColor" lazy>
+            <span slot="label">
+              <i class="el-icon-s-custom"></i> 供货商维度
+            </span>
+            <keep-alive>
+              <supplierTable ref="supplierTable" type="supplier"></supplierTable>
+            </keep-alive>
+          </el-tab-pane>
 
         </el-tabs>
       </div>
@@ -25,15 +34,19 @@
 </template>
 
 <script>
-  import phTab from './components/tab'
+
   import {checkPermission} from "@/utils/permission";
+  import warehouseTable from './components/warehouseTable'
+  import supplierTable from './components/supplierTable'
 
   const actionFlag = 's='
 
   export default {
+    name: '商品进销存报表',
 
     components: {
-      phTab
+      warehouseTable,
+      supplierTable
     },
 
     data() {

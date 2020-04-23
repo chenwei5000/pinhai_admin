@@ -164,65 +164,38 @@
           this.saveObject(detailItems);
         });
       },
-      
-      methods: {
-        /********************* 基础方法  *****************************/
-        //初始化数据 TODO:根据实际情况调整
-        initData() {
-          this.loading = true;
-          // 加载选择框数据
-          this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
-          this.typeSelection = phEnumModel.getSelectOptions('InventoryType');
-          this.loading = false;
-        },
-        /********************* 操作按钮相关方法  ***************************/
-        // 生成盘亏盘盈单 TODO:
 
-        onCreate() {
-          this.$refs.newObject.validate(valid => {
-            if (!valid) {
-              return;
-            }
-            let detailItems = this.$refs.itemTable.tableData;
-            if (!detailItems || detailItems.length == 0) {
-              this.$message.error("盘亏盘盈单内容不能为空!");
-              return;
-            }
-            this.saveObject(detailItems);
+      saveObject(detailItems) {
+        let _order = JSON.parse(JSON.stringify(this.newObject));
+        _order.inventoryItemTOs = detailItems;
+
+        const loading = this.$loading({
+          lock: true,
+          text: "下单中...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)"
+        });
+
+        this.global.axios
+          .post("/inventories", _order)
+          .then(resp => {
+            loading.close();
+            this.$message.success(this.typeName + "创建成功");
+            this.$refs.itemTable.tableData = [];
+            this.newObject = {};
+          })
+          .catch(err => {
+            loading.close();
           });
-        },
-
-        saveObject(detailItems) {
-          let _order = JSON.parse(JSON.stringify(this.newObject));
-          _order.inventoryItemTOs = detailItems;
-
-          const loading = this.$loading({
-            lock: true,
-            text: "下单中...",
-            spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)"
-          });
-
-          this.global.axios
-            .post("/inventories", _order)
-            .then(resp => {
-              loading.close();
-              this.$message.success(this.typeName + "创建成功");
-              this.$refs.itemTable.tableData = [];
-              this.newObject = {};
-            })
-            .catch(err => {
-              loading.close();
-            });
-        },
-        /*
-         * 创建成功之后，将子组件发送的数据继续向上传递给父组件
-         */
-        createCBEvent(newObjectId) {
-          this.$emit("step1CBEvent", newObjectId);
-        }
+      },
+      /*
+       * 创建成功之后，将子组件发送的数据继续向上传递给父组件
+       */
+      createCBEvent(newObjectId) {
+        this.$emit("step1CBEvent", newObjectId);
       }
-    };
+    }
+  };
 </script>
 
 <style type="text/less" lang="scss" scoped>

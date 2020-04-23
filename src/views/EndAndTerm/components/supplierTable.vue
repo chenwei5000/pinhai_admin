@@ -9,11 +9,11 @@
              inline-message
              @submit.native.prevent>
 
-      <el-form-item label="仓库">
-        <el-select size="mini" filterable v-model="searchParam.warehouseId.value" style="width: 160px"
-                   placeholder="请选择仓库">
+      <el-form-item label="供货商">
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 160px"
+                   placeholder="请选择供货商">
           <el-option
-            v-for="(item,idx) in warehouseSelectOptions"
+            v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
             :key="idx"
           ></el-option>
@@ -78,7 +78,7 @@
     >
       <el-table-column prop="skuCode" label="skuCode" width="150" align="center" fixed="left"></el-table-column>
 
-      <el-table-column prop="warehouseName" label="仓库" min-width="100" align="center">
+      <el-table-column prop="supplierName" label="供货商" min-width="100" align="center">
       </el-table-column>
 
       <el-table-column prop="productName" label="产品名称" min-width="250" align="center">
@@ -201,9 +201,9 @@
   import {checkPermission} from "@/utils/permission";
   import {currency, getObjectValueByArr} from "../../../utils";
   import moment from 'moment';
-  import warehouseModel from "../../../api/warehouse";
+  import supplierModel from "../../../api/supplier";
   import tableToolBar from '@/components/PhTableToolBar'
-  import excelConfig from './warehouseExcelConfig'
+  import excelConfig from './supplierExcelConfig'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -221,7 +221,7 @@
     props: {
       type: {
         type: String,
-        default: 'warehouse'
+        default: 'supplier'
       },
     },
 
@@ -253,7 +253,7 @@
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
 
         //抓数据 TODO: 根据实际情况调整
-        url: '/report/findBeginEndOfPeriodList?type=warehouse', // 资源URL
+        url: '/report/findBeginEndOfPeriodList?type=supplier', // 资源URL
         downloadUrl: '',
         relations: null,  // 关联对象
         data: [],
@@ -261,10 +261,10 @@
         loading: false,
 
         //搜索 TODO: 根据实际情况调整
-        warehouseSelectOptions: [],
+        supplierSelectOptions: [],
 
         searchParam: {
-          warehouseId: {value: null, op: 'eq', id: 'warehouseId'},
+          supplierId: {value: null, op: 'eq', id: 'supplierId'},
           reportDate: {
             value: `${moment(new Date()).startOf('month').format("YYYY-MM-DD")}|${moment(new Date()).endOf('month').format("YYYY-MM-DD")}`,
             op: 'timeRange',
@@ -296,8 +296,8 @@
           let params = qs.parse(query, {delimiter: paramSeparator})
 
           //TODO:根据实际情况调整
-          if (params.warehouseId) {
-            this.searchParam.warehouseId.value = params.warehouseId;
+          if (params.supplierId) {
+            this.searchParam.supplierId.value = params.supplierId;
           }
           if (params.reportDate) {
             this.searchParam.reportDate.value = params.reportDate;
@@ -322,7 +322,7 @@
       /********************* 基础方法  *****************************/
       //初始化数据 TODO:根据实际情况调整
       initData() {
-        this.warehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
+        this.supplierSelectOptions = supplierModel.getSelectOptions();
       },
 
       // 获取表格的高度
@@ -361,7 +361,7 @@
         this.$refs.searchForm.resetFields();
 
         //TODO:根据实际情况调整
-        this.searchParam.warehouseId.value = null;
+        this.searchParam.supplierId.value = null;
         this.searchParam.reportDate.value = `${moment(new Date()).startOf('month').format("YYYY-MM-DD")}|${moment(new Date()).endOf('month').format("YYYY-MM-DD")}`;
         this.searchParam.skuCode.value = null;
         this.searchParam.productName.value = null;
@@ -611,8 +611,8 @@
 
         this.downloadUrl = url + params;
 
-        if(this.searchParam.warehouseId.value == null){
-          this.$message.error("不选择仓库只能进行导出操作!");
+        if(this.searchParam.supplierId.value == null){
+          this.$message.error("不选择供货商只能进行导出操作!");
           this.loading = false
           return false;
         }
@@ -669,13 +669,13 @@
               url: downloadUrl,
               excelMerges: excelConfig.excelMerges,
               excelField: excelConfig.excelField,
-              filename: '商品进销存报表-仓库维度'
+              filename: '商品进销存报表-供货商维度'
             });
             this.loading = false;
           })
         }
         else{
-          this.$message.error("请先选择仓库、日期！");
+          this.$message.error("请先选择供货商、日期！");
         }
       },
 

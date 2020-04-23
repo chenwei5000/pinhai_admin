@@ -325,7 +325,7 @@
             <el-col :md="10">
               <el-form-item label="Vip级别" size="mini">
                 <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.vipLevel}}</span>
-                <el-select v-model="newProduct.vipLevel" placeholder="请输入产品Vip级别" style="width: 200px" v-else>
+                <el-select filterable v-model="newProduct.vipLevel" placeholder="请输入产品Vip级别" style="width: 200px" v-else>
                   <el-option
                     v-for="(item,idx) in vipLevelSelectOptions"
                     :label="item.label" :value="item.value"
@@ -334,6 +334,20 @@
                 </el-select>
               </el-form-item>
             </el-col>
+
+            <el-col :md="14">
+              <el-form-item label="销售渠道" size="mini">
+                <span style="font-size: 12px" v-if="!hasEdit">{{newProduct.merchantName}}</span>
+                <el-select filterable v-model="newProduct.merchantId" placeholder="请选择销售渠道" style="width: 250px" v-else>
+                  <el-option
+                    v-for="(item,idx) in merchantSelectOptions"
+                    :label="item.label" :value="item.value"
+                    :key="idx"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
           </el-row>
           <el-row>
 
@@ -394,6 +408,7 @@
   import declareConfigModel from "../../../api/declareConfig";
   import {checkPermission} from "@/utils/permission";
   import validRules from "../../../components/validRules";
+  import merchantModel from "../../../api/merchant";
 
 
   const vipLevelSelectOptions = [
@@ -450,6 +465,7 @@
         supplierSelectOptions: [],
         currencySelectOptions: [],
         declareConfigSelectOptions: [],
+        merchantSelectOptions: [],
 
         activeNames: ['base', 'supplier', 'declare', 'sale', 'material', 'note'],
 
@@ -538,6 +554,7 @@
       this.supplierSelectOptions = supplierModel.getSelectOptions();
       this.declareConfigSelectOptions = declareConfigModel.getSelectOptions();
       this.currencySelectOptions = currencyModel.getSelectOptions();
+      this.merchantSelectOptions = merchantModel.getSelectOptions();
       this.vipLevelSelectOptions = vipLevelSelectOptions;
     },
 

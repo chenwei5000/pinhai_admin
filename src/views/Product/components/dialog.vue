@@ -39,7 +39,7 @@
       return {
         primaryId: null,  //主ID
         primary: {}, //主对象
-        relations: ["category", "supplier", "cartonSpec", "currency", "declareConfig"],  // 关联对象
+        relations: ["category", "merchant", "supplier", "cartonSpec", "currency", "declareConfig"],  // 关联对象
         primaryComplete: false,
         logComplete: false,
         dialogVisible: false, //Dialog 是否开启

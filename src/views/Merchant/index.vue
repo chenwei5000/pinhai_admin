@@ -177,6 +177,14 @@
                 placeholder: '请输入Market Place'
               },
             },
+            {
+              $type: 'input',
+              $id: 'mwsAuthToken',
+              label: 'Auth Token',
+              $el: {
+                placeholder: '请输入Auth Token'
+              },
+            },
             phFromItems.status()
           ]
         }
