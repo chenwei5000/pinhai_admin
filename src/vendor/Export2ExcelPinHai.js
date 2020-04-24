@@ -143,7 +143,7 @@ export function export_json_url_to_excel_with_formulae({
   if (tpl) {
     let data = [];
     export_json_to_excel({
-      header: header,
+      header: header[idx],
       data,
       filename: filename,
       autoWidth: true,

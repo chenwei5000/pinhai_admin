@@ -524,7 +524,8 @@
           this.loading = true;
           excel.export_json_url_to_excel_with_formulae({
             url: '',
-            excelField: [{'attrName': 'skuCode', 'type': 's', 'name': '#SKU编码#'},
+            excelField: [
+              {'attrName': 'skuCode', 'type': 's', 'name': '#SKU编码#'},
               {'attrName': 'numberOfCarton', 'type': 's', 'name': '#装箱数#'},
               {'attrName': 'cartonQty', 'type': 's', 'name': '#本次发货箱数#'},
               {'attrName': 'remark', 'type': 's', 'name': '#备注#'},
