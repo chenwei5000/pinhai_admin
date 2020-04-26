@@ -18,6 +18,7 @@
   import phFromItems from '../../components/phFromItems'
 
   export default {
+    name: 'LinerShippingPlanResource_listUnBoundShipments',
     data() {
       return {
         title: '未绑定Amazon货柜',

@@ -63,7 +63,7 @@
   const actionFlag = 's=';
 
   export default {
-    name: '盘点任务',
+    name: 'InventoryTaskResource_menu',
 
     components: {
       phTab,

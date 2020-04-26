@@ -24,7 +24,7 @@
 
 
   export default {
-    name: '分类管理',
+    name: 'CategoryResource_menu',
     data() {
       return {
         title: '分类列表',

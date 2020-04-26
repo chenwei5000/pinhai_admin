@@ -96,7 +96,8 @@ let menuToRoute = (menus) => {
         //若你想不管路由下面的 children 声明的个数都显示你的根路由
         //你可以设置 alwaysShow: true，这样它就会忽略之前定义的规则，一直显示根路由
         alwaysShow: true,
-        name: oMenu.title, //设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
+        name: oMenu.actionId,
+        //name: oMenu.title, //设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
 
         meta: {
           //roles: ['admin', 'editor'], //设置该路由进入的权限，支持多个权限叠加
@@ -118,7 +119,8 @@ let menuToRoute = (menus) => {
       let oRouter = {
         hidden: false,
         alwaysShow: false,
-        name: oMenu.title,
+        //name: oMenu.title,
+        name: oMenu.actionId,
         meta: {
           //roles: ['admin', 'editor'], //设置该路由进入的权限，支持多个权限叠加
           title: oMenu.title, //设置该路由在侧边栏和面包屑中展示的名字

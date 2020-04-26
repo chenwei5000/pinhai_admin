@@ -20,6 +20,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'CountryResource_menu',
     data() {
       return {
         title: '国家列表',

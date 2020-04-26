@@ -42,7 +42,7 @@
   const actionFlag = 's='
 
   export default {
-    name: '商品进销存报表',
+    name: 'EndAndTermResource_menu',
 
     components: {
       warehouseTable,

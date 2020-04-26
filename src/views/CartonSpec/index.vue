@@ -22,7 +22,7 @@
 
 
   export default {
-    name: '包装材料',
+    name: 'CartonSpecResource_menu',
     data() {
       return {
         title: '包装材料列表',

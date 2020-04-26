@@ -19,6 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'ShippingMethodResource_menu',
     data() {
       return {
         title: '物流方式列表',

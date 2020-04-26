@@ -192,7 +192,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
-    name: '设置销量',
+    name: 'MerchantManualSaleResource_menu',
     components: {
       tableToolBar,
       chartDialog,

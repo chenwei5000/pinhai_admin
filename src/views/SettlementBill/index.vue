@@ -59,7 +59,7 @@
 
   const actionFlag = 's='
   export default {
-    name: '采购结算',
+    name: 'SettlementBillResource_menu',
     components: {
       phTab
     },

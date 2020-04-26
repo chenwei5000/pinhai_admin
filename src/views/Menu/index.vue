@@ -19,7 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '菜单管理',
+    name: 'MenuResource_menu',
     data() {
       return {
         title: '菜单列表',

@@ -23,7 +23,7 @@
 
 
   export default {
-    name: '付款账户',
+    name: 'PaymentAccountResource_menu',
     data() {
       return {
         title: '付款账户',

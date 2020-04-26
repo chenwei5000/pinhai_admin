@@ -22,7 +22,7 @@
   import validRules from "../../components/validRules";
 
   export default {
-    name: '出入库记录',
+    name: 'WarehouseOrderResource_menu',
     data() {
       return {
         title: '出入库记录',

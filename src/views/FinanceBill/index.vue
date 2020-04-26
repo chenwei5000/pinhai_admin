@@ -50,7 +50,7 @@
 
   const actionFlag = 's='
   export default {
-    name: '付款管理',
+    name: 'FinanceBillResource_menu',
     components: {
       advanceTab,
       paymentTab,

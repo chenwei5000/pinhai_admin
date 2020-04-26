@@ -20,6 +20,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'ReleaseLogResource_menu',
     data() {
       return {
         title: '系统更新日志列表',

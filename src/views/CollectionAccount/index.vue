@@ -23,7 +23,7 @@
 
 
   export default {
-    name: '收款账户',
+    name: 'CollectionAccountResource_menu',
     data() {
       return {
         title: '收款账户',

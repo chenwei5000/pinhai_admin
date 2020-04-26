@@ -73,7 +73,7 @@
   const actionFlag = 's='
 
   export default {
-    name: '国内调拨',
+    name: 'WarehouseAllocationResource_menu',
 
     components: {
       phTab,

@@ -36,6 +36,7 @@ import { checkPermission } from "@/utils/permission";
 const actionFlag = "s=";
 
 export default {
+  name: 'MaterialRequisitionResource_menu',
   components: {
     phTab,
     create

@@ -19,7 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '语言管理',
+    name: 'LanguageResource_menu',
     data() {
       return {
         title: '语言管理',

@@ -20,9 +20,10 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'AmazonFulfillmentReportResource_menu',
     data() {
       return {
-        title: 'Amazon Fulfilled Shipments',
+        title: 'Amazon Shipments',
         tableConfig: {
           //权限控制
           hasNew: false,

@@ -59,7 +59,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '基础配置',
+    name: 'ConfigInfoResource_menu',
     data() {
       return {
         title: '基础配置',

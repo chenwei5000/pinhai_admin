@@ -19,7 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '职位管理',
+    name: 'PositionResource_menu',
     data() {
       return {
         title: '职位管理',

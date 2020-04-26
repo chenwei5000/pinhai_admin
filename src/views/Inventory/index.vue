@@ -63,7 +63,7 @@
   const actionFlag = 's=';
 
   export default {
-    name: '盘亏盘盈单',
+    name: 'InventoryResource_menu',
 
     components: {
       phTab,

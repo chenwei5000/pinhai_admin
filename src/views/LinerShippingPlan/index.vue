@@ -204,7 +204,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
-    name: '物流计划',
+    name: 'LinerShippingPlanResource_menu',
     components: {
       fullCalendar: fullCalendar,
       createEvent: createEvent,

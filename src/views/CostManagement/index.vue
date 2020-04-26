@@ -19,7 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '费用管理',
+    name: 'CostManagementResource_menu',
     data() {
       return {
         title: '费用管理',

@@ -21,7 +21,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '银行账户',
+    name: 'BankAccountResource_menu',
     data() {
       return {
         title: '银行账户',

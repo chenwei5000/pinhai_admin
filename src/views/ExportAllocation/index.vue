@@ -59,7 +59,7 @@
   const actionFlag = 's=';
 
   export default {
-    name: '出口调拨',
+    name: 'WarehouseAllocationResource_planMenu',
 
     components: {
       phTab,

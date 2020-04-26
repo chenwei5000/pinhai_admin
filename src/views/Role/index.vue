@@ -26,7 +26,7 @@
   import roleList from './components/roleList'
 
   export default {
-    name: '角色管理',
+    name: 'RoleResource_menu',
     components: {
       roleList
     },

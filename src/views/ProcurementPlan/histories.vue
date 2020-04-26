@@ -16,7 +16,7 @@
   import phEnumModel from '@/api/phEnum'
 
   export default {
-    name: '采购计划历史',
+    name: 'ProcurementPlanItemResource_histories',
     data() {
       return {
         title: '物流计划历史',

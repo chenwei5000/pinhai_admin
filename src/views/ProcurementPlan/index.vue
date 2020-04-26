@@ -82,7 +82,7 @@
   const actionFlag = 's='
 
   export default {
-    name: '采购计划',
+    name: 'ProcurementPlanResource_menu',
 
     components: {
       phTab,

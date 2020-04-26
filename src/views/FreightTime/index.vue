@@ -21,7 +21,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '货运时间配置',
+    name: 'FreightTimeResource_menu',
     data() {
       return {
         title: '货运时间配置',

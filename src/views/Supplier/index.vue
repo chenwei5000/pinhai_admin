@@ -33,7 +33,7 @@
   import userModel from "../../api/user";
 
   export default {
-    name: '供货商管理',
+    name: 'SupplierResource_menu',
     components: {
       stockDialog,
       tplDialog

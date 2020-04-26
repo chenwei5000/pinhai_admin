@@ -20,7 +20,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '部门管理',
+    name: 'DepartmentResource_menu',
     data() {
       return {
         title: '部门管理',

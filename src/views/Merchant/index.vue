@@ -19,6 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'MerchantResource_menu',
     data() {
       return {
         title: '渠道管理',

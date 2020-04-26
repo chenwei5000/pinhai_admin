@@ -18,7 +18,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '产品价格历史',
+    name: 'ProductPriceChangeLogResource_menu',
     data() {
       return {
         title: '产品价格历史',

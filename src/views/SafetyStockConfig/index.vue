@@ -19,7 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '安全库存配置',
+    name: 'SafetyStockConfigResource_menu',
     data() {
       return {
         types: [],

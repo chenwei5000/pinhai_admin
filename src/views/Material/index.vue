@@ -49,7 +49,7 @@
   const statusFlag = 's='
 
   export default {
-    name: '原材料管理',
+    name: 'MaterialResource_menu',
     components: {
       materialPane,
       productToMaterial,

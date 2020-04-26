@@ -21,7 +21,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '仓库管理',
+    name: 'WarehouseResource_menu',
     data() {
       return {
         title: '仓库管理',

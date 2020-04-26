@@ -82,7 +82,7 @@
   const actionFlag = 's='
 
   export default {
-    name: '采购单跟单',
+    name: 'ProcurementShippedOrderResource_menu',
 
     components: {
       unPlanTable,

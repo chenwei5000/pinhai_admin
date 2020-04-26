@@ -59,7 +59,7 @@
   import validRules from "../../components/validRules";
 
   export default {
-    name: '成品安全库存',
+    name: 'StockResource_safetyStocks',
     data() {
       return {
         title: '成品安全库存-单位(件)',

@@ -76,7 +76,7 @@
   import {checkRole} from "../../utils/permission";
 
   export default {
-    name: 'Dashboard',
+    name: 'Index_index',
     components: {
       adminDashboard,
       salesDashboard,

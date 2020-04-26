@@ -20,7 +20,7 @@
   import {currency} from "../../utils";
 
   export default {
-    name: '库存查看',
+    name: 'WarehouseStockResource_menu',
     data() {
       return {
         title: '仓库库存',

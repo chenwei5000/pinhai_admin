@@ -153,7 +153,7 @@
   const queryPattern = new RegExp('q=.*' + paramSeparator)
 
   export default {
-    name: '产品在途断货情况',
+    name: 'AmazonStockResource_containerSoldOuts',
     components: {
       chartDialog,
       stockSituationDialog,

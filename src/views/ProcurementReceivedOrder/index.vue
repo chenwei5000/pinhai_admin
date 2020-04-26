@@ -48,7 +48,7 @@
   const actionFlag = 's=';
 
   export default {
-    name: '采购入库',
+    name: 'ProcurementReceivedOrderResource_menu',
 
     components: {
       phTab,

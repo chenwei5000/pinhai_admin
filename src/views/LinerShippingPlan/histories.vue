@@ -18,7 +18,7 @@
   import harbourModel from '@/api/harbour'
 
   export default {
-    name: '物流计划历史',
+    name: 'LinerShippingPlanItemResource_history_menu',
     data() {
       return {
         title: '物流计划历史',

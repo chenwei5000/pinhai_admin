@@ -19,7 +19,7 @@
   import {checkPermission} from "../../utils/permission";
 
   export default {
-    name: '港口管理',
+    name: 'HarbourResource_menu',
     data() {
       return {
         title: '港口列表',

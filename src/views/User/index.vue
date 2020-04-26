@@ -29,7 +29,7 @@
   import setting from './components/setting'
 
   export default {
-    name: '用户管理',
+    name: 'UserResource_menu',
     components: {
       setting
     },
