@@ -5,6 +5,19 @@
     <!--搜索-->
     <el-form :inline="true" :model="productParam" ref="searchForm" id="filter-form"
              @submit.native.prevent>
+
+      <el-form-item label="渠道" size="mini">
+        <el-select filterable v-model="productParam.merchantId.value"
+                   placeholder="请选择销售渠道"
+                   style="width: 160px">
+          <el-option
+            v-for="(item,idx) in merchantSelectOptions"
+            :label="item.label" :value="item.value"
+            :key="idx"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="分类">
         <el-select filterable v-model="productParam.categoryId.value"
                    style="width: 120px"
@@ -202,6 +215,7 @@
   import tableToolBar from '@/components/PhTableToolBar'
   import {currency, parseTime} from '@/utils'
   import {getObjectValueByArr} from "../../../utils";
+  import merchantModel from "../../../api/merchant";
 
 
   const valueSeparator = '~'
@@ -304,8 +318,10 @@
 
         //搜索
         categorySelectOptions: [],
+        merchantSelectOptions: [],
         productParam: {
           categoryId: {value: null, op: 'eq', id: 'categoryId'},
+          merchantId: {value: null, op: 'eq', id: 'categoryId'},
           skuCode: {value: null, op: 'bw', id: 'skuCode'},
           fnSku: {value: null, op: 'eq', id: 'fnSku'},
           name: {value: null, op: 'bw', id: 'name'},
@@ -324,6 +340,7 @@
     },
     created() {
       this.categorySelectOptions = categoryModel.getMineSelectProdcutOptions();
+      this.merchantSelectOptions = merchantModel.getSelectOptions();
     },
 
     mounted() {
@@ -348,6 +365,9 @@
 
         if (params.categoryId) {
           this.productParam.categoryId.value = params.categoryId;
+        }
+        if (params.merchantId) {
+          this.productParam.merchantId.value = params.merchantId;
         }
         if (params.skuCode) {
           this.productParam.skuCode.value = params.skuCode;
@@ -536,6 +556,7 @@
         this.productParam.fnSku.value = null;
         this.productParam.name.value = null;
         this.productParam.groupName.value = null;
+        this.productParam.merchantId.value = null;
         this.page = 1
 
         // 重置
