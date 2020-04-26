@@ -91,6 +91,17 @@
                   </el-select>
                 </el-form-item>
 
+                <el-form-item label="发货仓库">
+                  <el-select size="mini" filterable v-model="searchParam.fromWarehouseId.value" style="width: 120px"
+                             placeholder="请选择发货仓库">
+                    <el-option
+                      v-for="(item,idx) in warehouseSelectOptions"
+                      :label="item.label" :value="item.value"
+                      :key="idx"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+
                 <el-form-item>
                   <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
                   <el-button @click="resetSearch" size="mini">重置</el-button>
@@ -182,6 +193,7 @@
   import editEvent from "./components/edit/dialog";
   import {checkPermission} from "../../utils/permission";
   import moment from 'moment'
+  import warehouseModel from "../../api/warehouse";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -225,6 +237,7 @@
         searchParam: {
           portOfLoading: {value: null, op: 'eq', id: 'portOfLoading'},
           shipmentId: {value: null, op: 'eq', id: 'shipmentId'},
+          fromWarehouseId: {value: null, op: 'eq', id: 'fromWarehouseId'},
           destinationFulfillmentCenterId: {value: null, op: 'eq', id: 'destinationFulfillmentCenterId'},
           categoryName: {value: null, op: 'bw', id: 'categoryName'},
           boxNumber: {value: null, op: 'eq', id: 'boxNumber'},
@@ -239,6 +252,8 @@
 
         harbourSelectOptions: [],
         categorySelectOptions: [],
+        warehouseSelectOptions: [],
+
       };
     },
     computed: {
@@ -262,6 +277,10 @@
           }
           if (params.shipmentId) {
             this.searchParam.shipmentId.value = params.shipmentId;
+            this.searchFlg = true;
+          }
+          if (params.fromWarehouseId) {
+            this.searchParam.fromWarehouseId.value = params.fromWarehouseId;
             this.searchFlg = true;
           }
           if (params.destinationFulfillmentCenterId) {
@@ -296,6 +315,7 @@
       initData() {
         this.harbourSelectOptions = harbourModel.getSelectNameOptions();
         this.categorySelectOptions = categoryModel.getMineSelectProdcutNameOptions();
+        this.warehouseSelectOptions = warehouseModel.getSelectDomesticOptions(true);
       },
 
       loadData(shouldStoreQuery) {
@@ -472,6 +492,7 @@
 
         this.searchParam.portOfLoading.value = null;
         this.searchParam.shipmentId.value = null;
+        this.searchParam.fromWarehouseId.value = null;
         this.searchParam.destinationFulfillmentCenterId.value = null;
         this.searchParam.categoryName.value = null;
         this.searchParam.boxNumber.value = null;
