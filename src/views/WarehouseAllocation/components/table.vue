@@ -605,7 +605,8 @@
                   this.getList()
                 })
                 .catch(er => {
-                  this.loading = false
+                  this.loading = false;
+                  done()
                 })
             } else done()
           }

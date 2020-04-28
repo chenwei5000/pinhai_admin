@@ -146,7 +146,7 @@
         this.loading = true;
         // 加载选择框数据
         this.toWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
-        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions(true);
+        this.fromWarehouseSelectOptions = warehouseModel.getSelectDomesticAndMaterialOptions();
         this.loading = false;
       },
       /********************* 操作按钮相关方法  ***************************/
