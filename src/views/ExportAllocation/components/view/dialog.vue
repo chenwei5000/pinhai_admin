@@ -16,6 +16,10 @@
         修改状态
       </el-button>
 
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasSettlement" @click="onSettlement">
+        结算
+      </el-button>
+
     </el-row>
 
     <!-- 折叠面板 -->
@@ -41,7 +45,6 @@
 
     <phStatus statusName="WarehouseAllocationStatus" @saveStatusCBEvent="saveStatusCBEvent" ref="phStatus"
               :objStatus="primary.status"></phStatus>
-
 
 
   </el-dialog>
@@ -70,6 +73,12 @@
       hasAdmin() {
         return checkPermission('WarehouseAllocationResource_updateStatus');
       },
+      hasSettlement() {
+        if ([4, 5, 6].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        return checkPermission('WarehouseAllocationResource_updateStatus');
+      },
     },
 
     data() {
@@ -93,7 +102,7 @@
         if (this.primaryId) {
           //获取计划数据
           this.global.axios
-            .get(`/exportAllocations/${this.primaryId}?relations=${JSON.stringify(["team", "linerShippingPlan","fromWarehouse", "toWarehouse"])}`)
+            .get(`/exportAllocations/${this.primaryId}?relations=${JSON.stringify(["team", "linerShippingPlan", "fromWarehouse", "toWarehouse"])}`)
             .then(resp => {
               let res = resp.data;
               this.primary = res || {};
@@ -124,6 +133,35 @@
         this.dialogVisible = false;
       },
 
+      onSettlement() {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let settlementBill = {};
+        settlementBill.billingType = 'eout';
+        settlementBill.code = this.primary.code;
+        settlementBill.warehouseId = this.primary.fromWarehouseId;
+        settlementBill.settleDate = this.primary.expectTime;
+        settlementBill.jobStatus = '3';
+
+        let url = `/settlementBills`;
+        this.global.axios.post(url, settlementBill)
+          .then(resp => {
+            this.$refs.phStatus.closeDialog();
+            this.$message.success('操作成功!');
+            loading.close();
+            this.initData();
+            // 继续向父组件抛出事件 修改成功刷新列表
+            this.$emit("modifyCBEvent");
+          })
+          .catch(err => {
+            loading.close();
+          });
+      },
 
       // 管理员修改状态
       onStatus() {

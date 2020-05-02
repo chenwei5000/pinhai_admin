@@ -90,7 +90,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="note" label="完成度" width="120" v-if="hasCompleteness">
+      <el-table-column prop="note" label="完成度" width="90" v-if="hasCompleteness">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
             <div>
@@ -113,6 +113,8 @@
 
       <el-table-column prop="name" label="名称" min-width="200"  align="center">
       </el-table-column>
+
+      <el-table-column prop="company.abbreviation" label="购买方" width="120" align="center"></el-table-column>
 
       <el-table-column prop="supplier.name" label="供货商" width="120" align="center"></el-table-column>
 
@@ -302,7 +304,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementOrders', // 资源URL
         countUrl: '/procurementOrders/count', // 资源URL
-        relations: ["procurementPlan", "creator", "currency", "supplier", "warehouse"],  // 关联对象
+        relations: ["procurementPlan", "company", "creator", "currency", "supplier", "warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果

@@ -65,17 +65,18 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       show-summary
       :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="procurementOrder.company.abbreviation" label="购买方" width="120" fixed="left">
+      <el-table-column prop="company.abbreviation" label="购买方" width="120" fixed="left">
       </el-table-column>
 
       <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
       </el-table-column>
 
-      <el-table-column prop="code" label="编码" width="140"></el-table-column>
+      <el-table-column prop="code" label="结算单编码" width="140"></el-table-column>
 
       <el-table-column prop="statusName" label="状态" width="100">
         <template slot-scope="scope">
@@ -116,11 +117,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="procurementOrder.name" label="采购单" width="210">
+      <el-table-column prop="warehouseOrderCode" label="业务编码" width="140">
       </el-table-column>
 
-      <el-table-column prop="warehouseOrderCode" label="收货单编码" width="140">
+      <el-table-column prop="leader.name" label="负责人" width="100">
       </el-table-column>
+
+      <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <el-table-column prop="latestPaymentTime" label="缴款日期" width="100" fixed="right">
         <template slot-scope="scope">
@@ -144,10 +147,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="procurementOrder.creator.name" label="负责人" width="100">
-      </el-table-column>
-
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
@@ -203,6 +202,7 @@
   import viewDialog from './view/dialog'
   import supplierModel from '@/api/supplier'
   import {checkPermission} from "@/utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -265,7 +265,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/settlementBills', // 资源URL
         countUrl: '/settlementBills/count', // 资源URL
-        relations: ["supplier", "currency", "procurementOrder", "procurementOrder.company", "procurementOrder.creator"],  // 关联对象
+        relations: ["supplier", "currency", "company", "leader"],  // 关联对象
         data: [],
         phSort: {prop: "latestPaymentTime", order: "asc"},
 
@@ -409,6 +409,19 @@
         // )
       },
 
+
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
 
       /*汇总数据*/
       getSummaries(param) {

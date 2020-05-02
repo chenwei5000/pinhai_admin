@@ -23,12 +23,12 @@
 
   export default {
     name: 'WarehouseOrderResource_menu',
-    data() {
+    data: function () {
       return {
         title: '出入库记录',
         tableConfig: {
           exportFileName: '出入库记录',
-          noExportProps: ['结算状态','ID'],
+          noExportProps: ['结算状态', 'ID'],
           paginationSize: 50,
           //权限控制
           hasNew: checkPermission('WarehouseOrderResource_create'),
@@ -42,13 +42,13 @@
           relations: ["product", "procurementOrder", "warehouse", "supplier", "cartonSpec", "storageLocation", "currency", "procurementOrder.company"],
           tableAttrs: {
             "row-class-name": this.statusClassName,
-            "show-summary" : true,
-            "summary-method" : this.getSummaries
+            "show-summary": true,
+            "summary-method": this.getSummaries
           },
           hasOperation: false,
           hasNew: false,
           hasDelete: false,
-          'default-sort' : "{prop: 'createTime', order: 'descending'}",
+          'default-sort': "{prop: 'createTime', order: 'descending'}",
           //列表
           columns: [
             {prop: 'formatCreateTime', label: '创建时间', 'min-width': 140, fixed: 'left'},
@@ -72,7 +72,6 @@
             {prop: 'cartonQty', label: '箱数', 'min-width': 90, fixed: 'right'},
             {prop: 'qty', label: '件数', 'min-width': 90, fixed: 'right'},
             {prop: 'usedQty', label: '消耗件数', 'min-width': 90, fixed: 'right'},
-
 
 
           ],
@@ -269,6 +268,20 @@
               rules: [
                 validRules.required,
                 validRules.integer
+              ]
+            },
+            {
+              $type: 'select',
+              $id: 'jobStatus',
+              label: '结算状态',
+              $el: {
+                filterable: true,
+                placeholder: '请选择结算状态,可筛选',
+                size: 'mini'
+              },
+              $options: phEnumModel.getSelectOptions('WarehouseOrderJobStatus'),
+              rules: [
+                validRules.required
               ]
             },
           ]

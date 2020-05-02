@@ -11,7 +11,7 @@
                   placeholder="请输入"></el-input>
       </el-form-item>
 
-      <el-form-item label="物流单号">
+      <el-form-item label="物流单号" v-if="false">
         <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>

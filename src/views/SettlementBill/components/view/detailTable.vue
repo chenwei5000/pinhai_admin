@@ -18,10 +18,14 @@
       show-summary
       :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
       <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
+      </el-table-column>
+
+      <el-table-column prop="procurementOrder.code" label="采购单编号" sortable width="130">
       </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40" >
@@ -37,6 +41,7 @@
 
       <el-table-column prop="product.name" label="产品名" sortable min-width="150">
       </el-table-column>
+
       <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
 
       <el-table-column prop="product.groupName" label="款式" width="150"></el-table-column>
@@ -69,6 +74,7 @@
 
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
+  import {getObjectValueByArr} from "../../../../utils";
 
   export default {
     components: {
@@ -122,7 +128,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "currency", "product.category"],  // 关联对象
+        relations: ["product", "procurementOrder", "currency", "product.category"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -281,7 +287,18 @@
       handleSelectionChange(val) {
         this.selected = val
       },
-
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
       /********************* 搜索相关方法  ***************************/
       /*本地搜索*/
       search() {

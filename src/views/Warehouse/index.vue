@@ -48,6 +48,7 @@
             {prop: 'linkman', label: '联系人', width: 100},
             {prop: 'tel', label: '联系电话', width: 125},
             {prop: 'type', label: '类型'},
+            {prop: 'settleTypeName', label: '结算方式'},
             {prop: 'supplierId', label: '供货商编号', hidden: true},
             {prop: 'supplier.name', label: '供货商名称', 'min-width': 150},
             {prop: 'leader.name', label: '负责人', 'min-width': 150},
@@ -132,6 +133,7 @@
               },
             },
             phFromItems.datadic('warehouse', '类型', '', 'type'),
+            phFromItems.datadic('SettleType', '结算类型', '', 'settleType'),
             {
               $type: 'select',
               $id: 'supplierId',

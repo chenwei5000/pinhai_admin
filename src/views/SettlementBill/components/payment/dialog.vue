@@ -98,7 +98,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrder.company", "procurementOrder.creator"];
+          let relations = ["supplier", "currency", "company", "leader"];
           //获取计划数据
           this.global.axios
             .get(`/settlementBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
@@ -165,7 +165,7 @@
               this.$message.error("请上传电子版发票");
               return false;
             }*/
-            
+
             let order = {};
             order.settlementBillId = settlementBill.id;
             order.payableAmount = payableAmount;

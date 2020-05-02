@@ -14,7 +14,7 @@
       <el-row>
         <el-col :md="6">
           <el-form-item label="购买方">
-            <span style="font-size: 12px" v-if="this.editObject.procurementOrder">{{this.editObject.procurementOrder.company.abbreviation}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.company">{{this.editObject.company.abbreviation}}</span>
           </el-form-item>
         </el-col>
 
@@ -25,13 +25,7 @@
         </el-col>
 
         <el-col :md="6">
-          <el-form-item label="采购单编码">
-            <span style="font-size: 12px">{{this.editObject.procurementOrderCode}}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="收货单编码">
+          <el-form-item label="业务编码">
             <span style="font-size: 12px">{{this.editObject.warehouseOrderCode}}</span>
           </el-form-item>
         </el-col>
@@ -110,7 +104,7 @@
 
         <el-col :md="6">
           <el-form-item label="负责人">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.creator.name}}</span>
+            <span style="font-size: 12px">{{this.editObject.leader.name}}</span>
           </el-form-item>
         </el-col>
       </el-row>

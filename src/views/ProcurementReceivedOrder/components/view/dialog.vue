@@ -3,8 +3,15 @@
   <!-- 修改弹窗 TODO: title -->
   <el-dialog :title="title" v-if="dialogVisible" :visible.sync="dialogVisible"  @close='closeDialog' fullscreen>
 
+
+
     <el-row
       style="text-align:right; position:fixed; left:0; bottom: 0px; background-color:#FFF; padding: 5px 30px; z-index: 9999; width: 100%;">
+
+      <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasSettlement" @click="onSettlement">
+        结算
+      </el-button>
+
       <el-button @click="closeDialog" size="small" >取 消</el-button>
     </el-row>
 
@@ -38,6 +45,7 @@
   import infoFrom from './form'
   import itemTable from './detailTable'
   import attachment from './attachment'
+  import {checkPermission} from "../../../../utils/permission";
 
   export default {
     components: {
@@ -49,7 +57,13 @@
     computed: {
       title() {
         return '采购入库  ---  [' + this.primary.code + '] --- (' + this.primary.statusName + "状态)";
-      }
+      },
+      hasSettlement() {
+        if ([5, 6].indexOf(this.primary.status) === -1) {
+          return false;
+        }
+        return checkPermission('WarehouseAllocationResource_updateStatus');
+      },
     },
 
     data() {
@@ -96,6 +110,37 @@
         this.primary = {};
         this.activeNames = [];
         this.dialogVisible = false;
+      },
+
+      onSettlement() {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let settlementBill = {};
+        settlementBill.billingType = 'pin';
+        settlementBill.code = this.primary.code;
+        settlementBill.warehouseId = this.primary.warehouseId;
+        settlementBill.settleDate = this.primary.expectTime;
+        settlementBill.jobStatus = '3';
+
+        let url = `/settlementBills`;
+        this.global.axios.post(url, settlementBill)
+          .then(resp => {
+            console.log(resp);
+            let a = resp.data.msg.split(",");
+            this.$message.success('操作成功!'+  a[0] +'张结算单已经生成!');
+            loading.close();
+            this.initData();
+            // 继续向父组件抛出事件 修改成功刷新列表
+            this.$emit("modifyCBEvent");
+          })
+          .catch(err => {
+            loading.close();
+          });
       },
 
       /* 子组件编辑完成后相应事件 */
