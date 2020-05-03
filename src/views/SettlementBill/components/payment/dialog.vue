@@ -9,12 +9,15 @@
 
       <el-collapse-item name="infoFrom">
         <div slot="title" class="title">1. 基本信息</div>
-        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" v-if="primaryComplete" :primary="primary"></infoFrom>
+        <infoFrom ref="infoFrom" @modifyCBEvent="modifyCBEvent" :payableAmount="payableAmount"
+                  v-if="primaryComplete" :primary="primary"></infoFrom>
       </el-collapse-item>
+
 
       <el-collapse-item name="itemTable" style="margin-top: 10px">
         <div slot="title" class="title">2. 付款项</div>
-        <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
+        <itemTable ref="itemTable" :primary="primary" @modifyItemEvent="modifyItemEvent"
+                   v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
@@ -81,6 +84,7 @@
       return {
         primaryId: null,  //主ID
         primary: {}, //主对象
+        payableAmount: 0,
         primaryComplete: false,
         dialogVisible: false, //Dialog 是否开启
         confirmLoading: false,
@@ -107,6 +111,7 @@
               this.primary = res || {};
               this.dialogVisible = true;
               this.primaryComplete = true;
+              this.modifyItemEvent();
             })
             .catch(err => {
             });
@@ -121,7 +126,8 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        //this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        this.activeNames = ['infoFrom', 'itemTable'];
       },
       closeDialog() {
         this.primary = {};
@@ -145,17 +151,18 @@
               this.$message.error("请设置付款项目");
               return false;
             }
+
+            // 申请付款金额
             let payableAmount = 0;
             items.forEach(r => {
               payableAmount += r.pdAmount;
             });
+
             if (payableAmount < 0) {
-              payableAmount = 0;
-            }
-            if (payableAmount < 0) {
-              this.$message.error("应付金额必须大于等于0");
+              this.$message.error("付款金额必须大于等于0!如果存在预付款单冲销项目,请调整冲销金额!");
               return false;
             }
+          payableAmount = payableAmount.toFixed(2);
 
             /*if (!bills || bills.length == 0) {
               this.$message.error("请设置发票信息");
@@ -166,30 +173,45 @@
               return false;
             }*/
 
-            let order = {};
-            order.settlementBillId = settlementBill.id;
-            order.payableAmount = payableAmount;
-            order.collectionAccountId = settlementBill.accountId;
-            order.supplierId = settlementBill.supplierId;
-            order.currencyId = settlementBill.currencyId;
+            if (this.primary.settlementAmount != payableAmount) {
 
-            // 付款项明细
-            order.listPaymentDetail = items;
+              this.$confirm(`结算单只能申请一次付款！当前未申请金额${this.primary.settlementAmount}与付款金额${payableAmount}不一致？是否继续?`, '提示', {
+                type: 'warning',
+                beforeClose: (action, instance, done) => {
+                  if (action == 'confirm') {
+                    let order = {};
+                    order.settlementBillId = settlementBill.id;
+                    order.payableAmount = payableAmount;
+                    order.collectionAccountId = settlementBill.accountId;
+                    order.supplierId = settlementBill.supplierId;
+                    order.currencyId = settlementBill.currencyId;
+                    order.remark = settlementBill.note;
 
-            // 发票明细
-            order.listInvoice = [];
-            bills.forEach(r => {
-              r.type = 'PB';
-              order.listInvoice.push(r);
-            });
+                    // 付款项明细
+                    order.listPaymentDetail = items;
 
-            // 附件
-            order.listAttachment = [];
-            attachments.forEach(r => {
-              order.listAttachment.push({id: r.id});
-            });
+                    // 发票明细
+                    order.listInvoice = [];
+                    bills.forEach(r => {
+                      r.type = 'PB';
+                      order.listInvoice.push(r);
+                    });
 
-            this.savePaymentOrder(order);
+                    // 附件
+                    order.listAttachment = [];
+                    attachments.forEach(r => {
+                      order.listAttachment.push({id: r.id});
+                    });
+
+                    this.savePaymentOrder(order);
+
+                    done();
+                  } else done()
+                }
+              }).catch(er => {
+                /*取消*/
+              })
+            }
           }
         );
       },
@@ -221,8 +243,22 @@
       modifyCBEvent(object) {
         // 继续向父组件抛出事件 修改成功刷新列表
         this.$emit("modifyCBEvent", object);
-      }
-      ,
+      },
+      modifyItemEvent() {
+        let items = JSON.parse(JSON.stringify(this.$refs.itemTable.data));
+        if (!items || items.length == 0) {
+          this.payableAmount = 0;
+          return false;
+        }
+
+        // 申请付款金额
+        let payableAmount = 0;
+        items.forEach(r => {
+          payableAmount += r.pdAmount;
+        });
+        this.payableAmount = payableAmount;
+      },
+
       /* 重新加载 */
       reloadCBEvent() {
         this.initData();

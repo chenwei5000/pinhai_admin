@@ -29,6 +29,13 @@
             <span style="font-size: 12px">{{this.editObject.warehouseOrderCode}}</span>
           </el-form-item>
         </el-col>
+
+        <el-col :md="6">
+          <el-form-item label="负责人">
+            <span style="font-size: 12px">{{this.editObject.leader.name}}</span>
+          </el-form-item>
+        </el-col>
+
       </el-row>
 
       <el-row>
@@ -61,46 +68,18 @@
       <el-row>
         <el-col :md="6">
           <el-form-item label="结算总额">
-            <b style="font-size:12px;color: blue;">{{this.editObject.settlementAmount, this.editObject.currency.symbolLeft | currency }}</b>
+            <b style="font-size:16px;color: blue;">
+              {{this.editObject.settlementAmount, this.editObject.currency.symbolLeft | currency }}</b>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
-          <el-form-item label="未付金额">
-            <span style="font-size: 12px">{{this.editObject.unpaidAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="申请付款金额">
+            <b style="font-size:16px;color: blue;">
+              {{this.payableAmount, this.editObject.currency.symbolLeft | currency }}</b>
           </el-form-item>
         </el-col>
 
-        <el-col :md="6">
-          <el-form-item label="未申请金额">
-            <span style="font-size: 12px">{{this.editObject.unpaidApplyAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="已开票金额">
-            <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :md="6">
-          <el-form-item label="采购单预付款金额">
-            <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="已付金额">
-            <span style="font-size: 12px">{{this.editObject.paymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-        <el-col :md="6">
-          <el-form-item label="负责人">
-            <span style="font-size: 12px">{{this.editObject.leader.name}}</span>
-          </el-form-item>
-        </el-col>
       </el-row>
 
       <el-row>
@@ -124,6 +103,15 @@
         </el-col>
       </el-row>
 
+      <el-row>
+        <el-col :md="24">
+          <el-form-item label="备注" prop="note">
+            <el-input v-model="editObject.note" type="textarea"
+                      :autosize="{minRows: 6, maxRows: 10}" style="width: 500px"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
     </el-form>
   </div>
 
@@ -140,6 +128,10 @@
       primary: {
         type: [Object],
         default: {}
+      },
+      payableAmount: {
+        type: [Number],
+        default: 0
       }
     },
     computed: {
@@ -234,7 +226,7 @@
             })
         }
         else {
-          this.$message.error("无效的采购计划!");
+          this.$message.error("无效的结算单!");
           this.loading = false;
         }
       },
