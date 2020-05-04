@@ -115,29 +115,30 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementAmount" label="结算总额" width="100" fixed="right" align="right">
-        <template slot-scope="scope">
-          <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column prop="invoicedAmount" label="已开票金额" width="100" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.invoicedAmount, scope.row.currency.symbolLeft | currency }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="unpaidApplyAmount" label="未申请金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
+
+      <el-table-column prop="settlementAmount" label="结算总额" width="100" align="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="payableAmount" label="申请金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
-            {{ scope.row.unpaidApplyAmount, scope.row.currency.symbolLeft | currency }}
+            {{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column prop="unpaidAmount" label="未付金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
+      <el-table-column prop="paymentAmount" label="付款金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
-            {{ scope.row.unpaidAmount, scope.row.currency.symbolLeft | currency }}
+            {{ scope.row.paymentAmount, scope.row.currency.symbolLeft | currency }}
           </div>
         </template>
       </el-table-column>
@@ -430,30 +431,55 @@
         const {columns, data} = param;
         const sums = [];
 
+
         let amount = [];
+        amount['settlementAmount'] = [];
+        amount['payableAmount'] = [];
+        amount['paymentAmount'] = [];
+
 
         data.forEach(r => {
           let symbolLeft = r['currency']['symbolLeft'];
 
-          if (amount.hasOwnProperty(symbolLeft)) {
-            if (amount[symbolLeft]['price']) {
-              amount[symbolLeft]['price'] += r.settlementAmount;
+          if (amount['settlementAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['settlementAmount'][symbolLeft]['price']) {
+              amount['settlementAmount'][symbolLeft]['price'] += r.settlementAmount;
             }
             else {
-              amount[symbolLeft]['price'] = r.settlementAmount;
+              amount['settlementAmount'][symbolLeft]['price'] = r.settlementAmount;
             }
           }
           else {
-            amount[symbolLeft] = {};
-            amount[symbolLeft]['price'] = r.settlementAmount;
+            amount['settlementAmount'][symbolLeft] = {};
+            amount['settlementAmount'][symbolLeft]['price'] = r.settlementAmount;
+          }
+
+          if (amount['payableAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['payableAmount'][symbolLeft]['price']) {
+              amount['payableAmount'][symbolLeft]['price'] += r.payableAmount;
+            }
+            else {
+              amount['payableAmount'][symbolLeft]['price'] = r.payableAmount;
+            }
+          }
+          else {
+            amount['payableAmount'][symbolLeft] = {};
+            amount['payableAmount'][symbolLeft]['price'] = r.payableAmount;
+          }
+
+          if (amount['paymentAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['paymentAmount'][symbolLeft]['price']) {
+              amount['paymentAmount'][symbolLeft]['price'] += r.paymentAmount;
+            }
+            else {
+              amount['paymentAmount'][symbolLeft]['price'] = r.paymentAmount;
+            }
+          }
+          else {
+            amount['paymentAmount'][symbolLeft] = {};
+            amount['paymentAmount'][symbolLeft]['price'] = r.paymentAmount;
           }
         });
-
-        var keys = Object.keys(amount);
-        var str = '';
-        for (var i = 0; i < keys.length; i++) {
-          str += currency(amount[keys[i]].price, keys[i]) + ' \n ';
-        }
 
         columns.forEach((column, index) => {
           if (column.property == 'code') {
@@ -464,10 +490,16 @@
             sums[0] = '合计: ' + sums[0] + ' 行';
           }
 
-          if (column.property == 'settlementAmount') {
+          if (column.property == 'settlementAmount' ||
+            column.property == 'payableAmount' ||
+            column.property == 'paymentAmount') {
+            var keys = Object.keys(amount[column.property]);
+            var str = '';
+            for (var i = 0; i < keys.length; i++) {
+              str += currency(amount[column.property][keys[i]].price, keys[i]) + ' \n ';
+            }
             sums[index] = str;
           }
-
         });
 
         return sums;
@@ -687,6 +719,10 @@
     /deep/ .el-date-editor--daterange.el-input, .el-date-editor--daterange.el-input__inner, .el-date-editor--timerange.el-input, .el-date-editor--timerange.el-input__inner {
       width: 220px !important;
     }
+  }
+
+  .ph-table {
+    padding: 0 10px !important;
   }
 
 </style>

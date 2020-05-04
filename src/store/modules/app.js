@@ -17,7 +17,7 @@ import merchantModel from '@/api/merchant'
 
 const state = {
   sidebar: {
-    opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
+    opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : false,
     withoutAnimation: false
   },
   device: 'desktop',

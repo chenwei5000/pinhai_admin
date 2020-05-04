@@ -77,43 +77,48 @@
           </el-form-item>
         </el-col>
 
+
         <el-col :md="6">
-          <el-form-item label="未付金额" v-if="hasInpayment">
-            <span style="font-size: 12px">{{this.editObject.unpaidAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="申请付款金额" v-if="hasInpayment">
+            <b style="font-size: 12px;color:blue;">
+              {{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}
+            </b>
+          </el-form-item>
+        </el-col>
+
+
+        <el-col :md="6">
+          <el-form-item label="已付金额" v-if="hasInpayment">
+            <b style="font-size: 12px;color:blue;">
+              {{this.editObject.paymentAmount, this.editObject.currency.symbolLeft | currency }}
+            </b>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
-          <el-form-item label="未申请金额" v-if="hasInpayment">
-            <span style="font-size: 12px">{{this.editObject.unpaidApplyAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="未付金额" v-if="hasInpayment">
+            <b style="font-size: 12px;color:blue;">
+              {{this.editObject.unpaidAmount, this.editObject.currency.symbolLeft | currency }}
+            </b>
           </el-form-item>
         </el-col>
+
+      </el-row>
+
+      <el-row>
+        <el-col :md="6">
+          <el-form-item label="已付定金" v-if="hasInpayment">
+            <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          </el-form-item>
+        </el-col>
+
 
         <el-col :md="6">
           <el-form-item label="已开票金额" v-if="hasInpayment">
             <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
-      </el-row>
 
-      <el-row>
-        <el-col :md="6">
-          <el-form-item label="采购单预付款金额" v-if="hasInpayment">
-            <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="已付金额" v-if="hasInpayment">
-            <span style="font-size: 12px">{{this.editObject.paymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="已申请金额" v-if="hasInpayment">
-            <span style="font-size: 12px">{{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
 
       </el-row>
 
