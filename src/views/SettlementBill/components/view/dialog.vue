@@ -36,7 +36,12 @@
       </el-collapse-item>
 
       <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 相关付款单</div>
+        <div slot="title" class="title">3. 相关预付款单</div>
+        <reverseTable ref="reverseTable" :primary="primary" v-if="primaryComplete"></reverseTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="paymentsTable" style="margin-top: 10px">
+        <div slot="title" class="title">4. 相关付款单</div>
         <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
       </el-collapse-item>
     </el-collapse>
@@ -53,6 +58,7 @@
   import infoFrom from './form'
   import detailTable from './detailTable'
   import paymentsTable from './paymentsTable'
+  import reverseTable from './reverseTable'
   import {checkPermission} from "../../../../utils/permission";
   import phStatus from '@/components/PhStatus'
 
@@ -61,6 +67,7 @@
       infoFrom,
       detailTable,
       paymentsTable,
+      reverseTable,
       phStatus
     },
     props: {},

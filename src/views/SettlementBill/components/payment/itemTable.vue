@@ -35,16 +35,16 @@
       <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
       </el-table-column>
 
-      <el-table-column prop="pdNumber" label="数量" width="150">
+      <el-table-column prop="pdNumber" label="数量" width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="pdPrice" label="单价" width="150">
+      <el-table-column prop="pdPrice" label="单价" width="150" align="right">
         <template slot-scope="scope">
           {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="pdAmount" label="金额" width="150">
+      <el-table-column prop="pdAmount" label="金额" width="150" align="right">
         <template slot-scope="scope">
           {{scope.row.pdAmount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
@@ -53,7 +53,7 @@
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
-                       width="120" fixed="right">
+                       width="120" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle

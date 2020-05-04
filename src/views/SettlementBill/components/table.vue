@@ -10,17 +10,12 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px"
+        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 180px"
                   placeholder="请输入编码"></el-input>
       </el-form-item>
 
-      <el-form-item label="收货单编码">
-        <el-input size="mini" clearable v-model="searchParam.warehouseOrderCode.value" style="width: 150px"
-                  placeholder="请输入收货单编码"></el-input>
-      </el-form-item>
-
       <el-form-item label="供货商">
-        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 150px"
                    placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
@@ -70,15 +65,16 @@
       :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="company.abbreviation" label="购买方" width="120" fixed="left">
+
+      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left" align="center">
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
+      <el-table-column prop="company.abbreviation" label="购买方" width="120" align="center">
       </el-table-column>
 
-      <el-table-column prop="code" label="结算单编码" width="140"></el-table-column>
+      <el-table-column prop="code" label="结算单编码" width="140" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="statusName" label="状态" width="90" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 0
@@ -90,48 +86,47 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementAmount" label="结算总额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
+      <el-table-column prop="currency.name" label="结算货币" width="90" align="center">
       </el-table-column>
 
-      <el-table-column prop="currency.name" label="结算货币" width="90">
-      </el-table-column>
-
-      <el-table-column prop="invoicedAmount" label="已开票金额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.invoicedAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="accountPeriod" label="账期" width="80">
+      <el-table-column prop="accountPeriod" label="账期" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.accountPeriod }} 天</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="billingDate" label="结算日期" width="100">
+      <el-table-column prop="billingDate" label="结算日期" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.billingDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="warehouseOrderCode" label="业务编码" width="140">
+      <el-table-column prop="warehouseOrderCode" label="业务编码" width="140" align="center">
       </el-table-column>
 
-      <el-table-column prop="leader.name" label="负责人" width="100">
+      <el-table-column prop="leader.name" label="负责人" width="100" align="center">
       </el-table-column>
 
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
-      <el-table-column prop="latestPaymentTime" label="缴款日期" width="100" fixed="right">
+      <el-table-column prop="latestPaymentTime" label="缴款日期" width="100" fixed="right" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="unpaidApplyAmount" label="未申请金额" width="90" fixed="right">
+      <el-table-column prop="settlementAmount" label="结算总额" width="100" fixed="right" align="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="invoicedAmount" label="已开票金额" width="100" v-if="!hasInpayment" align="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.invoicedAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="unpaidApplyAmount" label="未申请金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
             {{ scope.row.unpaidApplyAmount, scope.row.currency.symbolLeft | currency }}
@@ -139,7 +134,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="unpaidAmount" label="未付金额" width="90" fixed="right">
+      <el-table-column prop="unpaidAmount" label="未付金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
             {{ scope.row.unpaidAmount, scope.row.currency.symbolLeft | currency }}
@@ -147,9 +142,8 @@
         </template>
       </el-table-column>
 
-
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="scope.row.status == 0 && hasEdit" size="mini" icon="el-icon-money" circle
@@ -241,6 +235,14 @@
       },
       hasOperation() {
         return this.hasView || this.hasEdit;
+      },
+      hasInpayment() {
+        if (this.type == 'inpayment') {
+          return true;
+        }
+        else {
+          return false;
+        }
       }
     },
     filters: {
@@ -435,22 +437,22 @@
 
           if (amount.hasOwnProperty(symbolLeft)) {
             if (amount[symbolLeft]['price']) {
-              amount[symbolLeft]['price'] += r.unpaidAmount;
+              amount[symbolLeft]['price'] += r.settlementAmount;
             }
             else {
-              amount[symbolLeft]['price'] = r.unpaidAmount;
+              amount[symbolLeft]['price'] = r.settlementAmount;
             }
           }
           else {
             amount[symbolLeft] = {};
-            amount[symbolLeft]['price'] = r.unpaidAmount;
+            amount[symbolLeft]['price'] = r.settlementAmount;
           }
         });
 
         var keys = Object.keys(amount);
         var str = '';
         for (var i = 0; i < keys.length; i++) {
-          str += currency(amount[keys[i]].price, keys[i])  + ' ';
+          str += currency(amount[keys[i]].price, keys[i]) + ' \n ';
         }
 
         columns.forEach((column, index) => {
@@ -462,7 +464,7 @@
             sums[0] = '合计: ' + sums[0] + ' 行';
           }
 
-          if (column.property == 'unpaidAmount') {
+          if (column.property == 'settlementAmount') {
             sums[index] = str;
           }
 
@@ -686,5 +688,6 @@
       width: 220px !important;
     }
   }
+
 </style>
 

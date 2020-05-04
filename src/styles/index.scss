@@ -250,8 +250,6 @@ tr.danger-row td {
   background: rgb(253, 226, 226) !important;
 }
 
-
-
 .el-table--medium th, .el-table--medium td {
   padding: 3px;
 }
@@ -332,7 +330,6 @@ tr.danger-row td {
   font-size: 13px;
 }
 
-
 // Dialog
 .el-dialog__body {
   padding: 10px 20px;
@@ -342,3 +339,6 @@ tr.danger-row td {
   padding: 10px 20px;
 }
 
+.el-table .el-table__footer .cell {
+  white-space: pre-line !important;
+}

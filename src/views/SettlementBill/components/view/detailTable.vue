@@ -22,10 +22,10 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150">
+      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="procurementOrder.code" label="采购单编号" sortable width="130">
+      <el-table-column prop="procurementOrder.code" label="采购单编号" sortable width="130" align="center">
       </el-table-column>
 
       <el-table-column prop="product.imgUrl" label="图片" width="40" >
@@ -39,19 +39,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="product.name" label="产品名" sortable min-width="150">
+      <el-table-column prop="product.name" label="产品名" sortable min-width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.category.name" label="分类" width="100"></el-table-column>
+      <el-table-column prop="product.category.name" label="分类" width="100" align="center"></el-table-column>
 
-      <el-table-column prop="product.groupName" label="款式" width="150"></el-table-column>
-      <el-table-column prop="numberOfCarton" label="装箱数" width="80"></el-table-column>
+      <el-table-column prop="product.groupName" label="款式" width="150" align="center"></el-table-column>
+      <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
 
 
-      <el-table-column prop="cartonQty" label="采购箱数" width="80"></el-table-column>
-      <el-table-column prop="qty" label="采购件数" width="80"></el-table-column>
+      <el-table-column prop="cartonQty" label="采购箱数" width="80" align="center"></el-table-column>
+      <el-table-column prop="qty" label="采购件数" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="price" label="采购单价" width="80">
+      <el-table-column prop="price" label="采购单价" width="80" align="right">
         <template slot-scope="scope">
           {{scope.row.price, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
         </template>

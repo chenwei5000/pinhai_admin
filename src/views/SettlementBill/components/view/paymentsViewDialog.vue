@@ -118,7 +118,8 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        //this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        this.activeNames = ['infoFrom', 'itemTable'];
       },
       closeDialog() {
         this.primary = {};

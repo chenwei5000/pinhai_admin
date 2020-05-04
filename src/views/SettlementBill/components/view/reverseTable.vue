@@ -21,14 +21,14 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="code" label="付款单编码" sortable min-width="120" align="center">
+      <el-table-column prop="code" label="预付款单编码" sortable min-width="120" align="center">
       </el-table-column>
 
       <el-table-column prop="statusName" label="状态" min-width="80" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
-            ? 'warning' : scope.row.status === 2
+            ? 'warning' : scope.row.status === 0
             ? 'danger' : 'success'"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
@@ -36,15 +36,15 @@
       </el-table-column>
 
 
-      <el-table-column prop="applicationTime" label="申请时间" sortable min-width="100" align="center">
+      <el-table-column prop="createTime" label="申请时间" sortable min-width="100" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.applicationTime | parseTime('{y}年{m}月{d}日') }}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}年{m}月{d}日') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="createTime" label="付款时间" sortable min-width="100" align="center">>
+      <el-table-column prop="prepayTime" label="付款时间" sortable min-width="100" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.paymentAmountTime | parseTime('{y}年{m}月{d}日') }}</span>
+          <span>{{ scope.row.prepayTime | parseTime('{y}年{m}月{d}日') }}</span>
         </template>
       </el-table-column>
 
@@ -61,26 +61,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="advanceAmount" label="预付冲账金额" width="100" algin="right">
+      <el-table-column prop="reverseAmount" label="已冲销金额" width="100" align="right">
         <template slot-scope="scope">
-          {{scope.row.advanceAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+          {{scope.row.reverseAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
-
-      <el-table-column prop="invoicedAmount" label="开票金额" width="100" align="right">
+      <el-table-column prop="unReverseAmount" label="未冲销金额" width="100" align="right">
         <template slot-scope="scope">
-          {{scope.row.invoicedAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+          {{scope.row.unReverseAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
-
-      <el-table-column prop="collectionAccount.bankAccount.accountName" label="收款账户" width="200">
-        <template slot-scope="scope">
-          {{scope.row.collectionAccount.bankAccount.accountName}} -
-          {{scope.row.collectionAccount.bankAccount.currency.name}} -
-          {{scope.row.collectionAccount.bankAccount.accountCardHide}}
-        </template>
-      </el-table-column>
-
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
@@ -160,16 +150,10 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementPaymentOrders", // 资源URL
+        url: `/settlementBills/reverses/${this.primary.id}`,
         downloadUrl: "", //下载Url
-        filters: [
-          {
-            field: "settlementBillId",
-            op: 'eq',
-            data: this.primary ? this.primary.id : -1
-          }
-        ],   //搜索对象
-        relations: ["currency", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency"],  // 关联对象
+        filters: [],   //搜索对象
+        relations: ["currency"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -219,8 +203,8 @@
 
           if (column.property == 'payableAmount' ||
             column.property == 'paymentAmount' ||
-            column.property == 'advanceAmount' ||
-            column.property == 'invoicedAmount'
+            column.property == 'reverseAmount' ||
+            column.property == 'unReverseAmount'
           ) {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
@@ -253,14 +237,9 @@
           return
         }
 
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
+          params += "?relations=" + JSON.stringify(this.relations);
         }
 
         // 请求开始
