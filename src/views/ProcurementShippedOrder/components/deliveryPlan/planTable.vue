@@ -203,7 +203,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
@@ -424,11 +424,11 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 68; //减框架头部高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - 120;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {

@@ -77,7 +77,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
@@ -231,7 +231,7 @@ export default {
           document.body.clientHeight;
         //表格高度
         let tableHeight = windowHeight;
-        tableHeight = tableHeight - 84; //减框架头部高度
+        tableHeight = tableHeight - 68; //减框架头部高度
         tableHeight =
           tableHeight -
           (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度

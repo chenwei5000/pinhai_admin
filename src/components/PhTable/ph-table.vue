@@ -889,7 +889,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 115; //减框架头部高度
+          tableHeight = tableHeight - 108; //减框架头部高度
           //tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度

@@ -102,7 +102,7 @@
     },
 
     computed: {
-      hasNew(){
+      hasNew() {
         return checkPermission('ProcurementPlanResource_create');
       }
     },
@@ -131,5 +131,7 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
-
+  .ph-table {
+    padding: 0 !important;
+  }
 </style>

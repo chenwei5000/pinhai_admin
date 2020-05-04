@@ -134,7 +134,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
