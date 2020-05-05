@@ -185,7 +185,7 @@
                     order.collectionAccountId = settlementBill.accountId;
                     order.supplierId = settlementBill.supplierId;
                     order.currencyId = settlementBill.currencyId;
-                    order.remark = settlementBill.note;
+                    order.applyNote = settlementBill.note;
 
                     // 付款项明细
                     order.listPaymentDetail = items;

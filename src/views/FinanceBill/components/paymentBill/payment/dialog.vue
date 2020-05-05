@@ -33,8 +33,14 @@
                     v-if="primaryComplete"></attachment>
       </el-collapse-item>
 
+      <el-collapse-item name="logs" style="margin-top: 10px">
+        <div slot="title" class="title">5. 付款记录</div>
+        <logs ref="logs" :primary="primary"
+              v-if="primaryComplete"></logs>
+      </el-collapse-item>
+
       <el-collapse-item name="paymentFrom" style="margin-top: 10px">
-        <div slot="title" class="title">5. 确认付款</div>
+        <div slot="title" class="title">6. 确认付款</div>
         <paymentFrom ref="paymentFrom" :primary="primary"
                      v-if="primaryComplete"></paymentFrom>
       </el-collapse-item>
@@ -42,10 +48,10 @@
     </el-collapse>
 
     <el-row type="flex" justify="center">
-      <el-button type="primary" style="margin-top: 15px" size="mini"  :loading="confirmLoading" @click="onPayment">
+      <el-button type="primary" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onPayment">
         确认付款
       </el-button>
-      <el-button type="danger" style="margin-top: 15px" size="mini"  :loading="confirmLoading" @click="onRefuse">
+      <el-button type="danger" style="margin-top: 15px" size="mini" :loading="confirmLoading" @click="onRefuse">
         拒绝申请
       </el-button>
     </el-row>
@@ -65,6 +71,7 @@
   import billTable from '../../../../SettlementBill/components/view/paymentBillTable'
   import attachment from '../../../../SettlementBill/components/view/paymentAttachment'
   import auditing from '@/components/PhAuditing'
+  import logs from '../view/paymentLogs'
 
   export default {
     components: {
@@ -73,6 +80,7 @@
       itemTable,
       billTable,
       attachment,
+      logs,
       auditing
     },
     props: {},
@@ -119,7 +127,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder", "settlementBill.procurementOrder.company"];
+          let relations = ["supplier", "currency", "creator", "settlementBill", "settlementBill.company"];
           //获取计划数据
           this.global.axios
             .get(`/procurementPaymentOrders/${this.primaryId}?relations=${JSON.stringify(relations)}`)
@@ -142,7 +150,8 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoForm', 'itemTable', 'billTable', 'attachment', 'paymentFrom'];
+        //this.activeNames = ['infoForm', 'itemTable', 'billTable', 'attachment', 'paymentFrom'];
+        this.activeNames = ['infoForm', 'itemTable', 'logs', 'paymentFrom'];
       },
       closeDialog() {
         this.primary = {};

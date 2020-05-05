@@ -71,20 +71,6 @@
           {{scope.row.unReverseAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
-
-      <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation"
-                       no-export="true"
-                       width="50" fixed="right">
-        <template slot-scope="scope">
-
-          <el-button v-if="hasView" type="primary" size="mini"
-                     id="ph-table-del" icon="el-icon-view" circle
-                     @click="onDefaultView(scope.row)">
-          </el-button>
-
-        </template>
-      </el-table-column>
     </el-table>
 
     <!--查看对话框-->

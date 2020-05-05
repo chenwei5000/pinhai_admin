@@ -212,6 +212,7 @@
             this.editObject.paymentAmountTime = moment(this.editObject.paymentAmountTime).format("YYYY-MM-DD")
           }
 
+          this.editObject.paymentAmount = this.primary.unPayAmount;
           this.loadCollectionAccounts();
           this.loadPaymentAccounts();
           this.initComplete = true;

@@ -15,16 +15,15 @@
       header-cell-class-name="ph-cell-header"
       :data="tableData"
       v-loading="loading"
-      show-summary
       :summary-method="getSummaries"
       @selection-change="handleSelectionChange"
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="code" label="付款单编码" sortable min-width="120" align="center">
+      <el-table-column prop="code" label="付款单编码" sortable width="140" align="center">
       </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" min-width="80" align="center">
+      <el-table-column prop="statusName" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -35,17 +34,7 @@
         </template>
       </el-table-column>
 
-
-      <el-table-column prop="applicationTime" label="申请时间" sortable min-width="100" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.applicationTime | parseTime('{y}年{m}月{d}日') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="createTime" label="付款时间" sortable min-width="100" align="center">>
-        <template slot-scope="scope">
-          <span>{{ scope.row.paymentAmountTime | parseTime('{y}年{m}月{d}日') }}</span>
-        </template>
+      <el-table-column prop="approvalContent" label="付款说明"  align="center">
       </el-table-column>
 
       <el-table-column prop="payableAmount" label="申请金额" width="100" align="right">
@@ -61,7 +50,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="advanceAmount" label="预付冲账金额" width="100" algin="right">
+      <el-table-column prop="advanceAmount" label="预付冲账金额" width="100"  align="right">
         <template slot-scope="scope">
           {{scope.row.advanceAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
         </template>
@@ -73,18 +62,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="collectionAccount.bankAccount.accountName" label="收款账户" width="200">
-        <template slot-scope="scope">
-          {{scope.row.collectionAccount.bankAccount.accountName}} -
-          {{scope.row.collectionAccount.bankAccount.currency.name}} -
-          {{scope.row.collectionAccount.bankAccount.accountCardHide}}
-        </template>
-      </el-table-column>
-
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       no-export="true"
+                       no-export="true" align="center"
                        width="50" fixed="right">
         <template slot-scope="scope">
 
@@ -169,7 +150,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["currency", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency"],  // 关联对象
+        relations: ["currency"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果

@@ -121,7 +121,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementAmount" label="结算总额" width="100" align="right">
+      <el-table-column prop="settlementAmount" label="结算总额" width="100" align="right" fixed="right">
         <template slot-scope="scope">
           <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
         </template>

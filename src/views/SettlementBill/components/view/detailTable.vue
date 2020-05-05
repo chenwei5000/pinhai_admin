@@ -3,6 +3,13 @@
   <!--本地搜索表格 一次加载所有相关数据 在本地进行搜索 不分页 前端搜索、排序 -->
   <div class="ph-table">
 
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar
+      :hasExport="hasExport"
+      @onToolBarDownloadData="onToolBarDownloadData"
+    >
+    </tableToolBar>
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -22,13 +29,19 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150" align="center">
+      <el-table-column prop="product.skuCode" label="SKU" sortable min-width="150" align="center" fixed="left">
       </el-table-column>
 
       <el-table-column prop="procurementOrder.code" label="采购单编号" sortable width="130" align="center">
       </el-table-column>
 
-      <el-table-column prop="product.imgUrl" label="图片" width="40" >
+      <el-table-column prop="procurementOrder.formatCreateTime" label="采购时间" width="130" align="center">
+      </el-table-column>
+
+      <el-table-column prop="procurementShippedOrder.formatReceivedTime" label="收货时间" width="130" align="center">
+      </el-table-column>
+
+      <el-table-column prop="product.imgUrl" label="图片" width="40">
         <template slot-scope="scope" v-if="scope.row.product.imgUrl">
           <el-image
             :z-index="10000"
@@ -58,7 +71,7 @@
       </el-table-column>
 
 
-      <el-table-column prop="amount" sortable label="金额" width="120" align="right">
+      <el-table-column prop="amount" sortable label="金额" width="120" align="right" fixed="right">
         <template slot-scope="scope">
           {{scope.row.amount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
         </template>
@@ -75,9 +88,11 @@
   import {mapGetters} from 'vuex'
   import {currency} from '@/utils'
   import {getObjectValueByArr} from "../../../../utils";
+  import tableToolBar from '@/components/PhTableToolBar'
 
   export default {
     components: {
+      tableToolBar
     },
     props: {
       primary: {
@@ -91,13 +106,11 @@
         'rolePower'
       ]),
       hasExecute() {
-        if ([2, 3, 4, 5, 6, 7, 8].indexOf(this.primary.status) > -1) {
-          return true;
-        }
-        else {
-          return false;
-        }
+        return true;
       },
+      hasExport() {
+        return true;
+      }
     },
     filters: {
       currency: currency
@@ -128,7 +141,7 @@
             data: this.primary ? this.primary.id : -1
           }
         ],   //搜索对象
-        relations: ["product", "procurementOrder", "currency", "product.category"],  // 关联对象
+        relations: ["product", "procurementOrder", "procurementShippedOrder", "currency", "product.category"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -254,6 +267,7 @@
 
         // 请求开始
         this.loading = true
+        this.downloadUrl = url + params;
 
         //获取数据
         this.global.axios
@@ -356,21 +370,6 @@
       onToolBarDelete() {
 
       },
-      onToolBarDownloadTpl() {
-        //获取数据
-        let table = this.$refs.table;
-        let downloadUrl = this.downloadUrl;
-
-        import('@/vendor/Export2Excel').then(excel => {
-          excel.export_el_table_to_excel({
-            table: table,
-            downloadUrl: downloadUrl,
-            filename: "采购计划内容-模版",
-            noExportProps: ['操作', '金额', 'ID', '下单件数', '发货件数', '收货件数'],
-            tpl: true,
-          })
-        })
-      },
       onToolBarDownloadData() {
         //获取数据
         let table = this.$refs.table;
@@ -381,8 +380,8 @@
           excel.export_el_table_to_excel({
             table: table,
             downloadUrl: downloadUrl,
-            filename: "采购计划内容",
-            noExportProps: ['操作', '金额', 'ID']
+            filename: "结算单采购明细",
+            noExportProps: ['操作', '图片', 'ID']
           })
           this.loading = false;
         })
