@@ -151,8 +151,8 @@
         let url = `/settlementBills`;
         this.global.axios.post(url, settlementBill)
           .then(resp => {
-            this.$refs.phStatus.closeDialog();
-            this.$message.success('操作成功!');
+            let a = resp.data.msg.split(",");
+            this.$message.success('操作成功!'+  a[0] +'张结算单已经生成!');
             loading.close();
             this.initData();
             // 继续向父组件抛出事件 修改成功刷新列表

@@ -45,6 +45,15 @@
       </el-form-item>
     </el-form>
 
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar v-if="hasAdmin"
+      ref="tableToolBar"
+      :hasDelete="hasAdmin"
+      @onToolBarDelete="onToolBarDelete"
+
+    >
+    </tableToolBar>
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -65,6 +74,14 @@
       :summary-method="getSummaries"
       id="table"
     >
+
+      <el-table-column
+        v-if="hasAdmin"
+        type="selection"
+        width="30"
+        align="center"
+      >
+      </el-table-column>
 
       <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left" align="center">
       </el-table-column>
@@ -198,6 +215,7 @@
   import supplierModel from '@/api/supplier'
   import {checkPermission} from "@/utils/permission";
   import {getObjectValueByArr} from "../../../utils";
+  import tableToolBar from '@/components/PhTableToolBar'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -210,6 +228,7 @@
   export default {
 
     components: {
+      tableToolBar,
       paymentDialog,
       viewDialog
     },
@@ -228,6 +247,9 @@
         'device', 'rolePower', 'rolePower'
       ]),
 
+      hasAdmin() {
+        return checkPermission('LinerShippingPlanResource_updateStatus');
+      },
       hasView() {
         return true;
       },
@@ -482,12 +504,12 @@
         });
 
         columns.forEach((column, index) => {
-          if (column.property == 'code') {
-            const values = data.map(item => item[column.property]);
-            sums[0] = values.reduce((prev) => {
+          if (column.property == 'supplier.name') {
+            const values = data.map(item => item['settlementAmount']);
+            sums[index] = values.reduce((prev) => {
               return prev + 1;
             }, 0);
-            sums[0] = '合计: ' + sums[0] + ' 行';
+            sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
           if (column.property == 'settlementAmount' ||
@@ -708,6 +730,42 @@
       /* 子组件修改完成后消息回调 编辑完成之后需要刷新列表 */
       modifyCBEvent(object) {
         this.getList();
+      },
+
+      /*批量删除*/
+      onToolBarDelete() {
+        if (this.selected.length <= 0) {
+          this.$message.error("请选择要删除的行!");
+          return;
+        }
+
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              // 多选模式
+              let ids = this.selected.map(v => v['id']).toString();
+              if (ids != '') {
+                this.loading = true;
+                this.global.axios
+                  .delete(this.url + '/' + ids)
+                  .then(resp => {
+                    this.$message({type: 'success', message: '删除成功'});
+                    this.getList()
+                    this.$emit("reloadCBEvent");
+
+                    this.loading = false;
+                  })
+                  .catch(er => {
+                    this.loading = false;
+                  })
+              }
+              done()
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
       },
     }
   }

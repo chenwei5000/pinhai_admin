@@ -842,7 +842,6 @@
       onToolBarDelete() {
         if (this.selected.length <= 0) {
           this.$message.error("请选择要删除的行!");
-          done(false);
           return;
         }
 

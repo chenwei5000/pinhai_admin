@@ -130,7 +130,6 @@
         let url = `/settlementBills`;
         this.global.axios.post(url, settlementBill)
           .then(resp => {
-            console.log(resp);
             let a = resp.data.msg.split(",");
             this.$message.success('操作成功!'+  a[0] +'张结算单已经生成!');
             loading.close();

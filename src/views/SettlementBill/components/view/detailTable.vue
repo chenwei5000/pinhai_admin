@@ -58,6 +58,8 @@
       <el-table-column prop="product.category.name" label="分类" width="100" align="center"></el-table-column>
 
       <el-table-column prop="product.groupName" label="款式" width="150" align="center"></el-table-column>
+      <el-table-column prop="product.model" label="型号" width="150" align="center"></el-table-column>
+      <el-table-column prop="product.color" label="颜色" width="150" align="center"></el-table-column>
       <el-table-column prop="numberOfCarton" label="装箱数" width="80" align="center"></el-table-column>
 
 

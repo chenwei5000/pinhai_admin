@@ -162,7 +162,7 @@
               this.$message.error("付款金额必须大于等于0!如果存在预付款单冲销项目,请调整冲销金额!");
               return false;
             }
-          payableAmount = payableAmount.toFixed(2);
+            payableAmount = payableAmount.toFixed(2);
 
             /*if (!bills || bills.length == 0) {
               this.$message.error("请设置发票信息");
@@ -174,7 +174,6 @@
             }*/
 
             if (this.primary.settlementAmount != payableAmount) {
-
               this.$confirm(`结算单只能申请一次付款！当前未申请金额${this.primary.settlementAmount}与付款金额${payableAmount}不一致？是否继续?`, '提示', {
                 type: 'warning',
                 beforeClose: (action, instance, done) => {
@@ -211,6 +210,33 @@
               }).catch(er => {
                 /*取消*/
               })
+            }
+            else{
+              let order = {};
+              order.settlementBillId = settlementBill.id;
+              order.payableAmount = payableAmount;
+              order.collectionAccountId = settlementBill.accountId;
+              order.supplierId = settlementBill.supplierId;
+              order.currencyId = settlementBill.currencyId;
+              order.applyNote = settlementBill.note;
+
+              // 付款项明细
+              order.listPaymentDetail = items;
+
+              // 发票明细
+              order.listInvoice = [];
+              bills.forEach(r => {
+                r.type = 'PB';
+                order.listInvoice.push(r);
+              });
+
+              // 附件
+              order.listAttachment = [];
+              attachments.forEach(r => {
+                order.listAttachment.push({id: r.id});
+              });
+
+              this.savePaymentOrder(order);
             }
           }
         );
