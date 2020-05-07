@@ -28,6 +28,10 @@ export default {
     chartData: {
       type: Object,
       required: true
+    },
+    searchParam: {
+      type: Object,
+      default: {merchantId: null, categoryId: null, week: 20}
     }
   },
   data() {
@@ -78,27 +82,32 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ xData, yData } = {}) {
       this.chart.setOption({
         title: {
-          text: '最近20周销售统计',
+          text: `最近${this.searchParam.week}周销售统计`,
           subtext: '美国时间',
           x: 'center',
-          align: 'right'
+          align: 'left'
         },
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: xData,
           boundaryGap: false,
+          type: 'category',
           axisTick: {
             show: false
           }
         },
-        grid: {
-          left: 10,
-          right: 10,
-          bottom: 20,
-          top: 30,
-          containLabel: true
+        toolbox: {
+          show: true,
+          feature: {
+            magicType: {type: ['line', 'bar']},
+            dataView: {
+              show: false,
+            },
+            restore: {},
+            saveAsImage: {}
+          }
         },
         tooltip: {
           trigger: 'axis',
@@ -108,16 +117,19 @@ export default {
           padding: [5, 10]
         },
         yAxis: {
+          type: 'value',
           axisTick: {
-            show: false
+            show: true
           }
         },
         legend: {
           data:['销售量'],
           x: 'left'
         },
+
         series: [{
-          name: 'expected', itemStyle: {
+          name: '销售量',
+          itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -128,12 +140,23 @@ export default {
           },
           smooth: true,
           type: 'line',
-          data: expectedData,
+          data: yData,
+          markPoint: {
+            data: [
+              {type: 'max', name: '最大值'},
+              {type: 'min', name: '最小值'}
+            ]
+          },
+          markLine: {
+            data: [
+              {type: 'average', name: '平均值'}
+            ]
+          },
           animationDuration: 2800,
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'actual',
+          name: '日期',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -148,7 +171,7 @@ export default {
               }
             }
           },
-          data: actualData,
+          data: xData,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
         }]

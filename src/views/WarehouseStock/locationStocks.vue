@@ -3,11 +3,6 @@
 
     <div class="ph-card">
 
-      <!-- title -->
-      <ph-card-header :title="title" type="table">
-
-      </ph-card-header>
-
       <!-- 表格 -->
       <div class="ph-card-body">
         <!-- 说明  https://femessage.github.io/el-data-table/-->
@@ -50,7 +45,7 @@
             phColumns.id,
             {prop: 'warehouseName', label: '仓库', 'min-width': 150},
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200, fixed: 'left'},
-            {prop: 'locationCode', label: '货位'},
+            {prop: 'locationCode', label: '货位', hidden: 'false'},
             {prop: 'productName', label: '产品名', fixed: 'left', 'min-width': 250},
             {prop: 'numberOfCarton', label: '装箱数', width: 100},
             {prop: 'qty', label: '库存件数', width: 100},
@@ -59,7 +54,7 @@
 
           // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            phSearchItems.warehouseId,
+            phSearchItems.warehouseDomesticId(),
             phSearchItems.skuCode
           ]
         }

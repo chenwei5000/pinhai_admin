@@ -57,6 +57,11 @@ const systemModel = {
   getRolePower: () => {
     const path = '/rolePowers/mine'
     return global.axios.get(path).then(res => res.data)
+  },
+
+  getConfigInfos:()=>{
+    const path = '/configInfos'
+    return global.axios.get(path).then(res => res.data);
   }
 }
 

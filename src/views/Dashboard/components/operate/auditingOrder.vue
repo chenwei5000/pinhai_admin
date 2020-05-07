@@ -17,9 +17,9 @@
 <script>
   export default {
     props: {
-      mine: {
+      searchParam: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
+        default: {merchantId: null, categoryId: null, week: 20}
       }
     },
     components: {},

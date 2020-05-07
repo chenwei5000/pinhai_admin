@@ -6,9 +6,9 @@ const datadicModel = {
 
   //获取所有数据字典
   getDatadics: (pagesize = -1) => {
-    const path = '/dataDicItems?sort=valueName&order=asc';
+    const path = '/dataDicItems?sort=id&order=asc';
 
-    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+    return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 通过字典类型获取字典列表
@@ -21,7 +21,7 @@ const datadicModel = {
     //状态有效
     rules.push({field: "status", op: "eq", data: "1"});
 
-    return global.searchResource(path, rules).then(data => data.rows);
+    return global.searchResource(path, rules).then(data => data);
   },
 
   // 获取字典id:name格式下拉框选项

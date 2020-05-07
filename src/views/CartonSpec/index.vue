@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -20,12 +18,24 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from '@/utils/permission'
+
 
   export default {
+    name: 'CartonSpecResource_menu',
     data() {
       return {
         title: '包装材料列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('CartonSpecResource_create'),
+          hasEdit: checkPermission('CartonSpecResource_update'),
+          hasDelete: checkPermission('CartonSpecResource_remove'),
+          // hasView: checkPermission('CartonSpecResource_get'),
+          hasExportTpl: checkPermission('CartonSpecResource_export'),
+          hasExport: checkPermission('CartonSpecResource_export'),
+          hasImport: checkPermission('CartonSpecResource_import'),
+
           url: '/cartonSpecs',
           relations: ["creator", "category"],
           tableAttrs: {
@@ -33,16 +43,15 @@
           },
           //表格内容显示
           columns: [
-            {type: 'selection'},
+            {width: 30,type: checkPermission('CartonSpecResource_remove') ? 'selection' : '', hidden: !checkPermission('CartonSpecResource_remove'), width: 30, align: "center"},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 150, fixed: 'left'},
-            phColumns.id,
-            {prop: 'category.name', label: '分类', 'min-width': 120},
+            {prop: 'category.name', label: '分类', 'min-width': 100},
             {prop: 'categoryId', label: '分类ID', hidden: true, 'min-width': 120},
-            {prop: 'length', label: '长(Cm)', width: 80},
-            {prop: 'width', label: '宽(Cm)', width: 80},
-            {prop: 'height', label: '高(Cm)', width: 80},
-            {prop: 'volume', label: '体积(m³)', 'min-width': 100},
-            {prop: 'grossWeight', label: '皮重(Kg)', width: 80},
+            {prop: 'length', label: '长(Cm)', width: 80, align: "center"},
+            {prop: 'width', label: '宽(Cm)', width: 80, align: "center"},
+            {prop: 'height', label: '高(Cm)', width: 80, align: "center"},
+            {prop: 'volume', label: '体积(m³)', 'min-width': 100, align: "center"},
+            {prop: 'grossWeight', label: '皮重(Kg)', width: 80, align: "center"},
             {
               prop: 'pallet',
               label: '是否打托',
@@ -58,9 +67,10 @@
                 return _label;
               }
             },
-            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120},
+            {prop: 'numberOfPallets', label: '托盘放置数', 'min-width': 120, align: "center"},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏
@@ -77,9 +87,10 @@
               label: '分类',
               $el: {
                 filterable: true,
-                placeholder: '请选择分类,可筛选'
+                placeholder: '请选择分类,可筛选',
+                size: 'mini'
               },
-              $options: categoryModel.getMineSelectOptions('p'),
+              $options: categoryModel.getMineSelectProdcutOptions(),
               rules: [
                 validRules.required
               ]

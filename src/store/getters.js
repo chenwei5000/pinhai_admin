@@ -48,6 +48,7 @@ const getters = {
   warehouses: state => state.app.warehouses, //仓库
   countries: state => state.app.countries,  //国家
   currencies: state => state.app.currencies, //货币
+  bankAccounts: state => state.app.bankAccounts, //银行账户
   cartonSpecs: state => state.app.cartonSpecs, //箱规
   harbours: state => state.app.harbours,   //港口
   merchants: state => state.app.merchants,   //销售渠道
@@ -55,6 +56,7 @@ const getters = {
   shippingMethods: state => state.app.shippingMethods, //运输方式
   personnels: state => state.app.personnels, //人员
   enums: state => state.app.enums, //系统枚举类型
+
 
   //验证是否有该权限
   checkRolePower: (state, roleTxt) => {

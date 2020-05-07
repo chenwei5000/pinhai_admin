@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -20,12 +18,23 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'FreightTimeResource_menu',
     data() {
       return {
-        title: '分类列表',
+        title: '货运时间配置',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('FreightTimeResource_create'),
+          hasEdit: checkPermission('FreightTimeResource_update'),
+          hasDelete: checkPermission('FreightTimeResource_remove'),
+          // hasView: checkPermission('FreightTimeResource_get'),
+          hasExportTpl: checkPermission('FreightTimeResource_export'),
+          hasExport: checkPermission('FreightTimeResource_export'),
+          hasImport: checkPermission('FreightTimeResource_import'),
+
           url: '/freightTimes',
           relations: ["sourceHarbour", "shippingMethod", "destinationHarbour"],
           tableAttrs: {
@@ -33,16 +42,20 @@
           },
           //列表
           columns: [
-            {type: 'selection'},
-            phColumns.id,
-            {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 200},
-            {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 200},
-            {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 200},
+            {
+              width: 30,
+              type: checkPermission('FreightTimeResource_remove') ? 'selection' : '',
+              hidden: !checkPermission('FreightTimeResource_remove')
+            },
+            {prop: 'sourceHarbour.name', label: '发货港口', 'min-width': 120},
+            {prop: 'shippingMethod.name', label: '物流方式', 'min-width': 120},
+            {prop: 'destinationHarbour.name', label: '收货港口', 'min-width': 120},
             {prop: 'spendDays', label: '物流时间(天)', 'min-width': 100},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
-          // 搜索
+          //搜索
           searchForm: [
             {
               $type: 'select',
@@ -51,6 +64,8 @@
               $options: harbourModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size: "mini",
+                style: "width:130px",
                 placeholder: '请选择发货港口'
               }
             },
@@ -61,6 +76,8 @@
               $options: shippingMethodModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size: "mini",
+                style: "width:130px",
                 placeholder: '请选择物流方式'
               }
             },
@@ -71,10 +88,12 @@
               $options: harbourModel.getSelectOptions(),
               $el: {
                 op: 'eq',
+                size: "mini",
+                style: "width:130px",
                 placeholder: '请输入收货港口'
               }
             },
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //修改或新增
           form: [
@@ -126,7 +145,7 @@
                 validRules.number
               ]
             },
-            phFromItems.status
+            phFromItems.status()
           ]
         }
       }

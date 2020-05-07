@@ -1,8 +1,9 @@
 <template>
 
-  <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
-  </ph-form>
-
+  <div class="ph-form">
+    <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
+    </ph-form>
+  </div>
 </template>
 
 <script>
@@ -22,6 +23,7 @@
           "label-width": "100px",
           "label-suffix": ":",
           "status-icon": true,
+          "inline-message": true,
           size: "small"
         },
         //添加或修改弹出框
@@ -32,9 +34,10 @@
             label: '分类',
             $el: {
               filterable: true,
-              placeholder: '请选择分类,可筛选'
+              placeholder: '请选择分类,可筛选',
+              size: 'mini',
             },
-            $options: categoryModel.getMineSelectOptions('p'),
+            $options: categoryModel.getMineSelectProdcutOptions(),
             rules: [
               validRules.required
             ]
@@ -45,7 +48,8 @@
             $id: 'length',
             label: '长(Cm)',
             $el: {
-              placeholder: '请输入箱子长度'
+              placeholder: '请输入箱子长度',
+              size: 'mini',
             },
             rules: [
               validRules.required,
@@ -57,7 +61,8 @@
             $id: 'width',
             label: '宽(Cm)',
             $el: {
-              placeholder: '请输入箱子宽度'
+              placeholder: '请输入箱子宽度',
+              size: 'mini',
             },
             rules: [
               validRules.required,
@@ -69,7 +74,8 @@
             $id: 'height',
             label: '高(Cm)',
             $el: {
-              placeholder: '请输入箱子高度'
+              placeholder: '请输入箱子高度',
+              size: 'mini',
             },
             rules: [
               validRules.required,
@@ -81,7 +87,8 @@
             $id: 'grossWeight',
             label: '皮重(Kg)',
             $el: {
-              placeholder: '箱子和箱中填充物的重量，不包含产品的重量'
+              placeholder: '箱子和箱中填充物的重量，不包含产品的重量',
+              size: 'mini',
             },
             rules: [
               validRules.required,
@@ -95,10 +102,10 @@
             label: '托盘放置数',
             $default: 1,
             $el: {
-              placeholder: '一个托盘上可以放置该箱规的最大箱数, 如：24'
+              placeholder: '一个托盘上可以放置该箱规的最大箱数, 如：24',
+              size: 'mini',
             },
             rules: [
-              validRules.required,
               validRules.number
             ]
           },

@@ -13,6 +13,7 @@
         @contextmenu.prevent.native="openMenu(tag,$event)"
       >
         {{ generateTitle(tag.title) }}
+        <span v-if="!tag.meta.affix" class="el-icon-refresh-right" @click="refreshSelectedTag(tag)" />
         <span v-if="!tag.meta.affix" class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
     </scroll-pane>

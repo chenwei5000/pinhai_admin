@@ -12,8 +12,8 @@
       <slot name="search"></slot>
       <el-form-item>
         <!--https://github.com/ElemeFE/element/pull/5920-->
-        <el-button native-type="submit" type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="resetSearch" size="small">重置</el-button>
+        <el-button native-type="submit" type="primary" @click="search" size="mini">查询</el-button>
+        <el-button @click="resetSearch" size="mini">重置</el-button>
       </el-form-item>
     </ph-form>
 
@@ -27,7 +27,7 @@
           closable
           style="margin-right:10px;"
           @close="handleTagClose(item)"
-          size="small"
+          size="mini"
           type='info'>
         <span
           style="color:#bbb"
@@ -64,27 +64,17 @@
     </div>
 
     <!--新增、编辑-->
-    <el-form v-if="hasNew || hasDelete || headerButtons.length > 0 " ref="operationForm">
-      <el-form-item>
-        <el-button v-if="hasNew" type="primary" size="small"
-                   @click="onDefaultNew" id="ph-table-add">新增
-        </el-button>
-        <self-loading-button v-for="(btn, i) in headerButtons"
-                             v-if="'show' in btn ? btn.show(selected) : true"
-                             :disabled="'disabled' in btn ? btn.disabled(selected) : false"
-                             :click="btn.atClick"
-                             :params="selected"
-                             :callback="getList"
-                             v-bind="btn"
-                             :key="i"
-                             size="small" id="ph-table-edit">{{btn.text}}
-        </self-loading-button>
-        <el-button v-if="hasSelect && hasDelete" type="danger" size="small"
-                   @click="onDefaultDelete($event)"
-                   :disabled="single ? (!selected.length || selected.length > 1) : !selected.length">删除
-        </el-button>
-      </el-form-item>
-    </el-form>
+    <tableToolBar
+      ref="tableToolBar"
+      v-bind="toolbarConfig"
+      @onToolBarAdd="onToolBarAdd"
+      @onToolBarEdit="onToolBarEdit"
+      @onToolBarDelete="onToolBarDelete"
+      @onToolBarDownloadTpl="onToolBarDownloadTpl"
+      @onToolBarDownloadData="onToolBarDownloadData"
+      @onToolBarImportData="onToolBarImportData"
+    >
+    </tableToolBar>
 
     <!--表格-->
     <el-table
@@ -93,8 +83,11 @@
       :data="data"
       :row-style="showRow"
       :max-height="tableMaxHeight"
+      cell-class-name="ph-cell"
+      header-cell-class-name="ph-cell-header"
       v-loading="loading"
       @selection-change="handleSelectionChange"
+      @cell-dblclick="handleDblclick"
       @sort-change='handleSortChange'
       id="ph-table"
       @filter-change="handleFilterChange"
@@ -104,7 +97,7 @@
 
         <!--有多选-->
         <template v-if="hasSelect">
-          <el-table-column key="selection-key" v-bind="columns[0]">
+          <el-table-column key="selection-key" v-bind="columns[0]" align="center">
           </el-table-column>
 
           <el-table-column
@@ -167,43 +160,43 @@
           :key="col.prop"
           v-bind="col"
           v-if="!col.hidden"
+          :align="col.align ? col.align : 'center'"
         >
-
-
-
         </el-table-column>
 
       </template>
 
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
-                       v-bind="operationAttrs"
+                       v-bind="operationAttrs" align="center"
       >
         <template slot-scope="scope">
           <el-button v-if="isTree && hasNew" type="primary" size="mini"
                      @click="onDefaultNew(scope.row)">新增
           </el-button>
-          <el-button v-if="hasEdit" size="small" icon="el-icon-edit" circle
+          <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
                      @click="onDefaultEdit(scope.row)" type="primary" id="ph-table-edit">
           </el-button>
           <el-button v-if="hasView" type="info" size="mini" icon="el-icon-search" circle
                      @click="onDefaultView(scope.row)">
           </el-button>
-          <self-loading-button v-for="(btn, i) in extraButtons"
-                               v-if="'show' in btn ? btn.show(scope.row) : true"
-                               v-bind="btn"
-                               :click="btn.atClick"
-                               :params="scope.row"
-                               :callback="getList"
-                               :key="i"
-                               size="mini"
-          >
-            {{btn.text}}
-          </self-loading-button>
+
           <el-button v-if="hasDelete && canDelete(scope.row)" type="danger" size="mini"
                      id="ph-table-del" icon="el-icon-delete" circle
                      @click="onDefaultDelete(scope.row)">
           </el-button>
+
+          <el-button v-if="hasSetting" type="warning" size="mini"
+                     id="ph-table-setting" icon="el-icon-setting" circle
+                     @click="onDefaultSetting(scope.row)">
+          </el-button>
+
+          <el-button v-if="hasTpl" type="primary" size="mini"
+                     id="ph-table-tpl" icon="el-icon-document" circle
+                     @click="onDefaultTpl(scope.row)">
+          </el-button>
+
+
         </template>
       </el-table-column>
 
@@ -211,35 +204,6 @@
       <slot></slot>
 
     </el-table>
-
-    <!-- 注册的筛选器 -->
-    <div v-clickoutside='allfilterHide'>
-      <template v-for="(item, key) in regfilters">
-        <!-- 输入框选择器 -->
-        <div :class="{'filterWrap': true, 'hideBg': item.hidebg}"
-             v-show="filterAction[key]"
-             :key="key"
-             :style="item.position">
-          <div class="filterContainer">
-            <component
-              :key="key"
-              :is="item.component"
-              :data="item.data"
-              :filterkey="item.filterkey"
-              :listinfo="item.listinfo"
-              :refname="item.refname"
-              :cdata="item.cdata"
-              :myprops="item.myprops"
-              :placeholderstr="item.myplaceholder"
-              :unit="item.unit"
-              :ftn="item.ftn"
-              :customizedata="item.customizedata"
-              @getFilterBridge="getFilterBridge">
-            </component>
-          </div>
-        </div>
-      </template>
-    </div>
 
     <!--分页-->
     <el-pagination
@@ -250,16 +214,18 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 7px 0 0 0;"
       background
+      size="mini"
       :layout="paginationLayout"
       id="ph-table-page"
       ref="pageForm"
     >
+      <el-button icon="el-icon-refresh" @click="onRefreshTable" class="btn-prev" circle></el-button>
     </el-pagination>
 
     <!--弹出框-->
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" v-if="hasDialog">
+    <el-dialog :title="dialogTitle" class="ph-dialog" :visible.sync="dialogVisible" v-if="hasDialog" top="3vh">
 
       <el-scrollbar class="menu-wrapper" noresize>
         <el-row>
@@ -274,8 +240,8 @@
       </el-scrollbar>
 
       <div slot="footer" v-show="!isView">
-        <el-button @click="cancel" size="small">取 消</el-button>
-        <el-button type="primary" @click="confirm" :loading="confirmLoading" size="small">确 定</el-button>
+        <el-button @click="cancel" size="mini">取 消</el-button>
+        <el-button type="primary" @click="confirm" :loading="confirmLoading" size="mini">确 定</el-button>
       </div>
 
     </el-dialog>
@@ -283,12 +249,10 @@
 </template>
 
 <script>
-  import _get from 'lodash.get'
   import qs from 'qs'
   import SelfLoadingButton from './self-loading-button.vue'
   import {mapGetters} from 'vuex'
-  import {getObjectVal} from '@/utils'
-
+  import {getObjectVal, parseTime} from '@/utils'
   // 过滤功能
   import editFilter from './Filters/edit.vue'
   import dateFilter from './Filters/date.vue'
@@ -297,6 +261,8 @@
   import radiosFilter from './Filters/radio.vue'
   import rangeFilter from './Filters/range.vue'
   import {doDeleteFilter} from './js/index.js'
+  import tableToolBar from '@/components/PhTableToolBar'
+  import {getObjectValueByArr} from "../../utils";
 
   const myFilterComponts = {
     edit: editFilter,
@@ -325,7 +291,6 @@
   const _regfilterarr = []
 
 
-
   // 默认返回的数据格式如下
   //          {
   //            "page": 1
@@ -339,9 +304,9 @@
 
   const defaultFirstPage = 1 //默认第一页
 
-  const dataPath = 'rows'
-  const totalPath = 'total'
-  const noPaginationDataPath = 'rows'
+  const dataPath = ''
+  const totalPath = ''
+  const noPaginationDataPath = ''
 
   const treeChildKey = 'children'
   const treeParentKey = 'parentId'
@@ -365,7 +330,8 @@
   export default {
     name: 'ElDataTable',
     components: {
-      SelfLoadingButton
+      SelfLoadingButton,
+      tableToolBar
     },
     props: {
       /**
@@ -376,12 +342,50 @@
         default: ''
       },
       /**
+       * 请求url, 如果为空, 则不会发送请求; 改变url, 则table会重新发送请求
+       */
+      countUrl: {
+        type: String,
+        default: '/count'
+      },
+
+      importMethod: {
+        type: String,
+        default: 'post'
+      },
+      maxUploadCount: {
+        type: Number,
+        default: 1
+      },
+      subHeight: {
+        type: Number,
+        default: 0
+      },
+      tplNoExportProps: {
+        type: Array,
+        default() {
+          return ['操作', '修改时间', 'ID', '创建人', '状态']
+        }
+      },
+
+      noExportProps: {
+        type: Array,
+        default() {
+          return ['操作', '修改时间']
+        }
+      },
+
+      /**
        * 主键，默认值 id，
        * 修改/删除时会用到,请求会根据定义的属性值获取主键,即row[this.id]
        */
       id: {
         type: String,
         default: defaultId
+      },
+      exportFileName: {
+        type: String,
+        default: '列表'
       },
       /**
        * 分页请求的第一页的值(有的接口0是第一页)
@@ -448,13 +452,6 @@
         default: false
       },
       /**
-       * 是否有操作列
-       */
-      hasOperation: {
-        type: Boolean,
-        default: true
-      },
-      /**
        * 操作列的自定义按钮, 渲染的是element-ui的button, 支持包括style在内的以下属性:
        * {type: '', text: '', atClick: row => Promise.resolve(), show: row => return true时显示 }
        * 点击事件 row参数 表示当前行数据, 需要返回Promise, 默认点击后会刷新table, resolve(false) 则不刷新
@@ -490,6 +487,22 @@
         type: Boolean,
         default: true
       },
+
+      hasExportTpl: {
+        type: Boolean,
+        default: false
+      },
+
+      hasExport: {
+        type: Boolean,
+        default: false
+      },
+
+      hasImport: {
+        type: Boolean,
+        default: false
+      },
+
       /**
        * 是否有查看按钮
        */
@@ -503,6 +516,16 @@
       hasDelete: {
         type: Boolean,
         default: true
+      },
+
+      hasSetting: {
+        type: Boolean,
+        default: false
+      },
+
+      hasTpl: {
+        type: Boolean,
+        default: false
       },
       /**
        * 某行数据是否可以删除, 返回true表示可以, 控制的是单选时单行的删除按钮
@@ -547,7 +570,7 @@
        */
       paginationLayout: {
         type: String,
-        default: 'total, sizes, prev, pager, next, jumper'
+        default: 'total, sizes, slot, prev, pager, next, jumper'
       },
       /**
        * 分页组件的每页显示个数选择器的选项设置，对应element-ui pagination的page-sizes属性
@@ -555,7 +578,7 @@
        */
       paginationSizes: {
         type: Array,
-        default: () => [20, 50, 100]
+        default: () => [20, 50, 100, 500, 1000]
       },
       /**
        * 分页组件的每页显示个数选择器默认选项，对应element-ui pagination的page-size属性
@@ -624,7 +647,7 @@
       operationAttrs: {
         type: Object,
         default() {
-          return {width: '100', fixed: 'right'}
+          return {width: '80', fixed: 'right'}
         }
       },
       /**
@@ -673,7 +696,8 @@
             "label-width": "100px",
             "label-suffix": ":",
             "status-icon": true,
-            size: "small"
+            size: "mini",
+            "inline-message": true,
           }
         }
       },
@@ -729,20 +753,25 @@
         default() {
           return []
         }
+      },
+      defalutSort: {
+        type: String,
+        default() {
+          return null
+        }
       }
     },
     data() {
       return {
+        downloadUrl: "", //下载Url
         tableMaxHeight: this.device !== 'mobile' ? 400 : 40000000,
         data: [],
         hasSelect: this.columns.length && this.columns[0].type == 'selection',
         size: this.paginationSize || this.paginationSizes[0],
         page: defaultFirstPage,
-        phSort: null,
+        phSort: this.defalutSort,
         defaultTableAttrs: {
           'style': "width: 100%",
-          'cell-style': {padding: "2px 0", 'font-size': '13px'},
-          'header-cell-style': {padding: "2px 0"},
           stripe: true,
           border: true,
           "highlight-current-row": true,
@@ -763,6 +792,16 @@
         confirmLoading: false,
         // 要修改的那一行
         row: {},
+
+        // 表格工具条配置
+        toolbarConfig: {
+          hasEdit: this.hasEdit,
+          hasDelete: this.hasDelete,
+          hasAdd: this.hasNew,
+          hasExportTpl: this.hasExportTpl,
+          hasExport: this.hasExport,
+          hasImport: this.hasImport,
+        },
 
         // 初始的customQuery值, 重置查询时, 会用到
         // JSON.stringify是为了后面深拷贝作准备
@@ -788,11 +827,14 @@
 
     computed: {
       ...mapGetters([
-        'device'
+        'device', 'rolePower'
       ]),
 
       phTableAttrs() {
         return Object.assign(this.defaultTableAttrs, this.tableAttrs);
+      },
+      hasOperation() {
+        return this.hasEdit || this.hasDelete || this.hasSetting || this.hasView || this.hasTpl;
       }
     },
 
@@ -847,13 +889,14 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
-          tableHeight = tableHeight - 82; //减标题高度
+          tableHeight = tableHeight - 108; //减框架头部高度
+          //tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 42;  //减去一些padding,margin，border偏差
-          console.log(tableHeight);
+
+          tableHeight = tableHeight - (this.$refs.tableToolBar && this.$refs.tableToolBar.$el.offsetHeight ? this.$refs.tableToolBar.$el.offsetHeight : 0); //减分页区块高度
+          tableHeight = tableHeight - this.subHeight;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -870,7 +913,17 @@
         // TODO Object.assign IE不支持, 所以后面Object.keys的保守其实是没有必要的。。。
         let query = Object.assign({}, formQuery, this.customQuery)
 
-        let url = this.url
+        let url = this.url;
+        let countUrl = null;
+        if (this.countUrl != null) {
+          if (this.countUrl.indexOf("#") === 0) {
+            countUrl = this.countUrl.replace("#", "");
+          }
+          else {
+            countUrl = this.url + this.countUrl;
+          }
+        }
+
         let params = ''
         let searchParams = ''
         let size = this.hasPagination ? this.size : this.noPaginationSize
@@ -886,6 +939,15 @@
         }
         else {
           url += '?'
+        }
+
+        if (countUrl != null) {
+          if (countUrl.indexOf('?') > -1) {
+            countUrl += '&'
+          }
+          else {
+            countUrl += '?'
+          }
         }
 
         // 处理分页信息
@@ -915,6 +977,7 @@
           return query[k] !== '' && query[k] !== null && query[k] !== undefined
         }).forEach(function (param, k) {
           let oParam = query[param];
+
           filters.push({
             'field': param,
             op: oParam.op ? oParam.op : 'eq',
@@ -944,28 +1007,40 @@
 
         // 请求开始
         this.loading = true
+        this.downloadUrl = url + params;
 
-        //获取数据
+        //获取列表数量数据
+        if (countUrl != null) {
+          this.global.axios
+            .get(countUrl + params)
+            .then(resp => {
+              let res = resp.data
+              this.total = res || 0;
+            })
+            .catch(err => {
+              /**
+               * 请求数据失败，返回err对象
+               * @event error
+               */
+              this.$emit('error', err)
+            })
+        }
+
+        //获取列表数据
         this.global.axios
           .get(url + params)
           .then(resp => {
             let res = resp.data
-            let data = []
-
-            // 不分页
-            if (!this.hasPagination) {
-              data =
-                _get(res, this.dataPath) || _get(res, noPaginationDataPath) || []
-            } else {
-              data = _get(res, this.dataPath) || []
-              this.total = _get(res, this.totalPath)
-            }
+            let data = res || []
 
             this.data = data
-
             // 树形结构逻辑
             if (this.isTree) {
               this.data = this.tree2Array(data, this.expandAll)
+            }
+
+            if (countUrl == null) {
+              this.total = data.length;
             }
 
             this.loading = false
@@ -1101,15 +1176,21 @@
         this.$emit('selection-change', val)
       },
 
+      onRefreshTable: function () {
+        this.getList();
+      },
+
       // 排序列修改
       handleSortChange: function (column) {
-        if (column.prop) {
-          this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
+        if (column.column.sortable == 'custom') {
+          if (column.prop) {
+            this.phSort = '&sort=' + column.prop + "&dir=" + (column.order === 'ascending' ? 'asc' : 'desc');
+          }
+          else {
+            this.phSort = '';
+          }
+          this.getList();
         }
-        else {
-          this.phSort = '';
-        }
-        this.getList();
       },
 
       //筛选
@@ -1141,17 +1222,8 @@
       },
 
       onDefaultView(row) {
-        this.row = row
-        this.isView = true
-        this.isNew = false
-        this.isEdit = false
-        this.dialogTitle = this.dialogViewTitle
-        this.dialogVisible = true
-
-        // 给表单填充值
-        this.$nextTick(() => {
-          this.$refs[dialogForm].updateForm(row)
-        })
+        this.$emit("onView", row);
+        return false;
       },
 
       onDefaultEdit(row) {
@@ -1289,7 +1361,7 @@
 
               // 默认删除逻辑
               // 单个删除
-              if (!this.hasSelect) {
+              if (!this.hasSelect || row) {
                 this.global.axios
                   .delete(this.url + '/' + row[this.id])
                   .then(resp => {
@@ -1302,6 +1374,12 @@
                     instance.confirmButtonLoading = false
                   })
               } else {
+                if (this.selected.length <= 0) {
+                  this.$message.error("请选择要删除的行!");
+                  instance.confirmButtonLoading = false;
+                  done(false);
+                  return;
+                }
                 // 多选模式
                 let ids = this.selected.map(v => v[this.id]).toString();
                 if (!ids && ids == '') {
@@ -1326,6 +1404,27 @@
         }).catch(er => {
           /*取消*/
         })
+      },
+
+      onDefaultSetting(row) {
+        this.$emit("onSetting", row);
+        return false;
+      },
+      onDefaultTpl(row) {
+        this.$emit("onTpl", row);
+        return false;
+      },
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
       },
       // 树形table相关
       // https://github.com/PanJiaChen/vue-element-admin/tree/master/src/components/TreeTable
@@ -1359,10 +1458,8 @@
         return tmp
       },
       showRow(row) {
-        const show = row.row.parent
-          ? row.row.parent._expanded && row.row.parent._show
-          : true
-        row.row._show = show
+        const show = true
+        row.row._show = true
         return show
           ? 'animation:treeTableShow 1s-webkit-animation:treeTableShow 1s'
           : 'display:none'
@@ -1389,70 +1486,179 @@
             message: '操作失败'
           })
         }
+      },
+
+      /********************* 工具条按钮  ***************************/
+      onToolBarAdd() {
+        this.onDefaultNew();
+      },
+      onToolBarEdit() {
+
+      },
+      onToolBarDelete() {
+        this.onDefaultDelete();
+      },
+      onToolBarDownloadTpl() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+
+        import('@/vendor/Export2Excel').then(excel => {
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: `${this.exportFileName}-模版-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.tplNoExportProps,
+            tpl: true,
+          })
+        })
+      },
+      onToolBarDownloadData() {
+        //获取数据
+        let table = this.$refs.table;
+        let downloadUrl = this.downloadUrl;
+        downloadUrl = downloadUrl.replace(/pageSize=\d*/, 'pageSize=-1');
+        downloadUrl = downloadUrl.replace(/currentPage=\d*/, 'currentPage=1');
+
+        import('@/vendor/Export2Excel').then(excel => {
+          this.loading = true;
+          excel.export_el_table_to_excel({
+            table: table,
+            downloadUrl: downloadUrl,
+            filename: `${this.exportFileName}-${parseTime(new Date(), '{y}-{m}-{d}')}"`,
+            noExportProps: this.noExportProps
+          })
+          this.loading = false;
+        })
+      },
+
+      uploadPromise(res) {
+        let url = this.url;
+        if (this.importMethod != "post") {
+          url = `${url}/${res.id}`;
+        }
+        return this.global.axios[this.importMethod](url, res)
+          .then(resp => {
+          })
+          .catch(err => {
+          })
+      },
+
+      async onToolBarImportData(excelData) {
+        if (!excelData) {
+          this.$message.error("导入失败!");
+          return false;
+        }
+        let loading = this.$loading({
+          lock: true,
+          text: '导入数据中',
+          spinner: 'el-icon-upload',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        let table = this.$refs.table;
+        let columns = (table && table.columns) ? table.columns : [];
+        let header = [];
+        // 处理头部映射
+        excelData.header.forEach(_head => {
+          columns.forEach(_col => {
+            if (_head == _col.label) {
+              header[_head] = _col.property;
+            }
+          });
+        });
+
+        // 导入数据
+        let promiseArr = [];
+        let resData = [];
+
+        // 创建提交列表
+        excelData.results.forEach(obj => {
+          let _res = {};
+          excelData.header.forEach(_head => {
+
+            let prop = header[_head];
+            if (prop) {
+              if (prop.indexOf('.') !== false) {
+                let tmps = prop.split('.');
+                for (var i = 0; i < tmps.length; i++) {
+                  if (i === 0) {
+                    prop = tmps[0];
+                  }
+                  else {
+                    prop += tmps[1].charAt(0).toUpperCase() + tmps[1].slice(1);
+                  }
+                }
+              }
+              if (prop == 'accountCardHide') {
+                prop = 'accountCard'
+              }
+              _res[prop] = obj[_head];
+            }
+          });
+          resData.push(_res);
+        });
+        for (var i = 0; i < resData.length; i++) {
+          promiseArr.push(this.uploadPromise(resData[i]));
+          if (promiseArr.length >= this.maxUploadCount) {
+            await Promise.all(promiseArr).then(obj => {
+              loading.text = "共[" + resData.length + "]条数据, 已经上传[" + (i + 1) + "]条";
+              promiseArr = [];
+            });
+            promiseArr = [];
+          }
+        }
+
+        if (promiseArr.length > 0) {
+          await Promise.all(promiseArr).then(obj => {
+            loading.text = "共[" + resData.length + "]条数据, 已经上传[" + resData.length + "]条";
+          });
+        }
+
+        loading.close();
+        this.$message.success("导入成功");
+        this.getList();
       }
     }
   }
 </script>
 
-<style type="text/less" lang="scss" scoped>
+<style type="text/less" lang="scss" scoped>css
+.ph-table {
+  padding: 10px 15px;
+  .ms-tree-space {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    width: 18px;
+    height: 14px;
 
-  .el-table {
-    /deep/ .ph-header-small {
-      font-size: 12px !important;
-    }
-    /deep/ tr.warning-row {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.warning-row td {
-      background: rgb(233, 233, 235) !important;
-    }
-
-    /deep/ tr.danger-row {
-      background: rgb(253, 226, 226) !important;
-    }
-
-    /deep/ tr.danger-row td {
-      background: rgb(253, 226, 226) !important;
-    }
-  }
-
-  .ph-table {
-
-    padding: 10px 15px;
-
-    .ms-tree-space {
-      position: relative;
-      top: 1px;
-      display: inline-block;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1;
-      width: 18px;
-      height: 14px;
-
-      &
-      ::before {
-        content: '';
-      }
-
-    }
-
-    .tree-ctrl {
-      position: relative;
-      cursor: pointer;
-      color: #2196F3;
-    }
-
-    @keyframes treeTableShow {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+    &
+    ::before {
+      content: '';
     }
 
   }
+
+  .tree-ctrl {
+    position: relative;
+    cursor: pointer;
+    color: #2196F3;
+  }
+
+  @keyframes treeTableShow {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+}
+
 </style>

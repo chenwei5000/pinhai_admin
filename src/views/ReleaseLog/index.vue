@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -19,20 +17,30 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'ReleaseLogResource_menu',
     data() {
       return {
         title: '系统更新日志列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('ReleaseLogResource_create'),
+          hasEdit: checkPermission('ReleaseLogResource_update'),
+          hasDelete: checkPermission('ReleaseLogResource_remove'),
+          // hasView: checkPermission('ReleaseLogResource_get'),
+          hasExportTpl: checkPermission('ReleaseLogResource_export'),
+          hasExport: checkPermission('ReleaseLogResource_export'),
+          hasImport: checkPermission('ReleaseLogResource_import'),
+
           url: '/releaseLogs',
           relations: ["creator"],
           tableAttrs: {
             "default-sort": {prop: 'releaseTime', order: 'descending'}, //设置默认排序
           },
           columns: [
-            {type: 'selection'},
-            phColumns.id,
+            {width: 30,type: checkPermission('ReleaseLogResource_remove') ? 'selection' : '', hidden: !checkPermission('ReleaseLogResource_remove')},
             {
               prop: 'releaseTime',
               label: '发版日期',
@@ -46,6 +54,7 @@
             {prop: 'version', label: '系统版本', sortable: 'custom', 'min-width': 120},
             {prop: 'caption', label: '更新说明', sortable: 'custom', 'min-width': 400},
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏
@@ -56,10 +65,11 @@
               label: '版本',
               $el: {
                 op: 'bw',
+                size:"mini",
                 placeholder: '请输入版本'
               }
             },
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //添加或修改弹出栏
           form: [

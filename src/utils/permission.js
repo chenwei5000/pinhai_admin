@@ -5,21 +5,64 @@ import store from '@/store'
  * @returns {Boolean}
  * @example see @/views/permission/directive.vue
  */
-export default function checkPermission(value) {
-  if (value && value instanceof Array && value.length > 0) {
-    const roles = store.getters && store.getters.roles
-    const permissionRoles = value
-
-    const hasPermission = roles.some(role => {
-      return permissionRoles.includes(role)
-    })
-
-    if (!hasPermission) {
-      return false
+export function checkPermission(value) {
+  if (value && value.length > 0) {
+    const roles = store.getters && store.getters.rolePower;
+    if (roles) {
+      return roles.hasOwnProperty(value);
     }
-    return true
+    return false;
   } else {
-    console.error(`need roles! Like v-permission="['admin','editor']"`)
     return false
   }
 }
+
+export function checkRole(value) {
+  if (value && value.length > 0) {
+    const userInfo = store.getters && store.getters.userInfo;
+    if (userInfo && userInfo.roles) {
+      let flg = false;
+      userInfo.roles.forEach(role => {
+        if (role.name == '系统管理员') {
+          flg = true;
+        }
+        if (role.name == '公司管理员') {
+          flg = true;
+        }
+        if (role.name == value) {
+          flg = true;
+        }
+      })
+      return flg;
+    }
+    return false;
+  } else {
+    return false
+  }
+}
+
+export function checkNotRole(value) {
+  if (value && value.length > 0) {
+    const userInfo = store.getters && store.getters.userInfo;
+    if (userInfo && userInfo.roles) {
+      let flg = true;
+      userInfo.roles.forEach(role => {
+        if (role.name == '系统管理员') {
+          flg = true;
+        }
+        if (role.name == '公司管理员') {
+          flg = true;
+        }
+        if (role.name == value) {
+          flg = false;
+        }
+      })
+      return flg;
+    }
+    return false;
+  } else {
+    return false;
+  }
+}
+
+

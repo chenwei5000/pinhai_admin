@@ -11,22 +11,16 @@ import 'nprogress/nprogress.css' // progress bar style
 NProgress.configure({showSpinner: false}) // NProgress Configuration
 
 // 白名单,这个里面的请求，不进行权限验证
-const whiteList = ['/login', '/auth-redirect']
-
-let hasPermission = (roles, permissionRoles) => {
-
-  //if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
-  //if (!permissionRoles) return true
-  //return roles.some(role => permissionRoles.indexOf(role) >= 0)
-  return true;
-
-}
-
+const whiteList = ['/login', '/auth-redirect', '/register', '/forget', '/reset-password']
 
 router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start();
-  console.log(to);
+
+  if(to.path == '/login'){
+    next()
+    return;
+  }
 
   let list = store.getters.enums;
   if (list == null) {
@@ -50,17 +44,10 @@ router.beforeEach(async (to, from, next) => {
   else if (store.getters.isLogin == 1) {
     // 登陆成功自动跳转首页
     if (to.path === '/login') {
-
-      if (hasPermission()) {
-        next({path: '/'});
-      }
-
+      next({path: '/'});
       NProgress.done();
     } else {
-
-      if (hasPermission()) {
-        next();
-      }
+      next();
     }
   }
   // 存在Token信息，但是要加载其它信息
@@ -84,21 +71,24 @@ router.beforeEach(async (to, from, next) => {
 
       let menus = await store.dispatch('menu/loadMenus');
       let accessRoutes = await store.dispatch('menu/generateRoutes', menus);
+      accessRoutes.push(
+        {
+          path: '*', // 页面不存在的情况下会跳到404页面
+          redirect: '/401',
+          name: 'notFound',
+          hidden: true
+        });
 
       //重新添加动态路由
       await router.addRoutes(accessRoutes);
       //菜单权限更新完成,重新进一次当前路由
-
-      if (hasPermission()) {
-        next({...to, replace: true});
-      }
+      next({...to, replace: true});
     }
     else {
-      if (hasPermission()) {
-        next();
-      }
+      next();
     }
   }
+
 });
 
 router.afterEach(() => {

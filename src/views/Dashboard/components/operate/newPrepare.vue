@@ -1,16 +1,18 @@
 <template>
 
-  <div class="card-panel">
-    <router-link :to="'/phtpl/table?merchantId='+mine.merchantId">
-      <div class="card-panel-icon-wrapper icon-green">
-        <svg-icon icon-class="prepare" class-name="card-panel-icon"/>
-      </div>
+  <el-badge :value="count" type="primary">
+    <div class="card-panel">
+      <router-link to="/m2/ProcurementPlan_index?s=create">
+        <div class="card-panel-icon-wrapper icon-green">
+          <svg-icon icon-class="prepare" class-name="card-panel-icon"/>
+        </div>
 
-      <div class="card-panel-text">
-        备货
-      </div>
-    </router-link>
-  </div>
+        <div class="card-panel-text">
+          备货
+        </div>
+      </router-link>
+    </div>
+  </el-badge>
 
 </template>
 
@@ -19,10 +21,14 @@
     props: {
       mine: {
         type: Object,
-        default: {merchantId: '', categoryId: '', week: '20'}
       }
     },
     components: {},
+    data() {
+      return {
+        count: null
+      }
+    },
     methods: {}
   }
 </script>

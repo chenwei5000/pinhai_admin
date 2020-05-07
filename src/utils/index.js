@@ -9,6 +9,9 @@
  * @returns {string}
  */
 export function parseTime(time, cFormat) {
+  if (!time) {
+    return "";
+  }
   if (arguments.length === 0) {
     return null
   }
@@ -372,4 +375,124 @@ export function getObjectVal(row, prop, formatter) {
     return row[prop];
   }
 
+}
+
+export function intArrToStrArr(intArr) {
+  let strArr = [];//保存转换后的整型字符串
+  if (intArr) {
+    intArr.forEach(item => {
+      strArr.push(item + "");
+    });
+    return strArr;
+  }
+  else {
+    return null;
+  }
+}
+
+
+export function strArrToIntArr(strArr) {
+  let intArr = [];//保存转换后的整型字符串
+  if (strArr) {
+    strArr.forEach(item => {
+      intArr.push(parseInt(item));
+    });
+    return intArr;
+  }
+  else {
+    return null;
+  }
+}
+
+const digitsRE = /(\d{3})(?=\d)/g
+
+export function currency(value, currency, decimals) {
+
+  value = parseFloat(value)
+  if (!isFinite(value) || (!value && value !== 0)) return ''
+  currency = currency != null ? currency : ''
+  decimals = decimals != null ? decimals : 2
+  var stringified = Math.abs(value).toFixed(decimals)
+  var _int = decimals
+    ? stringified.slice(0, -1 - decimals)
+    : stringified
+  var i = _int.length % 3
+  var head = i > 0
+    ? (_int.slice(0, i) + (_int.length > 3 ? ',' : ''))
+    : ''
+  var _float = decimals
+    ? stringified.slice(-1 - decimals)
+    : ''
+  var sign = value < 0 ? '-' : ''
+
+  return sign + currency + head +
+    _int.slice(i).replace(digitsRE, '$1,') +
+    _float
+}
+
+export function money(n) {
+  n = Math.abs(n);
+  if (n == 0) {
+    return '零';
+  }
+
+  if (!/^(0|[1-9]\d*)(\.\d+)?$/.test(n)) {
+    return ''
+  }
+
+  var unit = "仟佰拾亿仟佰拾万仟佰拾圆角分", str = "";
+  n += "00";
+  var p = n.indexOf('.');
+  if (p >= 0)
+    n = n.substring(0, p) + n.substr(p + 1, 2);
+
+  unit = unit.substr(unit.length - n.length);
+
+  for (var i = 0; i < n.length; i++)
+    str += '零壹贰叁肆伍陆柒捌玖'.charAt(n.charAt(i)) + unit.charAt(i);
+  return str.replace(/零(仟|佰|拾|角)/g, "零").replace(/(零)+/g, "零").replace(/零(万|亿|圆)/g, "$1").replace(/(亿)万|壹(拾)/g, "$1$2").replace(/^圆零?|零分/g, "").replace(/圆$/g, "圆整");
+}
+
+export function parseLineBreak(text) {
+  if (text) {
+    return text.replace(/\n/g, "<br/>");
+  }
+  else {
+    return text;
+  }
+}
+
+export function getObjectValueByArr(arr, prop) {
+  if (arr == null || arr.length == 0) {
+    return null;
+  }
+
+  let val = null;
+
+  if (prop.indexOf('.') !== false) {
+    val = arr;
+    let tmps = prop.split('.');
+    for (var i = 0; i < tmps.length; i++) {
+      val = val[tmps[i]];
+    }
+  }
+  else {
+    val = arr[prop];
+  }
+  return val;
+}
+
+export function demoStyle() {
+  if (process.env.NODE_ENV == 'demo') {
+    return 'background-color: #F56C6C';
+  }
+  else if (process.env.NODE_ENV == 'production') {
+    return '';
+  }
+  else if (process.env.NODE_ENV == 'test') {
+    return 'background-color: #409EFF';
+  }
+  else {
+    return 'background-color: #E6A23C';
+  }
 }

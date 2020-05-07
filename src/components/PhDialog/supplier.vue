@@ -1,7 +1,9 @@
 <template>
 
-  <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
-  </ph-form>
+  <div class="ph-form">
+    <ph-form :content="form" ref="dialogForm" v-bind="formAttrs">
+    </ph-form>
+  </div>
 
 </template>
 
@@ -22,6 +24,7 @@
           "label-width": "100px",
           "label-suffix": ":",
           "status-icon": true,
+          "inline-message": true,
           size: "small"
         },
         form: [
@@ -57,6 +60,9 @@
             $el: {
               placeholder: '供应商公司全称，如：深圳市品海电子商务有限公司'
             },
+            rules: [
+              validRules.required
+            ]
           },
           {
             $type: 'input',

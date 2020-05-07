@@ -2,13 +2,23 @@ import _axios from 'axios'
 import store from '@/store'
 import {Message} from 'element-ui'
 import qs from 'qs'
+import systemModel from './system'
+import Vue from 'vue'
 
 const config = {
-  NAME: '品海ERP管理系统',
-  VERSION: 'V2.0.0',
-  ERP_SERVICE_URL: 'http://192.168.10.200/erp-service',
-  //ERP_SERVICE_URL: 'http://localhost:9001/erp-service',
-  TENANT_ID: 'ff80808162fb6e100162fb6e213e0000'
+  NAME: process.env.VUE_APP_NAME,
+  VERSION: process.env.VUE_APP_VERSION,
+  ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
+  // ERP_SERVICE_URL: 'http://192.168.10.200/erp-service-v2/',
+
+  // 修改方法一： 请修改 /.env.development 中 VUE_APP_ERP_SERVICE_URL配置
+  // 修改方法二：
+  //     我的示例:
+  //        1. 创建 /.env.tankai
+  //        2. 修改 package.json 增加一行 第9行。 window系统使用 SET 设置环境变量
+  //        3. 使用 npm run tankai 启动
+  ERP_SERVICE_URL: process.env.VUE_APP_ERP_SERVICE_URL,
+  TENANT_ID: process.env.VUE_APP_TENANT_ID
 }
 
 // 定义全局方法
@@ -51,13 +61,20 @@ const searchResource = function (path, filterRules,
     relations: _relations ? _relations : ''
   };
 
-  return axios.get(path + "?" + qs.stringify(param)).then(res => res.data);
+  if (path.indexOf('?') > -1) {
+    path += '&'
+  }
+  else {
+    path += '?'
+  }
+
+  return axios.get(path + qs.stringify(param)).then(res => res.data);
 }
 
 
 const axios = _axios.create({
   baseURL: config.ERP_SERVICE_URL, // url = base url + request url
-  timeout: 5000 // request timeout
+  timeout: 600000 // request timeout
 })
 
 // 设置默认Request的Header
@@ -86,11 +103,22 @@ axios.interceptors.response.use(data => {
   return data
 }, err => {
   if (!err.response) {
-    Message.error(err.message)
+    Message.error(err.message);
+    return {};
   }
   else {
     if (err.response.data) {
-      Message.error({message: '[' + err.response.data.code + ']' + err.response.data.description})
+      Message.error({
+        dangerouslyUseHTMLString:true,
+        message: '[' + (err.response.data.code ? err.response.data.code : err.response.status) + ']'
+        + (err.response.data.description ? err.response.data.description.replace(/\n/g, '<br/>')
+          : err.response.data.message)
+      });
+
+      if(err.response.data.description && err.response.data.description=='无效的凭证'){
+        systemModel.logout();
+      }
+      throw err
     } else {
       if (err.response.status == 504 || err.response.status == 404) {
         Message.error({message: '服务器被吃了⊙﹏⊙∥'})
@@ -99,6 +127,7 @@ axios.interceptors.response.use(data => {
       } else {
         Message.error({message: '未知错误!'})
       }
+      throw err
     }
   }
   throw err

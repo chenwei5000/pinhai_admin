@@ -5,7 +5,7 @@ const defaultSettings = require('./src/settings.js')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-
+const Timestamp = new Date().getTime();
 const name = defaultSettings.title || 'vue Element Admin' // page title
 const port = 9527 // dev port
 
@@ -54,12 +54,18 @@ module.exports = {
         'vue$': 'vue/dist/vue.esm.js',
         '@': resolve('src')
       }
-    }
+    },
+    output: { // 输出重构  打包编译后的 文件名称  【模块名称.版本号.时间戳】
+      filename: `[name].${process.env.VUE_APP_VERSION}.${Timestamp}.js`,
+      chunkFilename: `[name].${process.env.VUE_APP_VERSION}.${Timestamp}.js`
+    },
   },
 
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
+
+    config.externals({ './cptable': 'var cptable' })
 
     // set svg-sprite-loader
     config.module

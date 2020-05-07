@@ -8,7 +8,7 @@ const currencyModel = {
   getCurrencies: (pagesize = -1) => {
     const path = '/currencies';
 
-    return global.searchResource(path, null, null, pagesize).then(data => data.rows);
+    return global.searchResource(path, null, null, pagesize).then(data => data);
   },
 
   // 获取id:name格式下拉框选项
@@ -27,7 +27,7 @@ const currencyModel = {
           });
         });
       }
-    }
+    };
     _loadData();
     return _options;
   }

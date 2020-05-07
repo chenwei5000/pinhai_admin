@@ -32,38 +32,37 @@ export default {
   render(h) {
     this.content.forEach(this.initItemValue) // handle default value
     return h(
-      'el-form',
-      {
+      'el-form', {
         props: Object.assign({}, this._props, {
           model: this.value // 用于校验
         }),
         ref: 'elForm'
       },
       this.content
-        .map((item, index) => {
-          const data = {
-            props: {
-              key: index,
-              data: item,
-              value: this.value,
-              itemValue: this.value[item.$id],
-              disabled: this.disabled,
-              options: this.options[item.$id],
-              // _parent 指向el-form, 在render-form-group里有用到
-              _parent: this
-            },
-            on: {
-              updateValue: this.updateValue
-            }
+      .map((item, index) => {
+        const data = {
+          props: {
+            key: index,
+            data: item,
+            value: this.value,
+            itemValue: this.value[item.$id],
+            disabled: this.disabled,
+            options: this.options[item.$id],
+            // _parent 指向el-form, 在render-form-group里有用到
+            _parent: this
+          },
+          on: {
+            updateValue: this.updateValue
           }
-          return [
-            this.$slots[`$id:${item.$id}`],
-            item.$type === GROUP
-              ? h('render-form-group', data)
-              : h('render-form-item', data)
-          ]
-        })
-        .concat(this.$slots.default)
+        }
+        return [
+          this.$slots[`$id:${item.$id}`],
+          item.$type === GROUP ?
+          h('render-form-group', data) :
+          h('render-form-item', data)
+        ]
+      })
+      .concat(this.$slots.default)
     )
   },
   components: {
@@ -100,12 +99,12 @@ export default {
         }
 
         con[item.$id] =
-          item.$type === GROUP
-            ? item.$items.reduce((acc, cur) => {
-              acc[cur.$id] = cur.$options || []
-              return acc
-            }, {})
-            : item.$options || []
+          item.$type === GROUP ?
+          item.$items.reduce((acc, cur) => {
+            acc[cur.$id] = cur.$options || []
+            return acc
+          }, {}) :
+          item.$options || []
         return con;
 
       }, {})
@@ -141,14 +140,20 @@ export default {
         defaultVal = item.$default
       }
       defaultVal !== undefined &&
-      this.updateValue({id: item.$id, value: defaultVal})
+        this.updateValue({
+          id: item.$id,
+          value: defaultVal
+        })
     },
     /**
      * 更新表单数据
      * @param  {String} options.id 表单ID
      * @param  {All} options.value 表单数据
      */
-    updateValue({id, value}) {
+    updateValue({
+      id,
+      value
+    }) {
       this.value = Object.assign({}, this.value, {
         [id]: value
       })
@@ -168,7 +173,9 @@ export default {
           }
           //TODO: fixbug element ui 不支持 aaa.bb的方式
           let newKey = key
-          if (key.indexOf("_") !== false) {
+          if (key.indexOf("__") !== false) {
+            newKey = key.replace("__", "_");
+          } else if (key.indexOf("_") !== false) {
             newKey = key.replace("_", ".");
           }
 
@@ -177,15 +184,17 @@ export default {
             acc[newKey] = getValue(values[key], item.$items)
           } else {
             if (item.$el && item.$el.op && item.$el.op !== '') { //搜索模式
-              acc[newKey] = {'op': item.$el.op, 'data': clone(values[key])}
-            }
-            else {
+              acc[newKey] = {
+                'op': item.$el.op,
+                'data': clone(values[key])
+              }
+            } else {
               if (item.outputFormat) {
                 const formatVal = item.outputFormat(clone(values[key]))
                 // 如果 outputFormat 返回的是一个对象，则合并该对象，否则在原有 acc 上新增该 属性：值
-                isObject(formatVal)
-                  ? Object.assign(acc, formatVal)
-                  : (acc[newKey] = formatVal)
+                isObject(formatVal) ?
+                  Object.assign(acc, formatVal) :
+                  (acc[newKey] = formatVal)
               } else {
                 acc[newKey] = clone(values[key])
               }
@@ -210,7 +219,9 @@ export default {
           let _value = values;
 
           //TODO: fixbug element ui 不支持 aaa.bb的方式
-          if (_id.indexOf("_") !== false) {
+          if (_id.indexOf("__") !== false) {
+            _id = _id.replace("__", "_");
+          } else if (_id.indexOf("_") !== false) {
             _id = _id.replace("_", ".");
           }
 
@@ -220,16 +231,15 @@ export default {
             type.forEach(_k => {
               _value = _value[_k];
             })
-          }
-          else {
+          } else {
             _value = values[_id];
           }
 
           const value =
-            item.$type === GROUP
-              ? updateValue(item.$items)
-              : (item.inputFormat && item.inputFormat(values)) ||
-              _value
+            item.$type === GROUP ?
+            updateValue(item.$items) :
+            (item.inputFormat && item.inputFormat(values)) ||
+            _value
 
           if (value !== undefined && value !== null) {
             //TOOD: 所有设置值，按照字符串处理

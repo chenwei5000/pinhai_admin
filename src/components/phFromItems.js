@@ -13,7 +13,9 @@ const phFromItems = {
         'status',
       label:
         '状态',
-      $el: {},
+      $el: {
+        size:"mini",
+      },
       $default: defaultVal + '',
       $options: phEnumModel.getSelectOptions('Status')
     }
@@ -25,7 +27,9 @@ const phFromItems = {
       $type: 'radio-button',
       $id: id,
       label: label,
-      $el: el,
+      $el: {
+        size:"mini",
+      },
       $default: defaultVal + '',
       $options: [
         {
@@ -44,16 +48,22 @@ const phFromItems = {
   },
 
   //名称
-  name: {
-    $type: 'input',
-    $id: 'name',
-    label: '名称',
-    $el: {
-      placeholder: '请输入名称'
-    },
-    rules: [
-      validRules.required
-    ]
+  name: (maxlength = 20) => {
+    return {
+      $type: 'input',
+      $id: 'name',
+      label: '名称',
+      $el: {
+        size:"mini",
+        placeholder: '请输入名称',
+        clearable: true,
+        maxlength: maxlength + '',
+        "show-word-limit": true,
+      },
+      rules: [
+        validRules.required
+      ]
+    }
   },
 
   //代码
@@ -62,6 +72,7 @@ const phFromItems = {
     $id: 'code',
     label: '代码',
     $el: {
+      size:"mini",
       placeholder: '请输入代码,最好使用全英文,空格用-号代替。如：gymmat-104'
     },
     rules: [
@@ -77,6 +88,7 @@ const phFromItems = {
       label: label,
       $default: defaultVal,
       $el: {
+      size:"mini",
         placeholder: '请输入' + label
       },
       rules: [
@@ -94,6 +106,7 @@ const phFromItems = {
       label: label,
       $default: defaultVal,
       $el: {
+        size:"mini",
         placeholder: '请输入' + label
       },
       rules: [

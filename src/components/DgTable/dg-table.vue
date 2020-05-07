@@ -9,7 +9,7 @@
         closable
         style="margin-right:10px;"
         @close="handleClose(item)"
-        size="small"
+        size="mini"
         type='info'>
         <span
           style="color:#bbb"

@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -18,31 +16,42 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFormItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'ShippingMethodResource_menu',
     data() {
       return {
         title: '物流方式列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('ShippingMethodResource_create'),
+          hasEdit: checkPermission('ShippingMethodResource_update'),
+          hasDelete: checkPermission('ShippingMethodResource_remove'),
+          // hasView: checkPermission('ShippingMethodResource_get'),
+          hasExportTpl: checkPermission('ShippingMethodResource_export'),
+          hasExport: checkPermission('ShippingMethodResource_export'),
+          hasImport: checkPermission('ShippingMethodResource_import'),
+
           url: '/shippingMethods',
           relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
           columns: [
-            {type: 'selection'},
-            phColumns.id,
+            {width: 30, type: checkPermission('ShippingMethodResource_remove') ? 'selection' : '', hidden: !checkPermission('ShippingMethodResource_remove')},
             {prop: 'name', label: '名称', sortable: 'custom', 'min-width': 100, fixed: 'left'},
             {prop: 'code', label: '编码', sortable: 'custom', 'min-width': 100},
             phColumns.creator,
             phColumns.status,
+            phColumns.id,
             phColumns.lastModified
           ],
           //搜索栏
           searchForm: [
             phSearchItems.name,
             phSearchItems.code,
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //修改或添加弹窗栏
           form: [

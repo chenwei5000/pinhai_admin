@@ -1,6 +1,7 @@
 import Vue from 'vue'
 
 import Cookies from 'js-cookie'
+import VueClipboard from 'vue-clipboard2'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import Element from 'element-ui'
@@ -55,6 +56,8 @@ Vue.use(Element, {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+
+Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 

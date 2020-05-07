@@ -1,16 +1,7 @@
 <template>
   <div class="app-container">
-
     <div class="ph-card">
-
-      <!-- title -->
-      <ph-card-header :title="title" type="table">
-
-      </ph-card-header>
-
-      <!-- 表格 -->
       <div class="ph-card-body">
-        <!-- 说明  https://femessage.github.io/el-data-table/-->
         <ph-table
           v-bind="tableConfig"
         >
@@ -24,55 +15,178 @@
 
 <script>
   import phSearchItems from '../../components/phSearchItems'
+  import {checkPermission} from "../../utils/permission";
+  import warehouseModel from "../../api/warehouse";
+  import {currency} from "../../utils";
 
   export default {
+    name: 'WarehouseStockResource_menu',
     data() {
       return {
-        title: '仓库库存', // 页面标题
+        title: '仓库库存',
         tableConfig: {
-          url: '/warehouseStocks/stocks', // 资源URL
-          relations: ["warehouse"],//关联数据字典
+          //权限控制
+          hasNew: checkPermission('WarehouseStockResource_create'),
+          hasEdit: checkPermission('WarehouseStockResource_update'),
+          hasDelete: checkPermission('WarehouseStockResource_remove'),
+          // hasView: checkPermission('WarehouseStockResource_get'),
+          hasExport: checkPermission('WarehouseStockResource_export'),
+          hasImport: false,
+          hasExportTpl: false,
 
-          hasNew: false,
-          hasEdit: false,
+          exportFileName: '库存明细',
+
+          url: '/warehouseStocks/stocks', // 资源URL
+          countUrl: '/count',
+          relations: ["warehouse", "cartonSpec"],//关联数据字典
           hasView: false,
-          hasDelete: false,
           hasOperation: false,
 
-          //表格定义 具体可参考https://element.eleme.cn/#/zh-CN/component/table#table-attributes
-          // https://femessage.github.io/el-data-table/
-          tableAttrs: {},
-
-          // 表格列定义, 具体可参考 https://element.eleme.cn/#/zh-CN/component/table#table-column-attributes
+          tableAttrs: {
+            "show-summary" : true,
+            "summary-method" : this.getSummaries
+          },
           columns: [
-            {prop: 'warehouseName', label: '仓库', 'min-width': 150},
             {prop: 'skuCode', label: 'SKU编码', 'min-width': 200, fixed: 'left'},
-            {prop: 'productName', label: '产品名', 'min-width': 250},
+            {prop: 'fnSku', label: 'FN-SKU', 'min-width': 100},
+            {prop: 'warehouseName', label: '仓库', 'min-width': 150},
+            {prop: 'productName', label: '产品名', 'min-width': 220},
             {prop: 'cartonSpecCode', label: '箱规', 'min-width': 150},
-            {prop: 'numberOfCarton', label: '装箱数', width: 100},
-            {prop: 'qty', label: '库存件数', width: 100},
-            {prop: 'cartonQty', label: '库存箱数', fixed: 'right', width: 100}
+            {prop: 'numberOfCarton', label: '装箱数', width: 90},
+            {prop: 'volume', label: '体积(m³)', 'min-width': 100, align: "center"},
+            {prop: 'qty', label: '库存件数', width: 90},
+            {prop: 'cartonQty', label: '库存箱数', fixed: 'right', width: 90}
           ],
 
-          // 搜索区块定义, 具体可参考 https://github.com/FEMessage/el-form-renderer/blob/master/README.md
           searchForm: [
-            phSearchItems.warehouseId,
-            phSearchItems.skuCode
+            {
+              $type: 'select',
+              $id: 'warehouseId',
+              label: '仓库',
+              $el: {
+                op: 'eq',
+                size: "mini",
+                filterable: true,
+                placeholder: '请选择仓库'
+              },
+              $options: warehouseModel.getSelectDomesticAndMaterialOptions(),
+            },
+            {
+              $type: 'input',
+              $id: 'skuCode',
+              label: 'SKU编码',
+              $el: {
+                op: 'eq',
+                size: "mini",
+                placeholder: '请输入SKU编码'
+              }
+            },
+            {
+              $type: 'input',
+              $id: 'fnSku',
+              label: 'FNSKU',
+              $el: {
+                op: 'eq',
+                size: "mini",
+                style: "width:120px;",
+                placeholder: '请输入FNSKU编码'
+              }
+            },
+            {
+              $type: 'input',
+              $id: 'productName',
+              label: '产品名',
+              $el: {
+                op: 'bw',
+                size: "mini",
+                placeholder: '请输入产品名'
+              }
+            }
           ]
         }
       }
     },
 
-    // 计算属性，用于跟模版进行数据交互。
-    // computed属性，属于持续变化跟踪。在computed属性定义的时候，这个computed属性就与给它赋值的变量绑定了。
-    // 改变这个赋值变量，computed属性值会随之改变。
-    // 主要用于用过其它第三变量，间接跟页面进行数据交互时使用。
     computed: {},
 
-    // 各种相关方法定义
-    methods: {},
+    filters: {
+      currency: currency
+    },
 
-    // 观察data中的值发送变化后，调用
+    methods: {
+      /*汇总数据*/
+      getSummaries(param) {
+
+        const {columns, data} = param;
+        const sums = [];
+
+        columns.forEach((column, index) => {
+          if (column.property == 'skuCode') {
+            const values = data.map(item => item[column.property]);
+            sums[index] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+            sums[index] = '合计: ' + sums[index] + ' 行';
+          }
+
+          if (column.property == 'cartonQty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 箱';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'qty') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] += ' 件';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+          if (column.property == 'volume') {
+            const values = data.map(item => Number(item[column.property]));
+            if (!values.every(value => isNaN(value))) {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr);
+                if (!isNaN(value)) {
+                  return prev + curr;
+                } else {
+                  return prev;
+                }
+              }, 0);
+              sums[index] = currency(sums[index]) + ' m³';
+            } else {
+              sums[index] = 'N/A';
+            }
+          }
+
+        });
+
+        return sums;
+      },
+
+    },
+
     watch: {}
   }
 </script>

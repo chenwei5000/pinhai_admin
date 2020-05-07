@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
     <div class="ph-card">
-      <ph-card-header :title="title" type="table">
-      </ph-card-header>
       <div class="ph-card-body">
         <ph-table
           v-bind="tableConfig"
@@ -18,20 +16,39 @@
   import phColumns from '../../components/phColumns'
   import phSearchItems from '../../components/phSearchItems'
   import phFromItems from '../../components/phFromItems'
+  import {checkPermission} from "../../utils/permission";
 
   export default {
+    name: 'MenuResource_menu',
     data() {
       return {
         title: '菜单列表',
         tableConfig: {
+          //权限控制
+          hasNew: checkPermission('MenuResource_create'),
+          hasEdit: checkPermission('MenuResource_update'),
+          hasDelete: checkPermission('MenuResource_remove'),
+          // hasView: checkPermission('MenuResource_get'),
+          hasExportTpl: checkPermission('MenuResource_export'),
+          hasExport: checkPermission('MenuResource_export'),
+          hasImport: checkPermission('MenuResource_import'),
+
           url: '/menus',
           relations: ["creator"],
           tableAttrs: {
             "row-class-name": this.statusClassName
           },
+          //工具按钮
+          maxUploadCount: 20, //提交数量
+          exportFileName: '菜单列表',
+          hasExportTpl: true,
+          hasExport: true,
+          hasImport: true,
+
           columns: [
-            {type: 'selection'},
-            phColumns.id,
+            {type: checkPermission('MenuResource_remove') ? 'selection' : '', hidden: !checkPermission('MenuResource_remove') , width: 30},
+
+            {prop: 'id', label: 'ID', sortable: 'true', hidden: false, width: 100},
             {
               prop: 'level', label: '菜单级别', sortable: 'custom', 'min-width': 120,
               formatter: row => (row.level === 1 ? '一级' : '二级')
@@ -59,6 +76,8 @@
               label: '菜单级别',
               $el: {
                 op: 'eq',
+                size: 'mini',
+                style: 'width:120px',
                 placeholder: '请选择菜单级别'
               },
               $options: [
@@ -76,17 +95,29 @@
                 }
               ]
             },
-            phSearchItems.name,
+            {
+              $type: 'input',
+              $id: 'title',
+              label: '名称',
+              $el: {
+                op: 'bw',
+                size: 'mini',
+                style: 'width:120px',
+                placeholder: '请输入名称'
+              }
+            },
             {
               $type: 'input',
               $id: 'actionId',
               label: '操作标识',
               $el: {
                 op: 'bw',
+                size: 'mini',
+                style: 'width:120px',
                 placeholder: '请输入操作标识'
               }
             },
-            phSearchItems.status
+            phSearchItems.status()
           ],
           //添加或修改弹出栏
           form: [
@@ -94,7 +125,7 @@
               $type: 'select',
               $id: 'level',
               label: '菜单级别',
-              $default: 1,
+              $default: '1',
               $el: {},
               $options: [
                 {
