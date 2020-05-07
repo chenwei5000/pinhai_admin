@@ -7,23 +7,23 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 120px"
+        <el-input v-model="searchParam.code.value" clearable size="mini" style="width: 200px"
                   placeholder="请输入"></el-input>
       </el-form-item>
 
-      <el-form-item label="物流单号">
+      <el-form-item label="物流单号" v-if="false">
         <el-input v-model="searchParam.trackNumber.value" clearable size="mini" style="width: 120px"
                   placeholder="请输入物流单号"></el-input>
       </el-form-item>
 
-      <el-form-item label="名称">
+      <el-form-item label="名称" v-if="false">
         <el-input size="mini" v-model="searchParam.name.value" clearable style="width: 110px"
                   placeholder="请输入名称"></el-input>
       </el-form-item>
 
       <el-form-item label="供货商">
         <el-select filterable v-model="searchParam.supplierId.value" size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 150px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
             :label="item.label" :value="item.value"
@@ -35,7 +35,7 @@
       <el-form-item label="收货仓库">
         <el-select filterable v-model="searchParam.warehouseId.value"
                    size="mini"
-                   style="width: 100px" placeholder="请选择">
+                   style="width: 150px" placeholder="请选择">
           <el-option
             v-for="(item,idx) in warehouseSelectOptions"
             :label="item.label" :value="item.value"
@@ -163,7 +163,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
@@ -344,7 +344,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 68; //减框架头部高度
           tableHeight = tableHeight - 82; //减标题高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度

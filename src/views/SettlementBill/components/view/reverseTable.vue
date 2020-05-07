@@ -21,57 +21,61 @@
       :default-sort="{prop: 'product.skuCode', order: 'ascending'}"
       id="table"
     >
-
-      <el-table-column
-        prop="code"
-        label="预付款单号"
-        width="180">
+      <el-table-column prop="code" label="预付款单编码" sortable min-width="120" align="center">
       </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="80">
+      <el-table-column prop="statusName" label="状态" min-width="80" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
-            ? 'primary' : scope.row.status === 2
-            ? 'success' : scope.row.status === 0
-            ? 'info' : ''"
+            ? 'warning' : scope.row.status === 0
+            ? 'danger' : 'success'"
                   disable-transitions>{{ scope.row.statusName }}
           </el-tag>
         </template>
       </el-table-column>
 
 
-      <el-table-column
-        prop="formatCreateTime"
-        label="申请日期"
-        width="180">
-      </el-table-column>
-
-      <el-table-column
-        prop="creator.name"
-        label="申请人"
-        width="180">
-      </el-table-column>
-
-
-      <el-table-column
-        prop="payableAmount"
-        label="申请金额"
-        width="180">
+      <el-table-column prop="createTime" label="申请时间" sortable min-width="100" align="center">
         <template slot-scope="scope">
-          {{scope.row.payableAmount ? scope.row.payableAmount : 0, primary.currency.symbolLeft | currency}}
+          <span>{{ scope.row.createTime | parseTime('{y}年{m}月{d}日') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column
-        prop="paymentAmount"
-        label="付款金额">
+      <el-table-column prop="prepayTime" label="付款时间" sortable min-width="100" align="center">
         <template slot-scope="scope">
-          {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, primary.currency.symbolLeft | currency}}
+          <span>{{ scope.row.prepayTime | parseTime('{y}年{m}月{d}日') }}</span>
         </template>
       </el-table-column>
 
+      <el-table-column prop="payableAmount" label="申请金额" width="100" align="right">
+        <template slot-scope="scope">
+          {{scope.row.payableAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="paymentAmount" label="实付金额" width="100" align="right">
+        <template slot-scope="scope">
+          {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, scope.row.currency ? scope.row.currency.symbolLeft :
+          '' | currency}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="reverseAmount" label="已冲销金额" width="100" align="right">
+        <template slot-scope="scope">
+          {{scope.row.reverseAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="unReverseAmount" label="未冲销金额" width="100" align="right">
+        <template slot-scope="scope">
+          {{scope.row.unReverseAmount, scope.row.currency ? scope.row.currency.symbolLeft : '' | currency}}
+        </template>
+      </el-table-column>
     </el-table>
+
+    <!--查看对话框-->
+    <paymentsViewDialog ref="paymentsViewDialog">
+    </paymentsViewDialog>
 
   </div>
 
@@ -81,9 +85,12 @@
 
   import {mapGetters} from 'vuex'
   import {currency, parseTime} from '@/utils'
+  import paymentsViewDialog from './paymentsViewDialog'
 
   export default {
-    components: {},
+    components: {
+      paymentsViewDialog
+    },
     props: {
       primary: {
         type: [Object],
@@ -129,12 +136,10 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/financeBills",
+        url: `/settlementBills/reverses/${this.primary.id}`,
         downloadUrl: "", //下载Url
-        filters: [
-          {"field": "relevanceCode", "op": "eq", "data": this.primary.settlementBill.procurementOrder.code}
-        ],   //搜索对象
-        relations: ["creator"],  // 关联对象
+        filters: [],   //搜索对象
+        relations: ["currency"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -182,7 +187,10 @@
             sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'paymentAmount' || column.property == 'payableAmount'
+          if (column.property == 'payableAmount' ||
+            column.property == 'paymentAmount' ||
+            column.property == 'reverseAmount' ||
+            column.property == 'unReverseAmount'
           ) {
             const values = data.map(item => Number(item[column.property]));
             if (!values.every(value => isNaN(value))) {
@@ -215,14 +223,9 @@
           return
         }
 
-        // 处理查询
-        if (this.filters && this.filters.length > 0) {
-          params += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": this.filters});
-        }
-
         // 处理关联加载
         if (this.relations && this.relations.length > 0) {
-          params += "&relations=" + JSON.stringify(this.relations);
+          params += "?relations=" + JSON.stringify(this.relations);
         }
 
         // 请求开始

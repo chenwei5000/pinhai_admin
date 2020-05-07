@@ -19,19 +19,19 @@
       :default-sort="{prop: 'pdRemarks', order: 'ascending'}"
       id="table"
     >
-      <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
+      <el-table-column prop="pdRemarks" label="付款项目" min-width="150" align="left">
       </el-table-column>
 
-      <el-table-column prop="pdNumber" label="数量" width="150">
+      <el-table-column prop="pdNumber" label="数量" width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="pdPrice" label="单价" width="150">
+      <el-table-column prop="pdPrice" label="单价" width="150" align="right">
         <template slot-scope="scope">
           {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="amount" label="金额" width="150">
+      <el-table-column prop="amount" label="金额" width="150" align="right">
         <template slot-scope="scope">
           {{scope.row.amount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>

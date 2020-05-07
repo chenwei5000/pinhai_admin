@@ -101,7 +101,7 @@
     },
 
     computed: {
-      hasNew(){
+      hasNew() {
         return checkPermission('ProcurementOrderResource_create');
       },
       // TODO: 设置默认的搜索条件
@@ -139,5 +139,7 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
-
+  .ph-table {
+    padding: 0 !important;
+  }
 </style>

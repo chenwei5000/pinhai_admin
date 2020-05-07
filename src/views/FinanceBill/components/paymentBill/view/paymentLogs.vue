@@ -22,70 +22,44 @@
       id="table"
     >
 
-      <el-table-column
-        prop="code"
-        label="付款单号"
-        width="180">
-      </el-table-column>
+      <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="80">
+      <el-table-column prop="paymentTime" label="付款日期" width="120" align="center">
         <template slot-scope="scope">
-          <el-tag size="mini"
-                  :type="scope.row.status === 1
-            ? 'primary' : scope.row.status === 3
-            ? 'success' : scope.row.status === 2
-            ? 'info' : ''"
-                  disable-transitions>{{ scope.row.statusName }}
-          </el-tag>
+          <span>{{ scope.row.paymentTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
 
-      <el-table-column prop="settlementBill.billingDate" label="结算日期" width="100">
+      <el-table-column prop="flowNo" label="银行流水号" width="100" align="center">
+      </el-table-column>
+
+      <el-table-column prop="paymentAccount.bankAccount.accountName" label="付款账户" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
+          {{scope.row.paymentAccount.bankAccount.accountName}} -
+          {{scope.row.paymentAccount.bankAccount.currency.name}} -
+          {{scope.row.paymentAccount.bankAccount.accountCardHide}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementBill.accountPeriod" label="账期" width="80">
+      <el-table-column prop="collectionAccount.bankAccount.accountName" label="收款账户" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.settlementBill.accountPeriod }} 天</span>
+          {{scope.row.collectionAccount.bankAccount.accountName}} -
+          {{scope.row.collectionAccount.bankAccount.currency.name}} -
+          {{scope.row.collectionAccount.bankAccount.accountCardHide}}
         </template>
       </el-table-column>
 
-      <el-table-column
-        prop="creator.name"
-        label="申请人"
-        width="180">
+      <el-table-column prop="note" label="备注" align="center">
       </el-table-column>
 
-
-      <el-table-column prop="settlementBill.latestPaymentTime" label="最晚付款时间" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
-        </template>
+      <el-table-column prop="creator.name" label="付款人" width="120" align="center">
       </el-table-column>
 
-      <el-table-column
-        prop="payableAmount"
-        label="申请金额"
-        width="180">
-        <template slot-scope="scope">
-          {{scope.row.payableAmount ? scope.row.payableAmount : 0, primary.currency.symbolLeft | currency}}
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        prop="paymentAmount"
-        label="付款金额">
+      <el-table-column prop="paymentAmount" label="付款金额" width="100" align="right">
         <template slot-scope="scope">
           {{scope.row.paymentAmount ? scope.row.paymentAmount : 0, primary.currency.symbolLeft | currency}}
         </template>
-      </el-table-column>
-
-      <el-table-column
-        prop="remark"
-        label="备注">
       </el-table-column>
 
     </el-table>
@@ -146,16 +120,12 @@
         selected: [],
 
         //数据 TODO: 根据实际情况调整
-        url: "/procurementPaymentOrders",
+        url: "/procurementPaymentOrderPayments",
         downloadUrl: "", //下载Url
         filters: [
-          {
-            "field": "settlementBill_procurementOrderCode",
-            "op": "eq",
-            "data": this.primary.settlementBill.procurementOrder.code
-          }
+          {"field": "procurementPaymentOrderId", "op": "eq", "data": this.primary.id}
         ],   //搜索对象
-        relations: ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"],  // 关联对象
+        relations: ["creator", "collectionAccount", "collectionAccount.bankAccount", "collectionAccount.bankAccount.currency", "paymentAccount", "paymentAccount.bankAccount", "paymentAccount.bankAccount.currency"],  // 关联对象
         data: [], // 从后台加载的数据
         tableData: [],  // 前端表格显示的数据，本地搜索用
         // 表格加载效果
@@ -195,7 +165,7 @@
         const sums = [];
 
         columns.forEach((column, index) => {
-          if (column.property == 'code') {
+          if (column.property == 'id') {
             const values = data.map(item => item[column.property]);
             sums[index] = values.reduce((prev) => {
               return prev + 1;

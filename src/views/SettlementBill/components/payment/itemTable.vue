@@ -35,16 +35,16 @@
       <el-table-column prop="pdRemarks" label="付款项目" min-width="150">
       </el-table-column>
 
-      <el-table-column prop="pdNumber" label="数量" width="150">
+      <el-table-column prop="pdNumber" label="数量" width="150" align="center">
       </el-table-column>
 
-      <el-table-column prop="pdPrice" label="单价" width="150">
+      <el-table-column prop="pdPrice" label="单价" width="150" align="right">
         <template slot-scope="scope">
           {{scope.row.pdPrice, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
       </el-table-column>
 
-      <el-table-column prop="pdAmount" label="金额" width="150">
+      <el-table-column prop="pdAmount" label="金额" width="150" align="right">
         <template slot-scope="scope">
           {{scope.row.pdAmount, primary.currency ? primary.currency.symbolLeft : '' | currency}}
         </template>
@@ -53,7 +53,7 @@
       <!--默认操作列-->
       <el-table-column label="操作" v-if="hasOperation"
                        no-export="true"
-                       width="120" fixed="right">
+                       width="120" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="hasEdit" size="mini" icon="el-icon-edit" circle
@@ -173,51 +173,27 @@
           pdAmount: this.primary.unpaidApplyAmount
         });
 
-        let all_url = "/financeBills";
-        let filters = [
-          {
-            "field": "relevanceCode",
-            "op": "eq",
-            "data": this.primary.procurementOrderCode ? this.primary.procurementOrderCode : -1
-          },
-          {"field": "status", "op": "eq", "data": 2},
-        ]
-        all_url += "?filters=" + JSON.stringify({"groupOp": "AND", "rules": filters});
-        all_url += "&sort=id&dir=asc";
 
+        let url = `/settlementBills/reverses/${this.primary.id}`;
         this.global.axios
-          .get(all_url)
+          .get(url)
           .then(resp => {
             let res = resp.data || [];
             res.forEach(bill => {
-              let use_url = `/procurementPaymentOrderDetails/getPaymentDetailPriceSum?financeBillId=${bill.id}&procurementOrderCode=${this.primary.procurementOrderCode}`;
-              this.global.axios
-                .get(use_url)
-                .then(res => {
-                  let amount = res.data || 0;
-                  this.data.push({
-                    pdNumber: 1,
-                    financeBillId: bill.id,
-                    pdPrice: -(bill.paymentAmount + amount),
-                    pdRemarks: `预付款单[${bill.code}]冲销`,
-                    pdAmount: -(bill.paymentAmount + amount),
-                  });
-                })
-                .catch(err => {
-                  this.data.push({
-                    pdNumber: 1,
-                    financeBillId: bill.id,
-                    pdPrice: -(bill.paymentAmount),
-                    pdRemarks: `预付款单[${bill.code}]冲销`,
-                    pdAmount: -(bill.paymentAmount),
-                  });
-                });
+              this.data.push({
+                pdNumber: 1,
+                financeBillId: bill.id,
+                pdPrice: -(bill.unReverseAmount),
+                pdRemarks: `预付款单[${bill.code}]冲销`,
+                pdAmount: -(bill.unReverseAmount),
+              });
             });
+            this.search();
           })
           .catch(err => {
+            this.search();
           });
 
-        this.search();
         this.loading = false;
       },
 
@@ -238,7 +214,7 @@
             sums[index] = values.reduce((prev) => {
               return prev + 1;
             }, 0);
-            sums[index] = '合计: ' + sums[index] + ' 行';
+            sums[index] = '结算合计: ' + sums[index] + ' 行';
           }
 
           if (column.property == 'pdNumber') {
@@ -268,7 +244,7 @@
                   return prev;
                 }
               }, 0);
-              sums[index] = currency(sums[index] < 0 ? 0 : sums[index], this.primary.currency.symbolLeft);
+              sums[index] = currency(sums[index], this.primary.currency.symbolLeft);
             } else {
               sums[index] = 'N/A';
             }
@@ -282,6 +258,7 @@
       /*本地搜索*/
       search() {
         this.tableData = this.data;
+        this.$emit("modifyItemEvent");
       },
 
       /*本地重置搜索*/

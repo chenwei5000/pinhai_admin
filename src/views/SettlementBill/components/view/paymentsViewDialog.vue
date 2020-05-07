@@ -17,13 +17,19 @@
         <itemTable ref="itemTable" :primary="primary" v-if="primaryComplete"></itemTable>
       </el-collapse-item>
 
+      <el-collapse-item name="logs" style="margin-top: 10px">
+        <div slot="title" class="title">2. 付款记录</div>
+        <logs ref="logs" :primary="primary" v-if="primaryComplete"></logs>
+      </el-collapse-item>
+
+
       <el-collapse-item name="billTable" style="margin-top: 10px">
-        <div slot="title" class="title">2. 发票信息</div>
+        <div slot="title" class="title">3. 发票信息</div>
         <billTable ref="billTable" :primary="primary" v-if="primaryComplete"></billTable>
       </el-collapse-item>
 
       <el-collapse-item name="attachment" style="margin-top: 10px">
-        <div slot="title" class="title">3. 发票文件</div>
+        <div slot="title" class="title">4. 发票文件</div>
         <attachment ref="attachment" :primary="primary"
                     v-if="primaryComplete"></attachment>
       </el-collapse-item>
@@ -43,12 +49,14 @@
   import itemTable from './paymentItemTable'
   import billTable from './paymentBillTable'
   import attachment from './paymentAttachment'
+  import logs from '../../../FinanceBill/components/paymentBill/view/paymentLogs'
 
   export default {
     components: {
       itemTable,
       billTable,
-      attachment
+      attachment,
+      logs
     },
     props: {},
     computed: {
@@ -118,7 +126,8 @@
         this.primaryId = primaryId;
         this.initData();
         // 默认展开所有折叠面板
-        this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        //this.activeNames = ['infoFrom', 'itemTable', 'billTable', 'attachment'];
+        this.activeNames = ['infoFrom', 'itemTable', 'logs'];
       },
       closeDialog() {
         this.primary = {};

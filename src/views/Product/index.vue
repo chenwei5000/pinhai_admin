@@ -101,4 +101,7 @@
 </script>
 
 <style scoped>
+  .ph-table {
+    padding: 0 !important;
+  }
 </style>

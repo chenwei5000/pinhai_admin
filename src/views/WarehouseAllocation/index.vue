@@ -117,5 +117,7 @@
 </script>
 
 <style type="text/less" lang="scss" scoped>
-
+  .ph-table {
+    padding: 0 !important;
+  }
 </style>

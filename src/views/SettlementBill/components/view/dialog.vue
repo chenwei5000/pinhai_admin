@@ -10,6 +10,10 @@
 
       <el-button type="success" size="small" icon="el-icon-s-claim" v-if="hasExecute" @click="onComplete">完成结算申报
       </el-button>
+
+      <el-button type="warning" size="small" icon="el-icon-refresh-left" v-if="hasWithdraw" @click="onWithdraw">撤回
+      </el-button>
+
       <el-button type="danger" size="small" icon="el-icon-s-opportunity" v-if="hasAdmin" @click="onStatus">修改状态
       </el-button>
       <el-button type="danger" size="small" icon="el-icon-delete" v-if="hasAdmin" @click="onDelete">删除</el-button>
@@ -32,7 +36,12 @@
       </el-collapse-item>
 
       <el-collapse-item name="paymentsTable" style="margin-top: 10px">
-        <div slot="title" class="title">3. 相关付款单</div>
+        <div slot="title" class="title">3. 相关预付款单</div>
+        <reverseTable ref="reverseTable" :primary="primary" v-if="primaryComplete"></reverseTable>
+      </el-collapse-item>
+
+      <el-collapse-item name="paymentsTable" style="margin-top: 10px">
+        <div slot="title" class="title">4. 相关付款单</div>
         <paymentsTable ref="paymentsTable" :primary="primary" v-if="primaryComplete"></paymentsTable>
       </el-collapse-item>
     </el-collapse>
@@ -49,6 +58,7 @@
   import infoFrom from './form'
   import detailTable from './detailTable'
   import paymentsTable from './paymentsTable'
+  import reverseTable from './reverseTable'
   import {checkPermission} from "../../../../utils/permission";
   import phStatus from '@/components/PhStatus'
 
@@ -57,6 +67,7 @@
       infoFrom,
       detailTable,
       paymentsTable,
+      reverseTable,
       phStatus
     },
     props: {},
@@ -73,6 +84,12 @@
         else {
           return false;
         }
+      },
+      hasWithdraw() {
+        if (this.primary.status != 1) {
+          return false;
+        }
+        return checkPermission('SettlementBillResource_revoke');
       },
       hasAdmin() {
         return checkPermission('ProcurementPlanResource_updateStatus');
@@ -104,7 +121,7 @@
     methods: {
       initData() {
         if (this.primaryId) {
-          let relations = ["supplier", "currency", "procurementOrder", "procurementOrder.company", "procurementOrder.creator"];
+          let relations = ["supplier", "currency", "company", "leader"];
           //获取计划数据
           this.global.axios
             .get(`/settlementBills/${this.primaryId}?relations=${JSON.stringify(relations)}`)
@@ -211,7 +228,7 @@
 
       //撤回
       onWithdraw() {
-        this.business('确认撤回该结算单吗?', 'withdraw', "操作成功!");
+        this.business('确认撤回该结算单吗?', 'revoke', "操作成功!");
       },
       //完成
       onComplete() {

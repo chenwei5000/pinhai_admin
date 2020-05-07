@@ -14,7 +14,7 @@
       <el-row>
         <el-col :md="6">
           <el-form-item label="购买方">
-            <span style="font-size: 12px" v-if="this.editObject.procurementOrder">{{this.editObject.procurementOrder.company.abbreviation}}</span>
+            <span style="font-size: 12px" v-if="this.editObject.company">{{this.editObject.company.abbreviation}}</span>
           </el-form-item>
         </el-col>
 
@@ -25,28 +25,32 @@
         </el-col>
 
         <el-col :md="6">
-          <el-form-item label="采购单编码">
-            <span style="font-size: 12px">{{this.editObject.procurementOrderCode}}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="收货单编码">
+          <el-form-item label="业务编码">
             <span style="font-size: 12px">{{this.editObject.warehouseOrderCode}}</span>
           </el-form-item>
         </el-col>
+
+        <el-col :md="6">
+          <el-form-item label="负责人">
+            <span style="font-size: 12px">{{this.editObject.leader.name}}</span>
+          </el-form-item>
+        </el-col>
+
       </el-row>
 
       <el-row>
+
         <el-col :md="6">
-          <el-form-item label="结算日期">
-            <span style="font-size: 12px">{{this.editObject.billingDate | parseTime('{y}-{m}-{d}') }}</span>
+          <el-form-item label="最晚付款日期">
+            <b style="font-size:12px;color: blue;">
+              {{this.editObject.latestPaymentTime | parseTime('{y}年{m}月{d}日')}}
+            </b>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
-          <el-form-item label="要求付款日期">
-            <span style="font-size: 12px">{{this.editObject.latestPaymentTime | parseTime('{y}-{m}-{d}')}}</span>
+          <el-form-item label="结算日期">
+            <span style="font-size: 12px">{{this.editObject.billingDate | parseTime('{y}年{m}月{d}日') }}</span>
           </el-form-item>
         </el-col>
 
@@ -61,60 +65,68 @@
             <span style="font-size: 12px">{{this.editObject.currency.name}}</span>
           </el-form-item>
         </el-col>
+
+
       </el-row>
 
       <el-row>
         <el-col :md="6">
           <el-form-item label="结算总额">
-            <b style="font-size: 12px;color:blue;">{{this.editObject.settlementAmount, this.editObject.currency.symbolLeft | currency }}</b>
+            <b style="font-size: 12px;color:blue;">{{this.editObject.settlementAmount,
+              this.editObject.currency.symbolLeft | currency }}</b>
+          </el-form-item>
+        </el-col>
+
+
+        <el-col :md="6">
+          <el-form-item label="申请付款金额" v-if="!hasInpayment">
+            <b style="font-size: 12px;color:blue;">
+              {{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}
+            </b>
+          </el-form-item>
+        </el-col>
+
+
+        <el-col :md="6">
+          <el-form-item label="已付金额" v-if="!hasInpayment">
+            <b style="font-size: 12px;color:blue;">
+              {{this.editObject.paymentAmount, this.editObject.currency.symbolLeft | currency }}
+            </b>
           </el-form-item>
         </el-col>
 
         <el-col :md="6">
-          <el-form-item label="未付金额">
-            <span style="font-size: 12px">{{this.editObject.unpaidAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="未付金额" v-if="!hasInpayment">
+            <b style="font-size: 12px;color:blue;">
+              {{this.editObject.unpaidAmount, this.editObject.currency.symbolLeft | currency }}
+            </b>
           </el-form-item>
         </el-col>
 
-        <el-col :md="6">
-          <el-form-item label="未申请金额">
-            <span style="font-size: 12px">{{this.editObject.unpaidApplyAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="已开票金额">
-            <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
       </el-row>
 
       <el-row>
         <el-col :md="6">
-          <el-form-item label="采购单预付款金额">
+          <el-form-item label="已付定金" v-if="!hasInpayment">
             <span style="font-size: 12px">{{this.editObject.advanceAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
 
+
         <el-col :md="6">
-          <el-form-item label="已付金额">
-            <span style="font-size: 12px">{{this.editObject.paymentAmount, this.editObject.currency.symbolLeft | currency }}</span>
+          <el-form-item label="已开票金额" v-if="!hasInpayment">
+            <span style="font-size: 12px">{{this.editObject.invoicedAmount, this.editObject.currency.symbolLeft | currency }}</span>
           </el-form-item>
         </el-col>
 
-        <el-col :md="6">
-          <el-form-item label="已申请金额">
-            <span style="font-size: 12px">{{this.editObject.payableAmount, this.editObject.currency.symbolLeft | currency }}</span>
-          </el-form-item>
-        </el-col>
-
-        <el-col :md="6">
-          <el-form-item label="负责人">
-            <span style="font-size: 12px">{{this.editObject.procurementOrder.creator.name}}</span>
+      </el-row>
+      <el-row>
+        <el-col :md="24">
+          <el-form-item label="备注" prop="note">
+            <div style="font-size: 12px;white-space: pre-line;">{{editObject.note}}</div>
           </el-form-item>
         </el-col>
       </el-row>
-
 
     </el-form>
   </div>
@@ -141,6 +153,14 @@
         }
         else {
           return true;
+        }
+      },
+      hasInpayment() {
+        if (this.editObject.status == 0) {
+          return true;
+        }
+        else {
+          return false;
         }
       },
       hasCategory() {

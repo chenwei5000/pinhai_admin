@@ -10,17 +10,12 @@
              @submit.native.prevent>
 
       <el-form-item label="编码">
-        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 150px"
+        <el-input size="mini" clearable v-model="searchParam.code.value" style="width: 180px"
                   placeholder="请输入编码"></el-input>
       </el-form-item>
 
-      <el-form-item label="收货单编码">
-        <el-input size="mini" clearable v-model="searchParam.warehouseOrderCode.value" style="width: 150px"
-                  placeholder="请输入收货单编码"></el-input>
-      </el-form-item>
-
       <el-form-item label="供货商">
-        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 120px"
+        <el-select size="mini" filterable v-model="searchParam.supplierId.value" style="width: 150px"
                    placeholder="请选择供货商">
           <el-option
             v-for="(item,idx) in supplierSelectOptions"
@@ -50,6 +45,15 @@
       </el-form-item>
     </el-form>
 
+    <!-- 表格工具条 添加、导入、导出等 -->
+    <tableToolBar v-if="hasAdmin"
+      ref="tableToolBar"
+      :hasDelete="hasAdmin"
+      @onToolBarDelete="onToolBarDelete"
+
+    >
+    </tableToolBar>
+
     <!--表格 TODO:根据实际情况调整 el-table-column  -->
     <el-table
       ref="table"
@@ -65,19 +69,29 @@
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      @cell-dblclick="handleDblclick"
       show-summary
       :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="procurementOrder.company.abbreviation" label="购买方" width="120" fixed="left">
+
+      <el-table-column
+        v-if="hasAdmin"
+        type="selection"
+        width="30"
+        align="center"
+      >
       </el-table-column>
 
-      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
+      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left" align="center">
       </el-table-column>
 
-      <el-table-column prop="code" label="编码" width="140"></el-table-column>
+      <el-table-column prop="company.abbreviation" label="购买方" width="120" align="center">
+      </el-table-column>
 
-      <el-table-column prop="statusName" label="状态" width="100">
+      <el-table-column prop="code" label="结算单编码" width="140" align="center"></el-table-column>
+
+      <el-table-column prop="statusName" label="状态" width="90" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 0
@@ -89,68 +103,65 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementAmount" label="结算总额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
+      <el-table-column prop="currency.name" label="结算货币" width="90" align="center">
       </el-table-column>
 
-      <el-table-column prop="currency.name" label="结算货币" width="90">
-      </el-table-column>
-
-      <el-table-column prop="invoicedAmount" label="已开票金额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.invoicedAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="accountPeriod" label="账期" width="80">
+      <el-table-column prop="accountPeriod" label="账期" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.accountPeriod }} 天</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="billingDate" label="结算日期" width="100">
+      <el-table-column prop="billingDate" label="结算日期" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.billingDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="procurementOrder.name" label="采购单" width="210">
+      <el-table-column prop="warehouseOrderCode" label="业务编码" width="140" align="center">
       </el-table-column>
 
-      <el-table-column prop="warehouseOrderCode" label="收货单编码" width="140">
+      <el-table-column prop="leader.name" label="负责人" width="100" align="center">
       </el-table-column>
 
-      <el-table-column prop="latestPaymentTime" label="缴款日期" width="100" fixed="right">
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+
+      <el-table-column prop="latestPaymentTime" label="缴款日期" width="100" fixed="right" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="unpaidApplyAmount" label="未申请金额" width="90" fixed="right">
+      <el-table-column prop="invoicedAmount" label="已开票金额" width="100" v-if="!hasInpayment" align="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.invoicedAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="settlementAmount" label="结算总额" width="100" align="right" fixed="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.settlementAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="payableAmount" label="申请金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
-            {{ scope.row.unpaidApplyAmount, scope.row.currency.symbolLeft | currency }}
+            {{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column prop="unpaidAmount" label="未付金额" width="90" fixed="right">
+      <el-table-column prop="paymentAmount" label="付款金额" width="90" fixed="right" v-if="!hasInpayment" align="right">
         <template slot-scope="scope">
           <div style="text-align: right;">
-            {{ scope.row.unpaidAmount, scope.row.currency.symbolLeft | currency }}
+            {{ scope.row.paymentAmount, scope.row.currency.symbolLeft | currency }}
           </div>
         </template>
       </el-table-column>
-
-      <el-table-column prop="procurementOrder.creator.name" label="负责人" width="100">
-      </el-table-column>
-
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
 
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="scope.row.status == 0 && hasEdit" size="mini" icon="el-icon-money" circle
@@ -173,7 +184,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
@@ -203,6 +214,8 @@
   import viewDialog from './view/dialog'
   import supplierModel from '@/api/supplier'
   import {checkPermission} from "@/utils/permission";
+  import {getObjectValueByArr} from "../../../utils";
+  import tableToolBar from '@/components/PhTableToolBar'
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -215,6 +228,7 @@
   export default {
 
     components: {
+      tableToolBar,
       paymentDialog,
       viewDialog
     },
@@ -233,6 +247,9 @@
         'device', 'rolePower', 'rolePower'
       ]),
 
+      hasAdmin() {
+        return checkPermission('LinerShippingPlanResource_updateStatus');
+      },
       hasView() {
         return true;
       },
@@ -241,6 +258,14 @@
       },
       hasOperation() {
         return this.hasView || this.hasEdit;
+      },
+      hasInpayment() {
+        if (this.type == 'inpayment') {
+          return true;
+        }
+        else {
+          return false;
+        }
       }
     },
     filters: {
@@ -265,7 +290,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/settlementBills', // 资源URL
         countUrl: '/settlementBills/count', // 资源URL
-        relations: ["supplier", "currency", "procurementOrder", "procurementOrder.company", "procurementOrder.creator"],  // 关联对象
+        relations: ["supplier", "currency", "company", "leader"],  // 关联对象
         data: [],
         phSort: {prop: "latestPaymentTime", order: "asc"},
 
@@ -357,7 +382,7 @@
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
-          tableHeight = tableHeight - 82;  //减去一些padding,margin，border偏差
+          tableHeight = tableHeight - 70;  //减去一些padding,margin，border偏差
           this.tableMaxHeight = tableHeight;
         }
         else {
@@ -410,49 +435,93 @@
       },
 
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
       /*汇总数据*/
       getSummaries(param) {
         const {columns, data} = param;
         const sums = [];
 
+
         let amount = [];
+        amount['settlementAmount'] = [];
+        amount['payableAmount'] = [];
+        amount['paymentAmount'] = [];
+
 
         data.forEach(r => {
           let symbolLeft = r['currency']['symbolLeft'];
 
-          if (amount.hasOwnProperty(symbolLeft)) {
-            if (amount[symbolLeft]['price']) {
-              amount[symbolLeft]['price'] += r.unpaidAmount;
+          if (amount['settlementAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['settlementAmount'][symbolLeft]['price']) {
+              amount['settlementAmount'][symbolLeft]['price'] += r.settlementAmount;
             }
             else {
-              amount[symbolLeft]['price'] = r.unpaidAmount;
+              amount['settlementAmount'][symbolLeft]['price'] = r.settlementAmount;
             }
           }
           else {
-            amount[symbolLeft] = {};
-            amount[symbolLeft]['price'] = r.unpaidAmount;
+            amount['settlementAmount'][symbolLeft] = {};
+            amount['settlementAmount'][symbolLeft]['price'] = r.settlementAmount;
+          }
+
+          if (amount['payableAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['payableAmount'][symbolLeft]['price']) {
+              amount['payableAmount'][symbolLeft]['price'] += r.payableAmount;
+            }
+            else {
+              amount['payableAmount'][symbolLeft]['price'] = r.payableAmount;
+            }
+          }
+          else {
+            amount['payableAmount'][symbolLeft] = {};
+            amount['payableAmount'][symbolLeft]['price'] = r.payableAmount;
+          }
+
+          if (amount['paymentAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['paymentAmount'][symbolLeft]['price']) {
+              amount['paymentAmount'][symbolLeft]['price'] += r.paymentAmount;
+            }
+            else {
+              amount['paymentAmount'][symbolLeft]['price'] = r.paymentAmount;
+            }
+          }
+          else {
+            amount['paymentAmount'][symbolLeft] = {};
+            amount['paymentAmount'][symbolLeft]['price'] = r.paymentAmount;
           }
         });
 
-        var keys = Object.keys(amount);
-        var str = '';
-        for (var i = 0; i < keys.length; i++) {
-          str += currency(amount[keys[i]].price, keys[i])  + ' ';
-        }
-
         columns.forEach((column, index) => {
-          if (column.property == 'code') {
-            const values = data.map(item => item[column.property]);
-            sums[0] = values.reduce((prev) => {
+          if (column.property == 'supplier.name') {
+            const values = data.map(item => item['settlementAmount']);
+            sums[index] = values.reduce((prev) => {
               return prev + 1;
             }, 0);
-            sums[0] = '合计: ' + sums[0] + ' 行';
+            sums[index] = '合计: ' + sums[index] + ' 行';
           }
 
-          if (column.property == 'unpaidAmount') {
+          if (column.property == 'settlementAmount' ||
+            column.property == 'payableAmount' ||
+            column.property == 'paymentAmount') {
+            var keys = Object.keys(amount[column.property]);
+            var str = '';
+            for (var i = 0; i < keys.length; i++) {
+              str += currency(amount[column.property][keys[i]].price, keys[i]) + ' \n ';
+            }
             sums[index] = str;
           }
-
         });
 
         return sums;
@@ -662,6 +731,42 @@
       modifyCBEvent(object) {
         this.getList();
       },
+
+      /*批量删除*/
+      onToolBarDelete() {
+        if (this.selected.length <= 0) {
+          this.$message.error("请选择要删除的行!");
+          return;
+        }
+
+        this.$confirm('确认删除吗', '提示', {
+          type: 'warning',
+          beforeClose: (action, instance, done) => {
+            if (action == 'confirm') {
+              // 多选模式
+              let ids = this.selected.map(v => v['id']).toString();
+              if (ids != '') {
+                this.loading = true;
+                this.global.axios
+                  .delete(this.url + '/' + ids)
+                  .then(resp => {
+                    this.$message({type: 'success', message: '删除成功'});
+                    this.getList()
+                    this.$emit("reloadCBEvent");
+
+                    this.loading = false;
+                  })
+                  .catch(er => {
+                    this.loading = false;
+                  })
+              }
+              done()
+            } else done()
+          }
+        }).catch(er => {
+          /*取消*/
+        })
+      },
     }
   }
 </script>
@@ -673,5 +778,6 @@
       width: 220px !important;
     }
   }
+
 </style>
 

@@ -67,18 +67,24 @@
       header-cell-class-name="ph-cell-header"
       :data="data"
       :max-height="tableMaxHeight"
+      @cell-dblclick="handleDblclick"
       v-loading="loading"
       @selection-change="handleSelectionChange"
       @sort-change='handleSortChange'
+      show-summary
+      :summary-method="getSummaries"
       id="table"
     >
-      <el-table-column prop="supplier.name" label="供货商" width="120" fixed="left">
+      <el-table-column prop="supplier.name" label="供货商" width="120" align="center" fixed="left">
       </el-table-column>
 
-      <el-table-column prop="code" label="编号" width="130"></el-table-column>
+      <el-table-column prop="settlementBill.company.abbreviation" label="购买方" width="120" align="center">
+      </el-table-column>
+
+      <el-table-column prop="code" label="编号" width="130" align="center"></el-table-column>
 
 
-      <el-table-column prop="statusName" label="状态" width="80">
+      <el-table-column prop="statusName" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-tag size="mini"
                   :type="scope.row.status === 1
@@ -90,53 +96,50 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="relevanceCode" label="采购单编码" width="130" v-if="false">
+      <el-table-column prop="settlementBill.warehouseOrderCode" label="业务编码" width="130" align="center">
       </el-table-column>
 
-      <el-table-column prop="settlementBill.billingDate" label="结算日期" width="100">
+      <el-table-column prop="settlementBill.billingDate" label="结算日期" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.settlementBill.billingDate | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementBill.accountPeriod" label="账期" width="80">
+      <el-table-column prop="settlementBill.accountPeriod" label="账期" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.settlementBill.accountPeriod }} 天</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="creator.name" label="申请人" width="80">
+      <el-table-column prop="creator.name" label="申请人" width="80" align="center">
       </el-table-column>
 
 
-      <el-table-column prop="currency.name" label="付款货币" width="80">
+      <el-table-column prop="currency.name" label="付款货币" width="80" align="center">
       </el-table-column>
 
-      <el-table-column prop="settlementBill.procurementOrder.name" label="采购单" width="210">
-      </el-table-column>
+      <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
 
-      <el-table-column prop="paymentAmount" label="实付金额" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.paymentAmount, scope.row.currency.symbolLeft | currency }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="id" label="ID" width="60"></el-table-column>
-
-      <el-table-column prop="settlementBill.latestPaymentTime" label="最晚付款时间" width="100" fixed="right">
+      <el-table-column prop="settlementBill.latestPaymentTime" label="最晚付款时间" width="100" fixed="right" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.settlementBill.latestPaymentTime | parseTime('{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="settlementAmount" label="申请金额" width="100" fixed="right">
+      <el-table-column prop="payableAmount" label="申请金额" width="100" fixed="right" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.payableAmount, scope.row.currency.symbolLeft | currency }}</span>
         </template>
       </el-table-column>
 
+      <el-table-column prop="paymentAmount" label="已付金额" width="100" fixed="right" align="right">
+        <template slot-scope="scope">
+          <span>{{ scope.row.paymentAmount == null ? 0 : scope.row.paymentAmount, scope.row.currency.symbolLeft | currency }}</span>
+        </template>
+      </el-table-column>
+
       <!--默认操作列-->
-      <el-table-column label="操作" v-if="hasOperation" width="90"  fixed="right">
+      <el-table-column label="操作" v-if="hasOperation" width="90" fixed="right" align="center">
         <template slot-scope="scope">
 
           <el-button v-if="scope.row.status == 1 && hasEdit" size="mini" icon="el-icon-money" circle
@@ -159,7 +162,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
@@ -190,6 +193,7 @@
   import supplierModel from '@/api/supplier'
   import phEnumModel from '@/api/phEnum'
   import {checkPermission} from "@/utils/permission";
+  import {getObjectValueByArr} from "../../../../utils";
 
   const valueSeparator = '~'
   const valueSeparatorPattern = new RegExp(valueSeparator, 'g')
@@ -248,7 +252,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementPaymentOrders', // 资源URL
         countUrl: '/procurementPaymentOrders/count', // 资源URL
-        relations: ["supplier", "currency", "creator", "settlementBill", "settlementBill.procurementOrder"],  // 关联对象
+        relations: ["supplier", "currency", "creator", "settlementBill", "settlementBill.company"],  // 关联对象
         data: [],
         phSort: {prop: "settlementBill.latestPaymentTime", order: "asc"},
 
@@ -339,7 +343,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 68; //减框架头部高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
@@ -395,6 +399,83 @@
         // )
       },
 
+      handleDblclick(row, column, cell, event) {
+        let val = getObjectValueByArr(row, column.property);
+        if (val) {
+          this.$copyText(val)
+            .then(res => {
+                this.$message.success("单元格内容已成功复制，可直接去粘贴");
+              },
+              err => {
+                this.$message.error("复制失败");
+              })
+        }
+      },
+
+      /*汇总数据*/
+      getSummaries(param) {
+        const {columns, data} = param;
+        const sums = [];
+
+
+        let amount = [];
+        amount['payableAmount'] = [];
+        amount['paymentAmount'] = [];
+
+
+        data.forEach(r => {
+          let symbolLeft = r['currency']['symbolLeft'];
+
+          if (amount['payableAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['payableAmount'][symbolLeft]['price']) {
+              amount['payableAmount'][symbolLeft]['price'] += r.payableAmount;
+            }
+            else {
+              amount['payableAmount'][symbolLeft]['price'] = r.payableAmount;
+            }
+          }
+          else {
+            amount['payableAmount'][symbolLeft] = {};
+            amount['payableAmount'][symbolLeft]['price'] = r.payableAmount;
+          }
+
+          if (amount['paymentAmount'].hasOwnProperty(symbolLeft)) {
+            if (amount['paymentAmount'][symbolLeft]['price']) {
+              amount['paymentAmount'][symbolLeft]['price'] += r.paymentAmount;
+            }
+            else {
+              amount['paymentAmount'][symbolLeft]['price'] = r.paymentAmount;
+            }
+          }
+          else {
+            amount['paymentAmount'][symbolLeft] = {};
+            amount['paymentAmount'][symbolLeft]['price'] = r.paymentAmount;
+          }
+        });
+
+        columns.forEach((column, index) => {
+          if (column.property == 'code') {
+            const values = data.map(item => item[column.property]);
+            sums[0] = values.reduce((prev) => {
+              return prev + 1;
+            }, 0);
+            sums[0] = '合计: ' + sums[0] + ' 行';
+          }
+
+          if (column.property == 'settlementAmount' ||
+            column.property == 'payableAmount' ||
+            column.property == 'paymentAmount') {
+            var keys = Object.keys(amount[column.property]);
+            var str = '';
+            for (var i = 0; i < keys.length; i++) {
+              str += currency(amount[column.property][keys[i]].price, keys[i]) + ' \n ';
+            }
+            sums[index] = str;
+          }
+        });
+
+        return sums;
+      },
       /********************* 表格相关方法  ***************************/
       /*格式化列输出 Formatter*/
       //  TODO:根据实际情况调整

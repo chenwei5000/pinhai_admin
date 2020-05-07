@@ -90,7 +90,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="note" label="完成度" width="120" v-if="hasCompleteness">
+      <el-table-column prop="note" label="完成度" width="90" v-if="hasCompleteness">
         <template slot-scope="scope">
           <el-popover placement="top-start" title="完成度" width="250" trigger="hover">
             <div>
@@ -113,6 +113,8 @@
 
       <el-table-column prop="name" label="名称" min-width="200"  align="center">
       </el-table-column>
+
+      <el-table-column prop="company.abbreviation" label="购买方" width="120" align="center"></el-table-column>
 
       <el-table-column prop="supplier.name" label="供货商" width="120" align="center"></el-table-column>
 
@@ -173,7 +175,7 @@
       :page-sizes="paginationSizes"
       :page-size="size"
       :total="total"
-      style="text-align: right; padding: 10px 0"
+      style="text-align: right; padding: 10px 0 0 0"
       background
       :layout="layout"
       id="ph-table-page"
@@ -302,7 +304,7 @@
         //抓数据 TODO: 根据实际情况调整
         url: '/procurementOrders', // 资源URL
         countUrl: '/procurementOrders/count', // 资源URL
-        relations: ["procurementPlan", "creator", "currency", "supplier", "warehouse"],  // 关联对象
+        relations: ["procurementPlan", "company", "creator", "currency", "supplier", "warehouse"],  // 关联对象
         data: [],
         phSort: {prop: "id", order: "desc"},
         // 表格加载效果
@@ -415,7 +417,7 @@
           let windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
           //表格高度
           let tableHeight = windowHeight;
-          tableHeight = tableHeight - 84; //减框架头部高度
+          tableHeight = tableHeight - 68; //减框架头部高度
           tableHeight = tableHeight - (this.$refs.searchForm ? this.$refs.searchForm.$el.offsetHeight : 0); //减搜索区块高度
           tableHeight = tableHeight - (this.$refs.operationForm ? this.$refs.operationForm.$el.offsetHeight : 0); //减操作区块高度
           tableHeight = tableHeight - (this.$refs.pageForm ? this.$refs.pageForm.$el.offsetHeight : 0); //减分页区块高度
